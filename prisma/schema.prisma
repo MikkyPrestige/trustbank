@@ -1,0 +1,106 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// --- ENUMS ---
+
+enum UserRole {
+  CLIENT
+  ADMIN
+}
+
+enum UserStatus {
+  PENDING_VERIFICATION
+  ACTIVE
+  FROZEN
+}
+
+enum TransactionType {
+  TRANSFER
+  DEPOSIT
+  WITHDRAWAL
+  FEE
+  REFUND
+}
+
+enum TransactionDirection {
+  DEBIT
+  CREDIT
+}
+
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REVERSED
+}
+
+// --- MODELS ---
+
+model User {
+  id                  String      @id @default(cuid())
+  fullName            String
+  email               String      @unique
+  passwordHash        String
+  transactionPinHash  String?     // 4-digit PIN for sensitive moves
+  role                UserRole    @default(CLIENT)
+  status              UserStatus  @default(PENDING_VERIFICATION)
+  kycVerified         Boolean     @default(false)
+
+  // Security & Audit
+  failedLoginAttempts Int         @default(0)
+  isLocked            Boolean     @default(false)
+  lastLoginAt         DateTime?
+
+  createdAt           DateTime    @default(now())
+  updatedAt           DateTime    @updatedAt
+  version             Int         @default(1) // Optimistic locking
+
+  accounts            Account[]
+}
+
+model Account {
+  id               String        @id @default(cuid())
+  accountNumber    String        @unique // 10-digit NUBAN style
+  accountType      String        // Savings or Current
+  currency         String        @default("USD")
+
+  // Financial balances
+  availableBalance Decimal       @default(0) @db.Decimal(19, 4)
+  reservedBalance  Decimal       @default(0) @db.Decimal(19, 4) // For pending/locked funds
+
+  userId           String
+  user             User          @relation(fields: [userId], references: [id])
+
+  version          Int           @default(1) // Prevent race conditions
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  ledgerEntries    LedgerEntry[]
+}
+
+model LedgerEntry {
+  id              String               @id @default(cuid())
+  referenceId     String               @unique // Idempotency key (External Ref)
+
+  accountId       String
+  account         Account              @relation(fields: [accountId], references: [id])
+
+  amount          Decimal              @db.Decimal(19, 4)
+  type            TransactionType      @default(TRANSFER)
+  direction       TransactionDirection
+  status          TransactionStatus    @default(PENDING)
+
+  description     String?
+  metadata        Json?                // Store provider responses or extra data
+
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+
+  @@index([accountId])
+  @@index([referenceId])
+}
