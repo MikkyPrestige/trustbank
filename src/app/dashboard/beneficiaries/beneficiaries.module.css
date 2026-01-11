@@ -1,0 +1,352 @@
+/* beneficiaries.module.css */
+
+/* CONTAINER */
+.container {
+    padding: 3rem 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: #fff;
+}
+
+/* HEADER */
+.header {
+    margin-bottom: 3rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.title {
+    font-size: 2rem;
+    font-weight: 800;
+    margin: 0 0 0.5rem 0;
+    background: linear-gradient(90deg, #fff, #aaa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+    color: #888;
+    font-size: 1rem;
+    margin: 0;
+}
+
+/* GRID LAYOUT */
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 380px; /* List takes space, Form is fixed width */
+    gap: 3rem;
+    align-items: start;
+}
+
+/* LEFT COLUMN: LIST */
+.listColumn {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.columnHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.columnTitle {
+    font-size: 1.2rem;
+    color: #fff;
+    margin: 0;
+    font-weight: 700;
+}
+
+/* SEARCH BAR */
+.searchWrapper {
+    position: relative;
+    width: 100%;
+    max-width: 300px;
+}
+.searchIcon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #666;
+    pointer-events: none;
+}
+.searchInput {
+    width: 100%;
+    background: #111;
+    border: 1px solid #333;
+    padding: 10px 10px 10px 36px;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 0.9rem;
+    outline: none;
+    transition: 0.2s;
+}
+.searchInput:focus {
+    border-color: #3b82f6;
+    background: #151515;
+}
+
+/* LIST CARDS */
+.listContainer {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+}
+
+.contactCard {
+    background: linear-gradient(145deg, #111, #0a0a0a);
+    border: 1px solid #222;
+    border-radius: 16px;
+    padding: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    transition: transform 0.2s, border-color 0.2s;
+    position: relative;
+    overflow: hidden;
+}
+.contactCard:hover {
+    transform: translateY(-2px);
+    border-color: #333;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.cardTop {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.avatar {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: #fff;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 1.2rem;
+    box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
+}
+
+.info h4 {
+    margin: 0 0 4px 0;
+    font-size: 1rem;
+    color: #fff;
+    font-weight: 600;
+}
+.bankBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.75rem;
+    color: #888;
+    background: #1a1a1a;
+    padding: 2px 8px;
+    border-radius: 6px;
+    border: 1px solid #222;
+}
+
+.cardDetails {
+    background: rgba(255,255,255,0.03);
+    padding: 10px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.accLabel { font-size: 0.7rem; color: #666; text-transform: uppercase; margin-right: 8px; }
+.accNum { font-family: "Courier New", monospace; color: #ccc; font-weight: 600; font-size: 0.9rem; letter-spacing: 1px; }
+
+.cardActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    border-top: 1px solid #222;
+    padding-top: 12px;
+}
+
+.actionBtn {
+    background: transparent;
+    border: none;
+    color: #666;
+    padding: 6px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.actionBtn:hover {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+.sendBtn {
+    background: #fff;
+    color: #000;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: 0.2s;
+}
+.sendBtn:hover {
+    background: #e5e5e5;
+}
+
+/* RIGHT COLUMN: FORM (Sticky) */
+.formColumn {
+    position: sticky;
+    top: 2rem;
+}
+
+.formCard {
+    background: #0a0a0a;
+    border: 1px solid #222;
+    padding: 1.5rem;
+    border-radius: 20px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+}
+
+.formStack {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+.inputGroup label {
+    display: block;
+    font-size: 0.75rem;
+    color: #888;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.inputWrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+.icon {
+    position: absolute;
+    left: 14px;
+    color: #666;
+    pointer-events: none;
+}
+
+.input {
+    width: 100%;
+    background: #111;
+    border: 1px solid #333;
+    color: #fff;
+    padding: 12px 12px 12px 42px;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    outline: none;
+    transition: 0.2s;
+}
+.input:focus {
+    border-color: #3b82f6;
+    background: #151515;
+}
+
+.submitBtn {
+    width: 100%;
+    background: #3b82f6;
+    color: #fff;
+    border: none;
+    padding: 14px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 10px;
+    transition: 0.2s;
+}
+.submitBtn:hover {
+    background: #2563eb;
+    transform: translateY(-2px);
+}
+.submitBtn:disabled {
+    background: #222;
+    color: #666;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* SUCCESS BOX */
+.successBox {
+    text-align: center;
+    padding: 2rem;
+    background: rgba(34, 197, 94, 0.1);
+    border-radius: 12px;
+    border: 1px solid rgba(34, 197, 94, 0.2);
+}
+.successBox h3 { margin: 0 0 5px 0; color: #22c55e; }
+.successBox p { color: #ccc; font-size: 0.9rem; margin-bottom: 1rem; }
+
+.btnSecondary {
+    background: #1a1a1a;
+    color: #fff;
+    border: 1px solid #333;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: 0.2s;
+}
+.btnSecondary:hover { background: #222; border-color: #555; }
+
+/* ERROR */
+.error {
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.1);
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    text-align: center;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+/* EMPTY STATE */
+.emptyState {
+    text-align: center;
+    padding: 4rem;
+    background: #111;
+    border: 1px dashed #333;
+    border-radius: 16px;
+    color: #666;
+}
+.emptyState p { margin-top: 1rem; font-size: 1rem; }
+
+/* SPINNER */
+.spin { animation: spin 1s linear infinite; }
+@keyframes spin { 100% { transform: rotate(360deg); } }
+
+/* MOBILE */
+@media (max-width: 1024px) {
+    .grid { grid-template-columns: 1fr; }
+    .formColumn { order: -1; position: static; margin-bottom: 3rem; }
+    .listContainer { grid-template-columns: 1fr; }
+}

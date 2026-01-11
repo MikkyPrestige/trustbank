@@ -3,7 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 // --- ENUMS ---
@@ -11,11 +13,14 @@ datasource db {
 enum UserRole {
   CLIENT
   ADMIN
+  SUPER_ADMIN
+  SUPPORT
 }
 
 enum UserStatus {
   PENDING_VERIFICATION
   ACTIVE
+  SUSPENDED
   FROZEN
 }
 
@@ -25,11 +30,13 @@ enum TransactionType {
   WITHDRAWAL
   FEE
   REFUND
-}
-
-enum TransactionDirection {
-  DEBIT
-  CREDIT
+  WIRE                // <--- RENAMED from WIRE_OUT to match your transfer.ts code
+  ADJUSTMENT          // <--- NEW: Essential for Admin to fix balances without fake deposits
+  LOAN_DISBURSEMENT
+  LOAN_REPAYMENT
+  CRYPTO_BUY
+  CRYPTO_SELL
+  CRYPTO_SEND
 }
 
 enum TransactionStatus {
@@ -37,70 +44,213 @@ enum TransactionStatus {
   COMPLETED
   FAILED
   REVERSED
+  ON_HOLD            // <--- NEW: Useful if you want to "freeze" a specific transaction later
 }
 
 // --- MODELS ---
 
 model User {
-  id                  String      @id @default(cuid())
-  fullName            String
-  email               String      @unique
-  passwordHash        String
-  transactionPinHash  String?     // 4-digit PIN for sensitive moves
-  role                UserRole    @default(CLIENT)
-  status              UserStatus  @default(PENDING_VERIFICATION)
-  kycVerified         Boolean     @default(false)
+  id                String      @id @default(cuid())
 
-  // Security & Audit
-  failedLoginAttempts Int         @default(0)
-  isLocked            Boolean     @default(false)
-  lastLoginAt         DateTime?
+  // 1. Auth & Core
+  email             String      @unique
+  passwordHash      String
+  transactionPin    String      @default("1234")
+  role              UserRole    @default(CLIENT)
+  status            UserStatus  @default(ACTIVE)
 
-  createdAt           DateTime    @default(now())
-  updatedAt           DateTime    @updatedAt
-  version             Int         @default(1) // Optimistic locking
+  // 2. Personal Info
+  fullName          String
+  image             String?     // <--- NEW: Profile Picture (Avatar)
+  dateOfBirth       DateTime?
+  gender            String?
+  phone             String?
+  occupation        String?
+  taxId             String?     // SSN
 
-  accounts            Account[]
+  // 3. Contact Info
+  address           String?
+  city              String?
+  state             String?
+  zipCode           String?
+  country           String?
+
+  // 4. Next of Kin
+  nokName           String?
+  nokEmail          String?
+  nokPhone          String?
+  nokRelationship   String?
+  nokAddress        String?
+
+  // 5. KYC Files
+  passportUrl       String?
+  idCardUrl         String?
+  kycVerified       Boolean     @default(false)
+
+  // 6. Security & Audit
+  lastLoginAt       DateTime?
+  lastLoginIp       String?     // <--- NEW: Good for security tracking
+  failedLoginAttempts Int       @default(0)
+
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  // RELATIONS
+  accounts          Account[]
+  cards             Card[]
+  loans             Loan[]
+  wireTransfers     WireTransfer[]
+  cryptoAssets      CryptoAsset[]
+  beneficiaries     Beneficiary[]
 }
 
 model Account {
-  id               String        @id @default(cuid())
-  accountNumber    String        @unique // 10-digit NUBAN style
-  accountType      String        // Savings or Current
-  currency         String        @default("USD")
+  id                String    @id @default(cuid())
+  userId            String
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  // Financial balances
-  availableBalance Decimal       @default(0) @db.Decimal(19, 4)
-  reservedBalance  Decimal       @default(0) @db.Decimal(19, 4) // For pending/locked funds
+  accountNumber     String    @unique
+  accountName       String
+  routingNumber     String?   // <--- NEW: Makes the bank look "real" (e.g. ACH Routing)
+  type              String    @default("SAVINGS")
+  status            String    @default("ACTIVE")
 
-  userId           String
-  user             User          @relation(fields: [userId], references: [id])
+  availableBalance  Decimal   @default(0.00) @db.Decimal(19, 4)
+  heldBalance       Decimal   @default(0.00) @db.Decimal(19, 4) // <--- NEW: Allows freezing specific funds while keeping account active
+  currency          String    @default("USD")
 
-  version          Int           @default(1) // Prevent race conditions
-  createdAt        DateTime      @default(now())
-  updatedAt        DateTime      @updatedAt
+  isPrimary         Boolean   @default(false)
 
-  ledgerEntries    LedgerEntry[]
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  ledgerEntries     LedgerEntry[]
+}
+
+model Beneficiary {
+  id                String    @id @default(cuid())
+  userId            String
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  accountName       String
+  accountNumber     String
+  bankName          String
+  swiftCode         String?
+  routingNumber     String?   // <--- NEW: Added for local US transfers
+
+  createdAt         DateTime  @default(now())
 }
 
 model LedgerEntry {
-  id              String               @id @default(cuid())
-  referenceId     String               @unique // Idempotency key (External Ref)
+  id                String            @id @default(cuid())
+  referenceId       String            @unique
 
-  accountId       String
-  account         Account              @relation(fields: [accountId], references: [id])
+  accountId         String
+  account           Account           @relation(fields: [accountId], references: [id], onDelete: Cascade)
 
-  amount          Decimal              @db.Decimal(19, 4)
-  type            TransactionType      @default(TRANSFER)
-  direction       TransactionDirection
-  status          TransactionStatus    @default(PENDING)
+  amount            Decimal           @db.Decimal(19, 4)
+  balanceAfter      Decimal?          @db.Decimal(19, 4) // <--- NEW: CRITICAL for audit trails (What was the balance right after this?)
 
-  description     String?
-  metadata        Json?                // Store provider responses or extra data
+  type              TransactionType
+  direction         String            // DEBIT or CREDIT
+  status            TransactionStatus @default(PENDING)
 
-  createdAt       DateTime             @default(now())
-  updatedAt       DateTime             @updatedAt
+  description       String?
+  metadata          Json?             // Stores extra data (e.g., source IP, admin ID who funded it)
 
-  @@index([accountId])
-  @@index([referenceId])
+  createdAt         DateTime          @default(now())
+}
+
+model Card {
+  id                String    @id @default(cuid())
+  userId            String
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  type              String    @default("VISA")
+  cardNumber        String    @unique
+  cvv               String
+  expiryDate        String
+  pin               String?
+
+  status            String    @default("ACTIVE")
+  isPhysical        Boolean   @default(false)
+
+  spendingLimit     Decimal?  @db.Decimal(19, 4) // <--- NEW: For Card Controls feature
+
+  createdAt         DateTime  @default(now())
+}
+
+model WireTransfer {
+  id                String    @id @default(cuid())
+  userId            String
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  bankName          String
+  accountNumber     String
+  swiftCode         String
+  country           String
+  amount            Decimal
+  currency          String    @default("USD")
+
+  status            String    @default("PENDING_AUTH")
+  currentStage      String    @default("TAA")
+
+  // The "Codes" for the offshore transfer flow
+  taaCode           String?
+  cotCode           String?
+  ijyCode           String?
+  imfCode           String?   // <--- NEW: Usually goes with COT/TAX codes
+
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}
+
+model Loan {
+  id                String    @id @default(cuid())
+  userId            String
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  amount            Decimal   @db.Decimal(19, 4)
+  balanceRemaining  Decimal?  @db.Decimal(19, 4) // To track pay-offs
+  termMonths        Int
+  interestRate      Decimal   @db.Decimal(5, 2)
+  monthlyPayment    Decimal   @db.Decimal(19, 4)
+  totalRepayment    Decimal   @db.Decimal(19, 4)
+  repaidAmount      Decimal   @default(0) @db.Decimal(19, 4)
+  nextPaymentDate   DateTime? // <--- NEW: For payment reminders
+  reason            String
+  status            String    @default("PENDING")
+  approvedAt        DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model CryptoAsset {
+  id           String   @id @default(cuid())
+  userId       String
+  symbol       String   // "BTC", "ETH"
+  quantity     Decimal  @default(0) @db.Decimal(19, 8)
+  avgBuyPrice  Decimal  @default(0) @db.Decimal(19, 2) // <--- KEPT THIS
+  updatedAt    DateTime @updatedAt
+
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, symbol])
+}
+
+model CryptoTransaction {
+  id          String   @id @default(cuid())
+  userId      String
+  type        String   // "BUY", "SELL"
+  symbol      String   // Changed from 'currency' to match Asset model
+  amount      Decimal  @db.Decimal(19, 8)
+  priceAtTime Decimal  @db.Decimal(19, 2)
+  totalUsd    Decimal  @db.Decimal(19, 2)
+  createdAt   DateTime @default(now())
+}
+
+model SystemSettings {
+  id                String    @id @default(cuid())
+  key               String    @unique
+  value             String
+  description       String?
 }
