@@ -1,14 +1,15 @@
 'use client';
 
 import { useActionState, useState } from 'react';
-import { registerUser } from '@/actions/register';
+import { registerUser } from '@/actions/user/register';
 import Link from 'next/link';
-import { ChevronDown, ChevronUp, Lock, User, Shield, MapPin, Users } from 'lucide-react';
+import { ChevronDown, ChevronUp, Lock, User, MapPin, Users, CheckCircle, ArrowRight } from 'lucide-react';
 import styles from './auth.module.css';
 
 const initialState = {
     message: '',
-    errors: {}
+    errors: {},
+    success: false
 };
 
 export default function RegisterForm() {
@@ -18,6 +19,31 @@ export default function RegisterForm() {
     const [showPersonal, setShowPersonal] = useState(false);
     const [showContact, setShowContact] = useState(false);
 
+    // ✅ SUCCESS VIEW
+    if (state?.success) {
+        return (
+            <div className={styles.container}>
+                <div className={styles.successState}>
+                    <div className={styles.successIconBox}>
+                        <CheckCircle size={48} strokeWidth={1.5} />
+                    </div>
+                    <h1>Account Created!</h1>
+                    <p>{state.message}</p>
+
+                    <div className={styles.successDetails}>
+                        <p>Your TrustBank Enterprise account is ready.</p>
+                        <p>Please sign in to access your dashboard.</p>
+                    </div>
+
+                    <Link href="/login" className={styles.loginBtn}>
+                        Sign In Now <ArrowRight size={18} />
+                    </Link>
+                </div>
+            </div>
+        );
+    }
+
+    // 📝 REGISTRATION FORM VIEW
     return (
         <div className={styles.container}>
             <div className={styles.header}>
@@ -27,9 +53,9 @@ export default function RegisterForm() {
 
             <form action={action} className={styles.form}>
 
-                {/* GLOBAL ERROR MESSAGE */}
-                {state?.message && (
-                    <div className={`${styles.alert} ${state.success ? styles.success : styles.error}`}>
+                {/* ERROR MESSAGE (Only show errors here, success is handled above) */}
+                {state?.message && !state.success && (
+                    <div className={`${styles.alert} ${styles.error}`}>
                         {state.message}
                     </div>
                 )}

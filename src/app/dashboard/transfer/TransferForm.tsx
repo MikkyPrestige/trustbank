@@ -1,27 +1,51 @@
 'use client';
 
 import { useState, useActionState, useEffect } from 'react';
-import { processTransfer } from '@/actions/transfer';
-import { Send, CreditCard, Lock, Save, User, Building, Hash, Loader2, CheckCircle, ArrowRight } from 'lucide-react';
+import { processTransfer } from '@/actions/user/transfer';
+import { Send, CreditCard, Lock, Save, User, Building, Hash, Loader2, CheckCircle } from 'lucide-react';
 import styles from "./transfer.module.css";
 import toast from 'react-hot-toast';
 import Link from 'next/link';
 
 const initialState = { message: '', success: false };
 
-export default function TransferForm({ accounts, beneficiaries }: { accounts: any[], beneficiaries: any[] }) {
+export default function TransferForm({
+    accounts,
+    beneficiaries,
+    preSelectedId
+}: {
+    accounts: any[],
+    beneficiaries: any[],
+    preSelectedId?: string
+}) {
     const [state, action, isPending] = useActionState(processTransfer, initialState);
 
-    // Controlled State
-    const [selectedBen, setSelectedBen] = useState("");
-    const [amount, setAmount] = useState(""); // Track amount for the receipt
-    const [formData, setFormData] = useState({
-        accountName: "",
-        bankName: "",
-        accountNumber: "",
-    });
+    const getInitialData = () => {
+        if (preSelectedId) {
+            const ben = beneficiaries.find(b => b.id === preSelectedId);
+            if (ben) {
+                return {
+                    selected: preSelectedId,
+                    data: {
+                        accountName: ben.accountName || ben.name || "",
+                        bankName: ben.bankName || "",
+                        accountNumber: ben.accountNumber || "",
+                    }
+                };
+            }
+        }
+        return {
+            selected: "",
+            data: { accountName: "", bankName: "", accountNumber: "" }
+        };
+    };
 
-    // Handle Toast Notifications (Error Only)
+    const initial = getInitialData();
+    const [selectedBen, setSelectedBen] = useState(initial.selected);
+    const [formData, setFormData] = useState(initial.data);
+    const [amount, setAmount] = useState("");
+
+    // Handle Toast Notifications
     useEffect(() => {
         if (state?.message && !state.success) {
             toast.error(state.message);
@@ -36,9 +60,10 @@ export default function TransferForm({ accounts, beneficiaries }: { accounts: an
             const ben = beneficiaries.find(b => b.id === id);
             if (ben) {
                 setFormData({
-                    accountName: ben.name,
-                    bankName: ben.bankName,
-                    accountNumber: ben.accountNumber,
+                    // 👇 Fix: Consistent property naming
+                    accountName: ben.accountName || ben.name || "",
+                    bankName: ben.bankName || "",
+                    accountNumber: ben.accountNumber || "",
                 });
             }
         } else {
@@ -49,7 +74,12 @@ export default function TransferForm({ accounts, beneficiaries }: { accounts: an
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
+        // If user manually types, clear the "Selected" dropdown state
         if (selectedBen) setSelectedBen("");
+    };
+
+    const formatMoney = (amount: number) => {
+        return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
     };
 
     // --- SUCCESS MODAL ---
@@ -103,10 +133,11 @@ export default function TransferForm({ accounts, beneficiaries }: { accounts: an
                 <h3 className={styles.secTitle}>From Account</h3>
                 <div className={styles.inputGroup}>
                     <CreditCard className={styles.icon} size={18} />
-                    <select name="sourceAccountId" className={styles.select} required>
-                        {accounts.map(acc => (
+                    <select name="sourceAccountId" className={styles.select} required defaultValue="">
+                        <option value="" disabled>Select Source Account</option>
+                        {accounts.map((acc) => (
                             <option key={acc.id} value={acc.id}>
-                                {acc.displayName}
+                                {acc.type} — Avail: {formatMoney(acc.availableBalance)} | Curr: {formatMoney(acc.currentBalance)}
                             </option>
                         ))}
                     </select>
@@ -117,14 +148,18 @@ export default function TransferForm({ accounts, beneficiaries }: { accounts: an
             <div className={styles.section}>
                 <div className={styles.flexHead}>
                     <h3 className={styles.secTitle}>Recipient Details</h3>
+
                     <select
                         value={selectedBen}
                         onChange={handleBeneficiaryChange}
                         className={styles.miniSelect}
+                        style={{ borderColor: selectedBen ? '#3b82f6' : '#333' }}
                     >
-                        <option value="">Select Saved...</option>
+                        <option value="">-- Select Beneficiary --</option>
                         {beneficiaries.map(b => (
-                            <option key={b.id} value={b.id}>{b.name} - {b.bankName}</option>
+                            <option key={b.id} value={b.id}>
+                                {b.accountName} - {b.bankName}
+                            </option>
                         ))}
                     </select>
                 </div>

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { generateClearanceCodes } from '@/actions/admin'; // Import from your admin.ts
+import { generateClearanceCodes } from '@/actions/admin/wire';
 import styles from '../users.module.css';
 import { ShieldCheck, Loader2 } from 'lucide-react';
 

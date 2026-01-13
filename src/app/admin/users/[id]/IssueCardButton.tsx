@@ -1,6 +1,6 @@
 'use client';
 
-import { adminIssueCard } from '@/actions/admin';
+import { adminIssueCard } from '@/actions/admin/users';
 import { useState } from 'react';
 import styles from '../users.module.css';
 import { Plus, Loader2 } from 'lucide-react';

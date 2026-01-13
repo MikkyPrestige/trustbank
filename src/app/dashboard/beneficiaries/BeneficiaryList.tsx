@@ -1,6 +1,6 @@
 'use client';
 
-import { deleteBeneficiary } from '@/actions/beneficiary';
+import { deleteBeneficiary } from '@/actions/user/beneficiary';
 import { Trash2, Building, Search, Send, User } from 'lucide-react';
 import { useState, useTransition } from 'react';
 import Link from 'next/link';

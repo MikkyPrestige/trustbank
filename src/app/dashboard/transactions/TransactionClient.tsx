@@ -76,7 +76,7 @@ export default function TransactionClient({ transactions }: { transactions: any[
     // 4. EXPORT PDF
     const handleExport = () => {
         const doc = new jsPDF();
-        doc.setFillColor(5, 5, 5); // Dark background header
+        doc.setFillColor(5, 5, 5);
         doc.rect(0, 0, 210, 40, 'F');
         doc.setTextColor(255, 255, 255);
         doc.setFontSize(22);
@@ -203,7 +203,7 @@ export default function TransactionClient({ transactions }: { transactions: any[
                                         <td data-label="Description">
                                             <div className={styles.descCell}>
                                                 <div className={`${styles.iconBox} ${t.type.includes('CRYPTO') ? styles.cryptoIcon :
-                                                        t.direction === 'CREDIT' ? styles.creditIcon : styles.debitIcon
+                                                    t.direction === 'CREDIT' ? styles.creditIcon : styles.debitIcon
                                                     }`}>
                                                     {renderIcon(t)}
                                                 </div>

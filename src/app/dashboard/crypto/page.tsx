@@ -19,7 +19,9 @@ export default async function CryptoPage() {
 
     if (!user) return null;
 
-    const isVerified = user.kycVerified;
+    // 👇 FIX: Strictly check for 'VERIFIED' string
+    const isVerified = user.kycStatus === 'VERIFIED';
+
     const prices = await getLiveCryptoPrices();
 
     const coinMap: Record<string, string> = {
@@ -43,7 +45,7 @@ export default async function CryptoPage() {
                     </div>
                     <h2>Trading Disabled</h2>
                     <p>To access the crypto markets, please complete your Identity Verification (KYC) in Settings.</p>
-                    <a href="/dashboard/settings" className={styles.verifyBtn}>Complete Verification</a>
+                    <a href="/dashboard/verify" className={styles.verifyBtn}>Complete Verification</a>
                 </div>
             ) : (
                 <div className={styles.grid}>

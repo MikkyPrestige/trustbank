@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useActionState, useEffect } from 'react';
-import { transferCrypto } from '@/actions/crypto';
+import { transferCrypto } from '@/actions/user/crypto';
 import styles from './crypto.module.css';
 import { ArrowUpRight, ArrowDownLeft, Copy, X, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';

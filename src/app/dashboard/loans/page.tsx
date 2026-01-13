@@ -14,7 +14,8 @@ export default async function LoansPage() {
         where: { id: session.user.id }
     });
 
-    const isVerified = user?.kycVerified;
+    // 👇 FIX: Strictly check for 'VERIFIED'
+    const isVerified = user?.kycStatus === 'VERIFIED';
 
     const rawLoans = await db.loan.findMany({
         where: { userId: session.user.id },

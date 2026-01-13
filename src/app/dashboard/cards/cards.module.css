@@ -327,6 +327,57 @@ input:checked + .slider:before {
 }
 .emptyState h3 { color: #fff; margin: 1rem 0 0.5rem; }
 
+.lockedState {
+    background: linear-gradient(145deg, #111, #0a0a0a);
+    border: 1px solid #222;
+    border-radius: 20px;
+    padding: 3rem;
+    text-align: center;
+    max-width: 500px;
+    margin: 2rem auto;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+}
+
+.lockIconBox {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem auto;
+}
+
+.lockedState h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: #fff;
+}
+
+.lockedState p {
+    color: #888;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+.verifyBtn {
+    background: #3b82f6;
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: 0.2s;
+    display: inline-block;
+}
+
+.verifyBtn:hover {
+    background: #2563eb;
+    transform: translateY(-2px);
+}
+
 /* RESPONSIVE */
 @media (max-width: 1024px) {
     .grid {

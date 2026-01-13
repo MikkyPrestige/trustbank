@@ -1,158 +1,196 @@
 .container {
-    padding: 2rem;
-    color: #fff;
-    max-width: 1400px;
+    max-width: 1200px;
     margin: 0 auto;
+    padding-bottom: 4rem;
 }
 
-.header {
+/* NAVIGATION */
+.nav {
     display: flex;
+    align-items: center;
     justify-content: space-between;
-    align-items: center;
-    margin-bottom: 3rem;
-    border-bottom: 1px solid #333;
-    padding-bottom: 2rem;
-}
-
-.header h1 {
-    font-size: 2rem;
-    font-weight: 800;
-    letter-spacing: -1px;
-}
-
-/* ... existing styles ... */
-
-.title {
-    font-size: 2rem;
-    font-weight: 800;
-    color: #fff;
-    margin: 0 0 0.5rem 0;
-}
-
-.subtitle {
-    color: #888;
-    font-size: 0.95rem;
-    margin: 0;
-}
-
-.emptyState {
-    text-align: center;
-    padding: 4rem 2rem;
-    color: #555;
-    border: 1px dashed #333;
-    border-radius: 12px;
+    padding: 0 2rem;
+    height: 70px;
     background: #0a0a0a;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 1rem;
+    border-bottom: 1px solid #222;
+    position: sticky;
+    top: 0;
+    z-index: 50;
 }
 
-.emptyState h2 {
-    color: #fff;
+.brand {
     font-size: 1.2rem;
-    margin: 0;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    display: flex;
+    align-items: center;
 }
 
-.emptyState p {
-    margin: 0;
+.navLinks {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
-/* LIQUIDITY CARD */
+.navLink {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    color: #888;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.navLink:hover {
+    background: #1a1a1a;
+    color: #fff;
+}
+
+.activeLink {
+    background: #1a1a1a;
+    color: #fff;
+}
+
+.separator {
+    width: 1px;
+    height: 24px;
+    background: #333;
+    margin: 0 8px;
+}
+
+/* Exit Button */
+.navExit {
+    display: flex;
+    align-items: center;
+}
+
+.exitLink {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #ef4444;
+    text-decoration: none;
+    font-size: 0.85rem;
+    padding: 8px 16px;
+    border: 1px solid #331111;
+    border-radius: 6px;
+    transition: all 0.2s;
+    background: rgba(239, 68, 68, 0.05);
+}
+
+.exitLink:hover {
+    background: #ef4444;
+    color: #fff;
+    border-color: #ef4444;
+}
+
+/* STATS GRID */
+.header {
+    margin-bottom: 2rem;
+}
+
+.statsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
 .statCard {
     background: #111;
-    border: 1px solid #333;
-    padding: 1rem 2rem;
+    border: 1px solid #222;
+    padding: 1.5rem;
     border-radius: 12px;
-    text-align: right;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
 }
 
 .statLabel {
     display: block;
-    color: #888;
+    color: #666;
     font-size: 0.85rem;
     text-transform: uppercase;
-    font-weight: 700;
+    letter-spacing: 1px;
     margin-bottom: 0.5rem;
 }
 
 .statValue {
     font-size: 1.8rem;
-    font-weight: bold;
-    color: #22c55e; /* Green money color */
-    font-family: 'Courier New', monospace;
+    font-weight: 700;
+    color: #fff;
 }
 
-/* SECTIONS */
+/* TABLES */
 .section {
-    margin-bottom: 4rem;
+    margin-top: 3rem;
 }
 
 .subTitle {
     font-size: 1.2rem;
     margin-bottom: 1rem;
-    color: #ccc;
-    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
-/* TABLES */
 .tableWrapper {
-    background: #0a0a0a;
-    border: 1px solid #333;
+    background: #111;
+    border: 1px solid #222;
     border-radius: 12px;
-    overflow: hidden; /* Rounds the corners of the table */
+    overflow: hidden;
 }
 
 .table {
     width: 100%;
     border-collapse: collapse;
+    font-size: 0.95rem;
 }
 
 .table th {
     text-align: left;
     padding: 1rem;
-    background: #151515;
-    color: #666;
+    background: #161616;
+    color: #888;
+    font-weight: 600;
     font-size: 0.8rem;
     text-transform: uppercase;
-    font-weight: 700;
-    border-bottom: 1px solid #222;
 }
 
 .table td {
     padding: 1rem;
-    border-bottom: 1px solid #1a1a1a;
-    vertical-align: middle;
+    border-bottom: 1px solid #222;
+    color: #ddd;
 }
 
 .table tr:last-child td {
     border-bottom: none;
 }
 
-.userName { font-weight: 600; }
-.userId { font-size: 0.75rem; color: #666; }
-
-/* Status Badges */
-.badge { padding: 4px 10px; border-radius: 99px; font-size: 0.7rem; font-weight: bold; }
-.ACTIVE { background: #064e3b; color: #34d399; }
-.PENDING_VERIFICATION { background: #451a03; color: #fbbf24; }
-.FROZEN { background: #450a0a; color: #f87171; }
-
-/* Action Buttons */
 .actionBtn {
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 0.8rem;
-  width: 100px;
+    background: #fff;
+    color: #000;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+}
+.actionBtn:hover {
+    background: #ccc;
 }
 
-.freeze { background: #222; color: #f87171; border: 1px solid #7f1d1d; }
-.freeze:hover { background: #7f1d1d; color: #fff; }
 
-.unfreeze { background: #064e3b; color: #fff; border: 1px solid #065f46; }
-.unfreeze:hover { opacity: 0.9; }
+/* Responsive Hide Text */
+@media (max-width: 1100px) {
+    .linkText {
+        display: none;
+    }
+    .navLink {
+        padding: 10px;
+    }
+}

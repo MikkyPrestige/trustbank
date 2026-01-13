@@ -1,10 +1,10 @@
-import { TransactionType, TransactionDirection, TransactionStatus } from "@prisma/client";
+import { TransactionType, TransactionStatus } from "@prisma/client";
 import styles from './TransactionList.module.css';
 
 interface Transaction {
     id: string;
     type: TransactionType;
-    direction: TransactionDirection;
+    direction: 'CREDIT' | 'DEBIT' | string;
     amount: number;
     status: TransactionStatus;
     createdAt: Date;

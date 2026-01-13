@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react';
 import { Lock, Globe, Smartphone } from 'lucide-react';
-import { toggleCardFreeze } from '@/actions/cards';
+import { toggleCardFreeze } from '@/actions/user/cards';
 import styles from './cards.module.css';
 import toast from 'react-hot-toast';
 

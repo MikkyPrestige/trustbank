@@ -1,17 +1,14 @@
-import { auth } from "@/auth";
 import { db } from "@/lib/db";
-import { redirect } from "next/navigation";
 import Link from "next/link";
 import VerificationRow from "./VerificationRow";
 import styles from "./verifications.module.css";
+import { requireAdmin } from "@/lib/admin-auth";
 
 export default async function VerificationsPage() {
-    const session = await auth();
-    if (session?.user?.role !== 'ADMIN') redirect("/dashboard");
+    await requireAdmin();
 
-    // Fetch only users waiting for KYC
     const pendingUsers = await db.user.findMany({
-        where: { status: 'PENDING_VERIFICATION' },
+        where: { kycStatus: 'PENDING' },
         orderBy: { updatedAt: 'desc' }
     });
 

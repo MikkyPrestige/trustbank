@@ -1,7 +1,7 @@
 'use client';
 
 import { useActionState, useEffect, useState } from 'react';
-import { submitClearanceCode } from '@/actions/clearance';
+import { submitClearanceCode } from '@/actions/user/clearance';
 import styles from './status.module.css';
 import toast from 'react-hot-toast';
 

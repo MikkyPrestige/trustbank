@@ -16,8 +16,9 @@ export default async function TransferPage() {
 
     if (!user) return null;
 
-    const isVerified = user.kycVerified;
-    const limitAmount = 2000; // Local limit usually lower for unverified
+    // 👇 LOGIC FIX: Strictly check for 'VERIFIED' string
+    const isVerified = user.kycStatus === 'VERIFIED';
+    const limitAmount = 2000;
 
     const beneficiaries = await db.beneficiary.findMany({
         where: { userId: session.user.id },
@@ -32,16 +33,16 @@ export default async function TransferPage() {
     const accounts = rawAccounts.map(acc => ({
         ...acc,
         availableBalance: Number(acc.availableBalance),
-        displayName: `${acc.type} - ${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(acc.availableBalance))}`
+        currentBalance: Number(acc.currentBalance),
     }));
 
     return (
         <div className={styles.container}>
             <header className={styles.header}>
-                {/* UPDATED TITLES */}
                 <h1 className={styles.title}>Local Transfer</h1>
                 <p className={styles.subtitle}>Instant transfer to any domestic bank account.</p>
 
+                {/* STATUS BADGE */}
                 <div className={isVerified ? styles.verifiedBadge : styles.unverifiedBadge}>
                     {isVerified ? (
                         <>

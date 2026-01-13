@@ -1,4 +1,4 @@
-import { UserRole, UserStatus } from "@prisma/client";
+import { UserRole, UserStatus, KycStatus } from "@prisma/client";
 import NextAuth, { DefaultSession } from "next-auth";
 
 declare module "next-auth" {
@@ -7,7 +7,7 @@ declare module "next-auth" {
       id: string;
       role: UserRole;
       status: UserStatus;
-      kycVerified: boolean;
+      kycStatus: KycStatus;
     } & DefaultSession["user"];
   }
 
@@ -15,7 +15,7 @@ declare module "next-auth" {
     id: string;
     role: UserRole;
     status: UserStatus;
-    kycVerified: boolean;
+    kycStatus: KycStatus;
   }
 }
 
@@ -24,6 +24,6 @@ declare module "next-auth/jwt" {
     id: string;
     role: UserRole;
     status: UserStatus;
-    kycVerified: boolean;
+    kycStatus: KycStatus;
   }
 }

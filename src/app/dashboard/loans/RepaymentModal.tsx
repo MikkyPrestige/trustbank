@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useActionState } from 'react';
-import { repayLoan } from '@/actions/loan';
+import { repayLoan } from '@/actions/user/loan';
 import styles from './loans.module.css';
 import { DollarSign, X, Loader2 } from 'lucide-react';
 

@@ -2,7 +2,7 @@ import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { redirect } from "next/navigation";
 import KycForm from "./KycForm";
-import { ShieldCheck, Clock, AlertTriangle } from "lucide-react";
+import { ShieldCheck, Clock, AlertTriangle, XCircle } from "lucide-react";
 import styles from "./verify.module.css";
 
 export default async function VerifyPage() {
@@ -15,6 +15,12 @@ export default async function VerifyPage() {
 
     if (!user) return null;
 
+    // Define States based on Enum
+    const isVerified = user.kycStatus === 'VERIFIED';
+    const isPending = user.kycStatus === 'PENDING';
+    const isFailed = user.kycStatus === 'FAILED';
+    const isNotSubmitted = !user.kycStatus || user.kycStatus === 'NOT_SUBMITTED';
+
     return (
         <div className={styles.container}>
             <header className={styles.header}>
@@ -22,24 +28,23 @@ export default async function VerifyPage() {
                 <p className={styles.subtitle}>Complete KYC compliance to unlock higher transaction limits.</p>
             </header>
 
-            {/* STATUS CARDS */}
             <div className={styles.statusBox}>
 
-                {/* 1. NOT VERIFIED / REQUIRED */}
-                {user.status === 'ACTIVE' && !user.passportUrl && (
-                    <div className={`${styles.statusCard} ${styles.alert}`}>
-                        <div className={styles.alertIcon}>
-                            <AlertTriangle size={32} />
+                {/* 1. VERIFIED */}
+                {isVerified && (
+                    <div className={`${styles.statusCard} ${styles.success}`}>
+                        <div className={styles.successIcon}>
+                            <ShieldCheck size={32} />
                         </div>
                         <div className={styles.statusText}>
-                            <h3>Verification Required</h3>
-                            <p>Your account is currently unverified. Please upload a valid Government ID and Passport Photo to lift restrictions.</p>
+                            <h3>Verified Account</h3>
+                            <p>Identity verification complete. You now have full access to all banking features and maximum global limits.</p>
                         </div>
                     </div>
                 )}
 
-                {/* 2. PENDING REVIEW */}
-                {user.status === 'PENDING_VERIFICATION' && (
+                {/* 2. PENDING */}
+                {isPending && (
                     <div className={`${styles.statusCard} ${styles.pending}`}>
                         <div className={styles.pendingIcon}>
                             <Clock size={32} />
@@ -51,22 +56,35 @@ export default async function VerifyPage() {
                     </div>
                 )}
 
-                {/* 3. VERIFIED */}
-                {user.kycVerified && (
-                    <div className={`${styles.statusCard} ${styles.success}`}>
-                        <div className={styles.successIcon}>
-                            <ShieldCheck size={32} />
+                {/* 3. FAILED */}
+                {isFailed && (
+                    <div className={`${styles.statusCard} ${styles.error}`}>
+                        <div className={styles.errorIcon}>
+                            <XCircle size={32} />
                         </div>
                         <div className={styles.statusText}>
-                            <h3>Verified Account</h3>
-                            <p>Identity verification complete. You now have full access to all banking features and maximum global limits.</p>
+                            <h3>Verification Rejected</h3>
+                            <p>Your previous submission was rejected. Please ensure your photos are clear and legible before trying again.</p>
+                        </div>
+                    </div>
+                )}
+
+                {/* 4. NOT SUBMITTED */}
+                {isNotSubmitted && (
+                    <div className={`${styles.statusCard} ${styles.alert}`}>
+                        <div className={styles.alertIcon}>
+                            <AlertTriangle size={32} />
+                        </div>
+                        <div className={styles.statusText}>
+                            <h3>Verification Required</h3>
+                            <p>Your account is currently unverified. Please upload a valid Government ID and Passport Photo to lift restrictions.</p>
                         </div>
                     </div>
                 )}
             </div>
 
-            {/* FORM (Only show if not pending/verified) */}
-            {user.status !== 'PENDING_VERIFICATION' && !user.kycVerified && (
+            {/* SHOW FORM IF: Not Submitted OR Failed */}
+            {(isNotSubmitted || isFailed) && (
                 <KycForm />
             )}
         </div>

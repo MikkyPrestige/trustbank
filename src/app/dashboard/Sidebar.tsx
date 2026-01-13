@@ -1,10 +1,11 @@
 import Link from 'next/link';
 import { auth, signOut } from '@/auth';
 import { db } from '@/lib/db';
+import { checkAdminAction } from '@/lib/admin-auth';
 import {
     LayoutDashboard, CreditCard, ArrowRightLeft, Globe, History, Settings,
-    Clock, Banknote, Bitcoin, FileText, Users, ShieldCheck, BadgeCheck,
-    AlertTriangle, LogOut, IdCard
+    Clock, Banknote, Bitcoin, FileText, Users, ShieldCheck, LogOut, IdCard,
+    Lock // 👈 Added Lock Icon
 } from 'lucide-react';
 import styles from './sidebar.module.css';
 
@@ -12,10 +13,11 @@ export default async function Sidebar() {
     const session = await auth();
     if (!session?.user?.email) return null;
 
+    // 1. Fetch User Data (Added 'status' to selection)
     const [user, pendingCount] = await Promise.all([
         db.user.findUnique({
             where: { email: session.user.email },
-            select: { fullName: true, role: true, kycVerified: true }
+            select: { fullName: true, role: true, kycStatus: true, status: true } // 👈 FETCH STATUS
         }),
         db.wireTransfer.count({
             where: { userId: session.user.id, status: 'PENDING_AUTH' }
@@ -23,7 +25,10 @@ export default async function Sidebar() {
     ]);
 
     if (!user) return null;
-    const isAdmin = user.role === 'ADMIN';
+
+    const { authorized: isAdmin } = await checkAdminAction();
+    const kycActionRequired = !user.kycStatus || user.kycStatus === 'NOT_SUBMITTED' || user.kycStatus === 'FAILED';
+    const isFrozen = user.status === 'FROZEN'; // 👈 Check Status
 
     return (
         <aside className={styles.sidebar}>
@@ -36,18 +41,14 @@ export default async function Sidebar() {
             <nav className={styles.nav}>
                 <div className={styles.sectionLabel}>Personal Banking</div>
                 <ul className={styles.ul}>
+                    {/* 1. OVERVIEW (Most Frequent) */}
                     <NavItem href="/dashboard" icon={<LayoutDashboard size={20} />} label="Dashboard" />
                     <NavItem href="/dashboard/transactions" icon={<History size={20} />} label="Transactions" />
-                    <NavItem href="/dashboard/cards" icon={<CreditCard size={20} />} label="My Cards" />
-                    <NavItem href="/dashboard/loans" icon={<Banknote size={20} />} label="Loan" />
-                    <NavItem href="/dashboard/crypto" icon={<Bitcoin size={20} />} label="Crypto Vault" />
-                    <NavItem href="/dashboard/transfer" icon={<ArrowRightLeft size={20} />} label="Local Transfer" />
-                    <NavItem href="/dashboard/beneficiaries" icon={<Users size={18} />} label="Beneficiaries" />
-
                     <li className={styles.divider}></li>
-
+                    {/* 2. MONEY MOVEMENT (Primary Actions) */}
+                    <NavItem href="/dashboard/transfer" icon={<ArrowRightLeft size={20} />} label="Local Transfer" />
                     <NavItem href="/dashboard/wire" icon={<Globe size={20} />} label="International Wire" />
-
+                    {/* Group Pending Wires with Wire Transfer for context */}
                     <li>
                         <Link href="/dashboard/wire/status" className={`${styles.link} ${styles.pendingLink}`}>
                             <Clock size={20} />
@@ -55,7 +56,12 @@ export default async function Sidebar() {
                             {pendingCount > 0 && <span className={styles.badge}>{pendingCount}</span>}
                         </Link>
                     </li>
+                    <NavItem href="/dashboard/beneficiaries" icon={<Users size={18} />} label="Beneficiaries" />
                     <li className={styles.divider}></li>
+                    {/* 3. ASSETS & PRODUCTS (Secondary Actions) */}
+                    <NavItem href="/dashboard/cards" icon={<CreditCard size={20} />} label="My Cards" />
+                    <NavItem href="/dashboard/crypto" icon={<Bitcoin size={20} />} label="Crypto Vault" />
+                    <NavItem href="/dashboard/loans" icon={<Banknote size={20} />} label="Loans" />
                 </ul>
 
                 {isAdmin && (
@@ -71,6 +77,11 @@ export default async function Sidebar() {
                             <li>
                                 <Link href="/admin/wires"><FileText size={20} color="#fbbf24" /><span>Wire Approvals</span></Link>
                             </li>
+                            {user.role === 'SUPER_ADMIN' && (
+                                <li>
+                                    <Link href="/admin/staff"><IdCard size={20} color="#fbbf24" /><span>Staff Management</span></Link>
+                                </li>
+                            )}
                         </ul>
                     </div>
                 )}
@@ -97,21 +108,24 @@ export default async function Sidebar() {
                 <div className={styles.userInfo}>
                     <div className={styles.userHeader}>
                         <p className={styles.userName}>{user.fullName}</p>
-                        {user.kycVerified ? (
-                            <span title="Verified Client" className={styles.verifiedBadge}>
-                                <BadgeCheck size={16} fill="#22c55e" color="#000" />
+
+                        {/* 👇 STATUS BADGES */}
+                        {isFrozen ? (
+                            <span className={styles.badgeError} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                <Lock size={10} /> Frozen
                             </span>
+                        ) : user.kycStatus === 'VERIFIED' ? (
+                            <span className={styles.badgeSuccess}>Verified ✅</span>
+                        ) : user.kycStatus === 'PENDING' ? (
+                            <span className={styles.badgeWarning}>Pending Review ⏳</span>
                         ) : (
-                            <span title="Unverified - Limits Apply" className={styles.unverifiedBadge}>
-                                <AlertTriangle size={16} color="#fbbf24" />
-                            </span>
+                            <span className={styles.badgeError}>Unverified ❌</span>
                         )}
                     </div>
 
-                    <span className={styles.userRole}>{user.role}</span>
+                    <span className={styles.userRole}>{user.role.replace('_', ' ')}</span>
 
-                    {/* 👇 CLICKABLE KYC WARNING */}
-                    {!user.kycVerified && (
+                    {kycActionRequired && !isFrozen && (
                         <Link href="/dashboard/verify" style={{ textDecoration: 'none' }}>
                             <div className={styles.kycWarning}>Action Required →</div>
                         </Link>

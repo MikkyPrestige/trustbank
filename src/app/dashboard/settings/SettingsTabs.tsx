@@ -3,8 +3,8 @@
 'use client';
 
 import { useState, useActionState, useRef, useEffect } from 'react';
-import { updateProfile, changePin, changePassword } from '@/actions/settings';
-import { mockUpload } from '@/actions/upload';
+import { updateProfile, changePin, changePassword } from '@/actions/user/settings';
+import { mockUpload } from '@/actions/user/upload';
 import { User, Lock, Shield, Save, Camera, KeyRound } from 'lucide-react';
 import styles from './settings.module.css';
 import toast from 'react-hot-toast';

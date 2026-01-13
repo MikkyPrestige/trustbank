@@ -1,33 +1,33 @@
-// components/DashboardView.tsx
 "use client";
 
 import { useState } from "react";
 import Link from "next/link";
 import {
-    ArrowUpRight,
-    ArrowDownLeft,
-    Send,
-    Globe,
-    CreditCard as CardIcon,
-    Plus,
-    MoreHorizontal,
-    Eye,
-    EyeOff,
-    User
+    ArrowUpRight, ArrowDownLeft, Send, Globe, CreditCard as CardIcon,
+    Plus, MoreHorizontal, Eye, EyeOff, Copy, Check, AlertTriangle
 } from "lucide-react";
+import toast from "react-hot-toast";
 import styles from "../app/dashboard/dashboard.module.css";
 
 interface DashboardViewProps {
     user: any;
     totalBalance: number;
-    beneficiaries: any[]; // 👈 Added prop type
+    beneficiaries: any[];
 }
 
 export default function DashboardView({ user, totalBalance, beneficiaries }: DashboardViewProps) {
     const [showMoreMenu, setShowMoreMenu] = useState(false);
     const [isVisible, setIsVisible] = useState(true);
+    const [copiedId, setCopiedId] = useState<string | null>(null);
 
     const toggleVisibility = () => setIsVisible(!isVisible);
+
+    const copyToClipboard = (text: string, id: string) => {
+        navigator.clipboard.writeText(text);
+        setCopiedId(id);
+        toast.success("Account Number Copied!");
+        setTimeout(() => setCopiedId(null), 2000);
+    };
 
     const displayMoney = (amount: number) => {
         if (!isVisible) return "••••••";
@@ -36,13 +36,39 @@ export default function DashboardView({ user, totalBalance, beneficiaries }: Das
 
     const displayCardNumber = (num: string) => {
         if (!isVisible) return "•••• •••• •••• ••••";
-        return `•••• •••• •••• ${num.slice(-4)}`;
+        return num.replace(/(.{4})/g, '$1 ').trim();
     };
 
     const primaryAccount = user.accounts[0];
+    const isFrozen = user.status === 'FROZEN'; // 👈 Check Freeze Status
 
     return (
         <div className={styles.container}>
+
+            {/* 👇 ALERT BANNER FOR FROZEN USERS */}
+            {isFrozen && (
+                <div style={{
+                    backgroundColor: '#ef4444',
+                    color: 'white',
+                    padding: '12px 20px',
+                    borderRadius: '8px',
+                    marginBottom: '1.5rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    boxShadow: '0 4px 12px rgba(239, 68, 68, 0.2)'
+                }}>
+                    <AlertTriangle size={24} strokeWidth={2.5} />
+                    <div>
+                        <strong style={{ display: 'block', fontSize: '0.95rem' }}>Account Frozen</strong>
+                        <span style={{ fontSize: '0.85rem', opacity: 0.9 }}>
+                            Your account is temporarily locked for security. Outgoing transfers, wires, and trading are disabled.
+                            Please contact support to restore access.
+                        </span>
+                    </div>
+                </div>
+            )}
+            {/* 👆 END ALERT */}
 
             {/* TOP BAR */}
             <div className={styles.topBar}>
@@ -55,7 +81,7 @@ export default function DashboardView({ user, totalBalance, beneficiaries }: Das
                     <button
                         onClick={toggleVisibility}
                         className={styles.privacyBtn}
-                        title={isVisible ? "Hide Balance" : "Show Balance"}
+                        title={isVisible ? "Hide Details" : "Show Details"}
                     >
                         {isVisible ? <Eye size={20} /> : <EyeOff size={20} />}
                     </button>
@@ -66,8 +92,8 @@ export default function DashboardView({ user, totalBalance, beneficiaries }: Das
                 </div>
             </div>
 
-            {/* QUICK ACTIONS */}
-            <div className={styles.quickActionsBar}>
+            {/* QUICK ACTIONS - Optionally dim these if frozen */}
+            <div className={styles.quickActionsBar} style={isFrozen ? { opacity: 0.6, pointerEvents: 'none', filter: 'grayscale(1)' } : {}}>
                 <Link href="/dashboard/transfer" className={styles.actionItem}>
                     <div className={styles.actionIcon}><Send size={20} /></div>
                     <span>Transfer</span>
@@ -124,13 +150,44 @@ export default function DashboardView({ user, totalBalance, beneficiaries }: Das
                                     <div className={styles.accIcon}>{acc.type.charAt(0)}</div>
                                     <div>
                                         <p className={styles.accName}>{acc.type} Account</p>
-                                        <p className={styles.accNum}>
-                                            {isVisible ? `•••• ${acc.accountNumber.slice(-4)}` : '•••• ••••'}
-                                        </p>
+                                        <div className={styles.accNumWrapper}>
+                                            <p className={styles.accNum}>
+                                                {isVisible
+                                                    ? acc.accountNumber
+                                                    : `•••• ${acc.accountNumber.slice(-4)}`
+                                                }
+                                            </p>
+                                            {isVisible && (
+                                                <button
+                                                    onClick={() => copyToClipboard(acc.accountNumber, acc.id)}
+                                                    className={styles.copyBtn}
+                                                    title="Copy Account Number"
+                                                >
+                                                    {copiedId === acc.id ? <Check size={14} color="#22c55e" /> : <Copy size={14} />}
+                                                </button>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
+
                                 <div className={styles.accBal}>
-                                    {displayMoney(Number(acc.availableBalance))}
+                                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '2px' }}>
+                                        <span style={{ color: '#fff', fontWeight: 'bold', fontSize: '1rem' }}>
+                                            {displayMoney(Number(acc.availableBalance))}
+                                        </span>
+                                        <span style={{ fontSize: '0.65rem', color: '#4ade80', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                                            Available
+                                        </span>
+                                        <div style={{ marginTop: '6px', textAlign: 'right', borderTop: '1px solid #333', paddingTop: '4px' }}>
+                                            <span style={{ color: '#999', fontSize: '0.85rem' }}>
+                                                {displayMoney(Number(acc.currentBalance))}
+                                            </span>
+                                            <br />
+                                            <span style={{ fontSize: '0.65rem', color: '#666', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                                                Current
+                                            </span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         ))}
@@ -171,8 +228,6 @@ export default function DashboardView({ user, totalBalance, beneficiaries }: Das
 
                 {/* RIGHT COLUMN */}
                 <div className={styles.rightCol}>
-
-                    {/* 👇 NEW: QUICK SEND WIDGET */}
                     <div className={styles.sectionHeader}>
                         <h3>Quick Send</h3>
                         <Link href="/dashboard/beneficiaries"><Plus size={18} /></Link>
@@ -185,9 +240,12 @@ export default function DashboardView({ user, totalBalance, beneficiaries }: Das
                             </div>
                         ) : (
                             <div className={styles.beneficiaryScroll}>
-                                <Link href="/dashboard/transfer" className={styles.addBenCircle}>
-                                    <Plus size={20} />
-                                </Link>
+                                {/* Disable Adding if Frozen */}
+                                {!isFrozen && (
+                                    <Link href="/dashboard/transfer" className={styles.addBenCircle}>
+                                        <Plus size={20} />
+                                    </Link>
+                                )}
                                 {beneficiaries.map(ben => (
                                     <Link href={`/dashboard/wire?beneficiaryId=${ben.id}`} key={ben.id} className={styles.benCircle} title={ben.accountName}>
                                         <div className={styles.benAvatar}>
@@ -205,8 +263,13 @@ export default function DashboardView({ user, totalBalance, beneficiaries }: Das
                         <Link href="/dashboard/cards"><Plus size={18} /></Link>
                     </div>
 
-                    <div className={styles.visaCard}>
+                    <div className={styles.visaCard} style={isFrozen ? { filter: 'grayscale(1)', opacity: 0.8 } : {}}>
                         <div className={styles.cardGlass}></div>
+                        {isFrozen && (
+                            <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', background: '#ef4444', color: 'white', padding: '4px 8px', borderRadius: '4px', fontWeight: 'bold', fontSize: '0.8rem', zIndex: 10 }}>
+                                LOCKED
+                            </div>
+                        )}
                         <div className={styles.cardTop}>
                             <span className={styles.bankName}>TrustBank</span>
                             <span className={styles.cardType}>Visa Infinite</span>
@@ -227,14 +290,16 @@ export default function DashboardView({ user, totalBalance, beneficiaries }: Das
                         </div>
                     </div>
 
-                    <div className={styles.promoCard}>
-                        <div className={styles.promoIcon}>
-                            <Globe size={24} color="#3b82f6" />
+                    {!isFrozen && (
+                        <div className={styles.promoCard}>
+                            <div className={styles.promoIcon}>
+                                <Globe size={24} color="#3b82f6" />
+                            </div>
+                            <h4>International Transfer</h4>
+                            <p>Send money abroad with 0% fees this week.</p>
+                            <Link href="/dashboard/wire" className={styles.promoBtn}>Send Now</Link>
                         </div>
-                        <h4>International Transfer</h4>
-                        <p>Send money abroad with 0% fees this week.</p>
-                        <Link href="/dashboard/wire" className={styles.promoBtn}>Send Now</Link>
-                    </div>
+                    )}
                 </div>
             </div>
         </div>

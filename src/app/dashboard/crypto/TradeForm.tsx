@@ -1,7 +1,7 @@
 'use client';
 
 import { useActionState, useState, useEffect } from 'react';
-import { tradeCrypto } from '@/actions/crypto';
+import { tradeCrypto } from '@/actions/user/crypto';
 import styles from './crypto.module.css';
 import { RefreshCw, ArrowRightLeft, Activity } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -40,7 +40,7 @@ export default function TradeForm({ livePrices }: TradeFormProps) {
         if (state?.message) {
             if (state.success) {
                 toast.success(state.message);
-                
+
                 // Fix: Push state update to next tick
                 const timer = setTimeout(() => {
                     setAmount('');

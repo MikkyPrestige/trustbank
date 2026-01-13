@@ -11,9 +11,9 @@ datasource db {
 // --- ENUMS ---
 
 enum UserRole {
-  CLIENT
-  ADMIN
   SUPER_ADMIN
+  ADMIN
+  CLIENT
   SUPPORT
 }
 
@@ -30,8 +30,8 @@ enum TransactionType {
   WITHDRAWAL
   FEE
   REFUND
-  WIRE                // <--- RENAMED from WIRE_OUT to match your transfer.ts code
-  ADJUSTMENT          // <--- NEW: Essential for Admin to fix balances without fake deposits
+  WIRE
+  ADJUSTMENT
   LOAN_DISBURSEMENT
   LOAN_REPAYMENT
   CRYPTO_BUY
@@ -44,22 +44,35 @@ enum TransactionStatus {
   COMPLETED
   FAILED
   REVERSED
-  ON_HOLD            // <--- NEW: Useful if you want to "freeze" a specific transaction later
+  ON_HOLD
+}
+
+enum KycStatus {
+  PENDING
+  VERIFIED
+  FAILED
+  NOT_SUBMITTED
 }
 
 // --- MODELS ---
 
+model AdminLog {
+  id          String   @id @default(cuid())
+  adminId     String
+  admin       User     @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  action      String   // e.g., "FREEZE_USER", "GENERATE_TRX"
+  targetId    String?  // The ID of the user/account affected
+  metadata    String?  // JSON string with details (e.g. "Generated $50k")
+  createdAt   DateTime @default(now())
+}
+
 model User {
   id                String      @id @default(cuid())
-
-  // 1. Auth & Core
   email             String      @unique
   passwordHash      String
   transactionPin    String      @default("1234")
   role              UserRole    @default(CLIENT)
-  status            UserStatus  @default(ACTIVE)
-
-  // 2. Personal Info
+  status            UserStatus  @default(PENDING_VERIFICATION)
   fullName          String
   image             String?     // <--- NEW: Profile Picture (Avatar)
   dateOfBirth       DateTime?
@@ -67,35 +80,27 @@ model User {
   phone             String?
   occupation        String?
   taxId             String?     // SSN
-
-  // 3. Contact Info
   address           String?
   city              String?
   state             String?
   zipCode           String?
   country           String?
-
-  // 4. Next of Kin
   nokName           String?
   nokEmail          String?
   nokPhone          String?
   nokRelationship   String?
   nokAddress        String?
-
-  // 5. KYC Files
   passportUrl       String?
   idCardUrl         String?
-  kycVerified       Boolean     @default(false)
-
-  // 6. Security & Audit
+  kycStatus         KycStatus   @default(NOT_SUBMITTED)
   lastLoginAt       DateTime?
-  lastLoginIp       String?     // <--- NEW: Good for security tracking
+  lastLoginIp       String?
+  failedPinAttempts Int             @default(0)
+  pinLockedUntil    DateTime?
   failedLoginAttempts Int       @default(0)
-
   createdAt         DateTime    @default(now())
   updatedAt         DateTime    @updatedAt
-
-  // RELATIONS
+  adminLogs         AdminLog[]
   accounts          Account[]
   cards             Card[]
   loans             Loan[]
@@ -116,7 +121,8 @@ model Account {
   status            String    @default("ACTIVE")
 
   availableBalance  Decimal   @default(0.00) @db.Decimal(19, 4)
-  heldBalance       Decimal   @default(0.00) @db.Decimal(19, 4) // <--- NEW: Allows freezing specific funds while keeping account active
+  currentBalance    Decimal   @default(0.00) @db.Decimal(19, 4)
+  heldBalance       Decimal   @default(0.00) @db.Decimal(19, 4)
   currency          String    @default("USD")
 
   isPrimary         Boolean   @default(false)
@@ -125,6 +131,7 @@ model Account {
   updatedAt         DateTime  @updatedAt
 
   ledgerEntries     LedgerEntry[]
+  wireTransfers     WireTransfer[]
 }
 
 model Beneficiary {
@@ -184,6 +191,8 @@ model WireTransfer {
   id                String    @id @default(cuid())
   userId            String
   user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accountId         String?
+  account           Account? @relation(fields: [accountId], references: [id])
 
   bankName          String
   accountNumber     String
@@ -201,6 +210,7 @@ model WireTransfer {
   ijyCode           String?
   imfCode           String?   // <--- NEW: Usually goes with COT/TAX codes
 
+  failedAttempts    Int   @default(0)
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import { useActionState, useEffect } from 'react';
-import { addBeneficiary } from '@/actions/beneficiary';
+import { addBeneficiary } from '@/actions/user/beneficiary';
 import { UserPlus, Loader2, Building2, CreditCard, User, Globe } from 'lucide-react';
 import styles from './beneficiaries.module.css';
 import toast from 'react-hot-toast';

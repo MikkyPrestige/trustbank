@@ -85,6 +85,20 @@
 }
 .success h3 { color: #22c55e; margin: 0 0 5px 0; font-size: 1.2rem; }
 
+/* 4. Error State (Failed) */
+.error {
+    background: rgba(239, 68, 68, 0.05);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    box-shadow: 0 0 40px rgba(239, 68, 68, 0.05);
+}
+.errorIcon {
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.1);
+    padding: 12px;
+    border-radius: 12px;
+}
+.error h3 { color: #ef4444; margin: 0 0 5px 0; font-size: 1.2rem; }
+
 .statusText p {
     color: #ccc;
     margin: 0;
@@ -132,7 +146,6 @@
     background: rgba(59, 130, 246, 0.02);
 }
 
-/* The actual file input is invisible but covers the whole area */
 .fileInput {
     position: absolute;
     top: 0;
@@ -154,7 +167,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    pointer-events: none; /* Let clicks pass through to input */
+    pointer-events: none;
     gap: 12px;
     color: #666;
     transition: 0.2s;
@@ -202,15 +215,45 @@
     box-shadow: none;
 }
 
-/* ERROR MESSAGE */
-.error {
-    background: rgba(239, 68, 68, 0.1);
-    color: #ef4444;
-    padding: 1rem;
-    border-radius: 12px;
-    margin-bottom: 2rem;
-    text-align: center;
-    border: 1px solid rgba(239, 68, 68, 0.2);
+.iconCircleSuccess {
+    background: #22c55e;
+    padding: 10px;
+    border-radius: 50%;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.iconCircleDefault {
+    background: #1a1a1a;
+    padding: 15px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.fileName {
+    color: #fff;
+    font-weight: 700;
+    margin: 0;
+}
+
+.fileLabel {
+    font-size: 0.8rem;
+    color: #22c55e;
+}
+
+.fileHint {
+    font-size: 0.8rem;
+    opacity: 0.6;
+}
+
+.dropText {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 500;
 }
 
 /* RESPONSIVE */

@@ -1,7 +1,7 @@
 'use client';
 
 import { useActionState, useEffect, useState } from 'react';
-import { initiateWireTransfer } from '@/actions/wire';
+import { initiateWireTransfer } from '@/actions/user/wire';
 import styles from './wire.module.css';
 import Link from 'next/link';
 import { CheckCircle, ShieldAlert, Users, Save, Globe, Building2, Hash, Lock, Loader2 } from 'lucide-react';
@@ -19,7 +19,6 @@ export default function WireForm({
 }) {
     const [state, action, isPending] = useActionState(initiateWireTransfer, undefined);
 
-
     const getInitialData = () => {
         if (preSelectedId) {
             const ben = beneficiaries.find(b => b.id === preSelectedId);
@@ -30,12 +29,11 @@ export default function WireForm({
                         bankName: ben.bankName,
                         accountNumber: ben.accountNumber,
                         swiftCode: ben.swiftCode || "",
-                        country: ben.country || "US", // Default if not saved
+                        country: ben.country || "US",
                     }
                 };
             }
         }
-        // Default empty state
         return {
             selected: "",
             data: { bankName: "", country: "US", accountNumber: "", swiftCode: "" }
@@ -70,6 +68,11 @@ export default function WireForm({
         if (selectedBen) setSelectedBen("");
     };
 
+    // Helper to format money nicely
+    const formatMoney = (amount: number) => {
+        return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
+    };
+
     useEffect(() => {
         if (state?.message) {
             if (!state.success) {
@@ -77,7 +80,6 @@ export default function WireForm({
             }
         }
     }, [state]);
-
 
     if (state?.success) {
         return (
@@ -117,11 +119,14 @@ export default function WireForm({
                 <label className={styles.label}>Source Account</label>
                 <select name="accountId" className={styles.select} required defaultValue="">
                     <option value="" disabled>Select Account</option>
+
+                    {/* 👇 FIX: Display BOTH balances explicitly */}
                     {accounts.map((acc) => (
                         <option key={acc.id} value={acc.id}>
-                            {acc.type} - {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(acc.availableBalance))}
+                            {acc.type} — Avail: {formatMoney(acc.availableBalance)} | Curr: {formatMoney(acc.currentBalance)}
                         </option>
                     ))}
+
                 </select>
             </div>
 
@@ -157,7 +162,6 @@ export default function WireForm({
                     />
                 </div>
 
-                {/* 👇 UPDATED COUNTRY SELECTOR */}
                 <div className={styles.group}>
                     <label className={styles.label}><Globe size={12} style={{ marginRight: '4px' }} /> Country</label>
                     <select

@@ -569,6 +569,27 @@
     text-decoration: none;
 }
 
+.accNumWrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.copyBtn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #666;
+    padding: 2px;
+    display: flex;
+    align-items: center;
+    transition: color 0.2s;
+}
+
+.copyBtn:hover {
+    color: #fff;
+}
+
 @media (max-width: 1024px) {
   .mainGrid {
     grid-template-columns: 1fr;

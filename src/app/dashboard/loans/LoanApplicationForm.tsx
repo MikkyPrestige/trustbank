@@ -1,7 +1,7 @@
 'use client';
 
 import { useActionState, useState } from 'react';
-import { applyForLoan } from '@/actions/loan';
+import { applyForLoan } from '@/actions/user/loan';
 import styles from './loans.module.css';
 
 export default function LoanApplicationForm() {

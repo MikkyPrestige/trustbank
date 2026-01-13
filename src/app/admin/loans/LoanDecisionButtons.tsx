@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { processLoan } from '@/actions/admin-loan';
+import { processLoan } from '@/actions/admin/loan';
+import styles from './loans.module.css';
 
 export default function LoanDecisionButtons({ loanId }: { loanId: string }) {
     const [loading, setLoading] = useState(false);
@@ -14,25 +15,19 @@ export default function LoanDecisionButtons({ loanId }: { loanId: string }) {
         setLoading(false);
     };
 
-    if (loading) return <span style={{ color: '#888', fontSize: '0.8rem', fontStyle: 'italic' }}>Processing...</span>;
+    if (loading) return <span className={styles.processing}>Processing...</span>;
 
     return (
-        <div style={{ display: 'flex', gap: '8px' }}>
+        <div className={styles.btnGroup}>
             <button
                 onClick={() => handleDecision('APPROVED')}
-                style={{
-                    background: '#059669', color: 'white', border: 'none',
-                    padding: '6px 12px', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold', fontSize: '0.8rem'
-                }}
+                className={styles.approveBtn}
             >
                 Approve
             </button>
             <button
                 onClick={() => handleDecision('REJECTED')}
-                style={{
-                    background: 'transparent', color: '#ef4444', border: '1px solid #ef4444',
-                    padding: '6px 12px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8rem'
-                }}
+                className={styles.rejectBtn}
             >
                 Reject
             </button>

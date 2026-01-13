@@ -2,7 +2,7 @@
 'use client';
 
 import { useState } from 'react';
-import { approveKyc, rejectKyc } from '@/actions/admin-kyc';
+import { approveKyc, rejectKyc } from '@/actions/admin/kyc';
 import { Check, X, Eye, FileText } from 'lucide-react';
 import styles from './verifications.module.css';
 
