@@ -6,42 +6,29 @@ import styles from './crypto.module.css';
 import { RefreshCw, ArrowRightLeft, Activity } from 'lucide-react';
 import toast from 'react-hot-toast';
 
+// ✅ UPDATE: Matches the shape of the 'priceMap' we created in the page
 interface TradeFormProps {
-    livePrices: {
-        [key: string]: {
-            usd: number;
-            usd_24h_change?: number;
-        };
-    };
+    livePrices: Record<string, { price: number; change: number }>;
 }
-
-const COIN_MAP: Record<string, string> = {
-    'BTC': 'bitcoin',
-    'ETH': 'ethereum',
-    'SOL': 'solana',
-    'HYPE': 'hype'
-};
 
 export default function TradeForm({ livePrices }: TradeFormProps) {
     const [state, action, isPending] = useActionState(tradeCrypto, undefined);
     const [type, setType] = useState<'BUY' | 'SELL'>('BUY');
-    const [currency, setCurrency] = useState('BTC');
+    const [currency, setCurrency] = useState('BTC'); // Default to BTC
     const [amount, setAmount] = useState('');
 
-    const geckoId = COIN_MAP[currency] || 'bitcoin';
-    const currentPrice = livePrices[geckoId]?.usd || 0;
+    // ✅ UPDATE: Access price directly using the symbol (No map needed)
+    // livePrices is now { "BTC": { price: 90000... }, "ETH": ... }
+    const currentPrice = livePrices[currency]?.price || 0;
 
     const estimate = amount && currentPrice > 0
         ? (Number(amount) / currentPrice).toFixed(6) + ` ${currency}`
         : '---';
 
-    // 👇 FIXED: Wrapped setAmount in setTimeout
     useEffect(() => {
         if (state?.message) {
             if (state.success) {
                 toast.success(state.message);
-
-                // Fix: Push state update to next tick
                 const timer = setTimeout(() => {
                     setAmount('');
                 }, 0);
@@ -51,6 +38,9 @@ export default function TradeForm({ livePrices }: TradeFormProps) {
             }
         }
     }, [state]);
+
+    // Get list of available symbols from the livePrices object
+    const availableSymbols = Object.keys(livePrices).filter(s => s !== 'HYPE'); // Filter out HYPE if you want, or keep it
 
     return (
         <div className={styles.tradeCard}>
@@ -89,9 +79,12 @@ export default function TradeForm({ livePrices }: TradeFormProps) {
                         onChange={e => setCurrency(e.target.value)}
                         className={styles.select}
                     >
-                        <option value="BTC">Bitcoin (BTC)</option>
-                        <option value="ETH">Ethereum (ETH)</option>
-                        <option value="SOL">Solana (SOL)</option>
+                        {/* ✅ UPDATE: Dynamic options based on available data */}
+                        {availableSymbols.map(sym => (
+                            <option key={sym} value={sym}>
+                                {sym} - ${livePrices[sym].price.toLocaleString()}
+                            </option>
+                        ))}
                     </select>
                 </div>
 

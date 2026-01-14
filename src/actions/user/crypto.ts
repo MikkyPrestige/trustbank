@@ -4,7 +4,7 @@ import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { checkPermissions } from "@/lib/security";
-import { getLiveCryptoPrices } from "@/lib/crypto-api";
+import { getLiveMarketData } from "@/lib/marketData";
 
 // --- ACTION 1: TRADE (BUY / SELL) ---
 export async function tradeCrypto(prevState: any, formData: FormData) {
@@ -35,19 +35,18 @@ export async function tradeCrypto(prevState: any, formData: FormData) {
     if (!inputAmount || inputAmount <= 0) return { message: "Invalid amount" };
 
     // 2. FETCH LIVE PRICE
-    const liveData = await getLiveCryptoPrices();
+    const marketData = await getLiveMarketData();
 
-    const map: Record<string, string> = {
-        'BTC': 'bitcoin',
-        'ETH': 'ethereum',
-        'SOL': 'solana',
-        'HYPE': 'hype'
-    };
+    const targetCoin = marketData.find(coin => coin.symbol === symbol);
 
-    const coinId = map[symbol] || 'bitcoin';
-    const currentPrice = liveData[coinId]?.usd || 0;
+   let currentPrice = targetCoin?.price || 0;
+   if (symbol === 'HYPE' && currentPrice === 0) {
+        currentPrice = 25;
+    }
 
-    if (!currentPrice) return { message: "Price unavailable. Try again." };
+    if (!currentPrice || currentPrice <= 0) {
+        return { message: "Price unavailable. Try again." };
+    }
 
     try {
         await db.$transaction(async (tx) => {

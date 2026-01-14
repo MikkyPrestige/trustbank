@@ -1,0 +1,162 @@
+/* --- TOP BAR (Brand Identity) --- */
+.header {
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.topBar {
+  background: var(--gradient-primary); /* 👈 Uses your Global Vibrant Blue */
+  padding: 10px 0;
+  color: var(--text-invert);
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Add this to Navbar.module.css */
+
+.logoWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  height: 100%;
+}
+
+.logoImage {
+  object-fit: contain;
+  /* Optional: Brightness filter if your logo is dark */
+  filter: brightness(0) invert(1);
+}
+
+.topActions {
+  display: none;
+  align-items: center;
+  gap: 24px;
+}
+
+@media (min-width: 992px) {
+  .topActions {
+    display: flex;
+  }
+}
+
+.langSelector {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  opacity: 0.9;
+  font-weight: 500;
+}
+
+.openBtn {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--text-invert);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.openBtn:hover {
+  opacity: 0.9;
+}
+
+/* THE GOLD LOGIN BUTTON (Vibrant Pop) */
+.loginBtn {
+  background-color: var(--accent); /* 👈 Global Gold */
+  color: #0f172a; /* Dark text on Gold for readability */
+  padding: 8px 20px;
+  border-radius: 4px;
+  font-weight: 700;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  text-decoration: none;
+}
+
+.loginBtn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4); /* Gold Glow */
+  background-color: #fbbf24; /* Lighter Gold */
+}
+
+/* --- BOTTOM BAR (Navigation) --- */
+.bottomBar {
+  background-color: var(--bg-card); /* 👈 Clean White */
+  border-bottom: 1px solid var(--border);
+}
+
+.navLinks {
+  display: flex;
+  gap: 32px;
+  width: 100%;
+}
+
+.navItem {
+  padding: 20px 0;
+  color: var(--text-main); /* Dark Navy */
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  text-decoration: none;
+  position: relative;
+  transition: color 0.2s;
+}
+
+.navItem:hover {
+  color: var(--primary); /* Blue hover */
+}
+
+/* Cool Hover Underline Effect */
+.navItem::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0%;
+  height: 3px;
+  background: var(--primary);
+  transition: width 0.3s;
+}
+
+.navItem:hover::after {
+  width: 100%;
+}
+
+/* MOBILE */
+.mobileToggle {
+  background: none;
+  border: none;
+  color: var(--text-invert);
+  cursor: pointer;
+  display: block;
+}
+
+@media (min-width: 992px) {
+  .mobileToggle {
+    display: none;
+  }
+  .bottomBar {
+    display: block !important;
+  }
+}
+
+.bottomBar {
+  display: none;
+}
+.showMobile {
+  display: block;
+}

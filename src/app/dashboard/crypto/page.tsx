@@ -6,7 +6,19 @@ import TradeForm from "./TradeForm";
 import CryptoActionModal from "./CryptoActionModal";
 import styles from "./crypto.module.css";
 import { Lock, Wallet, TrendingUp, AlertTriangle } from "lucide-react";
-import { getLiveCryptoPrices } from "@/lib/crypto-api";
+import { getLiveMarketData } from "@/lib/marketData";
+
+// Helper for images (since API doesn't always return them in the simple endpoint)
+const COIN_IMAGES: Record<string, string> = {
+    'BTC': 'https://assets.coingecko.com/coins/images/1/small/bitcoin.png',
+    'ETH': 'https://assets.coingecko.com/coins/images/279/small/ethereum.png',
+    'SOL': 'https://assets.coingecko.com/coins/images/4128/small/solana.png',
+    'XRP': 'https://assets.coingecko.com/coins/images/44/small/xrp-symbol-white-128.png',
+    'ADA': 'https://assets.coingecko.com/coins/images/975/small/cardano.png',
+    'DOGE': 'https://assets.coingecko.com/coins/images/5/small/dogecoin.png',
+    'DOT': 'https://assets.coingecko.com/coins/images/12171/small/polkadot.png',
+    'LINK': 'https://assets.coingecko.com/coins/images/877/small/chainlink-new-logo.png',
+};
 
 export default async function CryptoPage() {
     const session = await auth();
@@ -19,17 +31,22 @@ export default async function CryptoPage() {
 
     if (!user) return null;
 
-    // 👇 FIX: Strictly check for 'VERIFIED' string
     const isVerified = user.kycStatus === 'VERIFIED';
 
-    const prices = await getLiveCryptoPrices();
+    // 1. Fetch the New Array Data
+    const marketData = await getLiveMarketData();
 
-    const coinMap: Record<string, string> = {
-        'BTC': 'bitcoin',
-        'ETH': 'ethereum',
-        'SOL': 'solana',
-        'HYPE': 'hype'
-    };
+    // 2. Create a "Lookup Map" for Portfolio Calculations
+    // This converts the Array back to an Object: { "BTC": { price: 90000, change: 2.4 }, ... }
+    // This makes finding the price for user assets O(1) instant.
+    const priceMap = marketData.reduce((acc, item) => {
+        acc[item.symbol] = {
+            price: item.price,
+            change: item.change
+        };
+        return acc;
+    }, {} as Record<string, { price: number, change: number }>);
+
 
     return (
         <div className={styles.container}>
@@ -53,7 +70,7 @@ export default async function CryptoPage() {
                     {/* LEFT COLUMN: PORTFOLIO & MARKET */}
                     <div className={styles.mainColumn}>
 
-                        {/* PORTFOLIO */}
+                        {/* PORTFOLIO SECTION */}
                         <div className={styles.portfolioCard}>
                             <div className={styles.sectionHeader}>
                                 <div><Wallet size={20} /> Your Assets</div>
@@ -67,8 +84,10 @@ export default async function CryptoPage() {
                             ) : (
                                 <div className={styles.assetList}>
                                     {user.cryptoAssets.map(asset => {
-                                        const geckoId = coinMap[asset.symbol] || 'bitcoin';
-                                        const currentPrice = prices[geckoId]?.usd || 0;
+                                        // Use the priceMap we created above
+                                        const liveData = priceMap[asset.symbol];
+                                        const currentPrice = liveData?.price || 0;
+
                                         const qty = Number(asset.quantity);
                                         const avgBuy = Number(asset.avgBuyPrice);
 
@@ -109,74 +128,41 @@ export default async function CryptoPage() {
                             )}
                         </div>
 
-                        {/* MARKET TRENDS */}
+                        {/* MARKET TRENDS (Dynamic List) */}
                         <div className={styles.marketList}>
                             <div className={styles.sectionHeader}>
                                 <div><TrendingUp size={20} /> Live Market</div>
                             </div>
 
-                            {/* BTC */}
-                            <div className={styles.tickerItem}>
-                                <div className={styles.tickerLeft}>
-                                    <img className={styles.tickerIcon} src="https://assets.coingecko.com/coins/images/1/small/bitcoin.png" alt="BTC" width={32} height={32} />
+                            {/* Now we map over the REAL marketData array instead of hardcoding divs */}
+                            {marketData.filter(item => item.isCrypto).map((coin) => (
+                                <div key={coin.symbol} className={styles.tickerItem}>
+                                    <div className={styles.tickerLeft}>
+                                        <img
+                                            className={styles.tickerIcon}
+                                            src={COIN_IMAGES[coin.symbol] || "https://assets.coingecko.com/coins/images/1/small/bitcoin.png"}
+                                            alt={coin.symbol}
+                                            width={32}
+                                            height={32}
+                                        />
+                                        <div>
+                                            {/* Note: In production you might want a name map, using symbol for now */}
+                                            <span className={styles.tickerName}>{coin.symbol}</span>
+                                            <span className={styles.tickerSym}>{coin.symbol}</span>
+                                        </div>
+                                    </div>
                                     <div>
-                                        <span className={styles.tickerName}>Bitcoin</span>
-                                        <span className={styles.tickerSym}>BTC</span>
+                                        <div className={coin.change >= 0 ? styles.priceUp : styles.priceDown}>
+                                            ${coin.price.toLocaleString(undefined, { minimumFractionDigits: coin.price < 1 ? 4 : 2 })}
+                                        </div>
+                                        <div style={{ textAlign: 'right' }}>
+                                            <span className={styles.percentPill} style={{ color: coin.change >= 0 ? '#22c55e' : '#ef4444' }}>
+                                                {coin.change >= 0 ? '+' : ''}{coin.change.toFixed(2)}%
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
-                                <div>
-                                    <div className={prices.bitcoin.usd_24h_change >= 0 ? styles.priceUp : styles.priceDown}>
-                                        ${prices.bitcoin.usd.toLocaleString()}
-                                    </div>
-                                    <div style={{ textAlign: 'right' }}>
-                                        <span className={styles.percentPill} style={{ color: prices.bitcoin.usd_24h_change >= 0 ? '#22c55e' : '#ef4444' }}>
-                                            {prices.bitcoin.usd_24h_change >= 0 ? '+' : ''}{prices.bitcoin.usd_24h_change.toFixed(2)}%
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* ETH */}
-                            <div className={styles.tickerItem}>
-                                <div className={styles.tickerLeft}>
-                                    <img className={styles.tickerIcon} src="https://assets.coingecko.com/coins/images/279/small/ethereum.png" alt="ETH" width={32} height={32} />
-                                    <div>
-                                        <span className={styles.tickerName}>Ethereum</span>
-                                        <span className={styles.tickerSym}>ETH</span>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div className={prices.ethereum.usd_24h_change >= 0 ? styles.priceUp : styles.priceDown}>
-                                        ${prices.ethereum.usd.toLocaleString()}
-                                    </div>
-                                    <div style={{ textAlign: 'right' }}>
-                                        <span className={styles.percentPill} style={{ color: prices.ethereum.usd_24h_change >= 0 ? '#22c55e' : '#ef4444' }}>
-                                            {prices.ethereum.usd_24h_change >= 0 ? '+' : ''}{prices.ethereum.usd_24h_change.toFixed(2)}%
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* SOL */}
-                            <div className={styles.tickerItem}>
-                                <div className={styles.tickerLeft}>
-                                    <img className={styles.tickerIcon} src="https://assets.coingecko.com/coins/images/4128/small/solana.png" alt="SOL" width={32} height={32} />
-                                    <div>
-                                        <span className={styles.tickerName}>Solana</span>
-                                        <span className={styles.tickerSym}>SOL</span>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div className={prices.solana.usd_24h_change >= 0 ? styles.priceUp : styles.priceDown}>
-                                        ${prices.solana.usd.toLocaleString()}
-                                    </div>
-                                    <div style={{ textAlign: 'right' }}>
-                                        <span className={styles.percentPill} style={{ color: prices.solana.usd_24h_change >= 0 ? '#22c55e' : '#ef4444' }}>
-                                            {prices.solana.usd_24h_change >= 0 ? '+' : ''}{prices.solana.usd_24h_change.toFixed(2)}%
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
+                            ))}
                         </div>
 
                     </div>
@@ -184,7 +170,10 @@ export default async function CryptoPage() {
                     {/* RIGHT COLUMN: TRADE FORM */}
                     <div>
                         <div className={styles.stickyForm}>
-                            <TradeForm livePrices={prices} />
+                            {/* Pass the array or map depending on how you updated TradeForm.
+                                Assuming TradeForm is updated to handle the map or array.
+                                Passing the map is safest for logic consistency. */}
+                            <TradeForm livePrices={priceMap} />
 
                             <div className={styles.riskNote}>
                                 <AlertTriangle size={16} />
