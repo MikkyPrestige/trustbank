@@ -1,0 +1,74 @@
+.estimatorCard {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 2.5rem;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+    max-width: 500px;
+    margin: 1rem auto;
+}
+
+.header { display: flex; gap: 16px; margin-bottom: 2rem; align-items: center; }
+.iconBox {
+    background: rgba(99, 102, 241, 0.1); /* Indigo Tint */
+    color: #6366f1;
+    padding: 12px; border-radius: 12px;
+}
+.header h3 { font-size: 1.3rem; color: var(--text-main); margin: 0; }
+.header p { color: var(--text-muted); margin: 4px 0 0 0; font-size: 0.9rem; }
+
+/* CONVERTER UI */
+.converterBox {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.row {
+    display: flex; justify-content: space-between; align-items: center;
+}
+
+.labelCol { display: flex; flex-direction: column; gap: 8px; }
+.labelCol label { font-size: 0.8rem; color: var(--text-muted); font-weight: 600; }
+.currencyBadge { font-weight: 700; color: var(--text-main); display: flex; gap: 6px; }
+
+.input, .select, .displayAmount {
+    font-size: 1.5rem; font-weight: 700; color: var(--text-main);
+    background: transparent; border: none; text-align: right; width: 150px;
+}
+.input:focus { outline: none; }
+.select { cursor: pointer; direction: rtl; }
+
+/* CONNECTOR */
+.connector {
+    display: flex; align-items: center; gap: 10px; margin: 15px 0;
+}
+.line { flex-grow: 1; height: 1px; background: var(--border); }
+.exchangeRate {
+    font-size: 0.75rem; color: #6366f1; background: rgba(99, 102, 241, 0.1);
+    padding: 4px 10px; border-radius: 20px; font-weight: 600; display: flex; align-items: center; gap: 4px;
+}
+
+.pulse { opacity: 0.5; transition: opacity 0.2s; }
+
+/* INFO GRID */
+.infoGrid {
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 24px;
+}
+.infoItem {
+    background: var(--bg-surface); padding: 12px; border-radius: 10px;
+    display: flex; flex-direction: column; gap: 4px; border: 1px solid var(--border);
+}
+.infoLabel { font-size: 0.7rem; color: var(--text-muted); }
+.infoValue { font-size: 0.8rem; font-weight: 600; color: var(--text-main); display: flex; align-items: center; gap: 4px; }
+.infoValueFree { font-size: 0.8rem; font-weight: 700; color: #22c55e; }
+
+.sendBtn {
+    width: 100%;
+    background: #6366f1; color: white;
+    padding: 16px; border-radius: 12px; border: none;
+    font-weight: 700; cursor: pointer; transition: 0.2s; font-size: 1rem;
+}
+.sendBtn:hover { background: #4f46e5; transform: translateY(-2px); }

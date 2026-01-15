@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Apple, Play, ArrowRight, CheckCircle2, Shield } from "lucide-react";
-import styles from "@/app/home.module.css";
+import styles from "./home.module.css";
 
 export default function FinalCTA() {
     return (

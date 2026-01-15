@@ -1,0 +1,329 @@
+/* 1. THE BACKDROP OVERLAY */
+.overlay {
+  position: fixed;
+  top: 170%;
+  left: 0;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999 !important;
+  animation: fadeIn 0.2s ease-out;
+}
+
+/* 2. THE MODAL ITSELF */
+.modal {
+  background: var(--bg-card);
+  padding: 2rem;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 480px;
+  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+  z-index: 10000;
+  animation: scaleIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.closeBtn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 20;
+  color: var(--text-muted);
+}
+.closeBtn:hover {
+  background: var(--bg-surface);
+  color: var(--text-main);
+}
+
+/* 3. HEADER & SECURITY */
+.header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.securityBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(34, 197, 94, 0.1);
+  color: #16a34a; /* Green security tint */
+  padding: 6px 12px;
+  border-radius: 50px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 16px;
+}
+.shieldIcon {
+  display: inline-block;
+  animation: pulseSecure 2s infinite ease-in-out;
+}
+.header h2 {
+  font-size: 1.8rem;
+  margin: 0 0 8px 0;
+  color: var(--text-main);
+}
+.header p {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+/* 4. INPUT GROUPS (The Modern Part) */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.inputGroup {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+/* Vibrant Focus State */
+.focused {
+  border-color: #3b82f6; /* Bright Blue */
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); /* Blue Glow */
+  background: var(--bg-card);
+}
+
+.iconBox {
+  color: var(--text-muted);
+  padding-right: 12px;
+  border-right: 1px solid var(--border);
+  transition: color 0.2s;
+}
+.inputGroup.focused .iconBox {
+  color: #3b82f6;
+  border-right-color: #3b82f6;
+}
+/* Lock Animation Color */
+.inputGroup.focused .iconLocked {
+  color: #eab308;
+  border-right-color: #eab308;
+}
+
+.fieldWrapper {
+  flex: 1;
+  margin-left: 12px;
+  position: relative;
+  height: 42px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Floating Label Logic */
+.floatingLabel {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+.input {
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  color: var(--text-main);
+  font-weight: 600;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+/* Password Toggle */
+.eyeBtn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px;
+  transition: 0.2s;
+}
+.eyeBtn:hover {
+  color: var(--text-main);
+}
+
+/* 5. BUTTONS & EXTRAS */
+.extrasRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+  margin-top: 4px;
+}
+.rememberMe {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+.forgotLink {
+  color: #3b82f6;
+  text-decoration: none;
+  font-weight: 600;
+}
+.forgotLink:hover {
+  text-decoration: underline;
+}
+
+.submitBtn {
+  margin-top: 12px;
+  background: #0f172a; /* Dark Navy Button */
+  color: white;
+  border: none;
+  padding: 16px;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.submitBtn:hover {
+  background: #1e293b;
+  transform: translateY(-1px);
+}
+.submitBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+.footer {
+  text-align: center;
+  margin-top: 24px;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+.footer a {
+  color: #3b82f6;
+  font-weight: 700;
+  text-decoration: none;
+  margin-left: 6px;
+}
+
+.errorAlert {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.disclaimer {
+  margin-top: 20px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-align: center;
+  line-height: 1.5;
+  opacity: 0.8;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes scaleUp {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+@keyframes pulseSecure {
+  0% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+  100% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes scaleIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+/* DARK MODE OVERRIDES (Automatic Vibrancy) */
+@media (prefers-color-scheme: dark) {
+  .submitBtn {
+    background: #3b82f6;
+    color: white;
+  } /* Blue Button on Dark */
+  .submitBtn:hover {
+    background: #2563eb;
+  }
+  .inputGroup.focused {
+    border-color: #60a5fa;
+    box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.2);
+  }
+}

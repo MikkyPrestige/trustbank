@@ -1,0 +1,2131 @@
+/* GLOBAL RESET FOR HOME */
+.main {
+  background: var(--bg-app);
+  overflow-x: hidden;
+}
+
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 24px;
+  position: relative;
+  z-index: 2;
+  width: 100%;
+}
+
+/* --- 1. HERO SECTION --- */
+.hero {
+  position: relative;
+  height: 700px;
+  display: flex;
+  align-items: center;
+  color: var(--text-invert);
+  padding-top: 80px;
+}
+
+.heroBg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    rgba(15, 23, 42, 0.9) 0%,
+    rgba(37, 99, 235, 0.7) 50%,
+    rgba(37, 99, 235, 0.2) 100%
+  );
+}
+
+.heroContent {
+  max-width: 650px;
+}
+
+.heroBadge {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(4px);
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-bottom: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  text-transform: uppercase;
+}
+
+.heroTitle {
+  font-size: 3.5rem;
+  font-weight: 900;
+  line-height: 1.1;
+  margin-bottom: 24px;
+  text-transform: uppercase;
+  color: white;
+}
+
+.heroSub {
+  font-size: 1.25rem;
+  margin-bottom: 40px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.9);
+  max-width: 500px;
+}
+
+.ctaRow {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.btnPrimary {
+  background: var(--accent);
+  color: #0f172a;
+  padding: 16px 36px;
+  font-weight: 800;
+  border-radius: 6px;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btnPrimary:hover {
+  transform: translateY(-2px);
+  background: #fbbf24;
+  box-shadow: 0 10px 20px rgba(251, 191, 36, 0.3);
+}
+
+.btnOutline {
+  border: 2px solid white;
+  color: white;
+  padding: 16px 36px;
+  font-weight: 700;
+  border-radius: 6px;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btnOutline:hover {
+  background: white;
+  color: var(--primary);
+}
+
+/* --- 2. INFO BAR --- */
+.infoBarSection {
+  position: relative;
+  z-index: 10;
+  margin-top: -60px;
+  margin-bottom: 60px;
+  padding: 0 24px;
+}
+
+.infoContainer {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  border-radius: 12px;
+  overflow: hidden;
+  flex-wrap: wrap;
+}
+
+.infoBlock {
+  flex: 1;
+  min-width: 250px;
+  padding: 32px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  text-align: left;
+}
+
+/* HYBRID COLORS (Safe for Light/Dark) */
+.blueBlock {
+  background-color: var(--primary);
+  color: #ffffff;
+}
+.goldBlock {
+  background: var(--accent);
+  color: #0f172a;
+}
+.whiteBlock {
+  background-color: var(--bg-card);
+  color: var(--text-main);
+}
+
+.blueBlock .infoIcon {
+  color: #ffffff;
+  opacity: 0.9;
+}
+.goldBlock .infoIcon {
+  color: #0f172a;
+  opacity: 0.8;
+}
+.whiteBlock .infoIconDark {
+  color: var(--primary);
+}
+
+.infoText {
+  display: flex;
+  flex-direction: column;
+}
+.infoLabel {
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  opacity: 0.8;
+}
+.infoValue {
+  font-size: 1.4rem;
+  font-weight: 800;
+  margin-top: 4px;
+}
+.infoLink {
+  font-weight: 700;
+  text-decoration: underline;
+  font-size: 1.1rem;
+  cursor: pointer;
+  margin-top: 4px;
+}
+.infoLinkDark {
+  font-weight: 700;
+  color: var(--primary);
+  cursor: pointer;
+  margin-top: 4px;
+}
+
+/* --- 3. RATES SECTION --- */
+.ratesSection {
+  padding: 100px 0;
+  background: var(--bg-app);
+}
+
+.ratesHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+  margin-bottom: 60px;
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+  .ratesHeader {
+    flex-direction: row;
+    justify-content: space-between;
+    text-align: left;
+    align-items: flex-end;
+  }
+}
+
+.headerText {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 600px;
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+  .headerText {
+    text-align: left;
+  }
+}
+
+.sectionTitleDark {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--text-main);
+  line-height: 1.2;
+  margin-bottom: 12px;
+}
+
+.sectionDescDark {
+  font-size: 1.1rem;
+  color: var(--text-body);
+  max-width: 500px;
+}
+
+/* THE TABS */
+.rateTabs {
+  display: inline-flex;
+  background: var(--bg-surface);
+  padding: 6px;
+  border-radius: 50px; /* Pill shape */
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+.tabBtn {
+  background: transparent;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 40px;
+  font-weight: 600;
+  color: var(--text-main);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.95rem;
+}
+
+.tabBtn:hover {
+  color: var(--text-muted);
+}
+
+.activeTab {
+  background: white;
+  color: var(--primary);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  font-weight: 700;
+}
+
+/* THE GRID */
+.ratesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 30px;
+  align-items: stretch; /* Makes all cards same height */
+}
+
+/* THE CARD DESIGN */
+.rateCard {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.2s, box-shadow 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.rateCard:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-card);
+  border-color: var(--primary-light);
+}
+
+/* FEATURED CARD (Pop out) */
+.featuredCard {
+  border: 2px solid var(--primary);
+  background: linear-gradient(180deg, rgba(37, 99, 235, 0.03) 0%, white 100%);
+}
+
+/* Badge Layout */
+.badge {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: var(--primary);
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+}
+
+.badgeIcon {
+  flex-shrink: 0;
+  display: block;
+}
+
+/* Card Content */
+.cardTop {
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.rateTitle {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.rateValue {
+  font-size: 3.8rem;
+  font-weight: 800;
+  color: var(--text-main);
+  line-height: 1;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.rateValue small {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-top: 8px;
+}
+
+.rateSub {
+  font-size: 0.95rem;
+  color: var(--success); /* Green text for positive reinforcement */
+  font-weight: 600;
+}
+
+/* Details Table inside Card */
+.cardDetails {
+  background: var(--bg-app);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.detailRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  border-bottom: 1px dashed var(--border);
+  padding-bottom: 8px;
+}
+
+.detailRow:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.detailRow span {
+  color: var(--text-muted);
+}
+.detailRow strong {
+  color: var(--text-main);
+}
+
+/* Buttons */
+.btnFull {
+  width: 100%;
+  background: var(--primary);
+  color: white;
+  padding: 14px;
+  border-radius: 8px;
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btnFull:hover {
+  background: var(--primary-hover);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.btnOutlineDark {
+  width: 100%;
+  background: transparent;
+  border: 1px solid var(--border-hover);
+  color: var(--text-main);
+  padding: 14px;
+  border-radius: 8px;
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+  transition: all 0.2s;
+  display: block;
+}
+
+.btnOutlineDark:hover {
+  border-color: var(--text-main);
+  background: white;
+}
+
+/* Disclaimer Footer */
+.disclaimer {
+  margin-top: 40px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.disclaimer a {
+  color: var(--text-main);
+  text-decoration: underline;
+}
+
+/* --- 4. PREMIUM CARD SHOWCASE (ONYX SERIES) --- */
+.cardSection {
+  padding: 120px 0;
+  background-color: var(--bg-surface);
+  color: var(--text-main);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Background Texture (Subtle dots) */
+.cardSection::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: radial-gradient(var(--text-muted) 1px, transparent 1px);
+  background-size: 40px 40px;
+  opacity: 0.1; /* Kept very subtle */
+}
+
+.cardGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 80px;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+}
+
+@media (min-width: 992px) {
+  .cardGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* LEFT CONTENT */
+.cardContent {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  position: relative;
+  z-index: 5;
+}
+
+.tagline {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.taglineLine {
+  width: 60px;
+  height: 2px;
+  background: var(--accent); /* Gold Line */
+}
+
+.tagline span {
+  color: var(--accent);
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+}
+
+.cardTitle {
+  font-size: 3.5rem;
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 24px;
+  /* Title color inherits from section color (Adaptive) */
+}
+
+.goldText {
+  color: var(--accent);
+}
+
+.cardDesc {
+  font-size: 1.15rem;
+  /* ✅ FIX: Uses global body text variable */
+  color: var(--text-body);
+  line-height: 1.7;
+  margin-bottom: 40px;
+  max-width: 500px;
+}
+
+/* FEATURES LIST */
+.cardFeatures {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  margin-bottom: 40px;
+}
+
+.featureItem {
+  display: flex;
+  gap: 20px;
+}
+
+.goldIcon {
+  color: var(--accent);
+  min-width: 24px;
+}
+
+.featureItem strong {
+  display: block;
+  font-size: 1.1rem;
+  margin-bottom: 6px;
+  /* ✅ FIX: Uses main text variable */
+  color: var(--text-main);
+}
+
+.featureItem p {
+  /* ✅ FIX: Uses body text variable */
+  color: var(--text-body);
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+/* ACTIONS */
+.cardActions {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.btnGold {
+  background: var(--accent);
+  /* Keep text dark on the Gold button for readability */
+  color: #0f172a;
+  padding: 16px 36px;
+  font-weight: 700;
+  border-radius: 6px;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: transform 0.2s;
+}
+
+.btnGold:hover {
+  background: #fbbf24;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(245, 158, 11, 0.2);
+}
+
+/* Renamed from .linkWhite to .linkAdaptive since it's not always white now */
+.linkWhite {
+  /* ✅ FIX: Adapts link color (Navy in Light, White in Dark) */
+  color: var(--text-main);
+  font-weight: 700;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: gap 0.2s;
+}
+
+.linkWhite:hover {
+  color: var(--accent);
+  gap: 12px;
+}
+
+/* RIGHT VISUAL (Floating Card) */
+.cardVisual {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  perspective: 1000px;
+}
+
+.goldGlow {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  background: var(--accent);
+  border-radius: 50%;
+  filter: blur(80px);
+  /* Lower opacity so it doesn't look weird on light backgrounds */
+  opacity: 0.2;
+  z-index: 0;
+}
+
+.realCard {
+  position: relative;
+  z-index: 2;
+  transform: rotateY(-15deg) rotateX(10deg);
+  transition: transform 0.5s ease;
+  /* Enhanced shadow to separate it from background in Light Mode */
+  filter: drop-shadow(0 30px 60px rgba(0, 0, 0, 0.4));
+}
+
+.cardVisual:hover .realCard {
+  transform: rotateY(0deg) rotateX(0deg) scale(1.05);
+}
+
+/* --- 5. PARTNER STRIP (Infinite Marquee) --- */
+.partnerSection {
+  padding: 60px 0;
+  /* Matches the dark Global Reach background for seamless flow */
+  background: var(--bg-app);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.partnerContainer {
+  max-width: 1400px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.partnerLabel {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 40px;
+}
+
+/* MARQUEE MASK - The "Fade" Effect */
+.marqueeMask {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 20%,
+    black 80%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 20%,
+    black 80%,
+    transparent 100%
+  );
+}
+
+.marqueeTrack {
+  display: flex;
+  align-items: center;
+  gap: 80px;
+  width: max-content;
+  animation: scrollLogos 40s linear infinite;
+}
+
+/* Pause on hover so users can see details */
+.marqueeTrack:hover {
+  animation-play-state: paused;
+}
+
+.logoItem {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 60px;
+  transition: transform 0.3s ease;
+}
+
+.logoImage {
+  object-fit: contain;
+  filter: grayscale(100%) opacity(0.6);
+  transition: all 0.3s ease;
+}
+
+/* On Hover: Bring back color (or sharpen white) */
+.logoItem:hover .logoImage {
+  filter: grayscale(0%) opacity(1);
+  transform: scale(1.1);
+}
+
+@keyframes scrollLogos {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-33.33%);
+  } /* Move exactly 1/3rd (since we have 3 sets) */
+}
+
+/* --- 6. FINANCIAL GUIDANCE (Bento Grid) --- */
+.guideSection {
+  padding: 100px 0;
+  background: var(--bg-app);
+}
+
+.guideHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 50px;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.linkUnderline {
+  color: var(--primary);
+  font-weight: 700;
+  text-decoration: none;
+  border-bottom: 2px solid var(--primary);
+  padding-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+
+.linkUnderline:hover {
+  gap: 10px;
+  opacity: 0.8;
+}
+
+/* GRID LAYOUT */
+.guideGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  /* Mobile: Stacked */
+}
+
+@media (min-width: 992px) {
+  .guideGrid {
+    /* Desktop: 3 Columns. Left card takes 1, Right side takes 2 */
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 250px 250px; /* Two rows of height */
+  }
+}
+
+/* CARD STYLES */
+/* 1. Large Card (Spans 2 rows on Desktop) */
+.guideCardLarge {
+  position: relative;
+  border-radius: 24px;
+  overflow: hidden;
+  background: #0f172a;
+  grid-row: span 2; /* Takes up full height */
+  min-height: 400px;
+}
+
+/* 2. Gold Security Card */
+.guideCardGold {
+  background: var(--accent); /* GOLD Background */
+  border-radius: 24px;
+  padding: 30px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 3. Small Image Card */
+.guideCardSmall {
+  position: relative;
+  border-radius: 24px;
+  overflow: hidden;
+  background: #1e293b;
+}
+
+/* 4. Wide Business Card (Spans 2 columns on right) */
+.guideCardWide {
+  position: relative;
+  border-radius: 24px;
+  overflow: hidden;
+  background: #334155;
+  grid-column: span 2; /* Takes up bottom right width */
+}
+
+/* IMAGES & OVERLAYS */
+.cardBgImage {
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.guideCardLarge:hover .cardBgImage,
+.guideCardSmall:hover .cardBgImage,
+.guideCardWide:hover .cardBgImage {
+  transform: scale(1.05); /* Subtle Zoom Effect */
+}
+
+.cardOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0.8) 0%, transparent 60%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 30px;
+  color: white;
+}
+
+.cardOverlaySmall {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: white;
+  gap: 10px;
+}
+
+.cardOverlaySide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 40px;
+  color: white;
+  align-items: flex-start;
+}
+
+.iconWrapperSmall {
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+/* TEXT & BUTTONS */
+.guideCardLarge h3 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin-bottom: 10px;
+  line-height: 1.1;
+}
+.guideCardLarge p {
+  font-size: 1rem;
+  opacity: 0.9;
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+
+.securityContent h3 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 10px;
+}
+.securityContent p {
+  color: #334155;
+  margin-bottom: 20px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.guideCardWide h3 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin-bottom: 20px;
+  max-width: 300px;
+}
+
+/* TAGS */
+.tagBlue {
+  background: var(--primary);
+  color: white;
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  align-self: flex-start;
+}
+
+.tagWhite {
+  background: white;
+  color: #0f172a;
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 4px;
+  margin-bottom: 16px;
+}
+
+/* BUTTONS */
+.btnGlass {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 50px;
+  text-decoration: none;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  align-self: flex-start;
+  transition: background 0.2s;
+}
+
+.btnGlass:hover {
+  background: white;
+  color: #0f172a;
+}
+
+.btnGlassSmall {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 50px;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+
+.btnGlassSmall:hover {
+  background: white;
+  color: #0f172a;
+}
+
+.linkDark {
+  color: #0f172a;
+  font-weight: 800;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.iconCircleWhite {
+  width: 60px;
+  height: 60px;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.iconGold {
+  color: var(--accent);
+  fill: var(--accent);
+} /* Filled Shield */
+
+/* --- 7. LOAN SECTION --- */
+.loanSection {
+  padding: 100px 0;
+  background: var(--bg-surface);
+}
+
+.loanHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 50px;
+  flex-wrap: wrap;
+  gap: 30px;
+}
+
+.headerContent {
+  max-width: 500px;
+}
+
+/* Icon Navigation */
+.loanIcons {
+  display: flex;
+  gap: 30px;
+}
+
+.loanIconItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.loanIconItem:hover {
+  color: var(--primary);
+  transform: translateY(-3px);
+}
+
+.loanIconItem span {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+/* GRID LAYOUT */
+.loanGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 30px;
+  margin-bottom: 60px;
+}
+
+@media (min-width: 992px) {
+  .loanGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* CARD COMMON STYLES */
+.loanCardBlue,
+.loanCardGrey {
+  display: flex;
+  flex-direction: column-reverse; /* Image on top on mobile */
+  border-radius: 20px;
+  overflow: hidden;
+  min-height: 450px;
+}
+
+@media (min-width: 768px) {
+  .loanCardBlue,
+  .loanCardGrey {
+    flex-direction: column;
+  } /* Vertical on Desktop */
+}
+
+/* CARD 1: BLUE (Mortgage) - Keeps Blue Brand Color */
+.loanCardBlue {
+  background: var(--primary);
+  color: white; /* Always white text on blue background */
+  position: relative;
+}
+
+.loanTextContent {
+  padding: 40px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.loanImageWrapper {
+  height: 250px;
+  position: relative;
+  overflow: hidden;
+}
+
+.loanImage {
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.loanCardBlue:hover .loanImage,
+.loanCardGrey:hover .loanImage {
+  transform: scale(1.05);
+}
+
+/* Typography & Elements (Blue Card) */
+.iconBoxWhite {
+  width: 50px;
+  height: 50px;
+  background: white; /* This stays white because it sits on Blue */
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.iconBlue {
+  color: var(--primary);
+}
+
+.loanCardBlue h3 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin-bottom: 16px;
+  color: white;
+}
+.loanCardBlue p {
+  font-size: 1.05rem;
+  opacity: 0.9;
+  line-height: 1.6;
+  margin-bottom: 30px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.loanStatRow {
+  display: flex;
+  gap: 20px;
+  background: rgba(255, 255, 255, 0.1); /* Glass effect */
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+}
+
+.statLabel {
+  display: block;
+  font-size: 0.8rem;
+  opacity: 0.8;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+.statValue {
+  font-size: 1.4rem;
+  font-weight: 800;
+}
+.statValue small {
+  font-size: 0.8rem;
+  font-weight: 600;
+  opacity: 0.8;
+}
+
+.verticalDivider {
+  width: 1px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.loanActions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.btnWhite {
+  background: white;
+  color: var(--primary);
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.btnWhite:hover {
+  background: #f1f5f9;
+}
+
+.linkLight {
+  color: white;
+  font-weight: 700;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.linkLight:hover {
+  text-decoration: underline;
+}
+
+/* CARD 2: ADAPTIVE GREY (Auto) - THIS WAS THE ISSUE */
+.loanCardGrey {
+  /* ✅ FIX: Uses --bg-card (White in Light, Dark in Dark Mode) */
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-main);
+}
+
+.iconBoxBlue {
+  width: 50px;
+  height: 50px;
+  background: var(--primary);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+.iconWhite {
+  color: white;
+}
+
+.loanCardGrey h3 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin-bottom: 16px;
+  /* ✅ FIX: Uses variable text color */
+  color: var(--text-main);
+}
+
+.loanCardGrey p {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  margin-bottom: 24px;
+  /* ✅ FIX: Uses variable body text */
+  color: var(--text-body);
+}
+
+.loanChecklist {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.loanChecklist li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: var(--text-main);
+}
+.checkBlue {
+  color: var(--primary);
+}
+
+.btnBlueOutline {
+  border: 2px solid var(--primary);
+  color: var(--primary);
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.btnBlueOutline:hover {
+  background: var(--primary);
+  color: white;
+}
+
+.linkDark {
+  /* ✅ FIX: Adapts link color */
+  color: var(--text-main);
+  font-weight: 700;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.linkDark:hover {
+  color: var(--primary);
+}
+
+/* TOOLS STRIP (Bottom) - ADAPTIVE */
+.toolsStrip {
+  /* ✅ FIX: Uses card background, not white */
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+@media (min-width: 992px) {
+  .toolsStrip {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+.toolItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  flex: 1;
+}
+
+.toolIcon {
+  color: var(--primary);
+  margin-top: 2px;
+}
+
+.toolItem h4 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+  /* ✅ FIX: Variable text */
+  color: var(--text-main);
+}
+
+.toolItem a {
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: color 0.2s;
+  color: var(--text-body);
+}
+.toolItem a:hover {
+  color: var(--primary);
+}
+
+.toolDivider {
+  height: 1px;
+  background: var(--border);
+  width: 100%;
+}
+
+@media (min-width: 992px) {
+  .toolDivider {
+    width: 1px;
+    height: 50px;
+    background: var(--border);
+  }
+}
+
+/* --- 8. INVESTMENT & CRYPTO SECTION --- */
+.investSection {
+  padding: 0 0 100px 0;
+  background: var(--bg-app);
+  position: relative;
+  overflow: hidden;
+}
+
+/* 1. TICKER STRIP */
+.tickerStrip {
+  background: var(--bg-card);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 0;
+  margin-bottom: 80px;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
+
+.tickerTrack {
+  display: flex;
+  width: max-content; /* Allow track to be as long as needed */
+  /* The Animation: Scroll for 60 seconds, linear, infinite loop */
+  animation: scroll 60s linear infinite;
+}
+
+/* Pause when user hovers to read values */
+.tickerTrack:hover {
+  animation-play-state: paused;
+}
+
+.tickerItemWrapper {
+  display: flex;
+  align-items: center;
+}
+
+.tickerItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0 24px;
+  white-space: nowrap; /* Prevent text wrapping */
+}
+.tickerSymbol {
+  color: var(--text-muted);
+  font-weight: 700;
+}
+.tickerValue {
+  color: var(--text-main);
+}
+.tickerUp {
+  color: var(--success);
+}
+.tickerDown {
+  color: #ef4444;
+}
+
+.tickerDivider {
+  width: 1px;
+  height: 16px;
+  background: var(--border);
+}
+
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* 2. MAIN GRID */
+.investGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 60px;
+  align-items: center;
+}
+
+@media (min-width: 992px) {
+  .investGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.investContent {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  position: relative;
+  z-index: 5; /* Ensures text sits above any background blobs */
+}
+
+/* LEFT CONTENT */
+.investHeader {
+  margin-bottom: 40px;
+}
+.highlightBlue {
+  color: var(--primary);
+}
+
+.investFeatures {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  margin-bottom: 40px;
+}
+
+.investFeatureItem {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.iconBoxGlass {
+  width: 56px;
+  height: 56px;
+  /* Adaptive Glass Effect */
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-sm);
+  flex-shrink: 0;
+}
+
+.iconBlue {
+  color: var(--primary);
+}
+.iconGold {
+  color: var(--accent);
+}
+.iconGreen {
+  color: var(--success);
+}
+
+.investFeatureItem h4 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: var(--text-main);
+}
+
+.investFeatureItem p {
+  font-size: 0.95rem;
+  color: var(--text-body);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.investActions {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+/* RIGHT VISUAL (Phone Mockup) */
+.investVisual {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 700px;
+  width: 100%;
+  padding: 40px 0;
+}
+
+.blueBlob {
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  background: var(--primary);
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.15;
+  z-index: 0;
+}
+
+.phoneWrapper {
+  position: relative;
+  z-index: 2;
+  transform: rotate(0deg);
+  transition: transform 0.5s ease;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.phoneWrapper:hover {
+  transform: scale(1.02);
+}
+
+.phoneImage {
+  width: 100%; /* Responsive width */
+  height: auto; /* Height adjusts automatically to keep ratio */
+  max-width: 420px;
+  object-fit: contain;
+  filter: drop-shadow(0 50px 100px rgba(0, 0, 0, 0.4)); /* deeper shadow */
+  border-radius: 50px;
+}
+
+/* FLOATING CARDS (The Robust Touch) */
+.floatCardTop,
+.floatCardBottom {
+  position: absolute;
+  background: var(--bg-card);
+  padding: 12px 20px;
+  border-radius: 12px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid var(--border);
+  animation: float 6s ease-in-out infinite;
+  min-width: 200px;
+  z-index: 3;
+}
+
+.floatCardTop {
+  top: -5rem;
+  left: 5%;
+  animation-delay: 0s;
+}
+@media (min-width: 1200px) {
+  .floatCardTop {
+    left: 10%;
+  } /* Adjust for large screens */
+}
+
+.floatCardBottom {
+  bottom: -5rem;
+  right: 5%;
+  animation-delay: 2s;
+}
+@media (min-width: 1200px) {
+  .floatCardBottom {
+    right: 10%;
+  } /* Adjust for large screens */
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.floatIconGold {
+  width: 36px;
+  height: 36px;
+  background: rgba(251, 191, 36, 0.15);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+}
+
+.floatIconBlue {
+  width: 36px;
+  height: 36px;
+  background: rgba(37, 99, 235, 0.1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary);
+}
+
+.floatLabel {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.floatValue {
+  display: block;
+  font-size: 1rem;
+  color: var(--text-main);
+  font-weight: 800;
+}
+.textGreen {
+  color: var(--success);
+  font-size: 0.8rem;
+  margin-left: 4px;
+}
+
+/* --- 9. GLOBAL REACH (Map Section) --- */
+.globalSection {
+  padding: 100px 0;
+  background: var(--bg-surface);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Background Grid Texture (Subtle) */
+.globalSection::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 50px 50px;
+  opacity: 0.3;
+  z-index: 0;
+}
+
+.globalHeader {
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto 60px auto;
+  position: relative;
+  z-index: 2;
+}
+
+/* Override title colors for this dark section */
+.globalHeader h2 {
+  color: var(--text-main);
+  margin-bottom: 20px;
+  font-size: 3rem;
+  font-weight: 800;
+}
+.globalHeader p {
+  color: var(--text-body);
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+/* MAP CONTAINER */
+.mapWrapper {
+  position: relative;
+  width: 100%;
+  /* Aspect Ratio for World Map (Roughly 2:1) */
+  aspect-ratio: 16 / 9;
+  max-width: 1200px;
+  margin: 0 auto 60px auto;
+  z-index: 2;
+}
+
+.mapImage {
+  object-fit: contain;
+  opacity: 0.6; /* Dim the map slightly so dots shine brighter */
+}
+
+/* HOTSPOTS */
+.hotspot {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  transform: translate(-50%, -50%); /* Center on the coordinate */
+  cursor: pointer;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hotspotDot {
+  width: 8px;
+  height: 8px;
+  background: var(--primary); /* Blue Dot */
+  border-radius: 50%;
+  box-shadow: 0 0 10px var(--primary);
+  position: relative;
+  z-index: 2;
+}
+
+.hotspotPulse {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: var(--primary);
+  border-radius: 50%;
+  opacity: 0.5;
+  animation: pulseMap 2s infinite;
+  z-index: 1;
+}
+
+@keyframes pulseMap {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(3);
+    opacity: 0;
+  }
+}
+
+/* TOOLTIP (Hidden by default, shown on hover) */
+.hotspotTooltip {
+  position: absolute;
+  bottom: 25px; /* Above the dot */
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  background: var(--bg-card);
+  border: 1px solid var(--primary);
+  padding: 8px 12px;
+  border-radius: 8px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s ease;
+  /* backdrop-filter: blur(4px); */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.hotspot:hover .hotspotTooltip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.tooltipCity {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+.tooltipStatus {
+  font-size: 0.7rem;
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* STATS STRIP */
+.statsStrip {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 40px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(10px);
+  padding: 30px;
+  border-radius: 20px;
+  max-width: 900px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+}
+
+.statItem {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: var(--text-main);
+}
+
+.statIcon {
+  color: var(--primary);
+}
+
+.statItem strong {
+  display: block;
+  font-size: 1.1rem;
+  margin-bottom: 4px;
+}
+.statItem span {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.statDivider {
+  width: 1px;
+  height: 40px;
+  background: var(--border);
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .statDivider {
+    display: block;
+  }
+}
+
+/* --- 11. FINAL CTA (The Closer) --- */
+.ctaSection {
+  padding: 20px 0 20px 0;
+  background: var(--bg-surface);
+  position: relative;
+  z-index: 10;
+}
+
+.ctaCardWrapper {
+  position: relative;
+  border-radius: 40px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #000000 100%);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Subtle background mesh effect */
+.ctaMeshGradient {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+      at 80% 20%,
+      rgba(59, 130, 246, 0.3) 0px,
+      transparent 50%
+    ),
+    radial-gradient(at 20% 80%, rgba(6, 182, 212, 0.3) 0px, transparent 50%);
+  filter: blur(60px);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.ctaGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+  min-height: 500px;
+}
+
+/* LEFT CONTENT */
+.ctaContentLeft {
+  padding: 60px;
+  color: white;
+}
+
+.ctaBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 8px 16px;
+  border-radius: 30px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #60a5fa; /* Light blue */
+  margin-bottom: 24px;
+}
+
+.ctaContentLeft h2 {
+  font-size: 3.5rem;
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 20px;
+  background: linear-gradient(to right, #ffffff, #93c5fd);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.ctaContentLeft p {
+  font-size: 1.15rem;
+  color: #cbd5e1; /* Slate 300 */
+  margin-bottom: 32px;
+  max-width: 500px;
+  line-height: 1.6;
+}
+
+.ctaBenefitsList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 40px;
+}
+
+.benefitItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.checkIcon {
+  color: #22c55e; /* Green checkmark */
+}
+
+/* BUTTONS */
+.ctaButtonRow {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+/* Common Store Button Styles */
+.appStoreBtn,
+.googlePlayBtn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 20px;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 160px;
+}
+
+.appStoreBtn {
+  background: #fff;
+  color: #000;
+  border: 1px solid #fff;
+}
+
+.googlePlayBtn {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+}
+
+.appStoreBtn:hover,
+.googlePlayBtn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+}
+
+.btnText {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1.2;
+}
+.btnText small {
+  font-size: 0.7rem;
+  opacity: 0.8;
+}
+.btnText span {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.ctaWebLink {
+  color: #93c5fd;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  transition: gap 0.2s ease;
+}
+.ctaWebLink:hover {
+  gap: 12px;
+  color: #fff;
+}
+
+/* RIGHT VISUAL */
+.ctaVisualRight {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Optional: Make the image break out of the box slightly on large screens */
+  transform: scale(1.1) translateX(20px);
+}
+
+.ctaImage {
+  object-fit: contain;
+  /* Add a subtle float animation */
+  animation: floatImage 6s ease-in-out infinite;
+  filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.4));
+}
+
+@keyframes floatImage {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+}
+
+/* RESPONSIVE */
+@media (max-width: 992px) {
+  .ctaGrid {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+  .ctaContentLeft {
+    padding: 40px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .ctaContentLeft h2 {
+    font-size: 2.5rem;
+  }
+  .ctaContentLeft p {
+    margin: 0 auto 32px auto;
+  }
+  .ctaBenefitsList {
+    align-items: center;
+  }
+  .ctaButtonRow {
+    justify-content: center;
+  }
+
+  .ctaVisualRight {
+    height: auto;
+    padding-bottom: 40px;
+    transform: none; /* Reset desktop transform */
+  }
+  .ctaImage {
+    width: 80%; /* Make image smaller on mobile */
+    height: auto;
+  }
+}

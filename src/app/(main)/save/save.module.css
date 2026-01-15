@@ -1,0 +1,256 @@
+.main {
+  background: var(--bg-app);
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* HERO */
+.heroBackground {
+  position: relative;
+  width: 100%;
+  height: 75vh;
+  min-height: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.heroBgImage {
+  object-fit: cover;
+  z-index: 0;
+}
+
+.heroOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /* Gradient: Dark text area -> Transparent image area */
+  background: linear-gradient(
+    90deg,
+    rgba(15, 23, 42, 0.95) 0%,
+    rgba(15, 23, 42, 0.6) 50%,
+    rgba(15, 23, 42, 0.1) 100%
+  );
+  z-index: 1;
+}
+
+.heroContent {
+  position: relative;
+  z-index: 2;
+  max-width: 700px;
+  padding: 0 5%;
+  margin-top: 40px;
+}
+
+.pillBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 8px 16px;
+  border-radius: 50px;
+  color: #22c55e;
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-bottom: 24px;
+  backdrop-filter: blur(10px);
+}
+
+.heroTitle {
+  font-size: 4rem;
+  font-weight: 800;
+  color: white;
+  line-height: 1.1;
+  margin-bottom: 24px;
+}
+.highlight {
+  color: #22c55e;
+} /* Green for growth */
+
+.heroDesc {
+  font-size: 1.25rem;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.6;
+  max-width: 550px;
+}
+
+/* CALCULATOR SECTION */
+.calcSection {
+  margin-top: -25px; /* Overlap Hero */
+  margin-bottom: 50px;
+  position: relative;
+  z-index: 10;
+}
+
+/* PRODUCT GRID */
+.productSection {
+  padding-bottom: 50px;
+}
+
+.sectionHeader {
+  text-align: center;
+  margin-bottom: 60px;
+}
+.sectionHeader h2 {
+  font-size: 2.5rem;
+  color: var(--text-main);
+  margin-bottom: 10px;
+}
+.sectionHeader p {
+  color: var(--text-muted);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+}
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 30px;
+  transition: 0.3s;
+  display: flex;
+  flex-direction: column;
+}
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+  border-color: #22c55e;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.apyBadge {
+  background: rgba(34, 197, 94, 0.1);
+  color: #22c55e;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.card h3 {
+  font-size: 1.4rem;
+  color: var(--text-main);
+  margin-bottom: 10px;
+}
+.card p {
+  color: var(--text-muted);
+  margin-bottom: 24px;
+  flex-grow: 1;
+  line-height: 1.5;
+  font-size: 0.95rem;
+}
+
+.cardBtn {
+  background: transparent;
+  border: none;
+  color: var(--primary);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  padding: 0;
+}
+.cardBtn:hover {
+  gap: 12px;
+}
+
+/* ICONS */
+.iconGreen {
+  color: #22c55e;
+}
+.iconGold {
+  color: #eab308;
+}
+.iconBlue {
+  color: #3b82f6;
+}
+.iconPurple {
+  color: #a855f7;
+}
+
+/* TRUST STRIP */
+.trustStrip {
+  background: var(--bg-surface);
+  border-top: 1px solid var(--border);
+  padding: 80px 0;
+}
+.trustContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 40px;
+}
+.trustText h2 {
+  font-size: 2rem;
+  color: var(--text-main);
+  margin-bottom: 10px;
+}
+.trustText p {
+  color: var(--text-muted);
+  max-width: 500px;
+}
+
+.trustIcons {
+  display: flex;
+  gap: 20px;
+}
+.trustBadge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 16px 24px;
+  border-radius: 12px;
+  color: var(--text-main);
+  font-weight: 600;
+}
+
+@media (max-width: 900px) {
+  .heroBackground {
+    height: 60vh;
+    justify-content: center;
+  }
+  .heroOverlay {
+    background: rgba(15, 23, 42, 0.8);
+  } /* Darker full overlay on mobile */
+  .heroContent {
+    text-align: center;
+    margin-top: 0;
+  }
+  .heroTitle {
+    font-size: 2.5rem;
+  }
+
+  .trustContent {
+    flex-direction: column;
+    text-align: center;
+  }
+  .trustIcons {
+    flex-direction: column;
+    width: 100%;
+  }
+  .trustBadge {
+    justify-content: center;
+  }
+}

@@ -1,5 +1,5 @@
 import { Clock, Phone, Smartphone } from "lucide-react";
-import styles from "../../app/home.module.css";
+import styles from "./home.module.css";
 
 export default function InfoBar() {
     return (

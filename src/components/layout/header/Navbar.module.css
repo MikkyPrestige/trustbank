@@ -1,126 +1,135 @@
-/* --- TOP BAR (Brand Identity) --- */
+/* --- GLOBAL HEADER CONTAINER --- */
 .header {
-  box-shadow: var(--shadow-sm);
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 1000;
+  background: var(--bg-surface);
+  background-color: color-mix(in srgb, var(--bg-surface), transparent 10%);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
+/* 1. TOP BAR (Utility Area) */
 .topBar {
-  background: var(--gradient-primary); /* 👈 Uses your Global Vibrant Blue */
-  padding: 10px 0;
-  color: var(--text-invert);
+  background: var(--bg-subtle, #f1f5f9);
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.8rem;
+}
+
+/* In Dark Mode, we might want the top bar to blend in */
+@media (prefers-color-scheme: dark) {
+  .topBar {
+    background: var(--bg-surface);
+  }
 }
 
 .container {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 0 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-/* Add this to Navbar.module.css */
-
+/* LOGO */
 .logoWrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-decoration: none;
-  height: 100%;
+  display: block;
 }
-
 .logoImage {
   object-fit: contain;
-  /* Optional: Brightness filter if your logo is dark */
-  filter: brightness(0) invert(1);
 }
 
+/* TOP ACTIONS */
 .topActions {
-  display: none;
+  display: flex;
   align-items: center;
   gap: 24px;
-}
-
-@media (min-width: 992px) {
-  .topActions {
-    display: flex;
-  }
 }
 
 .langSelector {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 0.9rem;
+  color: var(--text-muted);
   cursor: pointer;
-  opacity: 0.9;
-  font-weight: 500;
+}
+.langSelector:hover {
+  color: var(--text-main);
 }
 
 .openBtn {
   font-weight: 700;
-  font-size: 0.9rem;
-  color: var(--text-invert);
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
+  color: var(--text-main);
   text-decoration: none;
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
 }
-
 .openBtn:hover {
-  opacity: 0.9;
+  color: var(--primary);
 }
 
-/* THE GOLD LOGIN BUTTON (Vibrant Pop) */
 .loginBtn {
-  background-color: var(--accent); /* 👈 Global Gold */
-  color: #0f172a; /* Dark text on Gold for readability */
-  padding: 8px 20px;
-  border-radius: 4px;
-  font-weight: 700;
-  text-transform: uppercase;
+  background: var(--primary);
+  color: #fff; /* Always white text on primary button */
+  padding: 8px 16px;
+  border-radius: 6px;
   display: flex;
   align-items: center;
   gap: 8px;
-  transition: transform 0.2s, box-shadow 0.2s;
+  font-weight: 700;
   text-decoration: none;
+  font-size: 0.8rem;
+  transition: filter 0.2s;
+  border: none;
+  cursor: pointer;
 }
-
 .loginBtn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4); /* Gold Glow */
-  background-color: #fbbf24; /* Lighter Gold */
+  filter: brightness(1.1);
 }
 
-/* --- BOTTOM BAR (Navigation) --- */
+/* MOBILE TOGGLE */
+.mobileToggle {
+  display: none; /* Hidden on desktop */
+  background: none;
+  border: none;
+  color: var(--text-main);
+  cursor: pointer;
+}
+
+/* 2. BOTTOM BAR (Main Navigation) */
 .bottomBar {
-  background-color: var(--bg-card); /* 👈 Clean White */
-  border-bottom: 1px solid var(--border);
+  background: transparent;
+  border-top: 1px solid rgba(0, 0, 0, 0.03);
 }
 
 .navLinks {
   display: flex;
-  gap: 32px;
-  width: 100%;
+  gap: 2.5rem;
 }
 
 .navItem {
-  padding: 20px 0;
-  color: var(--text-main); /* Dark Navy */
-  font-weight: 700;
-  font-size: 0.9rem;
-  text-transform: uppercase;
-  text-decoration: none;
   position: relative;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 20px 0;
   transition: color 0.2s;
 }
 
-.navItem:hover {
-  color: var(--primary); /* Blue hover */
+/* Hover & Active */
+.navItem:hover,
+.active {
+  color: var(--text-main);
 }
 
-/* Cool Hover Underline Effect */
+/* Underline Animation */
 .navItem::after {
   content: "";
   position: absolute;
@@ -129,34 +138,290 @@
   width: 0%;
   height: 3px;
   background: var(--primary);
-  transition: width 0.3s;
+  transition: width 0.3s ease;
 }
-
-.navItem:hover::after {
+.navItem:hover::after,
+.active::after {
   width: 100%;
 }
 
-/* MOBILE */
-.mobileToggle {
-  background: none;
-  border: none;
-  color: var(--text-invert);
+/* --- 3. MEGA MENU (Desktop Dropdown) --- */
+.megaMenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border);
+  padding: 40px 0 60px 0;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  animation: slideDown 0.2s ease-out;
+  z-index: 900;
+}
+
+.megaContainer {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  gap: 60px;
+}
+
+.megaHeader h2 {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text-main);
+  border-right: 1px solid var(--border);
+  padding-right: 40px;
+  margin-right: 20px;
+  height: 100%;
+  display: flex;
+  align-items: flex-start;
+}
+
+/* GRID LAYOUT */
+.megaGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.2fr;
+  gap: 40px;
+  width: 100%;
+}
+
+.linkColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.megaLink {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+.megaLink:hover {
+  gap: 14px;
+  color: var(--primary);
+}
+
+/* PROMO AREA */
+.promoColumn {
+  border-left: 1px solid var(--border);
+  padding-left: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.promoColumn h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 12px;
+}
+.promoColumn p {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+  margin-bottom: 24px;
+}
+
+.promoBtn {
+  border: 1px solid var(--primary);
+  color: var(--primary);
+  background: transparent;
+  text-decoration: none;
+  padding: 10px 24px;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  width: fit-content;
+  transition: 0.2s;
+}
+.promoBtn:hover {
+  background: var(--primary);
+  color: #fff;
+}
+
+/* --- 4. MOBILE MENU DRAWER (High Grade Animation) --- */
+
+/* The Backdrop */
+.mobileBackdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  z-index: 1999; /* Higher than Header */
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease-in-out;
+}
+.mobileBackdropOpen {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* The Drawer */
+.mobileDrawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 85%;
+  max-width: 400px;
+  height: 100vh;
+  background: var(--bg-card);
+  border-left: 1px solid var(--border);
+  z-index: 2000; /* Highest z-index */
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+
+  transform: translateX(100%);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.2);
+}
+.mobileDrawerOpen {
+  transform: translateX(0);
+}
+
+/* Drawer Content */
+.drawerHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 20px;
+}
+.drawerTitle {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.closeBtn {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-  display: block;
+  transition: 0.2s;
+}
+.closeBtn:hover {
+  background: #ef4444;
+  color: white;
+  border-color: #ef4444;
 }
 
-@media (min-width: 992px) {
+.mobileNavLinks {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.mobileLink {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-main);
+  text-decoration: none;
+  border-radius: 12px;
+  transition: 0.2s;
+}
+.mobileLink:hover {
+  background: var(--bg-surface);
+  padding-left: 24px;
+  color: #3b82f6;
+}
+.mobileLink svg {
+  color: var(--text-muted);
+  transition: 0.2s;
+}
+.mobileLink:hover svg {
+  color: #3b82f6;
+}
+
+.drawerFooter {
+  border-top: 1px solid var(--border);
+  padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.drawerLoginBtn {
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  font-weight: 700;
+  text-align: center;
+  cursor: pointer;
+  background: var(--bg-surface);
+  color: var(--text-main);
+  border: 1px solid var(--border);
+}
+.drawerOpenBtn {
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  font-weight: 700;
+  text-align: center;
+  cursor: pointer;
+  background: #0f172a;
+  color: white;
+  border: none;
+}
+
+/* --- RESPONSIVE LOGIC --- */
+
+/* Desktop: Hide Mobile Elements */
+@media (min-width: 1024px) {
+  .mobileBackdrop,
+  .mobileDrawer,
   .mobileToggle {
-    display: none;
-  }
-  .bottomBar {
-    display: block !important;
+    display: none !important;
   }
 }
 
-.bottomBar {
-  display: none;
+/* Mobile/Tablet: Hide Desktop Elements */
+@media (max-width: 1023px) {
+  .bottomBar {
+    display: none;
+  } /* Hide Desktop Nav */
+  .topActions {
+    display: none;
+  } /* Hide Top Login/Register (moved to drawer) */
+  .mobileToggle {
+    display: block;
+  } /* Show Hamburger */
+  .megaMenu {
+    display: none !important;
+  }
 }
-.showMobile {
-  display: block;
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

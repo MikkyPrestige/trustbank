@@ -7,7 +7,7 @@ import {
     Plus, MoreHorizontal, Eye, EyeOff, Copy, Check, AlertTriangle
 } from "lucide-react";
 import toast from "react-hot-toast";
-import styles from "../app/dashboard/dashboard.module.css";
+import styles from "../app/(main)/dashboard/dashboard.module.css";
 
 interface DashboardViewProps {
     user: any;

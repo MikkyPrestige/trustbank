@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Globe, ShieldCheck, Wifi } from "lucide-react";
-import styles from "../../app/home.module.css";
+import styles from "./home.module.css";
 
 const HOTSPOTS = [
     { city: "New York", top: "34%", left: "28%" },

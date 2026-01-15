@@ -1,5 +1,5 @@
 import Image from "next/image";
-import styles from "../../app/home.module.css";
+import styles from "./home.module.css";
 
 // Define logos here for easy management
 const PARTNERS = [

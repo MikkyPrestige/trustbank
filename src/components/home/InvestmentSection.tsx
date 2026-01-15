@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, Bitcoin, PieChart, Lock, RefreshCcw } from "lucide-react";
-import styles from "../../app/home.module.css";
+import styles from "./home.module.css";
 import { getLiveMarketData } from "@/lib/marketData";
 
 // Helper to format currency

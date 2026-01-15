@@ -1,0 +1,257 @@
+.main {
+  background: var(--bg-app);
+  min-height: 100vh;
+}
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* HERO */
+.heroBackground {
+  position: relative;
+  width: 100%;
+  height: 75vh;
+  min-height: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+.heroBgImage {
+  object-fit: cover;
+  z-index: 0;
+}
+.heroOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /* Teal-tinted dark gradient */
+  background: linear-gradient(
+    90deg,
+    rgba(6, 78, 59, 0.9) 0%,
+    rgba(15, 23, 42, 0.8) 60%,
+    rgba(15, 23, 42, 0.2) 100%
+  );
+  z-index: 1;
+}
+
+.heroContent {
+  position: relative;
+  z-index: 2;
+  max-width: 700px;
+  padding: 0 5%;
+  margin-top: 40px;
+}
+
+.tealBadge {
+  display: inline-block;
+  color: #2dd4bf;
+  background: rgba(45, 212, 191, 0.1);
+  border: 1px solid rgba(45, 212, 191, 0.3);
+  padding: 8px 16px;
+  border-radius: 50px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+}
+
+.heroTitle {
+  font-size: 4rem;
+  font-weight: 800;
+  color: white;
+  line-height: 1.1;
+  margin-bottom: 24px;
+}
+.highlight {
+  color: #2dd4bf;
+}
+.heroDesc {
+  font-size: 1.25rem;
+  color: #ccfbf1;
+  line-height: 1.6;
+  max-width: 550px;
+}
+
+/* WIZARD */
+.wizardSection {
+  margin-top: -80px;
+  margin-bottom: 100px;
+  position: relative;
+  z-index: 10;
+}
+
+/* PRODUCTS */
+.productsSection {
+  padding-bottom: 100px;
+}
+.sectionHeader {
+  text-align: center;
+  margin-bottom: 60px;
+}
+.sectionHeader h2 {
+  font-size: 2.5rem;
+  color: var(--text-main);
+  margin-bottom: 10px;
+}
+.sectionHeader p {
+  color: var(--text-muted);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+}
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 30px;
+  border-radius: 20px;
+  transition: 0.3s;
+  cursor: pointer;
+}
+.card:hover {
+  transform: translateY(-5px);
+  border-color: #2dd4bf;
+  box-shadow: 0 10px 30px rgba(45, 212, 191, 0.1);
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.arrowBox {
+  color: var(--text-muted);
+  transition: 0.2s;
+}
+.card:hover .arrowBox {
+  color: #2dd4bf;
+  transform: translateX(5px);
+}
+
+.card h3 {
+  font-size: 1.3rem;
+  color: var(--text-main);
+  margin-bottom: 12px;
+}
+.card p {
+  color: var(--text-muted);
+  line-height: 1.5;
+  font-size: 0.95rem;
+}
+
+/* ICON COLORS */
+.iconTeal {
+  color: #2dd4bf;
+}
+.iconBlue {
+  color: #3b82f6;
+}
+.iconOrange {
+  color: #f97316;
+}
+.iconPurple {
+  color: #a855f7;
+}
+.iconRed {
+  color: #ef4444;
+}
+.iconGold {
+  color: #eab308;
+}
+
+/* --- PARTNER STRIP CONTAINER --- */
+.partnerStrip {
+  border-top: 1px solid var(--border);
+  padding: 80px 0;
+  text-align: center;
+  background: var(--bg-surface);
+  transition: background 0.3s ease;
+}
+
+.partnerStrip h3 {
+  color: var(--text-main);
+  margin-bottom: 50px;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 700;
+}
+
+/* --- LOGO GRID --- */
+.logos {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 80px;
+  flex-wrap: wrap;
+}
+
+.logoItem {
+  position: relative;
+  height: 50px;
+  width: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* --- THE LOGO IMAGE STYLING --- */
+.logoImg {
+  width: auto;
+  height: 100%;
+  max-height: 45px;
+  object-fit: contain;
+  transition: all 0.3s ease;
+  filter: brightness(0);
+  opacity: 0.6;
+}
+
+/* HOVER EFFECT */
+.logoItem:hover .logoImg {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+/* --- DARK MODE OVERRIDE --- */
+@media (prefers-color-scheme: dark) {
+  .logoImg {
+    filter: brightness(0) invert(1);
+    opacity: 0.8;
+  }
+
+  .logoItem:hover .logoImg {
+    filter: brightness(0) invert(1)
+      drop-shadow(0 0 5px rgba(255, 255, 255, 0.6));
+    opacity: 1;
+  }
+}
+
+:global(.dark) .logoImg {
+  filter: brightness(0) invert(1);
+  opacity: 0.8;
+}
+
+@media (max-width: 768px) {
+  .logos {
+    gap: 40px;
+  }
+  .logoImg {
+    max-height: 35px;
+  } /* Smaller on mobile */
+}
+
+@media (max-width: 900px) {
+  .heroBackground {
+    height: 60vh;
+  }
+  .heroTitle {
+    font-size: 3rem;
+  }
+}

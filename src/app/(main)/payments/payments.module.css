@@ -1,0 +1,281 @@
+.main {
+  background: var(--bg-app);
+  min-height: 100vh;
+}
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* HERO (Split Layout: Text Left, Widget Right) */
+.heroBackground {
+  position: relative;
+  width: 100%;
+  min-height: 85vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding-top: 50px; /* Space for Navbar */
+}
+.heroBgImage {
+  object-fit: cover;
+  z-index: 0;
+}
+.heroOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    135deg,
+    rgba(15, 23, 42, 0.95) 0%,
+    rgba(15, 23, 42, 0.7) 60%,
+    rgba(30, 27, 75, 0.4) 100%
+  );
+  z-index: 1;
+}
+
+.heroContent {
+  position: relative;
+  z-index: 2;
+  max-width: 600px;
+  padding: 0 5%;
+  margin: -5rem auto 0 1%;
+}
+
+.heroWidget {
+  position: relative;
+  z-index: 3;
+  margin-right: 10%;
+  animation: slideUp 0.6s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.neonBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #818cf8;
+  background: rgba(99, 102, 241, 0.1);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  padding: 8px 16px;
+  border-radius: 50px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  font-size: 0.8rem;
+  box-shadow: 0 0 15px rgba(99, 102, 241, 0.2);
+}
+
+.heroTitle {
+  font-size: 3.5rem;
+  font-weight: 800;
+  color: white;
+  line-height: 1.1;
+  margin-bottom: 24px;
+}
+.highlight {
+  background: linear-gradient(
+    to right,
+    #818cf8,
+    #c084fc
+  ); /* Indigo to Purple */
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.heroDesc {
+  font-size: 1.2rem;
+  color: #cbd5e1;
+  line-height: 1.6;
+  max-width: 480px;
+}
+
+/* METHODS GRID */
+.methodsSection {
+  padding: 100px 0;
+  background: var(--bg-app);
+}
+.sectionHeader {
+  text-align: center;
+  margin-bottom: 60px;
+}
+.sectionHeader h2 {
+  font-size: 2.5rem;
+  color: var(--text-main);
+  margin-bottom: 10px;
+}
+.sectionHeader p {
+  color: var(--text-muted);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+}
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 30px;
+  border-radius: 20px;
+  transition: 0.3s;
+}
+.card:hover {
+  transform: translateY(-5px);
+  border-color: #6366f1;
+  box-shadow: 0 10px 30px rgba(99, 102, 241, 0.15);
+}
+
+.iconBox {
+  background: rgba(99, 102, 241, 0.1);
+  color: #6366f1;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16px;
+  margin-bottom: 20px;
+}
+
+.card h3 {
+  font-size: 1.4rem;
+  color: var(--text-main);
+  margin-bottom: 12px;
+}
+.card p {
+  color: var(--text-muted);
+  line-height: 1.5;
+  font-size: 0.95rem;
+  margin-bottom: 24px;
+}
+
+.link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #6366f1;
+  text-decoration: none;
+  font-weight: 700;
+}
+.link:hover {
+  gap: 12px;
+}
+
+/* UTILITY STRIP */
+.utilityStrip {
+    background: var(--bg-surface);
+    border-top: 1px solid var(--border);
+    padding: 100px 0; /* More breathing room */
+    position: relative;
+}
+
+/* Add a subtle background glow behind the strip */
+.utilityStrip::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 50%; transform: translateX(-50%);
+    width: 60%; height: 100%;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.05) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.utilityRow {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 40px;
+}
+
+/* Turn items into "Action Cards" */
+.utilityItem {
+    display: flex;
+    flex-direction: column; /* Stack Icon on top of text */
+    align-items: center;
+    text-align: center;
+    padding: 40px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Hover Effect: Lift and Glow */
+.utilityItem:hover {
+    transform: translateY(-10px);
+    border-color: #6366f1; /* Indigo Border */
+    box-shadow: 0 20px 40px rgba(99, 102, 241, 0.15);
+}
+
+/* The Icon: Make it Huge and Glowing */
+.utilIcon {
+    color: #6366f1; /* Indigo Brand Color */
+    background: rgba(99, 102, 241, 0.1);
+    width: 80px; /* Huge touch target */
+    height: 80px;
+    padding: 20px;
+    border-radius: 50%; /* Perfect Circle */
+    margin-bottom: 24px;
+    transition: 0.3s;
+}
+
+.utilityItem:hover .utilIcon {
+    background: #6366f1;
+    color: white; /* Invert colors on hover */
+    transform: scale(1.1) rotate(-10deg); /* Playful animation */
+}
+
+/* Typography Upgrade */
+.utilityItem h4 {
+    color: var(--text-main);
+    font-size: 1.5rem; /* Much bigger */
+    font-weight: 800;
+    margin: 0 0 12px 0;
+}
+
+.utilityItem p {
+    color: var(--text-muted);
+    font-size: 1rem;
+    line-height: 1.6;
+    margin: 0;
+    max-width: 250px;
+}
+
+/* Add a visual "Arrow" to show it's clickable */
+.utilityItem::after {
+    content: '→';
+    position: absolute;
+    bottom: 20px;
+    opacity: 0;
+    font-size: 1.5rem;
+    color: #6366f1;
+    transition: 0.3s;
+    transform: translateY(10px);
+}
+
+.utilityItem:hover::after {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Mobile Adjustments */
+@media (max-width: 768px) {
+    .utilityStrip { padding: 60px 0; }
+    .utilityRow { gap: 20px; }
+    .utilityItem { padding: 30px; }
+}

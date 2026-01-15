@@ -1,0 +1,120 @@
+.banner {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 100%;
+  max-width: 400px;
+  background: var(--bg-card); /* Adaptive background */
+  /* Glass Effect */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.2);
+  z-index: 9999;
+
+  /* Animation */
+  transform: translateY(100px);
+  opacity: 0;
+  animation: slideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: 1s; /* Wait 1s before showing */
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.iconBox {
+  width: 36px;
+  height: 36px;
+  background: rgba(16, 185, 129, 0.1); /* Green Security Tint */
+  color: #10b981;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0;
+}
+
+.text {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+}
+
+.acceptBtn {
+  flex: 1;
+  background: var(--text-main);
+  color: var(--bg-app);
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.acceptBtn:hover {
+  opacity: 0.9;
+}
+
+.declineBtn {
+  flex: 1;
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.declineBtn:hover {
+  border-color: var(--text-main);
+  color: var(--text-main);
+}
+
+.closeIcon {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+@keyframes slideIn {
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Mobile: Full width at bottom */
+@media (max-width: 480px) {
+  .banner {
+    bottom: 0;
+    right: 0;
+    max-width: 100%;
+    border-radius: 16px 16px 0 0;
+    border-bottom: none;
+  }
+}

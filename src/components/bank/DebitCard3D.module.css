@@ -1,0 +1,108 @@
+.perspectiveContainer {
+    width: 400px;
+    height: 250px;
+    position: relative;
+    margin: 0 auto;
+}
+
+.card {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); /* Metal Black */
+    border-radius: 20px;
+    position: relative;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+    border: 1px solid rgba(255,255,255,0.1);
+    transform-style: preserve-3d;
+    transition: transform 0.1s ease-out; /* Smooth movement */
+    overflow: hidden;
+}
+
+/* Texture Pattern */
+.texture {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px);
+    background-size: 10px 10px;
+    z-index: 0;
+}
+
+/* The Shine Effect */
+.gloss {
+    position: absolute;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.4) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 10;
+    mix-blend-mode: overlay;
+}
+
+.cardContent {
+    position: relative;
+    z-index: 5;
+    padding: 25px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    color: white;
+    transform: translateZ(20px); /* 3D Depth */
+}
+
+.cardTop {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.bankName { font-weight: 800; letter-spacing: 1px; font-size: 1.1rem; }
+.contactless { transform: rotate(90deg); opacity: 0.8; }
+
+.chipWrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.chip {
+    width: 50px; height: 35px;
+    background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+    border-radius: 6px;
+    position: relative;
+    border: 1px solid rgba(0,0,0,0.2);
+}
+/* Chip lines */
+.chip::before {
+    content: ''; position: absolute; top: 50%; left: 0; width: 100%; height: 1px; background: rgba(0,0,0,0.3);
+}
+.chip::after {
+    content: ''; position: absolute; top: 0; left: 50%; width: 1px; height: 100%; background: rgba(0,0,0,0.3);
+}
+
+.logoIcon { opacity: 0.5; }
+
+.number {
+    font-family: monospace;
+    font-size: 1.4rem;
+    letter-spacing: 4px;
+    margin-bottom: 20px;
+    text-shadow: 0 2px 2px rgba(0,0,0,0.5);
+    display: flex; gap: 10px;
+}
+
+.details {
+    display: flex;
+    justify-content: space-between;
+    text-transform: uppercase;
+}
+
+.holder, .expiry { display: flex; flex-direction: column; }
+
+.details small { font-size: 0.5rem; color: #94a3b8; margin-bottom: 2px; }
+.details span { font-size: 0.9rem; font-weight: 600; letter-spacing: 1px; }
+
+/* Responsive Resize */
+@media (max-width: 500px) {
+    .perspectiveContainer { width: 300px; height: 190px; }
+    .number { font-size: 1rem; }
+}

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { ArrowRight, Flame, ShieldCheck, Info, TrendingUp, CheckCircle2 } from "lucide-react";
-import styles from "../../app/home.module.css";
+import styles from "./home.module.css";
 
 export default function RatesGrid() {
     const [activeTab, setActiveTab] = useState<'deposits' | 'borrowing'>('deposits');
