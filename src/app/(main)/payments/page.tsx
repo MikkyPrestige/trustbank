@@ -1,6 +1,6 @@
 import Image from "next/image";
 import styles from "./payments.module.css";
-import TransferEstimator from "@/components/payments/TransferEstimator";
+import TransferEstimator from "@/components/main/payments/TransferEstimator";
 import { Zap, Smartphone, CreditCard, Mail, Building, ArrowRight, RefreshCw } from "lucide-react";
 
 export default function PaymentsPage() {

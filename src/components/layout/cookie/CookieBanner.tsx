@@ -9,11 +9,15 @@ export default function CookieBanner() {
 
     useEffect(() => {
         // 1. Check local storage
-        const consented = localStorage.getItem('trustbank_consent');
+        const consent = localStorage.getItem('trustbank_consent');
 
-        // 2. If not consented, show banner after a small delay
-        // This fixes the "Synchronous setState" error and improves UX
-        if (!consented) {
+        if (consent === 'true') {
+            // ✅ ONLY Load Google Analytics / Pixels here
+            // initGoogleAnalytics();
+        }
+
+        //  If no consent, show banner after a small delay
+        if (!consent) {
             const timer = setTimeout(() => {
                 setIsVisible(true);
             }, 1500);

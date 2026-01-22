@@ -5,7 +5,7 @@ import { useActionState } from 'react';
 import { login } from '@/actions/user/login';
 import Link from 'next/link';
 import { Lock, Mail, Eye, EyeOff, X, ShieldCheck, Loader2, ArrowRight } from 'lucide-react';
-import styles from './LoginModal.module.css';
+import styles from './styles/LoginModal.module.css';
 
 interface LoginModalProps {
     isOpen: boolean;

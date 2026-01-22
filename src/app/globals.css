@@ -1,9 +1,9 @@
 :root {
   /* --- ☀️ LIGHT MODE (Vibrant Corporate) --- */
   /* Backgrounds */
-  --bg-app: #f8fafc; /* Cool light grey-blue tint, not boring white */
-  --bg-card: #ffffff; /* Pure white for pop */
-  --bg-surface: #e2e8f0; /* For inputs/secondary areas */
+  --bg-app: #f8fafc;
+  --bg-card: #ffffff;
+  --bg-surface: #e2e8f0;
 
   /* Primary Brand Colors */
   --primary: #2563eb; /* Electric Royal Blue */
@@ -167,4 +167,15 @@ button {
   ); /* Blue to Purple */
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+/* Toast Notification Styles */
+.toast-base {
+  background: var(--bg-card) !important;
+  color: var(--text-main) !important;
+  border: 1px solid var(--border) !important;
+  padding: 16px !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+  z-index: 999999;
 }

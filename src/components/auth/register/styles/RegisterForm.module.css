@@ -1,0 +1,496 @@
+/* --- 1. PAGE LAYOUT --- */
+.pageWrapper {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  padding: 60px 20px;
+  background-color: var(--bg-surface);
+  position: relative;
+  overflow-x: hidden;
+  margin-top: 30px;
+}
+
+/* Ambient Mesh Gradient (Using Variables/Opacity) */
+.ambientMesh {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /* Subtle accent glow tailored to theme */
+  background:
+    radial-gradient(
+      circle at 10% 20%,
+      rgba(59, 130, 246, 0.08),
+      transparent 40%
+    ),
+    radial-gradient(
+      circle at 90% 80%,
+      rgba(99, 102, 241, 0.08),
+      transparent 40%
+    );
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* --- 2. CONTAINER --- */
+.formContainer {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 1100px;
+  animation: slideUp 0.6s ease-out;
+  border-radius: 50px;
+}
+
+/* HEADER */
+.header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.brandBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-surface); /* ✅ Variable */
+  color: var(--text-muted); /* ✅ Variable */
+  border: 1px solid var(--border); /* ✅ Variable */
+  padding: 6px 16px;
+  border-radius: 50px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 20px;
+}
+
+.header h1 {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--text-main); /* ✅ Variable */
+  margin: 0 0 10px 0;
+  letter-spacing: -0.5px;
+}
+.header p {
+  color: var(--text-muted);
+  font-size: 1rem;
+}
+
+/* --- 3. GLASS FORM --- */
+.glassForm {
+  background: var(--bg-card); /* ✅ Variable */
+  border: 1px solid var(--border); /* ✅ Variable */
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.05);
+}
+
+/* ERROR BANNER */
+.errorBanner {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  padding: 12px;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+/* Split Layout Grid */
+.splitLayout {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Two equal columns */
+  gap: 40px; /* Space between columns */
+  align-items: start;
+}
+
+.colLeft,
+.colRight {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* --- 4. SECTIONS --- */
+.sectionLabel {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  margin-top: 10px;
+  color: var(--text-main);
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.sectionLabel svg {
+  color: #3b82f6;
+} /* Accent Color for icons */
+
+.fieldGroup {
+  margin-bottom: 40px;
+  border-left: 2px solid var(--border); /* Visual guide line */
+  padding-left: 20px;
+}
+
+/* GRIDS */
+.inputRow {
+  margin-bottom: 16px;
+  width: 100%;
+}
+.grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+/* --- 5. INPUT STYLING --- */
+.inputWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+  width: 100%;
+}
+
+.inputWrapper label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.inputWrapper input,
+.inputWrapper select {
+  background: var(--bg-surface); /* ✅ Variable */
+  border: 1px solid var(--border); /* ✅ Variable */
+  border-radius: 10px;
+  padding: 12px 16px 12px 42px; /* Left padding for icon space */
+  font-size: 0.95rem;
+  color: var(--text-main);
+  transition: all 0.2s ease;
+  width: 100%;
+  outline: none;
+}
+/* Select inputs usually don't have icons, reduce padding */
+.inputWrapper select {
+  padding-left: 16px;
+}
+
+/* Icon inside input */
+.inputIconBox {
+  position: absolute;
+  left: 14px;
+  top: 38px; /* Adjust based on label height */
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+/* FOCUS STATES */
+.inputWrapper input:focus,
+.inputWrapper select:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+  background: var(--bg-card);
+}
+
+.pinInput {
+  letter-spacing: 4px;
+  text-align: center;
+  font-family: monospace;
+  padding-left: 16px !important;
+}
+
+/* --- 6. NOK BOX --- */
+.nokBox {
+  background: rgba(59, 130, 246, 0.03);
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 20px;
+}
+.miniHeader {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* --- 7. KYC & UPLOAD --- */
+.kycContainer {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.dropZone {
+  position: relative;
+  border: 2px dashed var(--border);
+  border-radius: 12px;
+  background: var(--bg-card);
+  transition: 0.2s;
+  overflow: hidden;
+  cursor: pointer;
+  margin-top: 16px;
+}
+.dropZone:hover {
+  border-color: #3b82f6;
+  background: rgba(59, 130, 246, 0.03);
+}
+
+.fileInput {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 2;
+}
+.dropContent {
+  padding: 30px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+  gap: 12px;
+}
+
+.cloudIcon {
+  width: 48px;
+  height: 48px;
+  background: rgba(59, 130, 246, 0.1);
+  color: #3b82f6;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.uploadText {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 4px;
+}
+
+.mainText {
+  font-weight: 600;
+  color: var(--text-main);
+  font-size: 0.95rem;
+  display: block;
+}
+.subText {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+.fileSuccess {
+  font-weight: 700;
+  color: #22c55e;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.complianceNote {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 12px;
+  text-align: center;
+}
+
+/* --- 8. FOOTER --- */
+.footer {
+  margin-top: 40px;
+}
+
+.primaryBtn {
+  width: 100%;
+  background: #0f172a; /* Keep dark for branding, or use var(--primary) if you have it */
+  color: white;
+  border: none;
+  padding: 16px;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+.primaryBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.1);
+}
+
+.legalText {
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 20px;
+}
+.loginLink {
+  text-align: center;
+  margin-top: 16px;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+.loginLink a {
+  color: #3b82f6;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* --- SUCCESS SCREEN --- */
+.successCard {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 60px 40px;
+  border-radius: 24px;
+  text-align: center;
+  max-width: 500px;
+}
+.successIcon {
+  color: #22c55e;
+  margin-bottom: 24px;
+}
+.successDetails {
+  margin: 20px 0 40px 0;
+  color: var(--text-muted);
+}
+
+/* ========================================= */
+/* NEW ADDITIONS FOR PROFILE PHOTO     */
+/* ========================================= */
+
+.photoUploadRow {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 10px 0;
+}
+
+.previewCircle {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: var(--bg-surface); /* Matches your variables */
+  border: 2px dashed var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.placeholderIcon {
+  color: var(--text-muted);
+  opacity: 0.5;
+}
+
+.photoInputWrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* OVERRIDE: The profile photo input needs to be visible,
+   unlike the Dropzone file input which is opacity: 0.
+*/
+.photoInputWrapper .fileInput {
+  position: static;
+  opacity: 1;
+  width: 100%;
+  height: auto;
+  padding: 10px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+/* Custom file selector button style to match your theme */
+.photoInputWrapper .fileInput::file-selector-button {
+  background: var(--bg-card);
+  color: var(--text-main);
+  border: 1px solid var(--border);
+  padding: 6px 12px;
+  border-radius: 6px;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.fileHint {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+  display: block;
+}
+
+.successText {
+  color: #22c55e;
+  font-weight: 600;
+}
+
+/* ANIMATION */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .grid2 {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .pageWrapper {
+    padding: 40px 16px;
+  }
+  .glassForm {
+    padding: 24px;
+  }
+
+  .splitLayout {
+    grid-template-columns: 1fr; /* Stack on smaller screens */
+    gap: 0;
+  }
+
+  .colLeft {
+    margin-bottom: 20px;
+  }
+
+  .formContainer {
+    max-width: 600px; /* Revert to narrow width on mobile */
+  }
+}
+
+/* DARK MODE OVERRIDES (Only if needed, otherwise variables handle it) */
+@media (prefers-color-scheme: dark) {
+  .primaryBtn {
+    background: #3b82f6;
+  } /* Brighter blue on dark mode */
+}

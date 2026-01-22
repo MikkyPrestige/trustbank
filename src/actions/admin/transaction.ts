@@ -4,20 +4,40 @@ import { db } from "@/lib/db";
 import { logAdminAction } from "@/lib/admin-logger";
 import { revalidatePath } from "next/cache";
 import { checkAdminAction } from "@/lib/admin-auth";
+import { canPerform } from "@/lib/permissions"; // 👈 Import Permissions
+import {
+  TransactionDirection,
+  TransactionStatus,
+  TransactionType,
+  UserRole // 👈 Import UserRole
+} from "@prisma/client";
 
 // 1. DELETE TRANSACTION
+// 🛡️ PERMISSION: 'MONEY' (Strictly Admin Only)
 export async function deleteTransaction(transactionId: string) {
-    const { authorized } = await checkAdminAction();
-    if (!authorized) return { success: false, message: "Unauthorized" };
+    const { authorized, session } = await checkAdminAction();
+
+    // ✅ 1. Session Safety
+    if (!authorized || !session || !session.user) {
+        return { success: false, message: "Unauthorized" };
+    }
+
+    // ✅ 2. Permission Check
+    // Support Agents cannot delete financial records.
+    if (!canPerform(session.user.role as UserRole, 'MONEY')) {
+        return { success: false, message: "Insufficient permissions. Only Admins can delete transactions." };
+    }
 
     try {
         await db.$transaction(async (tx) => {
             const record = await tx.ledgerEntry.findUnique({ where: { id: transactionId } });
             if (!record) throw new Error("Transaction not found");
 
-            // REVERSE IMPACT
-            if (record.status === 'COMPLETED') {
-                const op = record.direction === 'CREDIT' ? { decrement: record.amount } : { increment: record.amount };
+            // REVERSE IMPACT (Only if it was completed)
+            if (record.status === TransactionStatus.COMPLETED) {
+                const op = record.direction === TransactionDirection.CREDIT
+                    ? { decrement: record.amount } // Was added, so subtract it
+                    : { increment: record.amount }; // Was subtracted, so add it back
 
                 await tx.account.update({
                     where: { id: record.accountId },
@@ -28,28 +48,47 @@ export async function deleteTransaction(transactionId: string) {
             await tx.ledgerEntry.delete({ where: { id: transactionId } });
         });
 
-        revalidatePath("/admin/users");
-        return { success: true, message: "Transaction deleted & balance reverted." };
+        await logAdminAction("DELETE_TRX", transactionId, { admin: session.user.email });
+
     } catch (err) {
-        return { success: false, message: "Failed to delete." };
+        console.error("Delete Error:", err);
+        return { success: false, message: "Failed to delete transaction." };
     }
+
+    revalidatePath("/admin/users");
+    return { success: true, message: "Transaction deleted & balance reverted." };
 }
 
-// 2. UPDATE TRANSACTION (With Direction Swap Support)
+// 2. UPDATE TRANSACTION
+// 🛡️ PERMISSION: 'MONEY' (Strictly Admin Only)
 export async function updateTransaction(prevState: any, formData: FormData) {
-    const { authorized } = await checkAdminAction();
-    if (!authorized) return { success: false, message: "Unauthorized" };
+    const { authorized, session } = await checkAdminAction();
+
+    // ✅ 1. Session Safety
+    if (!authorized || !session || !session.user) {
+        return { success: false, message: "Unauthorized" };
+    }
+
+    // ✅ 2. Permission Check
+    if (!canPerform(session.user.role as UserRole, 'MONEY')) {
+        return { success: false, message: "Insufficient permissions. Only Admins can edit transactions." };
+    }
 
     const transactionId = formData.get("transactionId") as string;
     const amount = parseFloat(formData.get("amount") as string);
     const description = formData.get("description") as string;
     const createdAt = formData.get("createdAt") as string;
 
-    // 👇 NEW: Capture Direction Change
-    const direction = formData.get("direction") as "CREDIT" | "DEBIT";
+    // Inputs come as strings, we must cast to Enums carefully
+    const directionInput = formData.get("direction") as "CREDIT" | "DEBIT";
 
-    // Auto-fix the "type" tag if direction changes (e.g. avoiding "WITHDRAWAL" tag on a CREDIT)
-    const typeLabel = direction === 'CREDIT' ? 'DEPOSIT' : 'WITHDRAWAL';
+    // Map Input to Enums
+    const newDirection = directionInput === 'CREDIT' ? TransactionDirection.CREDIT : TransactionDirection.DEBIT;
+
+    // Auto-fix the "type": If Credit -> DEPOSIT, If Debit -> WITHDRAWAL (Safe defaults)
+    const newType = newDirection === TransactionDirection.CREDIT
+        ? TransactionType.DEPOSIT
+        : TransactionType.WITHDRAWAL;
 
     try {
         await db.$transaction(async (tx) => {
@@ -58,8 +97,8 @@ export async function updateTransaction(prevState: any, formData: FormData) {
             if (!oldRecord) throw new Error("Transaction not found");
 
             // B. REVERT OLD BALANCE (Undo the past)
-            if (oldRecord.status === 'COMPLETED') {
-                const reverseOp = oldRecord.direction === 'CREDIT'
+            if (oldRecord.status === TransactionStatus.COMPLETED) {
+                const reverseOp = oldRecord.direction === TransactionDirection.CREDIT
                     ? { decrement: oldRecord.amount } // Was Credit -> Remove it
                     : { increment: oldRecord.amount }; // Was Debit -> Add it back
 
@@ -75,15 +114,15 @@ export async function updateTransaction(prevState: any, formData: FormData) {
                 data: {
                     amount,
                     description,
-                    createdAt: new Date(createdAt),
-                    direction: direction, // 👈 Update Direction
-                    type: typeLabel       // 👈 Update Type Label
+                    createdAt: new Date(createdAt), // Admin can backdate transactions
+                    direction: newDirection,
+                    type: newType
                 }
             });
 
             // D. APPLY NEW BALANCE (Apply the future)
-            if (updatedRecord.status === 'COMPLETED') {
-                const newOp = updatedRecord.direction === 'CREDIT'
+            if (updatedRecord.status === TransactionStatus.COMPLETED) {
+                const newOp = updatedRecord.direction === TransactionDirection.CREDIT
                     ? { increment: amount } // Is Credit -> Add it
                     : { decrement: amount }; // Is Debit -> Remove it
 
@@ -94,12 +133,137 @@ export async function updateTransaction(prevState: any, formData: FormData) {
             }
         });
 
-        await logAdminAction("EDIT_TRX", transactionId, { amount, description, direction });
-        revalidatePath("/admin/users");
-        return { success: true, message: "Transaction updated & balance synced." };
+        await logAdminAction("EDIT_TRX", transactionId, { amount, description, direction: newDirection, admin: session.user.email });
 
     } catch (err) {
         console.error("Update Error:", err);
         return { success: false, message: "Update failed." };
     }
+
+    revalidatePath("/admin/users");
+    return { success: true, message: "Transaction updated & balance synced." };
 }
+
+
+// 'use server';
+
+// import { db } from "@/lib/db";
+// import { logAdminAction } from "@/lib/admin-logger";
+// import { revalidatePath } from "next/cache";
+// import { checkAdminAction } from "@/lib/admin-auth";
+// import {
+//   TransactionDirection,
+//   TransactionStatus,
+//   TransactionType
+// } from "@prisma/client"; // ✅ Import Enums
+
+// // 1. DELETE TRANSACTION
+// export async function deleteTransaction(transactionId: string) {
+//     const { authorized, session } = await checkAdminAction();
+//     if (!authorized) return { success: false, message: "Unauthorized" };
+
+//     try {
+//         await db.$transaction(async (tx) => {
+//             const record = await tx.ledgerEntry.findUnique({ where: { id: transactionId } });
+//             if (!record) throw new Error("Transaction not found");
+
+//             // REVERSE IMPACT (Only if it was completed)
+//             if (record.status === TransactionStatus.COMPLETED) {
+//                 const op = record.direction === TransactionDirection.CREDIT
+//                     ? { decrement: record.amount } // Was added, so subtract it
+//                     : { increment: record.amount }; // Was subtracted, so add it back
+
+//                 await tx.account.update({
+//                     where: { id: record.accountId },
+//                     data: { availableBalance: op, currentBalance: op }
+//                 });
+//             }
+
+//             await tx.ledgerEntry.delete({ where: { id: transactionId } });
+//         });
+
+//         await logAdminAction("DELETE_TRX", transactionId, { admin: session?.user?.email });
+
+//     } catch (err) {
+//         console.error("Delete Error:", err);
+//         return { success: false, message: "Failed to delete transaction." };
+//     }
+
+//     revalidatePath("/admin/users");
+//     return { success: true, message: "Transaction deleted & balance reverted." };
+// }
+
+// // 2. UPDATE TRANSACTION
+// export async function updateTransaction(prevState: any, formData: FormData) {
+//     const { authorized, session } = await checkAdminAction();
+//     if (!authorized) return { success: false, message: "Unauthorized" };
+
+//     const transactionId = formData.get("transactionId") as string;
+//     const amount = parseFloat(formData.get("amount") as string);
+//     const description = formData.get("description") as string;
+//     const createdAt = formData.get("createdAt") as string;
+
+//     // Inputs come as strings, we must cast to Enums carefully
+//     const directionInput = formData.get("direction") as "CREDIT" | "DEBIT";
+
+//     // Map Input to Enums
+//     const newDirection = directionInput === 'CREDIT' ? TransactionDirection.CREDIT : TransactionDirection.DEBIT;
+
+//     // Auto-fix the "type": If Credit -> DEPOSIT, If Debit -> WITHDRAWAL (Safe defaults)
+//     const newType = newDirection === TransactionDirection.CREDIT
+//         ? TransactionType.DEPOSIT
+//         : TransactionType.WITHDRAWAL;
+
+//     try {
+//         await db.$transaction(async (tx) => {
+//             // A. Fetch Original State
+//             const oldRecord = await tx.ledgerEntry.findUnique({ where: { id: transactionId } });
+//             if (!oldRecord) throw new Error("Transaction not found");
+
+//             // B. REVERT OLD BALANCE (Undo the past)
+//             if (oldRecord.status === TransactionStatus.COMPLETED) {
+//                 const reverseOp = oldRecord.direction === TransactionDirection.CREDIT
+//                     ? { decrement: oldRecord.amount } // Was Credit -> Remove it
+//                     : { increment: oldRecord.amount }; // Was Debit -> Add it back
+
+//                 await tx.account.update({
+//                     where: { id: oldRecord.accountId },
+//                     data: { availableBalance: reverseOp, currentBalance: reverseOp }
+//                 });
+//             }
+
+//             // C. UPDATE THE RECORD
+//             const updatedRecord = await tx.ledgerEntry.update({
+//                 where: { id: transactionId },
+//                 data: {
+//                     amount,
+//                     description,
+//                     createdAt: new Date(createdAt), // Admin can backdate transactions
+//                     direction: newDirection,
+//                     type: newType
+//                 }
+//             });
+
+//             // D. APPLY NEW BALANCE (Apply the future)
+//             if (updatedRecord.status === TransactionStatus.COMPLETED) {
+//                 const newOp = updatedRecord.direction === TransactionDirection.CREDIT
+//                     ? { increment: amount } // Is Credit -> Add it
+//                     : { decrement: amount }; // Is Debit -> Remove it
+
+//                 await tx.account.update({
+//                     where: { id: updatedRecord.accountId },
+//                     data: { availableBalance: newOp, currentBalance: newOp }
+//                 });
+//             }
+//         });
+
+//         await logAdminAction("EDIT_TRX", transactionId, { amount, description, direction: newDirection, admin: session?.user?.email });
+
+//     } catch (err) {
+//         console.error("Update Error:", err);
+//         return { success: false, message: "Update failed." };
+//     }
+
+//     revalidatePath("/admin/users");
+//     return { success: true, message: "Transaction updated & balance synced." };
+// }

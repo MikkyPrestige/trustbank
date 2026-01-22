@@ -18,9 +18,9 @@ export default function NotFound() {
                 </div>
 
                 <span className={styles.errorCode}>Error 404</span>
-                <h1 className={styles.title}>Coordinates Not Found</h1>
+                <h1 className={styles.title}>Page Not Found</h1>
                 <p className={styles.description}>
-                    The digital asset or page you are looking for has been moved to a secure archive or does not exist in our vault.
+                    The resource or page you are looking for has been moved to a secure archive or does not exist.
                 </p>
 
                 <div className={styles.actions}>

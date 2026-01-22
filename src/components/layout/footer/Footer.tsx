@@ -140,7 +140,7 @@ export default function Footer() {
                         </div>
 
                         <div className={styles.copyright}>
-                            © {currentYear} TrustBank. All rights reserved.
+                            &copy; {currentYear} TrustBank. All rights reserved.
                         </div>
 
                     </div>

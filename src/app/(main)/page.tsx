@@ -1,4 +1,3 @@
-import styles from "../../components/home/home.module.css";
 import Hero from "@/components/home/Hero";
 import InfoBar from "@/components/home/InfoBar";
 import RatesGrid from "@/components/home/RatesGrid";
@@ -9,6 +8,7 @@ import InvestmentSection from "@/components/home/InvestmentSection";
 import GlobalReach from "@/components/home/GlobalReach";
 import PartnerStrip from "@/components/home/PartnerStrip";
 import FinalCTA from "@/components/home/FinalCTA";
+import styles from "../../components/home/home.module.css"
 
 export default function Home() {
     return (

@@ -32,13 +32,9 @@ export default function RootLayout({
                     disableTransitionOnChange
                 >
                     <Toaster
-                        position="top-right"
+                        position="top-center"
                         toastOptions={{
-                            style: {
-                                background: 'var(--bg-card)',
-                                color: 'var(--text-main)',
-                                border: '1px solid var(--border)'
-                            },
+                            className: 'toast-base',
                             success: {
                                 iconTheme: { primary: 'var(--success)', secondary: 'var(--bg-card)' }
                             },

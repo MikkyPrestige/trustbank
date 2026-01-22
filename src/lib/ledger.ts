@@ -73,6 +73,8 @@ export const LedgerService = {
     description?: string;
   }) {
     const { fromAccountId, toAccountId, amount, description } = params;
+    if (amount <= 0) throw new Error("Transfer amount must be positive");
+    if (fromAccountId === toAccountId) throw new Error("Cannot transfer to self");
     const baseRef = `TRF-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
 
     return await db.$transaction(async (tx) => {
@@ -107,7 +109,7 @@ export const LedgerService = {
         data: {
           accountId: fromAccountId,
           amount: amount,
-          type: "TRANSFER",
+          type: "TRANSFER" as TransactionType,
           direction: "DEBIT",
           status: "COMPLETED",
           description: description || `Transfer to ${toAccountId}`,
@@ -121,7 +123,7 @@ export const LedgerService = {
         data: {
           accountId: toAccountId,
           amount: amount,
-          type: "TRANSFER",
+          type: "TRANSFER" as TransactionType,
           direction: "CREDIT",
           status: "COMPLETED",
           description: description || `Transfer from ${sender.accountNumber}`,

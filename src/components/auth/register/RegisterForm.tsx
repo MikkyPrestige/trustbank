@@ -6,9 +6,9 @@ import { registerUser } from '@/actions/user/register';
 import Link from 'next/link';
 import {
     Lock, User, MapPin, UploadCloud, ShieldCheck,
-    CheckCircle, ArrowRight, FileText, Mail, HeartHandshake, Fingerprint
+    CheckCircle, ArrowRight, FileText, Mail, HeartHandshake, Fingerprint, Camera, AlertCircle
 } from 'lucide-react';
-import styles from './RegisterForm.module.css';
+import styles from './styles/RegisterForm.module.css';
 
 const initialState = {
     message: '',
@@ -16,20 +16,60 @@ const initialState = {
     success: false
 };
 
+// Limit for Client Check (Keep it slightly lower than server limit)
+// If Server is 10MB, Client should stop at 21MB combined.
+const MAX_TOTAL_SIZE = 21 * 1024 * 1024;
+
 export default function RegisterForm() {
     const [state, action, isPending] = useActionState(registerUser, initialState);
+    const [fileError, setFileError] = useState<string | null>(null);
 
-    // Get Pre-filled data
     const searchParams = useSearchParams();
     const defaultName = searchParams.get('full_name') || '';
     const defaultEmail = searchParams.get('email') || '';
 
-    // File Preview State
     const [frontFile, setFrontFile] = useState<string | null>(null);
+    const [passportFile, setPassportFile] = useState<string | null>(null);
+
+    // 👇 NEW: Track sizes separately so we can sum them
+    const [sizes, setSizes] = useState({
+        passport: 0,
+        id: 0
+    });
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
-            setFrontFile(e.target.files[0].name);
+        const file = e.target.files?.[0];
+        const fieldName = e.target.name; // 'passportPhoto' or 'idDocument'
+
+        // Calculate new potential size
+        const newSize = file ? file.size : 0;
+
+        // "What would the total be if we accepted this file?"
+        const currentPassportSize = fieldName === 'passportPhoto' ? newSize : sizes.passport;
+        const currentIdSize = fieldName === 'idDocument' ? newSize : sizes.id;
+        const totalSize = currentPassportSize + currentIdSize;
+
+        setFileError(null);
+
+        if (file) {
+            // 🛑 CHECK TOTAL SIZE
+            if (totalSize > MAX_TOTAL_SIZE) {
+                const sizeMB = (totalSize / (1024 * 1024)).toFixed(2);
+                setFileError(`Total upload size (${sizeMB}MB) exceeds the 20MB limit. Please choose smaller files.`);
+                e.target.value = "";
+
+                return;
+            }
+
+            // ✅ If valid, update state
+            const fileName = file.name;
+            if (fieldName === 'idDocument') {
+                setFrontFile(fileName);
+                setSizes(prev => ({ ...prev, id: newSize }));
+            } else if (fieldName === 'passportPhoto') {
+                setPassportFile(fileName);
+                setSizes(prev => ({ ...prev, passport: newSize }));
+            }
         }
     };
 
@@ -54,13 +94,9 @@ export default function RegisterForm() {
 
     return (
         <div className={styles.pageWrapper}>
-
-            {/* Ambient Background Mesh */}
             <div className={styles.ambientMesh}></div>
 
             <div className={styles.formContainer}>
-
-                {/* HEADER */}
                 <div className={styles.header}>
                     <div className={styles.brandBadge}>
                         <ShieldCheck size={16} />
@@ -73,189 +109,212 @@ export default function RegisterForm() {
                 <form action={action} className={styles.glassForm}>
 
                     {state?.message && !state.success && (
-                        <div className={styles.errorBanner}>{state.message}</div>
+                        <div className={styles.errorBanner}>
+                            <AlertCircle size={18} />
+                            <span>{state.message}</span>
+                        </div>
                     )}
 
-                    {/* --- 1. CREDENTIALS --- */}
-                    <div className={styles.sectionLabel}>
-                        <Lock size={16} /> <span>Account Credentials</span>
-                    </div>
-
-                    <div className={styles.fieldGroup}>
-                        <div className={styles.inputRow}>
-                            <div className={styles.inputWrapper}>
-                                <label>Legal Full Name</label>
-                                <div className={styles.inputIconBox}><User size={18} /></div>
-                                <input name="fullName" defaultValue={defaultName} placeholder="John Doe" required />
-                            </div>
+                    {fileError && (
+                        <div className={styles.errorBanner} style={{ borderColor: '#ef4444', color: '#ef4444' }}>
+                            <AlertCircle size={18} />
+                            <span>{fileError}</span>
                         </div>
+                    )}
 
-                        <div className={styles.inputRow}>
-                            <div className={styles.inputWrapper}>
-                                <label>Email Address</label>
-                                <div className={styles.inputIconBox}><Mail size={18} /></div>
-                                <input name="email" defaultValue={defaultEmail} type="email" readOnly className={styles.readOnly} />
+                    <div className={styles.splitLayout}>
+                        {/* LEFT COLUMN */}
+                        <div className={styles.colLeft}>
+                            <div className={styles.sectionLabel}>
+                                <Camera size={16} /> <span>Profile Photo</span>
                             </div>
-                        </div>
-
-                        <div className={styles.grid2}>
-                            <div className={styles.inputWrapper}>
-                                <label>Password</label>
-                                <input name="password" type="password" placeholder="••••••••" required />
-                            </div>
-                            <div className={styles.inputWrapper}>
-                                <label>Transaction PIN</label>
-                                <input name="pin" type="password" maxLength={4} placeholder="• • • •" className={styles.pinInput} required />
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* --- 2. PERSONAL DATA --- */}
-                    <div className={styles.sectionLabel}>
-                        <Fingerprint size={16} /> <span>Personal Profile</span>
-                    </div>
-
-                    <div className={styles.fieldGroup}>
-                        <div className={styles.grid2}>
-                            <div className={styles.inputWrapper}>
-                                <label>Date of Birth</label>
-                                <input name="dateOfBirth" type="date" required />
-                            </div>
-                            <div className={styles.inputWrapper}>
-                                <label>Gender</label>
-                                <select name="gender">
-                                    <option value="">Select Identity...</option>
-                                    <option value="Male">Male</option>
-                                    <option value="Female">Female</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div className={styles.grid2}>
-                            <div className={styles.inputWrapper}>
-                                <label>Mobile Phone</label>
-                                <input name="phone" type="tel" placeholder="+1..." />
-                            </div>
-                            <div className={styles.inputWrapper}>
-                                <label>Occupation</label>
-                                <input name="occupation" placeholder="Position / Role" />
-                            </div>
-                        </div>
-
-                        <div className={styles.inputRow}>
-                            <div className={styles.inputWrapper}>
-                                <label>Tax ID / SSN</label>
-                                <input name="taxId" placeholder="XXX-XX-XXXX" />
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* --- 3. RESIDENCY & NOK --- */}
-                    <div className={styles.sectionLabel}>
-                        <MapPin size={16} /> <span>Residency & Next of Kin</span>
-                    </div>
-
-                    <div className={styles.fieldGroup}>
-                        <div className={styles.inputRow}>
-                            <div className={styles.inputWrapper}>
-                                <label>Street Address</label>
-                                <input name="address" placeholder="1234 Wall Street, Penthouse 4" />
-                            </div>
-                        </div>
-
-                        <div className={styles.grid2}>
-                            <div className={styles.inputWrapper}>
-                                <label>City</label>
-                                <input name="city" placeholder="City" />
-                            </div>
-                            <div className={styles.inputWrapper}>
-                                <label>Country</label>
-                                <input name="country" defaultValue="United States" />
-                            </div>
-                        </div>
-
-                        {/* NOK AREA (Restored & Enhanced) */}
-                        <div className={styles.nokBox}>
-                            <div className={styles.miniHeader}><HeartHandshake size={14} /> Emergency Contact (Next of Kin)</div>
-                            <div className={styles.inputRow}>
-                                <div className={styles.inputWrapper}>
-                                    <label>Full Name</label>
-                                    <input name="nokName" placeholder="NOK Name" />
-                                </div>
-                            </div>
-                            <div className={styles.grid2}>
-                                <div className={styles.inputWrapper}>
-                                    <label>Relationship</label>
-                                    <input name="nokRelationship" placeholder="e.g. Spouse" />
-                                </div>
-                                <div className={styles.inputWrapper}>
-                                    <label>Phone Number</label>
-                                    <input name="nokPhone" placeholder="Contact Phone" />
-                                </div>
-                            </div>
-                            {/* ✅ RESTORED EMAIL INPUT */}
-                            <div className={styles.inputRow}>
-                                <div className={styles.inputWrapper}>
-                                    <label>Email Address</label>
-                                    <input name="nokEmail" type="email" placeholder="nok@example.com" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* --- 4. KYC / COMPLIANCE --- */}
-                    <div className={styles.sectionLabel}>
-                        <FileText size={16} /> <span>Identity Verification (KYC)</span>
-                    </div>
-
-                    <div className={styles.kycContainer}>
-                        <div className={styles.inputRow}>
-                            <div className={styles.inputWrapper}>
-                                <label>Document Type</label>
-                                <select name="docType">
-                                    <option value="passport">International Passport</option>
-                                    <option value="dl">Driver&apos;s License</option>
-                                    <option value="id">National ID Card</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div className={styles.dropZone}>
-                            <input type="file" id="idUpload" className={styles.fileInput} onChange={handleFileChange} />
-                            <div className={styles.dropContent}>
-                                <div className={styles.cloudIcon}>
-                                    <UploadCloud size={24} />
-                                </div>
-                                {frontFile ? (
-                                    <div className={styles.fileSuccess}>
-                                        <span>{frontFile}</span>
-                                        <CheckCircle size={16} />
+                            <div className={styles.fieldGroup}>
+                                <div className={styles.photoUploadRow}>
+                                    <div className={styles.previewCircle}>
+                                        {passportFile ? <User size={32} color="#22c55e" /> : <User size={32} className={styles.placeholderIcon} />}
                                     </div>
-                                ) : (
-                                    <div className={styles.uploadText}>
-                                        <span className={styles.mainText}>Upload Identity Document</span>
-                                        <span className={styles.subText}>PNG, JPG or PDF (Max 10MB)</span>
+                                    <div className={styles.photoInputWrapper}>
+                                        <label>Upload Passport / Selfie</label>
+                                        <input type="file" name="passportPhoto" accept="image/*" className={styles.fileInput} onChange={handleFileChange} />
+                                        <span className={styles.fileHint}>
+                                            {passportFile ? <span className={styles.successText}>{passportFile}</span> : "Visible on your profile (Max 10MB)"}
+                                        </span>
                                     </div>
-                                )}
+                                </div>
+                            </div>
+
+                            <div className={styles.sectionLabel}>
+                                <Lock size={16} /> <span>Account Credentials</span>
+                            </div>
+                            <div className={styles.fieldGroup}>
+                                <div className={styles.inputRow}>
+                                    <div className={styles.inputWrapper}>
+                                        <label>Legal Full Name</label>
+                                        <div className={styles.inputIconBox}><User size={18} /></div>
+                                        <input name="fullName" defaultValue={defaultName} placeholder="John Doe" required />
+                                    </div>
+                                </div>
+                                <div className={styles.inputRow}>
+                                    <div className={styles.inputWrapper}>
+                                        <label>Email Address</label>
+                                        <div className={styles.inputIconBox}><Mail size={18} /></div>
+                                        <input name="email" defaultValue={defaultEmail} type="email" required />
+                                    </div>
+                                </div>
+                                <div className={styles.grid2}>
+                                    <div className={styles.inputWrapper}>
+                                        <label>Password</label>
+                                        <input name="password" type="password" placeholder="••••••••" required />
+                                    </div>
+                                    <div className={styles.inputWrapper}>
+                                        <label>Transaction PIN</label>
+                                        <input name="pin" type="password" maxLength={4} placeholder="• • • •" className={styles.pinInput} required />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className={styles.sectionLabel}>
+                                <Fingerprint size={16} /> <span>Personal Profile</span>
+                            </div>
+                            <div className={styles.fieldGroup}>
+                                <div className={styles.grid2}>
+                                    <div className={styles.inputWrapper}>
+                                        <label>Date of Birth</label>
+                                        <input name="dateOfBirth" type="date" required />
+                                    </div>
+                                    <div className={styles.inputWrapper}>
+                                        <label>Gender</label>
+                                        <select name="gender" required >
+                                            <option value="">Select Identity...</option>
+                                            <option value="Female">Female</option>
+                                            <option value="Male">Male</option>
+                                            <option value="non-binary">Non-Binary</option>
+                                            <option value="Other">Other</option>
+                                            <option value="Prefer not to answer">Prefer not to Answer</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div className={styles.grid2}>
+                                    <div className={styles.inputWrapper}>
+                                        <label>Mobile Phone</label>
+                                        <input name="phone" type="tel" placeholder="+1..." />
+                                    </div>
+                                    <div className={styles.inputWrapper}>
+                                        <label>Occupation</label>
+                                        <input name="occupation" placeholder="Position / Role" />
+                                    </div>
+                                </div>
+                                <div className={styles.inputRow}>
+                                    <div className={styles.inputWrapper}>
+                                        <label>Tax ID / SSN</label>
+                                        <input name="taxId" placeholder="XXX-XX-XXXX" />
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <p className={styles.complianceNote}>
-                            Your data is processed securely in compliance with federal banking regulations.
-                        </p>
+
+                        {/* RIGHT COLUMN */}
+                        <div className={styles.colRight}>
+                            <div className={styles.sectionLabel}>
+                                <MapPin size={16} /> <span>Residency & Next of Kin</span>
+                            </div>
+                            <div className={styles.fieldGroup}>
+                                <div className={styles.inputRow}>
+                                    <div className={styles.inputWrapper}>
+                                        <label>Street Address</label>
+                                        <input name="address" placeholder="1234 Wall Street, Penthouse 4" />
+                                    </div>
+                                </div>
+                                <div className={styles.grid2}>
+                                    <div className={styles.inputWrapper}>
+                                        <label>City</label>
+                                        <input name="city" placeholder="City" />
+                                    </div>
+                                    <div className={styles.inputWrapper}>
+                                        <label>Country</label>
+                                        <input name="country" defaultValue="United States" />
+                                    </div>
+                                    <div className={styles.inputWrapper}>
+                                        <label>Zip Code</label>
+                                        <input name="zipCode" defaultValue="99950" />
+                                    </div>
+                                </div>
+                                <div className={styles.nokBox}>
+                                    <div className={styles.miniHeader}><HeartHandshake size={14} /> Emergency Contact</div>
+                                    <div className={styles.inputRow}>
+                                        <div className={styles.inputWrapper}>
+                                            <label>Full Name</label>
+                                            <input name="nokName" placeholder="NOK Name" />
+                                        </div>
+                                    </div>
+                                    <div className={styles.grid2}>
+                                        <div className={styles.inputWrapper}>
+                                            <label>Relationship</label>
+                                            <select name="nokRelationship">
+                                                <option value="" disabled>Select...</option>
+                                                <option value="Spouse">Spouse/Partner</option>
+                                                <option value="Parent">Parent</option>
+                                                <option value="Child">Child</option>
+                                                <option value="Sibling">Sibling</option>
+                                                <option value="Other">Other</option>
+                                            </select>
+                                        </div>
+                                        <div className={styles.inputWrapper}>
+                                            <label>Phone Number</label>
+                                            <input name="nokPhone" placeholder="Contact Phone" />
+                                        </div>
+                                    </div>
+                                    <div className={styles.inputRow}>
+                                        <div className={styles.inputWrapper}>
+                                            <label>Email Address</label>
+                                            <input name="nokEmail" type="email" placeholder="nok@example.com" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className={styles.sectionLabel}>
+                                <FileText size={16} /> <span>Identity Verification (KYC)</span>
+                            </div>
+                            <div className={styles.kycContainer}>
+                                <div className={styles.inputRow}>
+                                    <div className={styles.inputWrapper}>
+                                        <label>Document Type</label>
+                                        <select name="docType">
+                                            <option value="passport">International Passport</option>
+                                            <option value="dl">Driver&apos;s License</option>
+                                            <option value="id">National ID Card</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div className={styles.dropZone}>
+                                    <input type="file" name="idDocument" id="idUpload" className={styles.fileInput} onChange={handleFileChange} />
+                                    <div className={styles.dropContent}>
+                                        <div className={styles.cloudIcon}><UploadCloud size={24} /></div>
+                                        {frontFile ? (
+                                            <div className={styles.fileSuccess}><span>{frontFile}</span><CheckCircle size={16} /></div>
+                                        ) : (
+                                            <div className={styles.uploadText}>
+                                                <span className={styles.mainText}>Upload Identity Document</span>
+                                                <span className={styles.subText}>PNG, JPG or PDF (Max 10MB)</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                                <p className={styles.complianceNote}>
+                                    Your data is processed securely in compliance with federal banking regulations.
+                                </p>
+                            </div>
+                        </div>
                     </div>
 
-                    {/* SUBMIT */}
                     <div className={styles.footer}>
-                        <button disabled={isPending} className={styles.primaryBtn}>
+                        <button disabled={isPending || !!fileError} className={styles.primaryBtn}>
                             {isPending ? 'Verifying Identity...' : 'Submit Application'}
                             {!isPending && <ArrowRight size={18} />}
                         </button>
-                        <p className={styles.legalText}>
-                            By creating an account, you agree to TrustBank&apos;s Terms of Service.
-                        </p>
-                        <div className={styles.loginLink}>
-                            Already have an account? <Link href="/login">Sign In</Link>
-                        </div>
+                        <p className={styles.legalText}>By creating an account, you agree to TrustBank&apos;s Terms of Service.</p>
+                        <div className={styles.loginLink}>Already have an account? <Link href="/login">Sign In</Link></div>
                     </div>
 
                 </form>
@@ -263,219 +322,3 @@ export default function RegisterForm() {
         </div>
     );
 }
-
-
-
-// 'use client';
-
-// import { useActionState, useState } from 'react';
-// import { registerUser } from '@/actions/user/register';
-// import Link from 'next/link';
-// import { ChevronDown, ChevronUp, Lock, User, MapPin, Users, CheckCircle, ArrowRight } from 'lucide-react';
-// import styles from './auth.module.css';
-
-// const initialState = {
-//     message: '',
-//     errors: {},
-//     success: false
-// };
-
-// export default function RegisterForm() {
-//     const [state, action, isPending] = useActionState(registerUser, initialState);
-
-//     // Toggles for optional sections
-//     const [showPersonal, setShowPersonal] = useState(false);
-//     const [showContact, setShowContact] = useState(false);
-
-//     // ✅ SUCCESS VIEW
-//     if (state?.success) {
-//         return (
-//             <div className={styles.container}>
-//                 <div className={styles.successState}>
-//                     <div className={styles.successIconBox}>
-//                         <CheckCircle size={48} strokeWidth={1.5} />
-//                     </div>
-//                     <h1>Account Created!</h1>
-//                     <p>{state.message}</p>
-
-//                     <div className={styles.successDetails}>
-//                         <p>Your TrustBank Enterprise account is ready.</p>
-//                         <p>Please sign in to access your dashboard.</p>
-//                     </div>
-
-//                     <Link href="/login" className={styles.loginBtn}>
-//                         Sign In Now <ArrowRight size={18} />
-//                     </Link>
-//                 </div>
-//             </div>
-//         );
-//     }
-
-//     // 📝 REGISTRATION FORM VIEW
-//     return (
-//         <div className={styles.container}>
-//             <div className={styles.header}>
-//                 <h1>Open Your Account</h1>
-//                 <p>Join TrustBank Enterprise today.</p>
-//             </div>
-
-//             <form action={action} className={styles.form}>
-
-//                 {/* ERROR MESSAGE (Only show errors here, success is handled above) */}
-//                 {state?.message && !state.success && (
-//                     <div className={`${styles.alert} ${styles.error}`}>
-//                         {state.message}
-//                     </div>
-//                 )}
-
-//                 {/* --- SECTION 1: ESSENTIALS (REQUIRED) --- */}
-//                 <div className={styles.section}>
-//                     <div className={styles.sectionTitle}>
-//                         <Lock size={18} /> Account Credentials
-//                     </div>
-
-//                     <div className={styles.row}>
-//                         <div className={styles.group}>
-//                             <label>Full Legal Name <span className={styles.req}>*</span></label>
-//                             <input name="fullName" placeholder="John Doe" required className={styles.input} />
-//                             <ErrorMsg errors={state?.errors?.fullName} />
-//                         </div>
-//                     </div>
-
-//                     <div className={styles.group}>
-//                         <label>Email Address <span className={styles.req}>*</span></label>
-//                         <input name="email" type="email" placeholder="name@example.com" required className={styles.input} />
-//                         <ErrorMsg errors={state?.errors?.email} />
-//                     </div>
-
-//                     <div className={styles.row}>
-//                         <div className={styles.group}>
-//                             <label>Password <span className={styles.req}>*</span></label>
-//                             <input name="password" type="password" placeholder="••••••" required className={styles.input} />
-//                             <ErrorMsg errors={state?.errors?.password} />
-//                         </div>
-//                         <div className={styles.group}>
-//                             <label>Transaction PIN <span className={styles.req}>*</span></label>
-//                             <input
-//                                 name="pin"
-//                                 type="password"
-//                                 maxLength={4}
-//                                 placeholder="4 Digits"
-//                                 required
-//                                 className={styles.input}
-//                                 style={{ letterSpacing: '4px', textAlign: 'center' }}
-//                             />
-//                             <ErrorMsg errors={state?.errors?.pin} />
-//                         </div>
-//                     </div>
-//                 </div>
-
-//                 {/* --- SECTION 2: PERSONAL INFO (OPTIONAL) --- */}
-//                 <div className={styles.section}>
-//                     <button type="button" onClick={() => setShowPersonal(!showPersonal)} className={styles.accordionBtn}>
-//                         <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-//                             <User size={18} /> Personal Information <span className={styles.optional}>(Optional)</span>
-//                         </div>
-//                         {showPersonal ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-//                     </button>
-
-//                     {showPersonal && (
-//                         <div className={styles.accordionContent}>
-//                             <div className={styles.row}>
-//                                 <div className={styles.group}>
-//                                     <label>Phone Number</label>
-//                                     <input name="phone" placeholder="+1 (555) 000-0000" className={styles.input} />
-//                                 </div>
-//                                 <div className={styles.group}>
-//                                     <label>Date of Birth</label>
-//                                     <input name="dateOfBirth" type="date" className={styles.input} />
-//                                 </div>
-//                             </div>
-//                             <div className={styles.row}>
-//                                 <div className={styles.group}>
-//                                     <label>Gender</label>
-//                                     <select name="gender" className={styles.select}>
-//                                         <option value="">Select...</option>
-//                                         <option value="Male">Male</option>
-//                                         <option value="Female">Female</option>
-//                                         <option value="Other">Other</option>
-//                                     </select>
-//                                 </div>
-//                                 <div className={styles.group}>
-//                                     <label>Occupation</label>
-//                                     <input name="occupation" placeholder="e.g. Engineer" className={styles.input} />
-//                                 </div>
-//                             </div>
-//                             <div className={styles.group}>
-//                                 <label>Tax ID / SSN</label>
-//                                 <input name="taxId" placeholder="XXX-XX-XXXX" className={styles.input} />
-//                             </div>
-//                         </div>
-//                     )}
-//                 </div>
-
-//                 {/* --- SECTION 3: CONTACT & NOK (OPTIONAL) --- */}
-//                 <div className={styles.section}>
-//                     <button type="button" onClick={() => setShowContact(!showContact)} className={styles.accordionBtn}>
-//                         <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-//                             <MapPin size={18} /> Contact & Next of Kin <span className={styles.optional}>(Optional)</span>
-//                         </div>
-//                         {showContact ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-//                     </button>
-
-//                     {showContact && (
-//                         <div className={styles.accordionContent}>
-//                             <h4 className={styles.miniHeader}>Your Address</h4>
-//                             <div className={styles.row}>
-//                                 <div className={styles.group}>
-//                                     <label>Country</label>
-//                                     <input name="country" placeholder="Country" className={styles.input} />
-//                                 </div>
-//                                 <div className={styles.group}>
-//                                     <label>City</label>
-//                                     <input name="city" placeholder="City" className={styles.input} />
-//                                 </div>
-//                             </div>
-//                             <div className={styles.group}>
-//                                 <label>Full Address</label>
-//                                 <input name="address" placeholder="123 Main St, Apt 4B" className={styles.input} />
-//                             </div>
-
-//                             <div className={styles.divider}></div>
-
-//                             <h4 className={styles.miniHeader}><Users size={14} /> Next of Kin</h4>
-//                             <div className={styles.row}>
-//                                 <div className={styles.group}>
-//                                     <label>NOK Name</label>
-//                                     <input name="nokName" placeholder="Full Name" className={styles.input} />
-//                                 </div>
-//                                 <div className={styles.group}>
-//                                     <label>Relationship</label>
-//                                     <input name="nokRelationship" placeholder="e.g. Spouse" className={styles.input} />
-//                                 </div>
-//                             </div>
-//                             <div className={styles.group}>
-//                                 <label>NOK Phone/Email</label>
-//                                 <input name="nokPhone" placeholder="Contact Info" className={styles.input} />
-//                             </div>
-//                         </div>
-//                     )}
-//                 </div>
-
-//                 <button disabled={isPending} className={styles.submitBtn}>
-//                     {isPending ? 'Creating Account...' : 'Register Account'}
-//                 </button>
-
-//                 <p className={styles.footerText}>
-//                     Already have an account? <Link href="/login" className={styles.link}>Sign In</Link>
-//                 </p>
-//             </form>
-//         </div>
-//     );
-// }
-
-// // Helper for showing field-specific errors
-// function ErrorMsg({ errors }: { errors?: string[] }) {
-//     if (!errors || errors.length === 0) return null;
-//     return <p className={styles.fieldError}>{errors[0]}</p>;
-// }

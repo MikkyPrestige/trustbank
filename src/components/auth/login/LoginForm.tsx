@@ -4,7 +4,7 @@ import { useActionState, useState } from 'react';
 import { login } from '@/actions/user/login';
 import Link from 'next/link';
 import { Lock, Mail, ArrowRight, ShieldCheck, Eye, EyeOff, Loader2 } from 'lucide-react';
-import styles from './LoginForm.module.css';
+import styles from './styles/LoginForm.module.css';
 
 export default function LoginForm() {
     const [state, action, isPending] = useActionState(login, undefined);
@@ -55,7 +55,7 @@ export default function LoginForm() {
                         <div className={styles.labelRow}>
                             <label>Password</label>
                             <Link href="/forgot-password" className={styles.forgotLink}>
-                                Forgot?
+                                Forgot Password?
                             </Link>
                         </div>
 

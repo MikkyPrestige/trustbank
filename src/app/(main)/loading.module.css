@@ -2,32 +2,102 @@
   padding: 2rem;
   max-width: 1200px;
   margin: 0 auto;
+  width: 100%;
 }
 
+/* The Shimmer Effect */
 .shimmer {
-  background: #f6f7f8;
+  /* Dark base color */
+  background: #1f2937;
+  /* The moving highlight */
   background-image: linear-gradient(
     to right,
-    #f6f7f8 0%,
-    #edeef1 20%,
-    #f6f7f8 40%,
-    #f6f7f8 100%
+    #1f2937 0%,
+    #374151 20%,
+    /* Lighter gray for the shine */ #1f2937 40%,
+    #1f2937 100%
   );
   background-repeat: no-repeat;
   background-size: 800px 100%;
-  animation-duration: 1s;
+  animation-duration: 1.5s;
   animation-fill-mode: forwards;
   animation-iteration-count: infinite;
   animation-name: placeholderShimmer;
   animation-timing-function: linear;
-  border-radius: 8px;
+  border-radius: 12px;
+  opacity: 0.6;
 }
 
 @keyframes placeholderShimmer {
-  0% { background-position: -468px 0; }
-  100% { background-position: 468px 0; }
+  0% {
+    background-position: -468px 0;
+  }
+  100% {
+    background-position: 468px 0;
+  }
 }
 
-.header { height: 40px; width: 200px; margin-bottom: 2rem; }
-.card { height: 200px; width: 100%; margin-bottom: 1.5rem; }
-.row { height: 60px; width: 100%; margin-bottom: 1rem; }
+/* Specific Element Sizing */
+.headerGroup {
+  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.title {
+  height: 32px;
+  width: 200px;
+  border-radius: 6px;
+}
+.subtitle {
+  height: 16px;
+  width: 150px;
+  border-radius: 4px;
+}
+
+.card {
+  height: 200px;
+  width: 100%;
+  margin-bottom: 2rem;
+  border-radius: 16px;
+}
+
+.actionsRow {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  margin-bottom: 2.5rem;
+}
+
+.circle {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+}
+
+.sectionTitle {
+  height: 24px;
+  width: 140px;
+  margin-bottom: 1rem;
+}
+
+.row {
+  height: 70px;
+  width: 100%;
+  margin-bottom: 1rem;
+  border-radius: 12px;
+}
+
+/* Mobile Adjustments */
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+  .card {
+    height: 160px;
+  }
+  .circle {
+    width: 50px;
+    height: 50px;
+  }
+}

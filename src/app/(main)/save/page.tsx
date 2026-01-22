@@ -1,6 +1,6 @@
 import Image from "next/image";
 import styles from "./save.module.css";
-import SavingsCalculator from "@/components/save/SavingsCalculator";
+import SavingsCalculator from "@/components/main/save/SavingsCalculator";
 import { ShieldCheck, ArrowRight, TrendingUp, PiggyBank, Lock, Award, Star } from "lucide-react";
 
 const PRODUCTS = [

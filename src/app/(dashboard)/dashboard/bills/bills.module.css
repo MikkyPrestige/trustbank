@@ -1,0 +1,143 @@
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 2rem;
+    color: var(--text-main);
+    animation: fadeIn 0.4s ease-out;
+}
+
+.header { margin-bottom: 2rem; }
+.title { font-size: 1.8rem; font-weight: 800; margin-bottom: 0.5rem; }
+.subtitle { color: var(--text-muted); font-size: 0.95rem; }
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.2s;
+}
+
+.card:hover {
+    border-color: var(--primary);
+    transform: translateY(-2px);
+    background: var(--bg-card);
+}
+
+.cardSelected {
+    background: rgba(59, 130, 246, 0.1);
+    border-color: var(--primary);
+    box-shadow: 0 0 0 1px var(--primary);
+}
+
+.iconBox {
+    padding: 12px;
+    border-radius: 50%;
+    background: var(--bg-app);
+    color: var(--text-main);
+}
+
+.formCard {
+    background: var(--bg-card);
+    padding: 2rem;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-card);
+}
+
+.formTitle {
+    margin: 0 0 1.5rem 0;
+    font-size: 1.2rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1rem;
+}
+
+.group { margin-bottom: 1.5rem; }
+
+.label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.input {
+    width: 100%;
+    padding: 14px;
+    border-radius: 10px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    color: var(--text-main);
+    font-size: 1rem;
+    outline: none;
+    transition: border 0.2s;
+}
+
+.input:focus { border-color: var(--primary); }
+
+.inputAmount { font-size: 1.2rem; font-weight: 700; }
+.inputPin { text-align: center; letter-spacing: 4px; font-size: 1.2rem; }
+
+.payBtn {
+    width: 100%;
+    padding: 16px;
+    border-radius: 12px;
+    background: var(--text-main);
+    color: var(--bg-app);
+    border: none;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.2s;
+}
+
+.payBtn:hover { opacity: 0.9; }
+.payBtn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.providerName {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--text-main);
+}
+
+.indicator {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    border-radius: 4px 4px 0 0;
+}
+
+.formSubtitle {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin-bottom: 1.5rem;
+    margin-top: -0.5rem;
+}
+
+.row {
+    display: flex;
+    gap: 1rem;
+    width: 100%;
+}
+
+.spin { animation: spin 1s linear infinite; }
+@keyframes spin { 100% { transform: rotate(360deg); } }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }

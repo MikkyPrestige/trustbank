@@ -1,12 +1,69 @@
 import { db } from "@/lib/db";
+import { KycStatus, TransactionDirection, TransactionType } from "@prisma/client";
 
-// Define limits for Unverified users
+// --- CONFIGURATION ---
 const LIMITS = {
-    TRANSFER_MAX: 500, // Max $500 per transfer
-    BALANCE_CAP: 2000, // Max $2000 in account
+    UNVERIFIED_TX_MAX: 2000,      // Max $2,000 per single transaction
+    UNVERIFIED_DAILY_MAX: 10000,  // Max $10,000 per day total
+    UNVERIFIED_BALANCE_CAP: 100000, // Max $100,000 holding balance
 };
 
-export async function checkPermissions(userId: string, action: 'LOAN' | 'CRYPTO' | 'TRANSFER', amount?: number) {
+// 1. CHECK PERMISSIONS (Sender Limits)
+export async function checkPermissions(userId: string, action: 'LOAN' | 'CRYPTO' | 'TRANSFER', amount: number = 0) {
+    const user = await db.user.findUnique({
+        where: { id: userId },
+    });
+
+    if (!user) return { allowed: false, error: "User not found" };
+
+    // ✅ VERIFIED USERS: No Limits
+    if (user.kycStatus === KycStatus.VERIFIED) {
+        return { allowed: true };
+    }
+
+    // --- UNVERIFIED RULES ---
+
+    // A. Feature Blocks
+    if (action === 'LOAN') return { allowed: false, error: "KYC Verification required for Loans." };
+    if (action === 'CRYPTO') return { allowed: false, error: "Identity verification required for Crypto trading." };
+
+    // B. Transfer Limits
+    if (action === 'TRANSFER') {
+
+        // Rule 1: Per Transaction Limit
+        if (amount > LIMITS.UNVERIFIED_TX_MAX) {
+            return { allowed: false, error: `Unverified Limit: Max $${LIMITS.UNVERIFIED_TX_MAX.toLocaleString()} per transaction.` };
+        }
+
+        // Rule 2: Daily Cumulative Limit 🛡️
+        // We must calculate how much they have ALREADY spent today.
+        const startOfDay = new Date();
+        startOfDay.setHours(0, 0, 0, 0);
+
+        const todayUsage = await db.ledgerEntry.aggregate({
+            _sum: { amount: true },
+            where: {
+                account: { userId: userId }, // All accounts belonging to this user
+                direction: TransactionDirection.DEBIT, // Money leaving
+                type: { in: [TransactionType.TRANSFER, TransactionType.WIRE] }, // Only user-initiated transfers
+                createdAt: { gte: startOfDay }
+            }
+        });
+
+        const currentDailyTotal = Number(todayUsage._sum.amount || 0);
+
+        if ((currentDailyTotal + amount) > LIMITS.UNVERIFIED_DAILY_MAX) {
+             const remaining = Math.max(0, LIMITS.UNVERIFIED_DAILY_MAX - currentDailyTotal);
+             return { allowed: false, error: `Daily Limit ($${LIMITS.UNVERIFIED_DAILY_MAX.toLocaleString()}) Exceeded. You have $${remaining.toLocaleString()} remaining for today.` };
+        }
+    }
+
+    return { allowed: true };
+}
+
+// 2. CHECK INBOUND LIMIT (Balance Cap - For Receivers)
+// usage: call this before crediting an unverified user
+export async function checkInboundLimit(userId: string, incomingAmount: number) {
     const user = await db.user.findUnique({
         where: { id: userId },
         include: { accounts: true }
@@ -14,40 +71,37 @@ export async function checkPermissions(userId: string, action: 'LOAN' | 'CRYPTO'
 
     if (!user) return { allowed: false, error: "User not found" };
 
-    // If User is Verified, they have NO limits (or higher limits)
-    if (user.kycStatus) {
-        return { allowed: true };
+    if (user.status === 'SUSPENDED') {
+        return {
+            allowed: false,
+            error: "Transaction Rejected: Beneficiary account is Suspended/Inactive."
+        };
     }
 
-    // --- RULES FOR UNVERIFIED USERS ---
+    if (user.status === 'FROZEN') return { allowed: true };
+    if (user.kycStatus === KycStatus.VERIFIED) return { allowed: true };
 
-    // 1. BLOCK SENSITIVE FEATURES
-    if (action === 'LOAN') {
-        return { allowed: false, error: "KYC Verification required for Loans." };
-    }
-    if (action === 'CRYPTO') {
-        return { allowed: false, error: "Identity verification required for Crypto trading." };
-    }
+    // Calculate Total Holdings
+    const totalBalance = user.accounts.reduce((sum, acc) => sum + Number(acc.currentBalance), 0);
 
-    // 2. LIMIT TRANSFERS
-    if (action === 'TRANSFER' && amount) {
-        if (amount > LIMITS.TRANSFER_MAX) {
-            return { allowed: false, error: `Unverified limit: $${LIMITS.TRANSFER_MAX} per transaction.` };
-        }
+    if ((totalBalance + incomingAmount) > LIMITS.UNVERIFIED_BALANCE_CAP) {
+        return {
+            allowed: false,
+            error: `Transfer rejected. Recipient balance cannot exceed $${LIMITS.UNVERIFIED_BALANCE_CAP.toLocaleString()} (Unverified).`
+        };
     }
-
-    // 3. BALANCE CAP (Prevent hoarding money)
-    // (Optional logic you can add if needed)
 
     return { allowed: true };
 }
 
-
+// 3. VERIFY PIN (Standard)
 export async function verifyPin(userId: string, pin: string) {
   try {
     const user = await db.user.findUnique({
       where: { id: userId },
       select: {
+        id: true,
+        fullName: true,
         transactionPin: true,
         failedPinAttempts: true,
         pinLockedUntil: true
@@ -56,57 +110,61 @@ export async function verifyPin(userId: string, pin: string) {
 
     if (!user) return { success: false, error: "User not found" };
 
-    // 1. CHECK LOCK STATUS
-    // If we have a lock date and it's in the future, BLOCK THEM.
+    // A. Check Lock
     if (user.pinLockedUntil && new Date() < user.pinLockedUntil) {
        const minutesLeft = Math.ceil((user.pinLockedUntil.getTime() - new Date().getTime()) / 60000);
        return { success: false, error: `PIN locked. Try again in ${minutesLeft} minutes.` };
     }
 
-    // 2. CHECK ATTEMPTS (Limit: 5)
-    if (user.failedPinAttempts >= 5) {
-        // Optional: Set a lock time (e.g., 30 minutes) if not already set
-        if (!user.pinLockedUntil) {
-             await db.user.update({
-                where: { id: userId },
-                data: { pinLockedUntil: new Date(Date.now() + 30 * 60 * 1000) } // 30 mins from now
-             });
-        }
-        return { success: false, error: "Account locked due to too many failed PIN attempts." };
-    }
-
-    // 3. VERIFY PIN
-    // Note: If you store PINs as plain text (e.g. "1234"), use: pin === user.transactionPin
-    // If you hash them, use bcrypt.compare
+    // B. Verify
     const isValid = pin === user.transactionPin;
 
-    if (!isValid) {
-      // ❌ WRONG PIN
-      const newCount = user.failedPinAttempts + 1;
-
-      // Update DB
-      await db.user.update({
-        where: { id: userId },
-        data: { failedPinAttempts: newCount }
-      });
-
-      const remaining = 5 - newCount;
-      if (remaining <= 0) {
-          return { success: false, error: "PIN Limit Reached. Account Locked." };
-      }
-
-      return { success: false, error: `Invalid PIN. ${remaining} attempts remaining.` };
+    if (isValid) {
+        // Reset counters on success
+        if (user.failedPinAttempts > 0 || user.pinLockedUntil) {
+            await db.user.update({
+                where: { id: userId },
+                data: { failedPinAttempts: 0, pinLockedUntil: null }
+            });
+        }
+        return { success: true };
     }
 
-    // ✅ SUCCESS: Reset counter to 0
-    if (user.failedPinAttempts > 0 || user.pinLockedUntil) {
-      await db.user.update({
+    // C. Handle Failure
+    const newCount = user.failedPinAttempts + 1;
+    const isLockedNow = newCount >= 5;
+
+    await db.user.update({
         where: { id: userId },
-        data: { failedPinAttempts: 0, pinLockedUntil: null }
-      });
+        data: {
+            failedPinAttempts: newCount,
+            pinLockedUntil: isLockedNow ? new Date(Date.now() + 30 * 60 * 1000) : null
+        }
+    });
+
+    if (isLockedNow) {
+        // Notify Admins
+        const admins = await db.user.findMany({
+            where: { role: { in: ["ADMIN", "SUPER_ADMIN"] } },
+            select: { id: true }
+        });
+
+        if (admins.length > 0) {
+            await db.notification.createMany({
+                data: admins.map((admin) => ({
+                    userId: admin.id,
+                    title: "Security Alert: Account Locked",
+                    message: `User ${user.fullName || 'User'} has been locked out after 5 failed PIN attempts.`,
+                    type: "WARNING",
+                    link: `/admin/users/${user.id}`,
+                    isRead: false
+                }))
+            });
+        }
+        return { success: false, error: "Too many failed attempts. Account locked for 30 minutes." };
     }
 
-    return { success: true };
+    return { success: false, error: `Invalid PIN. ${5 - newCount} attempts remaining.` };
 
   } catch (error) {
     console.error("PIN Verification Error:", error);

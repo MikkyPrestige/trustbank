@@ -1,0 +1,436 @@
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem;
+    color: var(--text-main);
+}
+
+.header {
+    margin-bottom: 3rem;
+    text-align: center;
+}
+
+.title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+    color: var(--text-muted);
+}
+
+/* LAYOUT GRID */
+.grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    align-items: flex-start;
+    padding-bottom: 4rem;
+    border-bottom: 1px dashed var(--border);
+    margin-bottom: 4rem;
+}
+
+@media (min-width: 900px) {
+    .grid {
+        grid-template-columns: 400px 1fr; /* Fixed Card Width + Flexible Controls */
+        gap: 4rem;
+    }
+}
+
+/* --- THE PREMIUM CARD --- */
+.cardColumn {
+    position: sticky;
+    top: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.visaCard {
+    width: 100%;
+    aspect-ratio: 1.586; /* Standard Credit Card Ratio */
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    border-radius: 20px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 20px 40px -10px rgba(0,0,0,0.3);
+    color: white;
+    transition: transform 0.3s ease, filter 0.3s ease;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+/* Shiny Glass Effect */
+.cardShine {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(105deg, rgba(255,255,255,0) 20%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0) 80%);
+    pointer-events: none;
+}
+
+.cardTexture {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle at 80% 20%, rgba(255,255,255,0.05) 0%, transparent 40%);
+    pointer-events: none;
+}
+
+.frozenCard {
+    filter: grayscale(100%) opacity(0.8);
+    transform: scale(0.98);
+}
+
+.cardContent {
+    padding: 24px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    z-index: 2;
+}
+
+.cardTop {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.bankName {
+    font-weight: 700;
+    font-size: 1.1rem;
+    letter-spacing: 0.5px;
+}
+
+.cardType {
+    font-weight: 800;
+    font-style: italic;
+    font-size: 1.2rem;
+    opacity: 0.9;
+}
+
+.chipRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.chip {
+    width: 45px;
+    height: 32px;
+    background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+    border-radius: 6px;
+    position: relative;
+    overflow: hidden;
+}
+.chip::after {
+    content: '';
+    position: absolute;
+    top: 50%; left: 0; right: 0; height: 1px; background: rgba(0,0,0,0.3);
+}
+
+.contactlessIcon {
+    font-family: monospace;
+    font-size: 1.2rem;
+    font-weight: bold;
+    transform: rotate(90deg);
+    opacity: 0.7;
+}
+
+.cardNumberWrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 10px 0;
+}
+
+.cardNumber {
+    font-family: 'Courier New', monospace;
+    font-size: 1.4rem;
+    letter-spacing: 3px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.4);
+    font-weight: 600;
+}
+
+.copyBtn {
+    background: transparent;
+    border: none;
+    color: rgba(255,255,255,0.6);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.copyBtn:hover {
+    background: rgba(255,255,255,0.1);
+    color: white;
+}
+
+.cardDetails {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.detailGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.detailLabel {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    opacity: 0.7;
+    letter-spacing: 1px;
+}
+
+.detailValue {
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.eyeBtn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 10;
+    background: rgba(0,0,0,0.3);
+    border: none;
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+.eyeBtn:hover {
+    background: rgba(0,0,0,0.5);
+}
+
+/* --- CONTROLS --- */
+.controlsWrapper {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: var(--shadow-card);
+}
+
+.sectionHeader {
+    margin-bottom: 2rem;
+}
+.sectionHeader h3 { margin: 0 0 5px 0; }
+.sectionHeader p { margin: 0; color: var(--text-muted); font-size: 0.9rem; }
+
+.controlGrid {
+    display: grid;
+    gap: 1rem;
+}
+
+.controlCard {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    transition: all 0.2s;
+}
+
+.controlCard:hover {
+    border-color: var(--primary);
+    transform: translateY(-2px);
+}
+
+.activeFreeze {
+    border-color: var(--danger);
+    background: rgba(239, 68, 68, 0.05);
+}
+
+.controlHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.iconBox {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.controlInfo h4 {
+    margin: 0 0 4px 0;
+    font-size: 1rem;
+}
+.controlInfo p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+/* TOGGLE SWITCH */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 48px;
+    height: 26px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: var(--border);
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+input:checked + .slider {
+    background-color: var(--primary);
+}
+
+input:checked + .slider:before {
+    transform: translateX(22px);
+}
+
+/* LOCKED STATE */
+.lockedState {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: var(--bg-card);
+    border-radius: 16px;
+    border: 1px dashed var(--border);
+}
+.lockIconBox {
+    background: var(--bg-surface);
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1.5rem;
+    color: var(--text-muted);
+}
+.verifyBtn {
+    display: inline-block;
+    margin-top: 1.5rem;
+    background: var(--primary);
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.emptyState {
+    text-align: center;
+    padding: 4rem;
+    color: var(--text-muted);
+}
+
+.emptyIcon {
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+/* --- STATUS PILL STYLES --- */
+.statusWrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: -10px; /* Pulls it slightly up towards the card */
+    position: relative;
+    z-index: 2;
+}
+
+.statusPill {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    backdrop-filter: blur(4px);
+    border: 1px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.activePill {
+    background: rgba(34, 197, 94, 0.1);
+    color: #22c55e;
+    border-color: rgba(34, 197, 94, 0.2);
+}
+
+.frozenPill {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border-color: rgba(239, 68, 68, 0.2);
+}
+
+.statusDot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+/* Add a glow effect specifically for the active dot */
+.activePill .statusDot {
+    box-shadow: 0 0 8px currentColor;
+    animation: pulse 2s infinite;
+}
+
+/* Add this to your existing CSS file */
+.flexGap {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* Ensure the left column stretches its items to fill width */
+.cardColumn {
+    position: sticky;
+    top: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    width: 100%; /* Ensures the Freeze box fills the column width */
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}

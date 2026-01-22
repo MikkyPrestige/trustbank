@@ -1,0 +1,1121 @@
+/* --- 1. THE SHELL LAYOUT --- */
+.layoutShell {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--bg-subtle, #f8fafc);
+}
+
+/* Dark Mode adjustment */
+@media (prefers-color-scheme: dark) {
+  .layoutShell {
+    background-color: #0f172a;
+  }
+}
+
+/* --- 2. SIDEBAR (The Navigation Hub) --- */
+.sidebar {
+  width: 280px;
+  height: 100vh;
+  background: var(--bg-surface);
+  border-right: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  z-index: 50;
+  transition: transform 0.3s ease;
+}
+
+/* Logo Area */
+.logoArea {
+  padding-bottom: 24px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0; /* Prevents logo from shrinking on short screens */
+}
+
+/* ✅ FIXED: Added missing class */
+.logoImage {
+  object-fit: contain;
+  display: block;
+}
+
+/* Navigation List */
+.navMenu {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1; /* Takes up all available space */
+
+  /* ✅ FIXED: This enables scrolling for the links only */
+  overflow-y: auto;
+  min-height: 0; /* Crucial for flexbox scrolling to work */
+  padding-right: 4px; /* Space for scrollbar */
+}
+
+/* Custom Scrollbar for Nav (Subtle) */
+.navMenu::-webkit-scrollbar {
+  width: 4px;
+}
+.navMenu::-webkit-scrollbar-track {
+  background: transparent;
+}
+.navMenu::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 10px;
+}
+.navMenu:hover::-webkit-scrollbar-thumb {
+  background: var(--text-muted);
+}
+
+.navLabel {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+  margin: 24px 0 8px 12px;
+}
+.navLabel:first-child {
+  margin-top: 0;
+}
+
+/* The Links */
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0; /* Prevents links from squishing */
+}
+
+.navItem:hover {
+  background: rgba(0, 0, 0, 0.03);
+  color: var(--text-main);
+}
+@media (prefers-color-scheme: dark) {
+  .navItem:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
+}
+
+/* ACTIVE STATE */
+.active {
+  background: rgba(59, 130, 246, 0.1);
+  color: #3b82f6;
+}
+.active::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 20px;
+  background: #3b82f6;
+  border-radius: 0 4px 4px 0;
+}
+
+/* Divider Line */
+.divider {
+  height: 1px;
+  background: var(--border);
+  margin: 0px 16px;
+  opacity: 0.5;
+  flex-shrink: 0;
+}
+
+/* Notification Badge */
+.navBadge {
+  margin-left: auto;
+  background: var(--danger);
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 50px;
+  min-width: 20px;
+  text-align: center;
+}
+
+/* --- 3. BOTTOM USER CARD --- */
+.userProfile {
+  margin-top: 16px; /* Space from nav list */
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  cursor: pointer;
+  transition: 0.2s;
+  flex-shrink: 0; /* ✅ Prevents Profile from disappearing */
+}
+.userProfile:hover {
+  border-color: var(--text-muted);
+  transform: translateY(-2px);
+}
+
+.avatarWrapper {
+  position: relative;
+}
+.avatar {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+.userAvatarImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.statusDot {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--bg-card);
+}
+.dotVerified {
+  background: var(--success);
+}
+.dotPending {
+  background: var(--warning);
+}
+.dotFrozen {
+  background: var(--danger);
+}
+
+.userInfo {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+.userName {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.userRole {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.logoutBtn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  transition: 0.2s;
+}
+.logoutBtn:hover {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--danger);
+}
+
+/* --- 4. MAIN CONTENT AREA --- */
+.mainContent {
+  flex: 1;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* --- 5. DASHBOARD HEADER --- */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 40px;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+@media (prefers-color-scheme: dark) {
+  .header {
+    background: rgba(15, 23, 42, 0.8);
+  }
+}
+
+.greeting h1 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text-main);
+  margin: 0;
+}
+.greeting p {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.headerActions {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.iconBtn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: 0.2s;
+  position: relative;
+}
+.iconBtn:hover {
+  background: var(--bg-card);
+  color: var(--text-main);
+  border-color: var(--text-main);
+}
+
+.badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 8px;
+  height: 8px;
+  background: #ef4444;
+  border-radius: 50%;
+  border: 1px solid var(--bg-surface);
+}
+
+/* --- 6. HERO & CARDS --- */
+.overviewGrid {
+  display: grid;
+  grid-template-columns: 1.8fr 1fr;
+  gap: 24px;
+  padding: 30px 40px;
+}
+
+.actionsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  position: relative;
+}
+.quickAction {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px; /* Slightly tighter radius */
+  padding: 16px 10px; /* Less padding to fit 3 cols */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+  height: 100%;
+}
+.quickAction:hover {
+  transform: translateY(-4px);
+  border-color: var(--primary);
+  box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.05);
+}
+.actionIcon {
+  width: 40px; /* Smaller icon circle */
+  height: 40px;
+  background: var(--bg-surface);
+  border-radius: 12px;
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.actionLabel {
+  font-size: 0.8rem; /* Smaller, sharper text */
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+/* --- 7. TRANSACTIONS TABLE --- */
+.sectionTitle {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0 0 20px 0;
+  padding: 0 40px;
+}
+.tableWrapper {
+  margin: 0 40px 40px 40px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+.table th {
+  text-align: left;
+  padding: 16px 24px;
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--border);
+}
+.table td {
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-main);
+  font-weight: 500;
+}
+.table tr:last-child td {
+  border-bottom: none;
+}
+.table tr:hover td {
+  background: var(--bg-surface);
+}
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 50px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+.statusCompleted {
+  background: rgba(34, 197, 94, 0.1);
+  color: #22c55e;
+}
+.statusPending {
+  background: rgba(234, 179, 8, 0.1);
+  color: #eab308;
+}
+.statusFailed {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+.amountPositive {
+  color: #22c55e;
+}
+.amountNegative {
+  color: var(--text-main);
+}
+.emptyState {
+  padding: 40px;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+/* --- RESPONSIVE MOBILE --- */
+.mobileHeader {
+  display: none;
+}
+
+@media (max-width: 1024px) {
+  .overviewGrid {
+    grid-template-columns: 1fr;
+    padding: 20px;
+  }
+  .balanceAmount {
+    font-size: 2.2rem;
+  }
+
+  .sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    transform: translateX(-100%);
+    box-shadow: 20px 0 40px rgba(0, 0, 0, 0.1);
+  }
+  .open {
+    transform: translateX(0);
+  }
+
+  .mobileHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    background: var(--bg-surface);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 40;
+  }
+  .layoutShell {
+    flex-direction: column;
+  }
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 45;
+  opacity: 0;
+  pointer-events: none;
+  transition: 0.3s;
+}
+.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+.mobileToggleBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* --- 8. FROZEN ALERT --- */
+.frozenBanner {
+  background: #ef4444;
+  color: white;
+  padding: 16px 24px;
+  border-radius: 16px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 10px 20px -5px rgba(239, 68, 68, 0.4);
+}
+.frozenContent strong {
+  display: block;
+  font-size: 0.95rem;
+  margin-bottom: 2px;
+}
+.frozenContent span {
+  font-size: 0.85rem;
+  opacity: 0.9;
+  line-height: 1.4;
+}
+
+/* --- 9. ACCOUNTS LIST (Checking/Savings Rows) --- */
+.accountList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 30px;
+}
+
+.accountRow {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 16px 20px;
+  border-radius: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: 0.2s;
+}
+.accountRow:hover {
+  border-color: var(--primary);
+  transform: translateY(-2px);
+}
+
+.accInfo {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.accIcon {
+  width: 40px;
+  height: 40px;
+  background: var(--bg-surface);
+  color: var(--primary);
+  font-weight: 800;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+}
+.accName {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 2px;
+}
+.accNumWrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.accNum {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-family: monospace;
+}
+.copyBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  padding: 2px;
+}
+.copyBtn:hover {
+  color: var(--primary);
+}
+
+.accBal {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+.balMain {
+  display: block;
+  font-weight: 700;
+  color: var(--text-main);
+  font-size: 1rem;
+  letter-spacing: -0.5px;
+}
+.balSub {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+.balLabel {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* --- 10. VISA CARD VISUAL --- */
+.visaCard {
+  background: linear-gradient(125deg, #09090b 0%, #18181b 40%, #27272a 100%);
+  border-radius: 24px;
+  padding: 28px;
+  color: white;
+  position: relative;
+  overflow: hidden;
+  box-shadow:
+    0 20px 40px -10px rgba(0, 0, 0, 0.5),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.1); /* Inner glass border */
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.3s ease;
+}
+.visaCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.6);
+}
+.cardGlass {
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.1) 0%,
+    transparent 60%
+  );
+  pointer-events: none;
+}
+.cardShine {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    115deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.05) 45%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0.05) 55%,
+    transparent 60%
+  );
+  pointer-events: none;
+}
+.cardTexture {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.3;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+.cardTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  position: relative;
+  z-index: 2;
+}
+.cardType {
+  font-size: 0.8rem;
+  opacity: 0.8;
+  font-style: italic;
+}
+.bankLogo {
+  font-weight: 800;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  background: linear-gradient(to right, #fff, #94a3b8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Contactless Icon */
+.contactless {
+  transform: rotate(90deg);
+  opacity: 0.8;
+}
+.chip {
+  width: 42px;
+  height: 32px;
+  background: linear-gradient(135deg, #fcd34d 0%, #d97706 100%);
+  border-radius: 6px;
+  margin: 20px 0;
+  position: relative;
+  box-shadow:
+    inset 0 1px 2px rgba(255, 255, 255, 0.4),
+    0 2px 4px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+/* Chip Lines */
+.chip::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: rgba(0, 0, 0, 0.2);
+}
+.chip::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  height: 100%;
+  width: 1px;
+  background: rgba(0, 0, 0, 0.2);
+}
+.cardNumber {
+  font-size: 1.4rem;
+  letter-spacing: 1px;
+  font-family: "Courier New", monospace; /* Classic card font */
+  text-shadow: 0 2px 2px rgba(0, 0, 0, 0.5);
+  color: #e2e8f0;
+  position: relative;
+  z-index: 2;
+  margin-bottom: 0.5rem;
+}
+.cardBottom {
+  display: flex;
+  justify-content: space-between;
+  margin-top: auto;
+  position: relative;
+  z-index: 2;
+}
+.cardLabelSmall {
+  font-size: 0.55rem;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+  display: block;
+}
+.cardValueSmall {
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* --- 11. BENEFICIARIES (Quick Send) --- */
+.quickSendWidget {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding: 4px 0 16px 0;
+}
+.quickSendWidget::-webkit-scrollbar {
+  height: 4px;
+}
+.quickSendWidget::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 10px;
+}
+
+.benCircle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  min-width: 60px;
+}
+.benAvatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  font-weight: 600;
+  color: var(--text-muted);
+  position: relative;
+}
+.benAvatarImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+.benCircle:hover .benAvatar {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: var(--bg-card);
+}
+.benName {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+.addBenCircle {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 1px dashed var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+.addBenCircle:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+/* --- LAYOUT COLUMNS --- */
+.mainGrid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 30px;
+  padding: 0 40px 40px 40px;
+}
+@media (max-width: 1024px) {
+  .mainGrid {
+    grid-template-columns: 1fr;
+    /* padding: 0 20px 40px 20px; */
+  }
+}
+
+.container {
+  width: 100%;
+  min-height: 100%;
+  padding-bottom: 40px;
+}
+
+/* Left Column (Main Content) */
+.leftCol {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Right Column (Sidebar Widgets) */
+.rightCol {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Section Headers (e.g., "Recent Activity", "My Card") */
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding: 0 4px; /* Align visually with cards */
+}
+
+.sectionHeader h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0;
+}
+
+/* --- MORE MENU OVERLAY --- */
+.moreOverlay {
+  position: absolute;
+  inset: 0;
+  background: var(--bg-card);
+  border-radius: 16px;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  padding: 10px;
+  animation: fadeIn 0.2s ease-out;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-card);
+}
+
+.moreAction {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 12px;
+  background: var(--bg-surface);
+  color: var(--text-main);
+  text-decoration: none;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+}
+
+.moreAction:hover {
+  background: var(--bg-app);
+  border-color: var(--border);
+  transform: translateY(-2px);
+}
+
+.closeMenuBtn {
+  grid-column: span 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.closeMenuBtn:hover {
+  background: rgba(239, 68, 68, 0.2);
+}
+
+/* Mobile Toggle Icon Color */
+.menuIcon {
+  color: var(--text-main);
+}
+
+/* --- ADMIN NAVIGATION STYLES --- */
+.adminLabel {
+  color: #f59e0b;
+}
+
+.adminItem {
+  color: #f59e0b; /* Default gold color */
+}
+
+.adminItem:hover {
+  background: rgba(245, 158, 11, 0.1);
+  color: #f59e0b;
+}
+
+.adminItem.active {
+  background: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
+  border-right: 3px solid #f59e0b;
+}
+
+/* --- NAV ITEMS GENERIC --- */
+.navText {
+  flex-grow: 1; /* Pushes the badge to the far right */
+  margin-left: 12px; /* Spacing between Icon and Text */
+  font-size: 0.95rem;
+  font-weight: 500;
+  white-space: nowrap; /* Prevents text wrapping */
+}
+
+.navIcon {
+  color: currentColor;
+}
+
+/* --- BADGES --- */
+.navBadge {
+  background: var(--primary);
+  color: white;
+}
+
+.badgeDanger {
+  background: var(--danger);
+}
+
+/* --- USER PROFILE STATUSES --- */
+.frozenText {
+  color: var(--danger);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.kycLink {
+  color: var(--warning);
+  font-weight: 600;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.kycLink:hover {
+  opacity: 0.8;
+}
+
+
+.frozenWrapper {
+    padding: 0 40px;
+}
+
+.sectionSpacer {
+    margin-top: 30px;
+}
+
+.sectionSpacerSmall {
+    margin-top: 30px;
+    margin-bottom: 10px;
+    padding: 0;
+}
+
+.noMargin {
+    margin: 0 !important;
+}
+
+.linkPrimary {
+    font-size: 0.85rem;
+    color: var(--primary);
+}
+
+.iconSuccess {
+    color: var(--success);
+}
+
+.textSuccess {
+    color: var(--success) !important;
+}
+
+/* --- ACCOUNT ROW STYLING --- */
+.balWrapper {
+    text-align: right;
+}
+
+.balSub {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+/* --- TRANSACTION ROW STYLING --- */
+.txRow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.txIcon {
+    padding: 8px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.txIconCredit {
+    background: rgba(34, 197, 94, 0.1);
+    color: var(--success);
+}
+
+.txIconDebit {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+.txDesc {
+    font-weight: 600;
+}
+
+.txDate {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+.txAmount {
+    text-align: right;
+    font-weight: 700;
+}
+
+/* --- CARD STYLING --- */
+.cardFrozen {
+    filter: grayscale(1);
+    opacity: 0.8;
+}
+
+.visaCardEmpty {
+    display: block;
+    height: 200px;
+    background: var(--bg-surface);
+    border: 1px dashed var(--border);
+    border-radius: 16px;
+    box-shadow: none;
+    text-decoration: none;
+    overflow: hidden;
+}
+
+.visaCardEmptyContent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: var(--text-muted);
+}

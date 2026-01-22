@@ -1,0 +1,493 @@
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+/* --- HEADER --- */
+.header {
+  margin-bottom: 30px;
+  text-align: center;
+}
+.title {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--text-main);
+  margin: 0;
+}
+.subtitle {
+  color: var(--text-muted);
+  margin-top: 8px;
+  font-size: 0.95rem;
+}
+.ref {
+  font-family: monospace;
+  background: var(--bg-surface);
+  padding: 4px 8px;
+  border-radius: 4px;
+  color: var(--primary);
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: 0.2s;
+}
+.backLink:hover {
+  color: var(--primary);
+  transform: translateX(-4px);
+}
+
+/* --- SUCCESS STATE (Completed) --- */
+.successCard {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 40px;
+  text-align: center;
+  box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.1);
+}
+
+.successIcon {
+  width: 80px;
+  height: 80px;
+  background: rgba(34, 197, 94, 0.1);
+  color: #22c55e;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px auto;
+  box-shadow: 0 0 0 8px rgba(34, 197, 94, 0.05);
+}
+
+.successTitle {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 8px;
+}
+.successSubtitle {
+  color: var(--text-muted);
+  margin-bottom: 30px;
+}
+
+.receiptDetails {
+  background: var(--bg-surface);
+  border-radius: 16px;
+  padding: 24px;
+  border: 1px dashed var(--border);
+  margin-bottom: 30px;
+}
+.receiptRow {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+.receiptRow:last-child {
+  margin-bottom: 0;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+.receiptRow span:last-child {
+  color: var(--text-main);
+  font-weight: 600;
+  text-align: right;
+}
+
+.dashboardBtn {
+  display: block;
+  width: 100%;
+  padding: 16px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--text-main);
+  font-weight: 600;
+  text-decoration: none;
+  transition: 0.2s;
+}
+.dashboardBtn:hover {
+  background: var(--bg-surface);
+  border-color: var(--primary);
+}
+
+/* --- PENDING / CLEARANCE CARD --- */
+.statusCard {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.05);
+}
+
+/* Progress Stepper */
+.progress {
+  display: flex;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border);
+}
+.step {
+  flex: 1;
+  text-align: center;
+  padding: 16px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  position: relative;
+}
+.active {
+  color: var(--primary);
+  background: rgba(59, 130, 246, 0.05);
+}
+.active::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--primary);
+}
+
+.details {
+  padding: 30px;
+}
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+.row:last-child {
+  border-bottom: none;
+}
+.row span {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+.row strong {
+  color: var(--text-main);
+  font-size: 1rem;
+}
+.warning {
+  color: #f59e0b !important;
+}
+
+/* Action Area */
+.actionArea {
+  background: linear-gradient(to bottom, var(--bg-surface), var(--bg-card));
+  padding: 30px;
+  border-top: 1px solid var(--border);
+}
+
+/* --- CLEARANCE FORM --- */
+.stageAlert {
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 24px;
+}
+.stageAlert h3 {
+  color: #f59e0b;
+  font-size: 0.95rem;
+  font-weight: 800;
+  margin: 0 0 4px 0;
+  text-transform: uppercase;
+}
+.stageAlert p {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.input {
+  width: 100%;
+  padding: 18px;
+  text-align: center;
+  background: var(--bg-card);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  font-size: 1.4rem;
+  font-family: monospace;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--text-main);
+  transition: 0.2s;
+  margin-bottom: 20px;
+}
+.input:focus {
+  border-color: var(--primary);
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+}
+
+.button {
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(
+    135deg,
+    #f59e0b 0%,
+    #d97706 100%
+  ); /* Amber for Clearance */
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: 0.2s;
+  box-shadow: 0 10px 20px -5px rgba(217, 119, 6, 0.3);
+}
+.button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+}
+.button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.help {
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 16px;
+}
+
+/* --- LOADER SCREEN --- */
+.loaderBox {
+  text-align: center;
+  padding: 40px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid var(--bg-surface);
+  border-top: 4px solid var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 24px;
+}
+.loaderBox h3 {
+  font-size: 1.2rem;
+  color: var(--text-main);
+  margin: 0 0 8px 0;
+}
+.loaderBox p {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-bottom: 24px;
+}
+.percent {
+  font-family: monospace;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-top: 12px;
+}
+
+.progressBarBg {
+  width: 100%;
+  height: 8px;
+  background: var(--bg-surface);
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+}
+.progressBarFill {
+  height: 100%;
+  background: var(--primary);
+  border-radius: 10px;
+  transition: width 0.1s linear; /* Smooth fill */
+}
+
+/* --- LIST VIEW --- */
+.listGrid {
+  display: grid;
+  gap: 16px;
+}
+.wireCard {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: 0.2s;
+}
+.wireCard:hover {
+  border-color: var(--primary);
+  transform: translateX(4px);
+}
+
+.wireBank {
+  font-weight: 700;
+  color: var(--text-main);
+  font-size: 1rem;
+}
+.wireDate {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+.wireAmount {
+  font-family: monospace;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-top: 4px;
+}
+
+.wireAction {
+  text-align: right;
+}
+.stageBadge {
+  display: inline-block;
+  padding: 4px 8px;
+  background: rgba(245, 158, 11, 0.1);
+  color: #f59e0b;
+  font-size: 0.7rem;
+  font-weight: 700;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+.resumeBtn {
+  display: inline-block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--primary);
+  text-decoration: none;
+}
+.resumeBtn:hover {
+  text-decoration: underline;
+}
+
+/* Empty State */
+.emptyState {
+  text-align: center;
+  padding: 60px;
+  background: var(--bg-card);
+  border: 1px dashed var(--border);
+  border-radius: 24px;
+}
+.emptyState h2 {
+  color: var(--text-main);
+  margin-bottom: 8px;
+}
+.emptyState p {
+  color: var(--text-muted);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.fieldWrapper {
+  text-align: left;
+}
+
+.label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--text-muted, #888);
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* --- Success State Text --- */
+.textSuccess {
+  color: #22c55e;
+  font-weight: 600;
+}
+
+/* --- Waiting / Pending Auth State --- */
+.waitingCard {
+  text-align: center;
+  padding: 3rem 2rem;
+}
+
+.waitingIconWrapper {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #eff6ff;
+  color: #3b82f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem auto;
+}
+
+.waitingTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.waitingSubtitle {
+  color: var(--text-muted);
+  max-width: 400px;
+  margin: 0 auto 2rem auto;
+  line-height: 1.5;
+}
+
+.processingStatus {
+  color: #3b82f6;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+}
+
+.waitingNote {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-top: 2rem;
+}
+
+/* --- Wire Info (List View) --- */
+.wireInfo {
+  margin-bottom: 1.5rem;
+}
+
+/* --- Badges --- */
+.badgeAction {
+  background-color: #fff7ed;
+  color: #c2410c;
+  border: 1px solid #fdba74;
+}
+
+.badgeWaiting {
+  background-color: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

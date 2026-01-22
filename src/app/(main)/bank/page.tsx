@@ -1,7 +1,7 @@
 import Image from "next/image";
 import styles from "./bank.module.css";
-import DebitCard3D from "@/components/bank/DebitCard3D";
-import { Zap, Smartphone, Globe, Check, X, ArrowRight } from "lucide-react";
+import DebitCard3D from "@/components/learn/bank/DebitCard3D";
+import { Zap, Smartphone, Globe, Check, X } from "lucide-react";
 
 export default function BankPage() {
     return (

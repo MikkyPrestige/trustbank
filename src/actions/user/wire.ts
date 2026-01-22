@@ -1,145 +1,401 @@
 'use server';
 
-import { auth } from "@/auth";
+import { getAuthenticatedUser } from "@/lib/user-guard";
 import { db } from "@/lib/db";
 import { checkPermissions, verifyPin } from "@/lib/security";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import {
+  UserStatus,
+  KycStatus,
+  TransactionStatus,
+  TransactionType,
+  TransactionDirection
+} from "@prisma/client";
 
+// --- 1. FEE CALCULATOR ---
+function calculateWireFee(amount: number): number {
+    if (amount <= 5000) return 25.00;
+    if (amount <= 50000) return 50.00;
+    return 100.00;
+}
+
+// ... [Keep wireSchema exactly as it was] ...
 const wireSchema = z.object({
-    accountId: z.string().min(1, "Account is required"),
-    amount: z.coerce.number().min(10, "Minimum wire amount is $10"),
-    pin: z.string().length(4, "PIN must be 4 digits"),
-    bankName: z.string().min(3, "Bank Name is required"),
-    accountNumber: z.string().min(6, "Invalid Account Number"),
-    swiftCode: z.string().min(3, "SWIFT/BIC Code is required"),
-    country: z.string().min(2, "Country is required"),
-    routingNumber: z.string().optional(),
-    note: z.string().optional(),
-    saveBeneficiary: z.string().optional(),
+  accountId: z.string().min(1, "Account Selection is required"),
+  amount: z.coerce.number().min(100, "Minimum wire amount is $100"),
+  pin: z.string().length(4, "PIN must be 4 digits"),
+  bankName: z.string().min(3, "Bank Name is required"),
+  accountName: z.string().min(3, "Account Name is required"),
+  accountNumber: z.string().min(6, "Invalid Account Number"),
+  country: z.string().min(2, "Country is required"),
+  swiftCode: z.string().optional(),
+  routingNumber: z.string().optional(),
+  saveBeneficiary: z.string().optional(),
 });
 
 export async function initiateWireTransfer(prevState: any, formData: FormData) {
-    const session = await auth();
-    if (!session) return { message: "Unauthorized" };
-
-    const rawData = Object.fromEntries(formData.entries());
-    const validated = wireSchema.safeParse(rawData);
-
-    if (!validated.success) {
-        return { message: "Please check your inputs." };
+  // 1. GUARD
+  const { success, message, user } = await getAuthenticatedUser();
+   if (!success || !user) {
+        return { success: false, message };
     }
 
-    const {
-        accountId, amount, pin, bankName, accountNumber,
-        swiftCode, country, saveBeneficiary
-    } = validated.data;
+  const rawData = {
+    accountId: formData.get("accountId")?.toString() || "",
+    amount: formData.get("amount")?.toString() || "",
+    pin: formData.get("pin")?.toString() || "",
+    bankName: formData.get("bankName")?.toString() || "",
+    accountName: formData.get("accountName")?.toString() || "",
+    accountNumber: formData.get("accountNumber")?.toString() || "",
+    country: formData.get("country")?.toString() || "",
+    swiftCode: formData.get("swiftCode")?.toString() || undefined,
+    routingNumber: formData.get("routingNumber")?.toString() || undefined,
+    saveBeneficiary: formData.get("saveBeneficiary")?.toString() || undefined,
+  };
 
-    // 🔒 1. SECURITY: Verify PIN & Check Rate Limit
-    const pinValidation = await verifyPin(session.user.id, pin);
-    if (!pinValidation.success) {
-        return { message: pinValidation.error };
-    }
+  const validated = wireSchema.safeParse(rawData);
 
-    // 🔒 2. SECURITY: Check Permissions (Role/Limits)
-    const permission = await checkPermissions(session.user.id, 'TRANSFER', amount);
-    if (!permission.allowed) {
-        return { message: `🚫 ${permission.error}` };
-    }
+  if (!validated.success) {
+    return { message: validated.error.issues[0].message };
+  }
 
-    try {
-        // 3. Fetch User for KYC Check
-        const user = await db.user.findUnique({ where: { id: session.user.id } });
+  const {
+    accountId, amount, pin, bankName, accountNumber, accountName,
+    swiftCode, country, routingNumber, saveBeneficiary
+  } = validated.data;
 
-        if (!user) return { message: "User not found." };
+  // 2. LOGIC & COMPLIANCE
 
-        // 🛑 NEW: FROZEN ACCOUNT LOCK
-        // Frozen users cannot move money internationally either.
-        if (user.status === 'FROZEN') {
-            return { message: "🚫 Account Frozen. Please contact support to unlock transfers." };
+  // A. Routing/SWIFT Check
+  if (!swiftCode && !routingNumber) {
+      return { message: "Please provide either a SWIFT Code (Intl) or Routing Number (US)." };
+  }
+
+  // B. Internal Transfer Check
+  const internalAccount = await db.account.findUnique({
+      where: { accountNumber: accountNumber }
+  });
+  if (internalAccount) {
+      return { message: "TrustBank Account detected. Please use 'Local Transfer' for instant, fee-free transactions." };
+  }
+
+  // C. Calculate Fee
+  const serviceFee = calculateWireFee(amount);
+  const totalDeduction = amount + serviceFee;
+
+  // 3. SECURITY & LIMITS
+  const pinValidation = await verifyPin(user.id, pin);
+  if (!pinValidation.success) return { message: pinValidation.error };
+
+  const permission = await checkPermissions(user.id, 'TRANSFER', amount);
+  if (!permission.allowed) return { message: `🚫 ${permission.error}` };
+
+  const isVerified = user.kycStatus === KycStatus.VERIFIED;
+  const UNVERIFIED_LIMIT = 2000;
+
+  if (!isVerified && amount > UNVERIFIED_LIMIT) {
+    return { message: `🚫 Unverified Limit Exceeded. Max: $${UNVERIFIED_LIMIT.toLocaleString()}.` };
+  }
+
+  // 4. BALANCE CHECK (Must cover Amount + Fee)
+  const account = await db.account.findUnique({ where: { id: accountId } });
+  if (!account) return { message: "Account not found." };
+
+  if (Number(account.availableBalance) < totalDeduction) {
+      return { message: `Insufficient funds. Balance needed: $${totalDeduction.toLocaleString()} (Includes $${serviceFee} fee).` };
+  }
+
+  // 5. THE TRANSACTION (UPDATED FLOW) 🟢
+  try {
+    let transactionResult: any = null;
+
+    await db.$transaction(async (tx) => {
+      // A. Create Wire Record
+      // ⚠️ IMPORTANT: We store the 'fee' here, but we don't charge it yet.
+      const wire = await tx.wireTransfer.create({
+        data: {
+          userId: user.id,
+          accountId: accountId,
+          bankName,
+          accountNumber,
+          accountName,
+          country,
+          amount: amount,
+          fee: serviceFee, // 👈 STORED FOR LATER
+          status: TransactionStatus.ON_HOLD, // 👈 NEW STATUS (Make sure to add to Enum)
+          currentStage: "TAA",
+          swiftCode: swiftCode || undefined,
+          routingNumber: routingNumber || undefined,
         }
+      });
 
-        // 4. KYC Limit Check
-        const isVerified = user.kycStatus === 'VERIFIED';
-        const UNVERIFIED_LIMIT = 2000;
+      // B. Deduct AVAILABLE Balance Only (The Lock)
+      // We lock the Principal + Fee, but Current Balance remains untouched.
+      await tx.account.update({
+        where: { id: accountId },
+        data: { availableBalance: { decrement: totalDeduction } }
+      });
 
-        if (!isVerified && amount > UNVERIFIED_LIMIT) {
-            return { message: `🚫 Unverified Limit Exceeded. You can only wire up to $${UNVERIFIED_LIMIT.toLocaleString()}.` };
+      // C. Ledger Entry: The Wire (ON HOLD)
+      await tx.ledgerEntry.create({
+        data: {
+          accountId: accountId,
+          amount: amount,
+          type: TransactionType.WIRE,
+          direction: TransactionDirection.DEBIT,
+          status: TransactionStatus.ON_HOLD,
+          description: `Authorization Hold: Wire to ${bankName}`,
+          referenceId: "WIRE-" + wire.id,
         }
+      });
 
-        // 5. Account & Balance Check
-        const account = await db.account.findUnique({ where: { id: accountId } });
-        if (!account) return { message: "Account not found." };
-        if (Number(account.availableBalance) < amount) {
-            return { message: "Insufficient Funds." };
-        }
-
-        // 6. EXECUTE TRANSACTION
-        await db.$transaction(async (tx) => {
-            // A. Create Wire Record
-            await tx.wireTransfer.create({
-                data: {
-                    userId: user.id,
-                    accountId: accountId,
-                    bankName,
-                    accountNumber,
-                    swiftCode,
-                    country,
-                    amount: amount,
-                    status: "PENDING_AUTH",
-                    currentStage: "TAA",
-                }
-            });
-
-            // B. Deduct Balance
-            await tx.account.update({
-                where: { id: accountId },
-                data: { availableBalance: { decrement: amount } }
-            });
-
-            // C. Create Receipt
-            await tx.ledgerEntry.create({
-                data: {
-                    accountId: accountId,
-                    amount: amount,
-                    direction: "DEBIT",
-                    status: "PENDING",
-                    description: `Wire Transfer to ${bankName}`,
-                    referenceId: "WIRE-" + Date.now(),
-                    type: "WIRE"
-                }
-            });
-
-            // D. SAVE BENEFICIARY (Optional)
-            if (saveBeneficiary === "on") {
-                const existing = await tx.beneficiary.findFirst({
-                    where: {
-                        userId: session.user.id,
-                        accountNumber: accountNumber
-                    }
-                });
-
-                if (!existing) {
-                    await tx.beneficiary.create({
-                        data: {
-                            userId: session.user.id,
-                            accountName: bankName, // Using Bank Name as alias for wires
-                            accountNumber: accountNumber,
-                            bankName: bankName,
-                            swiftCode: swiftCode,
-                        }
-                    });
-                }
-            }
+      // D. Beneficiary
+      if (saveBeneficiary === "on") {
+        const existing = await tx.beneficiary.findFirst({
+          where: { userId: user.id, accountNumber: accountNumber }
         });
 
-        revalidatePath("/dashboard");
-        revalidatePath("/dashboard/beneficiaries");
+        if (!existing) {
+          await tx.beneficiary.create({
+            data: {
+              userId: user.id,
+              accountName: accountName,
+              bankName: bankName,
+              accountNumber: accountNumber,
+              swiftCode: swiftCode || null,
+              routingNumber: routingNumber || null,
+            }
+          });
+        }
+      }
 
-        return { success: true, message: "Wire Initiated Successfully." };
+      transactionResult = wire;
+    });
 
-    } catch (err) {
-        console.error("Wire Error:", err);
-        return { message: "Transaction failed. Please try again." };
+    // 6. NOTIFICATIONS
+    if (transactionResult) {
+      const admins = await db.user.findMany({
+          where: { role: { in: ["ADMIN", "SUPER_ADMIN"] } },
+          select: { id: true }
+      });
+
+      if (admins.length > 0) {
+          await db.notification.createMany({
+              data: admins.map(admin => ({
+                  userId: admin.id,
+                  title: "New Wire Authorization",
+                  message: `${user.fullName || 'User'} requested wire of $${amount.toLocaleString()}. Funds held.`,
+                  type: "WARNING",
+                  link: `/admin/wires?id=${transactionResult.id}`,
+                  isRead: false
+              }))
+          });
+      }
     }
+
+  } catch (err) {
+    console.error("Wire Error:", err);
+    return { message: "Transaction failed. Please try again." };
+  }
+
+  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/beneficiaries");
+
+  return { success: true, message: `Wire Authorized. Funds Reserved ($${totalDeduction.toLocaleString()}).` };
 }
+
+
+
+// 'use server';
+
+// import { getAuthenticatedUser } from "@/lib/user-guard";
+// import { db } from "@/lib/db";
+// import { checkPermissions, verifyPin } from "@/lib/security";
+// import { revalidatePath } from "next/cache";
+// import { z } from "zod";
+// import {
+//   UserStatus,
+//   KycStatus,
+//   TransactionStatus,
+//   TransactionType,
+//   TransactionDirection
+// } from "@prisma/client";
+
+// const wireSchema = z.object({
+//   accountId: z.string().min(1, "Account Selection is required"),
+//   amount: z.coerce.number().min(100, "Minimum wire amount is $100"),
+//   pin: z.string().length(4, "PIN must be 4 digits"),
+//   bankName: z.string().min(3, "Bank Name is required"),
+//   accountName: z.string().min(3, "Account Name is required"),
+//   accountNumber: z.string().min(6, "Invalid Account Number"),
+//   country: z.string().min(2, "Country is required"),
+//   swiftCode: z.string().optional(),
+//   routingNumber: z.string().optional(),
+//   saveBeneficiary: z.string().optional(),
+// });
+
+// export async function initiateWireTransfer(prevState: any, formData: FormData) {
+//   // 1. GUARD
+//   const { success, message, user } = await getAuthenticatedUser();
+
+//    if (!success || !user) {
+//         return { success: false, message };
+//     }
+
+//   const rawData = {
+//     accountId: formData.get("accountId")?.toString() || "",
+//     amount: formData.get("amount")?.toString() || "",
+//     pin: formData.get("pin")?.toString() || "",
+//     bankName: formData.get("bankName")?.toString() || "",
+//     accountName: formData.get("accountName")?.toString() || "",
+//     accountNumber: formData.get("accountNumber")?.toString() || "",
+//     country: formData.get("country")?.toString() || "",
+//     swiftCode: formData.get("swiftCode")?.toString() || undefined,
+//     routingNumber: formData.get("routingNumber")?.toString() || undefined,
+//     saveBeneficiary: formData.get("saveBeneficiary")?.toString() || undefined,
+//   };
+
+//   const validated = wireSchema.safeParse(rawData);
+
+//   if (!validated.success) {
+//     const issue = validated.error.issues[0];
+//     return { message: issue.message };
+//   }
+
+//   const {
+//     accountId, amount, pin, bankName, accountNumber, accountName,
+//     swiftCode, country, routingNumber, saveBeneficiary
+//   } = validated.data;
+
+//   // 2. VALIDATION CHECKS
+
+//   // A. Must have SWIFT or Routing
+//   if (!swiftCode && !routingNumber) {
+//       return { message: "Please provide either a SWIFT Code (Intl) or Routing Number (US)." };
+//   }
+
+//   // B. 🛑 INTERNAL ACCOUNT CHECK (The Fix)
+//   // If this account number exists in our DB, force them to use Local Transfer.
+//   const internalAccount = await db.account.findUnique({
+//       where: { accountNumber: accountNumber }
+//   });
+
+//   if (internalAccount) {
+//       return { message: "TrustBank Account detected. Please use 'Local Transfer' for instant, fee-free transactions." };
+//   }
+
+//   // 3. SECURITY CHECKS
+//   const pinValidation = await verifyPin(user.id, pin);
+//   if (!pinValidation.success) return { message: pinValidation.error };
+
+//   const permission = await checkPermissions(user.id, 'TRANSFER', amount);
+//   if (!permission.allowed) return { message: `🚫 ${permission.error}` };
+
+//   // 4. KYC & BALANCE CHECKS
+//   const isVerified = user.kycStatus === KycStatus.VERIFIED;
+//   const UNVERIFIED_LIMIT = 2000;
+
+//   if (!isVerified && amount > UNVERIFIED_LIMIT) {
+//     return { message: `🚫 Unverified Limit Exceeded. Max: $${UNVERIFIED_LIMIT.toLocaleString()}.` };
+//   }
+
+//   const account = await db.account.findUnique({ where: { id: accountId } });
+//   if (!account) return { message: "Account not found." };
+//   if (Number(account.availableBalance) < amount) return { message: "Insufficient Funds." };
+
+//   // 5. THE TRANSACTION
+//   try {
+//     let transactionResult: any = null;
+
+//     await db.$transaction(async (tx) => {
+//       // A. Create Wire Record
+//       const wire = await tx.wireTransfer.create({
+//         data: {
+//           userId: user.id,
+//           accountId: accountId,
+//           bankName,
+//           accountNumber,
+//           accountName,
+//           country,
+//           amount: amount,
+//           status: TransactionStatus.PENDING_AUTH,
+//           currentStage: "TAA",
+//           swiftCode: swiftCode || undefined,
+//           routingNumber: routingNumber || undefined,
+//         }
+//       });
+
+//       // B. Deduct Balance
+//       await tx.account.update({
+//         where: { id: accountId },
+//         data: { availableBalance: { decrement: amount } }
+//       });
+
+//       // C. Ledger
+//       await tx.ledgerEntry.create({
+//         data: {
+//           accountId: accountId,
+//           amount: amount,
+//           type: TransactionType.WIRE,
+//           direction: TransactionDirection.DEBIT,
+//           status: TransactionStatus.PENDING,
+//           description: `Wire Transfer to ${bankName} (${accountName})`,
+//           referenceId: "WIRE-" + Date.now(),
+//         }
+//       });
+
+//       // D. Beneficiary
+//       if (saveBeneficiary === "on") {
+//         const existing = await tx.beneficiary.findFirst({
+//           where: { userId: user.id, accountNumber: accountNumber }
+//         });
+
+//         if (!existing) {
+//           await tx.beneficiary.create({
+//             data: {
+//               userId: user.id,
+//               accountName: accountName,
+//               bankName: bankName,
+//               accountNumber: accountNumber,
+//               swiftCode: swiftCode || null,
+//               routingNumber: routingNumber || null,
+//             }
+//           });
+//         }
+//       }
+
+//       transactionResult = wire;
+//     });
+
+//     // 6. NOTIFICATIONS (OUTSIDE)
+//     if (transactionResult) {
+//       const admins = await db.user.findMany({
+//           where: { role: { in: ["ADMIN", "SUPER_ADMIN"] } },
+//           select: { id: true }
+//       });
+
+//       if (admins.length > 0) {
+//           await db.notification.createMany({
+//               data: admins.map(admin => ({
+//                   userId: admin.id,
+//                   title: "New Wire Initiated",
+//                   message: `${user.fullName || 'User'} initiated a wire of $${amount.toLocaleString()}`,
+//                   type: "WARNING",
+//                   link: `/admin/wires?id=${transactionResult.id}`,
+//                   isRead: false
+//               }))
+//           });
+//       }
+//     }
+
+//   } catch (err) {
+//     console.error("Wire Error:", err);
+//     return { message: "Transaction failed. Please try again." };
+//   }
+
+//   revalidatePath("/dashboard");
+//   revalidatePath("/dashboard/beneficiaries");
+
+//   return { success: true, message: "Wire Initiated Successfully." };
+// }

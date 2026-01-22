@@ -1,7 +1,7 @@
 'use client';
 
 import Link from "next/link";
-import { ShieldAlert, ArrowLeft, Phone, LockKeyhole } from "lucide-react";
+import { ShieldAlert, ArrowLeft, Phone } from "lucide-react";
 import styles from "./forgotPassword.module.css";
 
 export default function ForgotPasswordPage() {

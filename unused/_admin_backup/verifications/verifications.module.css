@@ -1,0 +1,295 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  color: var(--text-main);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 5px;
+  letter-spacing: -0.5px;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+.backLink {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s;
+  font-size: 0.9rem;
+}
+
+.backLink:hover {
+  color: var(--primary);
+}
+
+.tableWrapper {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th {
+  text-align: left;
+  padding: 1rem;
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--border);
+}
+
+.table td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+
+/* Remove bottom border from last row so it doesn't look double */
+.row:last-child td {
+  border-bottom: none;
+}
+
+.userName {
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.userEmail {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.badge {
+  background: var(--primary-light);
+  color: var(--primary);
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border: 1px solid var(--primary);
+}
+
+.empty {
+  text-align: center;
+  padding: 4rem;
+  color: var(--text-muted);
+}
+
+/* --- BUTTONS --- */
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.viewBtn {
+  background: transparent;
+  color: var(--text-body);
+  border: 1px solid var(--border);
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  transition: all 0.2s;
+}
+
+.viewBtn:hover {
+  background: var(--bg-surface);
+  border-color: var(--border-hover);
+  color: var(--text-main);
+}
+
+.approveBtn {
+  background: transparent;
+  color: var(--success);
+  border: 1px solid var(--success);
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.approveBtn:hover {
+  background: var(--success);
+  color: var(--text-invert);
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.4); /* Green Glow on hover */
+}
+
+.rejectBtn {
+  background: transparent;
+  color: var(--danger);
+  border: 1px solid var(--danger);
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.rejectBtn:hover {
+  background: var(--danger);
+  color: var(--text-invert);
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.4); /* Red Glow on hover */
+}
+
+/* --- REJECT FORM INPUT --- */
+.rejectForm {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-surface);
+  padding: 4px;
+  border-radius: 6px;
+  animation: fadeIn 0.2s ease;
+  border: 1px solid var(--border);
+}
+
+.reasonInput {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-main);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  outline: none;
+  width: 150px;
+}
+
+.reasonInput:focus {
+  border-color: var(--danger);
+}
+
+.confirmRejectBtn {
+  background: var(--danger);
+  color: var(--text-invert);
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.cancelBtn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+}
+
+.cancelBtn:hover {
+  color: var(--text-main);
+}
+
+/* --- EXPANDED DOCS SECTION --- */
+.expandedRow {
+  background: var(--bg-surface); /* Slightly distinct from main card */
+  animation: slideDown 0.3s ease;
+}
+
+.docGrid {
+  display: flex;
+  gap: 2rem;
+  padding: 1.5rem;
+  justify-content: center;
+  border-top: 1px dashed var(--border);
+}
+
+.docItem {
+  text-align: center;
+}
+
+.docItem h4 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  color: var(--text-body);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.imgWrapper {
+  width: 320px;
+  height: 220px;
+  background: var(--bg-app); /* Darker/Lighter container for image */
+  border: 1px dashed var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.docImg {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.link {
+  color: var(--primary);
+  font-size: 0.8rem;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.link:hover {
+  text-decoration: underline;
+  color: var(--primary-hover);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

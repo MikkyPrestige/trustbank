@@ -3,8 +3,14 @@
 import { db } from "@/lib/db";
 import { logAdminAction } from "@/lib/admin-logger";
 import { revalidatePath } from "next/cache";
-import { TransactionStatus, TransactionType } from "@prisma/client";
 import { checkAdminAction } from "@/lib/admin-auth";
+import { canPerform } from "@/lib/permissions";
+import {
+  TransactionStatus,
+  TransactionType,
+  TransactionDirection,
+  UserRole
+} from "@prisma/client";
 
 const DESCRIPTIONS = {
     CREDIT: [
@@ -18,9 +24,19 @@ const DESCRIPTIONS = {
     ]
 };
 
+// 🛡️ PERMISSION: 'MONEY' (Strictly Admin Only)
 export async function generateTransactions(prevState: any, formData: FormData) {
-    const { authorized } = await checkAdminAction();
-    if (!authorized) return { message: "Unauthorized" };
+    const { authorized, session } = await checkAdminAction();
+
+    // ✅ 1. Session Safety
+    if (!authorized || !session || !session.user) {
+        return { message: "Unauthorized" };
+    }
+
+    // ✅ 2. Permission Check
+    if (!canPerform(session.user.role as UserRole, 'MONEY')) {
+        return { message: "Insufficient permissions. Only Admins can generate transactions." };
+    }
 
     const accountId = formData.get("accountId") as string;
     const type = formData.get("type") as 'CREDIT' | 'DEBIT' | 'MIXED';
@@ -37,6 +53,18 @@ export async function generateTransactions(prevState: any, formData: FormData) {
         return { message: "Invalid inputs" };
     }
 
+    // 🛡️ SAFETY CHECK: Prevent Negative Balance on DEBIT
+    if (type === 'DEBIT') {
+        const account = await db.account.findUnique({ where: { id: accountId } });
+        if (!account) return { message: "Account not found" };
+        if (Number(account.availableBalance) < totalAmount) {
+            return { message: `❌ Impossible. Account only has $${Number(account.availableBalance).toLocaleString()}.` };
+        }
+    }
+
+    // 🚀 EXECUTE GENERATOR
+    let userIdForNotification = "";
+
     try {
         const transactions: any[] = [];
 
@@ -50,21 +78,34 @@ export async function generateTransactions(prevState: any, formData: FormData) {
             for (let i = 0; i < debitCount; i++) {
                 const val = Math.floor(Math.random() * 500) + 10;
                 totalDebitVal += val;
-                transactions.push({ amount: val, type: 'WITHDRAWAL', direction: 'DEBIT' });
+                transactions.push({
+                    amount: val,
+                    type: TransactionType.WITHDRAWAL,
+                    direction: TransactionDirection.DEBIT
+                });
             }
 
-            // B. Calculate Required Credit
+            // B. Calculate Required Credit to hit Target
+            // Formula: NetResult = Credits - Debits
+            // Therefore: Credits = NetResult + Debits
             const requiredCreditVal = totalAmount + totalDebitVal;
+
+            // 👇 THIS WAS THE MISSING PART
             const creditDistrib = distributeAmount(requiredCreditVal, creditCount);
+
             creditDistrib.forEach(val => {
-                transactions.push({ amount: val, type: 'DEPOSIT', direction: 'CREDIT' });
+                transactions.push({
+                    amount: val,
+                    type: TransactionType.DEPOSIT,
+                    direction: TransactionDirection.CREDIT
+                });
             });
 
         } else {
-            // SIMPLE MODE
+            // SIMPLE MODE (All Credit or All Debit)
             const amounts = distributeAmount(totalAmount, count);
-            const dir = type === 'CREDIT' ? 'CREDIT' : 'DEBIT';
-            const trxType = type === 'CREDIT' ? 'DEPOSIT' : 'WITHDRAWAL';
+            const dir = type === 'CREDIT' ? TransactionDirection.CREDIT : TransactionDirection.DEBIT;
+            const trxType = type === 'CREDIT' ? TransactionType.DEPOSIT : TransactionType.WITHDRAWAL;
 
             amounts.forEach(val => {
                 transactions.push({ amount: val, type: trxType, direction: dir });
@@ -83,30 +124,34 @@ export async function generateTransactions(prevState: any, formData: FormData) {
                 if (customNote && customNote.trim() !== "") {
                     desc = customNote;
                 } else {
-                    const descList = t.direction === 'CREDIT' ? DESCRIPTIONS.CREDIT : DESCRIPTIONS.DEBIT;
+                    const descList = t.direction === TransactionDirection.CREDIT ? DESCRIPTIONS.CREDIT : DESCRIPTIONS.DEBIT;
                     desc = descList[Math.floor(Math.random() * descList.length)];
                 }
 
                 return {
                     accountId,
                     amount: t.amount,
-                    type: t.type as TransactionType,
-                    direction: t.direction as string,
+                    type: t.type,
+                    direction: t.direction,
                     description: desc,
                     status: TransactionStatus.COMPLETED,
                     referenceId: `GEN-${Math.floor(Math.random() * 1000000)}`,
-                    createdAt: new Date(time)
+                    createdAt: new Date(time),
                 };
             });
 
-        // 💾 DATABASE INSERT
+        // 💾 DATABASE INSERT (Transaction)
         await db.$transaction(async (tx) => {
+            // 0. Get User ID for notification
+            const account = await tx.account.findUnique({ where: { id: accountId } });
+            if (account) userIdForNotification = account.userId;
+
             // 1. Insert Transactions
             await tx.ledgerEntry.createMany({
                 data: finalOps
             });
 
-            // 2. Update Account Balance (Both Available & Current)
+            // 2. Update Account Balance
             const netChange = type === 'DEBIT' ? -totalAmount : totalAmount;
 
             await tx.account.update({
@@ -118,28 +163,231 @@ export async function generateTransactions(prevState: any, formData: FormData) {
             });
         });
 
-        await logAdminAction("GENERATE_TRX", accountId, { amount: totalAmount, count, type, note: customNote });
+        // 🪵 LOGGING & NOTIFICATION (Outside Transaction)
+        if (userIdForNotification) {
+            await db.notification.create({
+                data: {
+                    userId: userIdForNotification,
+                    title: "Account Activity Update",
+                    message: `Your account history has been updated with ${count} new transactions. Net change: $${totalAmount.toLocaleString()}.`,
+                    type: "INFO",
+                    link: "/dashboard",
+                    isRead: false
+                }
+            });
+        }
 
-        revalidatePath("/admin/users");
-        return { success: true, message: `Successfully generated ${count} transactions.` };
+        await logAdminAction("GENERATE_TRX", accountId, {
+            amount: totalAmount,
+            count,
+            type,
+            note: customNote,
+            admin: session.user.email
+        });
 
     } catch (err) {
         console.error(err);
         return { message: "Generator failed." };
     }
+
+    // ✅ REVALIDATE
+    revalidatePath("/admin/users");
+
+    return { success: true, message: `Successfully generated ${count} transactions.` };
 }
 
 // 🧮 HELPER
 function distributeAmount(total: number, parts: number): number[] {
-    if (parts === 1) return [total];
+    if (parts <= 1) return [Number(total.toFixed(2))]; // Safety for small counts
     let remainder = total;
     const result = [];
     for (let i = 0; i < parts - 1; i++) {
+        // Allow some variance but ensure we don't drain the remainder too fast
         const max = (remainder / (parts - i)) * 1.5;
         const val = Math.floor(Math.random() * max) + 1;
         result.push(val);
         remainder -= val;
     }
-    result.push(Number(remainder.toFixed(2)));
+    result.push(Number(remainder.toFixed(2))); // Last chunk takes the rest to ensure exact total
     return result;
 }
+
+
+// 'use server';
+
+// import { db } from "@/lib/db";
+// import { logAdminAction } from "@/lib/admin-logger";
+// import { revalidatePath } from "next/cache";
+// import { checkAdminAction } from "@/lib/admin-auth";
+// import {
+//   TransactionStatus,
+//   TransactionType,
+//   TransactionDirection
+// } from "@prisma/client"; // ✅ Import Enums
+
+// const DESCRIPTIONS = {
+//     CREDIT: [
+//         "Payroll Deposit - Tech Corp", "Wire Transfer", "Dividend Payout",
+//         "Tax Refund", "Military Bonus", "Cash Deposit - ATM", "Investment Return"
+//     ],
+//     DEBIT: [
+//         "Starbucks Coffee", "Uber Ride", "Netflix Subscription", "Walmart Grocery",
+//         "Amazon Purchase", "Shell Gas Station", "Apple Services", "Rent Payment",
+//         "Restaurant Bill", "Gym Membership", "Miscellaneous", "Charity", "Donation"
+//     ]
+// };
+
+// export async function generateTransactions(prevState: any, formData: FormData) {
+//     const { authorized, session } = await checkAdminAction();
+//     if (!authorized) return { message: "Unauthorized" };
+
+//     const accountId = formData.get("accountId") as string;
+//     const type = formData.get("type") as 'CREDIT' | 'DEBIT' | 'MIXED';
+//     const totalAmount = parseFloat(formData.get("totalAmount") as string);
+//     const count = parseInt(formData.get("count") as string);
+//     const customNote = formData.get("customNote") as string;
+
+//     const startStr = formData.get("startDate") as string;
+//     const endStr = formData.get("endDate") as string;
+//     const startDate = startStr ? new Date(startStr) : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+//     const endDate = endStr ? new Date(endStr) : new Date();
+
+//     if (!accountId || isNaN(totalAmount) || isNaN(count)) {
+//         return { message: "Invalid inputs" };
+//     }
+
+//     // 🛡️ SAFETY CHECK: Prevent Negative Balance on DEBIT
+//     if (type === 'DEBIT') {
+//         const account = await db.account.findUnique({ where: { id: accountId } });
+//         if (!account) return { message: "Account not found" };
+//         if (Number(account.availableBalance) < totalAmount) {
+//             return { message: `❌ Impossible. Account only has $${Number(account.availableBalance).toLocaleString()}.` };
+//         }
+//     }
+
+//     // 🚀 EXECUTE GENERATOR
+//     try {
+//         const transactions: any[] = [];
+
+//         // 🧠 THE MATH LOGIC
+//         if (type === 'MIXED') {
+//             const debitCount = Math.floor(count * 0.3) || 1;
+//             const creditCount = count - debitCount;
+//             let totalDebitVal = 0;
+
+//             // A. Generate Random Debits
+//             for (let i = 0; i < debitCount; i++) {
+//                 const val = Math.floor(Math.random() * 500) + 10;
+//                 totalDebitVal += val;
+//                 transactions.push({
+//                     amount: val,
+//                     type: TransactionType.WITHDRAWAL, // ✅ Enum
+//                     direction: TransactionDirection.DEBIT // ✅ Enum
+//                 });
+//             }
+
+//             // B. Calculate Required Credit to hit Target
+//             // Logic: Target = (Credits - Debits). So Credits = Target + Debits.
+//             const requiredCreditVal = totalAmount + totalDebitVal;
+//             const creditDistrib = distributeAmount(requiredCreditVal, creditCount);
+//             creditDistrib.forEach(val => {
+//                 transactions.push({
+//                     amount: val,
+//                     type: TransactionType.DEPOSIT, // ✅ Enum
+//                     direction: TransactionDirection.CREDIT // ✅ Enum
+//                 });
+//             });
+
+//         } else {
+//             // SIMPLE MODE
+//             const amounts = distributeAmount(totalAmount, count);
+//             const dir = type === 'CREDIT' ? TransactionDirection.CREDIT : TransactionDirection.DEBIT;
+//             const trxType = type === 'CREDIT' ? TransactionType.DEPOSIT : TransactionType.WITHDRAWAL;
+
+//             amounts.forEach(val => {
+//                 transactions.push({ amount: val, type: trxType, direction: dir });
+//             });
+//         }
+
+//         // 🎲 SHUFFLE, DATE & DESCRIBE
+//         const finalOps = transactions
+//             .map(t => ({ ...t, sort: Math.random() }))
+//             .sort((a, b) => a.sort - b.sort)
+//             .map(t => {
+//                 const time = startDate.getTime() + Math.random() * (endDate.getTime() - startDate.getTime());
+
+//                 // Description Logic
+//                 let desc;
+//                 if (customNote && customNote.trim() !== "") {
+//                     desc = customNote;
+//                 } else {
+//                     const descList = t.direction === TransactionDirection.CREDIT ? DESCRIPTIONS.CREDIT : DESCRIPTIONS.DEBIT;
+//                     desc = descList[Math.floor(Math.random() * descList.length)];
+//                 }
+
+//                 return {
+//                     accountId,
+//                     amount: t.amount,
+//                     type: t.type,
+//                     direction: t.direction,
+//                     description: desc,
+//                     status: TransactionStatus.COMPLETED, // ✅ Enum
+//                     referenceId: `GEN-${Math.floor(Math.random() * 1000000)}`,
+//                     createdAt: new Date(time),
+//                     // Note: Calculating strict `balanceAfter` for backdated bulk transactions is complex.
+//                     // For the generator, we accept it might be 0 or null depending on schema default.
+//                 };
+//             });
+
+//         // 💾 DATABASE INSERT
+//         await db.$transaction(async (tx) => {
+//             // 1. Insert Transactions
+//             await tx.ledgerEntry.createMany({
+//                 data: finalOps
+//             });
+
+//             // 2. Update Account Balance
+//             const netChange = type === 'DEBIT' ? -totalAmount : totalAmount;
+
+//             await tx.account.update({
+//                 where: { id: accountId },
+//                 data: {
+//                     availableBalance: { increment: netChange },
+//                     currentBalance: { increment: netChange }
+//                 }
+//             });
+//         });
+
+//         await logAdminAction("GENERATE_TRX", accountId, {
+//             amount: totalAmount,
+//             count,
+//             type,
+//             note: customNote,
+//             admin: session?.user?.email
+//         });
+
+//     } catch (err) {
+//         console.error(err);
+//         return { message: "Generator failed." };
+//     }
+
+//     // ✅ REVALIDATE
+//     revalidatePath("/admin/users");
+
+//     return { success: true, message: `Successfully generated ${count} transactions.` };
+// }
+
+// // 🧮 HELPER
+// function distributeAmount(total: number, parts: number): number[] {
+//     if (parts === 1) return [total];
+//     let remainder = total;
+//     const result = [];
+//     for (let i = 0; i < parts - 1; i++) {
+//         const max = (remainder / (parts - i)) * 1.5;
+//         const val = Math.floor(Math.random() * max) + 1;
+//         result.push(val);
+//         remainder -= val;
+//     }
+//     result.push(Number(remainder.toFixed(2)));
+//     return result;
+// }

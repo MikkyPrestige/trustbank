@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { X, User, Mail, ArrowRight, ShieldCheck } from 'lucide-react';
-import styles from './RegisterModal.module.css';
+import styles from './styles/RegisterModal.module.css'
 
 interface RegisterModalProps {
     isOpen: boolean;

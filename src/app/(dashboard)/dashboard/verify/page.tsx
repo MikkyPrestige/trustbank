@@ -1,0 +1,94 @@
+import { auth } from "@/auth";
+import { db } from "@/lib/db";
+import { redirect } from "next/navigation";
+import KycForm from "@/components/dashboard/verify/KycForm";
+import { ShieldCheck, Clock, AlertTriangle, XCircle, CheckCircle2 } from "lucide-react";
+import { KycStatus } from "@prisma/client";
+import styles from "../../../../components/dashboard/verify/verify.module.css"
+
+export default async function VerifyPage() {
+    const session = await auth();
+    if (!session?.user?.email) redirect("/login");
+
+    const user = await db.user.findUnique({
+        where: { email: session.user.email }
+    });
+
+    if (!user) redirect("/login");
+
+    // Status Logic using Enums
+    const isVerified = user.kycStatus === KycStatus.VERIFIED;
+    const isPending = user.kycStatus === KycStatus.PENDING;
+    const isFailed = user.kycStatus === KycStatus.FAILED;
+    const isNotSubmitted = user.kycStatus === KycStatus.NOT_SUBMITTED;
+
+    return (
+        <div className={styles.container}>
+            <div className={styles.contentWrapper}>
+                <header className={styles.header}>
+                    <div className={styles.iconBadge}>
+                        <ShieldCheck size={28} />
+                    </div>
+                    <h1 className={styles.title}>Identity Verification</h1>
+                    <p className={styles.subtitle}>
+                        To comply with financial regulations and unlock high-limit transactions,
+                        we need to verify your identity through a secure KYC process.
+                    </p>
+                </header>
+
+                <div className={styles.statusSection}>
+                    {/* 1. VERIFIED */}
+                    {isVerified && (
+                        <div className={`${styles.statusCard} ${styles.success}`}>
+                            <div className={styles.statusIcon}><CheckCircle2 size={32} /></div>
+                            <div>
+                                <h3>Account Verified</h3>
+                                <p>Identity verified. You have full access to global banking features.</p>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* 2. PENDING */}
+                    {isPending && (
+                        <div className={`${styles.statusCard} ${styles.pending}`}>
+                            <div className={styles.statusIcon}><Clock size={32} /></div>
+                            <div>
+                                <h3>Verification in Progress</h3>
+                                <p>Our compliance team is reviewing your documents. This typically takes 24-48 business hours.</p>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* 3. FAILED */}
+                    {isFailed && (
+                        <div className={`${styles.statusCard} ${styles.error}`}>
+                            <div className={styles.statusIcon}><XCircle size={32} /></div>
+                            <div>
+                                <h3>Verification Failed</h3>
+                                <p>Your documents were rejected. Please upload clear, government-issued IDs without glare.</p>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* 4. NOT SUBMITTED */}
+                    {isNotSubmitted && (
+                        <div className={`${styles.statusCard} ${styles.neutral}`}>
+                            <div className={styles.statusIcon}><AlertTriangle size={32} /></div>
+                            <div>
+                                <h3>Action Required</h3>
+                                <p>Identity documentation is required to remove withdrawal limits on your account.</p>
+                            </div>
+                        </div>
+                    )}
+                </div>
+
+                {/* Show Form only if Action is needed (Not Submitted or Rejected) */}
+                {(isNotSubmitted || isFailed) && (
+                    <div className={styles.formSection}>
+                        <KycForm />
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+}

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import styles from "./learn.module.css";
-import WellnessPulse from "@/components/learn/WellnessPulse";
+import WellnessPulse from "@/components/main/learn/WellnessPulse";
 import { BookOpen, Lightbulb, TrendingUp, PlayCircle, ArrowRight } from "lucide-react";
 
 export default function LearnPage() {

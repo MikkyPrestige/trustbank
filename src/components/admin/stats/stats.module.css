@@ -1,0 +1,147 @@
+.richCard {
+  background: var(--bg-card);
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  color: var(--text-main);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s,
+    border-color 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.richCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  border-color: var(--border-hover, #475569);
+}
+
+/* Card Header (Label + Icon) */
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cardLabel {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Dynamic Icon Wrapper */
+.iconWrapper {
+  padding: 10px;
+  border-radius: 12px; /* Slightly softer square */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Icon Color Variants */
+.iconGreen {
+  background: color-mix(in srgb, #10b981, transparent 85%);
+  color: #10b981;
+}
+
+.iconBlue {
+  background: color-mix(in srgb, #3b82f6, transparent 85%);
+  color: #3b82f6;
+}
+
+.iconPurple {
+  background: color-mix(in srgb, #8b5cf6, transparent 85%);
+  color: #8b5cf6;
+}
+
+.iconOrange {
+  background: color-mix(in srgb, #f97316, transparent 85%);
+  color: #f97316;
+}
+
+.iconRed {
+  background: color-mix(in srgb, #ef4444, transparent 85%);
+  color: #ef4444;
+}
+
+/* Main Value Typography */
+.cardValue {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--text-main);
+  letter-spacing: -0.5px;
+  line-height: 1;
+}
+
+/* Subtext / Action Line */
+.cardSubtext {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 20px;
+}
+
+/* Status Indicators */
+.statusUrgent {
+  color: #ef4444;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.statusSafe {
+  color: var(--success);
+}
+
+
+.cardUrgent {
+  border-color: var(--warning) !important;
+}
+
+/* Text Colors */
+.textSuccess {
+  color: var(--success);
+}
+
+.textDanger {
+  color: #ef4444;
+}
+
+.textWarning {
+  color: #f97316;
+}
+
+.textMuted {
+  color: var(--text-muted);
+}
+
+/* Icon Spacing helper */
+.inlineIcon {
+  display: inline-block;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+
+
+.revenueTrend {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.trendPositive {
+  color: var(--success);
+}

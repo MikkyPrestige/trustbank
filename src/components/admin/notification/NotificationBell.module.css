@@ -1,0 +1,218 @@
+.wrapper {
+  position: relative;
+  display: inline-block;
+  z-index: 50;
+}
+
+.bellButton {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 10px;
+  border-radius: 50%;
+  cursor: pointer;
+  position: relative;
+  color: var(--text-secondary);
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bellButton:hover, .active {
+  background: var(--bg-secondary);
+  color: var(--text-main);
+  border-color: var(--border);
+}
+
+.badge {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  background: var(--danger);
+  color: white;
+  font-size: 10px;
+  font-weight: bold;
+  height: 16px;
+  min-width: 16px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  border: 2px solid var(--bg-card);
+}
+
+/* DROPDOWN */
+.dropdown {
+  position: absolute;
+  right: 0;
+  top: 50px;
+  width: 320px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.header {
+  padding: 12px 16px;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text-main);
+}
+
+.headerBtn {
+  background: none;
+  border: none;
+  color: var(--primary);
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 6px;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.headerBtn:hover {
+  background: rgba(37, 99, 235, 0.1);
+}
+
+.list {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+/* SCROLLBAR */
+.list::-webkit-scrollbar { width: 4px; }
+.list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+/* ITEM LAYOUT */
+.item {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex; /* Changed from column to flex row for Icon + Content */
+  gap: 12px;
+  background: var(--bg-card);
+  transition: background 0.2s;
+  align-items: flex-start;
+}
+
+.item:hover {
+  background: var(--bg-secondary);
+}
+
+/* Unread State */
+.unread {
+  background: rgba(37, 99, 235, 0.04); /* Very subtle blue tint */
+}
+
+.unread:hover {
+  background: rgba(37, 99, 235, 0.08);
+}
+
+.iconCol {
+  padding-top: 2px;
+  min-width: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.contentCol {
+  flex: 1;
+  overflow: hidden; /* Prevents text overflow */
+}
+
+/* TYPOGRAPHY */
+.noteTitle {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-main);
+  margin-bottom: 2px;
+}
+
+.noteMsg {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin: 0;
+  line-height: 1.4;
+  margin-bottom: 6px;
+}
+
+.noteTime {
+  display: block;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  opacity: 0.7;
+  margin-top: 4px;
+}
+
+/* ACTIONS ROW */
+.actionsRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+  margin-bottom: 4px;
+}
+
+.actionLink {
+  font-size: 0.75rem;
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.actionLink:hover {
+  text-decoration: underline;
+}
+
+.dismissBtn {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  height: 24px;
+  display: flex;
+  align-items: center;
+}
+
+.dismissBtn:hover {
+  background: var(--bg-secondary);
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
+.empty {
+  padding: 30px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}

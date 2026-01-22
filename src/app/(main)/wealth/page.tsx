@@ -1,6 +1,6 @@
 import Image from "next/image";
 import styles from "./wealth.module.css";
-import WealthSimulator from "@/components/wealth/WealthSimulator";
+import WealthSimulator from "@/components/main/wealth/WealthSimulator";
 import { Gem, Briefcase, FileText, ArrowRight, UserCheck, Phone } from "lucide-react";
 
 export default function WealthPage() {

@@ -1,4 +1,4 @@
-import LoanCalculator from '@/components/loans/LoanCalculator';
+import LoanCalculator from '@/components/main/borrow/LoanCalculator';
 import { CreditCard, Home, Car, GraduationCap, ArrowRight, ShieldCheck, Zap, Percent } from 'lucide-react';
 import Image from 'next/image';
 import styles from './borrow.module.css';

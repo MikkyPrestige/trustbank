@@ -3,7 +3,8 @@ import Credentials from "next-auth/providers/credentials";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
 import { db } from "@/lib/db";
-import { UserStatus, KycStatus } from "@prisma/client";
+import { UserStatus, KycStatus, UserRole } from "@prisma/client";
+import { headers } from "next/headers";
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -25,28 +26,65 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
           if (!user) return null;
 
-          // 1. Verify Password
+          // 🛑 1. Check Password
           const passwordsMatch = await bcrypt.compare(password, user.passwordHash);
+          if (!passwordsMatch) return null;
 
-          if (passwordsMatch) {
-
-            // 🛑 2. NEW SECURITY CHECK: Block Suspended Users
-            if (user.status === 'SUSPENDED') {
-              // This error stops the login immediately
-              throw new Error("Account Suspended");
-            }
-
-            // Return user object if Active or Frozen (Frozen users can still login)
-            return user;
+          // 🛑 2. Check Status (Login Guard)
+          // We allow FROZEN users to login (so they can contact support), but NOT Suspended.
+          if (user.status === UserStatus.SUSPENDED) {
+             throw new Error("Account Suspended. Contact Support.");
           }
+
+          return user;
         }
 
-        console.log("Invalid credentials");
         return null;
       },
     }),
   ],
   callbacks: {
+    // 🔔 LOGIN TRACKING
+    async signIn({ user }) {
+      if (!user.id) return true;
+
+      try {
+        const headerList = await headers();
+        const ip = headerList.get("x-forwarded-for") || "unknown";
+
+        // Fetch current DB data (User might have changed since session started)
+        const dbUser = await db.user.findUnique({ where: { id: user.id } });
+
+        if (dbUser) {
+          // If IP changed, update it.
+          if (dbUser.lastIp !== ip) {
+             await db.user.update({
+                where: { id: user.id },
+                data: { lastIp: ip }
+             });
+
+             // ⚠️ OPTIONAL: Notify the USER (Not Admins)
+             // Standard security practice is to alert the owner, not the bank staff.
+             await db.notification.create({
+                data: {
+                    userId: user.id,
+                    title: "New Login Detected",
+                    message: `We noticed a login from a new IP address (${ip}).`,
+                    type: "INFO",
+                    link: "/dashboard/settings",
+                    isRead: false
+                }
+             });
+          }
+        }
+      } catch (error) {
+        console.error("Login Tracking Error:", error);
+        // Don't block login if tracking fails
+      }
+
+      return true;
+    },
+
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
@@ -56,10 +94,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
       return token;
     },
+
     async session({ session, token }) {
       if (token && session.user) {
         session.user.id = token.id as string;
-        session.user.role = token.role as any;
+        session.user.role = token.role as UserRole;
         session.user.status = token.status as UserStatus;
         session.user.kycStatus = token.kycStatus as KycStatus;
       }
