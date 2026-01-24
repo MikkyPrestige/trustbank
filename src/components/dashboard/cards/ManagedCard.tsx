@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react';
 import VirtualCard from './VirtualCard';
-import { Lock, Ban, Unlock } from 'lucide-react';
+import { Ban, Unlock } from 'lucide-react';
 import styles from './cards.module.css';
 import { toggleCardFreeze } from '@/actions/user/cards';
 import toast from 'react-hot-toast';
@@ -19,29 +19,24 @@ interface Card {
 interface ManagedCardProps {
     card: Card;
     userName: string;
+    siteName?: string;
 }
 
-export default function ManagedCard({ card, userName }: ManagedCardProps) {
-    // 1. Initialize state with the DB status
+export default function ManagedCard({ card, userName, siteName }: ManagedCardProps) {
     const [currentStatus, setCurrentStatus] = useState<string>(card.status);
     const [isPending, startTransition] = useTransition();
 
-    // 2. CHECK FOR 'BLOCKED' TOO (This matches your card.ts logic)
     const isFrozen = currentStatus === 'FROZEN' || currentStatus === 'BLOCKED';
 
     const handleToggle = () => {
-        // Save the old status to pass to the server action
         const statusBeforeToggle = currentStatus;
 
-        // Determine the new target status (Using 'BLOCKED' to match your DB)
         const nextStatus = isFrozen ? 'ACTIVE' : 'BLOCKED';
 
-        // 3. Optimistic Update (Update UI immediately)
         setCurrentStatus(nextStatus);
 
         startTransition(async () => {
             try {
-                // 4. Pass the OLD status (statusBeforeToggle) so the server knows what to toggle FROM
                 const result = await toggleCardFreeze(card.id, statusBeforeToggle);
 
                 if (result.success) {
@@ -59,13 +54,11 @@ export default function ManagedCard({ card, userName }: ManagedCardProps) {
 
     return (
         <div className={styles.cardColumn}>
-            {/* We pass 'FROZEN' to VirtualCard here manually if isFrozen is true.
-               This ensures the gray CSS style applies even if the string is 'BLOCKED'.
-            */}
             <VirtualCard
                 card={card}
                 userName={userName}
                 overrideStatus={isFrozen ? 'FROZEN' : 'ACTIVE'}
+                siteName={siteName}
             />
 
             {/* Status Pill */}

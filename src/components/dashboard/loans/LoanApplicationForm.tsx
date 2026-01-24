@@ -8,11 +8,9 @@ import { Loader2 } from 'lucide-react';
 export default function LoanApplicationForm() {
     const [state, action, isPending] = useActionState(applyForLoan, undefined);
 
-    // Default values
     const [amount, setAmount] = useState(5000);
     const [months, setMonths] = useState(12);
 
-    // Live Calculation
     const interestRate = 0.05; // 5%
     const totalRepayment = amount + (amount * interestRate);
     const monthlyPayment = totalRepayment / months;
@@ -48,9 +46,9 @@ export default function LoanApplicationForm() {
                 />
             </div>
 
-            <div style={{ display: 'flex', gap: '1rem' }}>
+            <div className={styles.flexRow}>
                 {/* TERM SELECT */}
-                <div className={styles.group} style={{ flex: 1 }}>
+                <div className={`${styles.group} ${styles.flexItem}`}>
                     <label className={styles.label}>Duration</label>
                     <select
                         name="months"
@@ -66,7 +64,7 @@ export default function LoanApplicationForm() {
                 </div>
 
                 {/* REASON SELECT */}
-                <div className={styles.group} style={{ flex: 1 }}>
+                <div className={`${styles.group} ${styles.flexItem}`}>
                     <label className={styles.label}>Purpose</label>
                     <select name="reason" className={styles.select}>
                         <option value="Business">Business</option>

@@ -27,6 +27,8 @@ interface SidebarProps {
         };
         isAdmin: boolean;
         isSuperAdmin: boolean;
+        logoUrl?: string;
+        siteName?: string;
     };
 }
 
@@ -41,12 +43,15 @@ export default function Sidebar({ data }: SidebarProps) {
     const wireTotal = data.counts.actionRequired + data.counts.pendingReview;
     const wireBadgeVariant = data.counts.actionRequired > 0 ? 'danger' : 'default';
 
+    const logoSource = data.logoUrl || '/logo.png';
+    const siteTitle = data.siteName || 'TrustBank';
+
     return (
         <>
             {/* MOBILE HEADER */}
             <div className={styles.mobileHeader}>
                 <Link href="/dashboard">
-                    <Image src="/logo.png" alt="TrustBank" width={140} height={40} className={styles.logoImage} />
+                    <Image src={logoSource} alt={siteTitle} width={140} height={40} className={styles.logoImage} />
                 </Link>
                 <button onClick={() => setIsMobileOpen(true)} className={styles.mobileToggleBtn}>
                     <Menu size={24} className={styles.menuIcon} />
@@ -65,7 +70,7 @@ export default function Sidebar({ data }: SidebarProps) {
                 {/* 1. LOGO */}
                 <div className={styles.logoArea}>
                     <Link href="/dashboard" onClick={() => setIsMobileOpen(false)}>
-                        <Image src="/logo.png" alt="TrustBank" width={160} height={45} className={styles.logoImage} />
+                        <Image src={logoSource} alt={siteTitle} width={160} height={45} className={styles.logoImage} />
                     </Link>
                 </div>
 
@@ -176,7 +181,6 @@ export default function Sidebar({ data }: SidebarProps) {
     );
 }
 
-// ✅ Updated NavItem: No inline styles, uses CSS classes
 function NavItem({
     href, icon: Icon, label, active, variant, count, badgeVariant
 }: {

@@ -1,9 +1,13 @@
+import { getSiteSettings } from "@/lib/get-settings";
 import Image from "next/image";
 import styles from "./wealth.module.css";
 import WealthSimulator from "@/components/main/wealth/WealthSimulator";
 import { Gem, Briefcase, FileText, ArrowRight, UserCheck, Phone } from "lucide-react";
 
-export default function WealthPage() {
+export default async function WealthPage() {
+    // 1. Fetch Dynamic Data
+    const settings = await getSiteSettings();
+
     return (
         <main className={styles.main}>
 
@@ -21,12 +25,11 @@ export default function WealthPage() {
                 <div className={styles.heroContent}>
                     <div className={styles.goldBadge}>Private Client Group</div>
                     <h1 className={styles.heroTitle}>
-                        Preserve your legacy. <br />
-                        <span className={styles.highlight}>Architect your future.</span>
+                        {settings.wealth_hero_title} <br />
+                        <span className={styles.highlight}>{settings.wealth_hero_highlight}</span>
                     </h1>
                     <p className={styles.heroDesc}>
-                        Comprehensive wealth management, estate planning, and personalized
-                        investment strategies for those who demand more than just banking.
+                        {settings.wealth_hero_desc}
                     </p>
                 </div>
             </section>
@@ -83,15 +86,14 @@ export default function WealthPage() {
                 </div>
             </section>
 
-            {/* 4. THE "FIDUCIARY" PROMISE (Trust Section) */}
+            {/* 4. THE "FIDUCIARY" PROMISE */}
             <section className={styles.advisorSection}>
                 <div className={styles.container}>
                     <div className={styles.advisorBox}>
                         <div className={styles.advisorContent}>
-                            <h2>Partner with a Fiduciary.</h2>
+                            <h2>{settings.wealth_advisor_title}</h2>
                             <p>
-                                Unlike standard brokers, TrustBank advisors are legally bound to act in your best interest.
-                                No hidden commissions. No conflict of interest. Just pure, unbiased advice.
+                                {settings.wealth_advisor_desc}
                             </p>
                             <div className={styles.checkList}>
                                 <span><UserCheck size={18} /> Dedicated Wealth Manager</span>

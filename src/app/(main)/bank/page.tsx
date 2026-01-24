@@ -1,9 +1,13 @@
+import { getSiteSettings } from "@/lib/get-settings";
 import Image from "next/image";
 import styles from "./bank.module.css";
-import DebitCard3D from "@/components/learn/bank/DebitCard3D";
+import DebitCard3D from "@/components/main/bank/DebitCard3D";
 import { Zap, Smartphone, Globe, Check, X } from "lucide-react";
 
-export default function BankPage() {
+export default async function BankPage() {
+    // 1. Fetch Dynamic Content
+    const settings = await getSiteSettings();
+
     return (
         <main className={styles.main}>
 
@@ -20,12 +24,11 @@ export default function BankPage() {
 
                 <div className={styles.heroContent}>
                     <h1 className={styles.heroTitle}>
-                        Banking at the <br />
-                        <span className={styles.highlight}>speed of life.</span>
+                        {settings.bank_hero_title_1} <br />
+                        <span className={styles.highlight}>{settings.bank_hero_highlight}</span>
                     </h1>
                     <p className={styles.heroDesc}>
-                        Get paid up to 2 days early, enjoy fee-free overdrafts, and manage your money
-                        with a card that demands attention.
+                        {settings.bank_hero_desc}
                     </p>
                     <div className={styles.heroActions}>
                         <button className={styles.primaryBtn}>Open Account</button>
@@ -39,12 +42,10 @@ export default function BankPage() {
                 <div className={styles.container}>
                     <div className={styles.cardGrid}>
                         <div className={styles.cardText}>
-                            <div className={styles.badge}>Titanium Design</div>
-                            <h2>The card that turns heads.</h2>
-                            <p>
-                                Milled from a single sheet of aerospace-grade metal.
-                                No plastic, no numbers on the front, just pure security and style.
-                            </p>
+                            <div className={styles.badge}>{settings.bank_card_badge}</div>
+                            <h2>{settings.bank_card_title}</h2>
+                            <p>{settings.bank_card_desc}</p>
+
                             <ul className={styles.featureList}>
                                 <li><Check size={20} className={styles.check} /> Contactless & Chip Enabled</li>
                                 <li><Check size={20} className={styles.check} /> Instant Lock/Unlock in App</li>
@@ -52,7 +53,7 @@ export default function BankPage() {
                             </ul>
                         </div>
                         <div className={styles.cardVisual}>
-                            <DebitCard3D />
+                            <DebitCard3D bankName={settings.site_name} />
                         </div>
                     </div>
                 </div>
@@ -64,18 +65,18 @@ export default function BankPage() {
                     <div className={styles.features}>
                         <div className={styles.featureItem}>
                             <div className={styles.iconBox}><Zap size={28} /></div>
-                            <h3>Early Payday</h3>
-                            <p>Direct deposits land in your account up to 2 days faster than traditional banks.</p>
+                            <h3>{settings.bank_feat_1_title}</h3>
+                            <p>{settings.bank_feat_1_desc}</p>
                         </div>
                         <div className={styles.featureItem}>
                             <div className={styles.iconBox}><Smartphone size={28} /></div>
-                            <h3>Instant Alerts</h3>
-                            <p>Real-time notifications for every transaction. You will always know where your money goes.</p>
+                            <h3>{settings.bank_feat_2_title}</h3>
+                            <p>{settings.bank_feat_2_desc}</p>
                         </div>
                         <div className={styles.featureItem}>
                             <div className={styles.iconBox}><Globe size={28} /></div>
-                            <h3>Fee-Free Travel</h3>
-                            <p>Spend globally with the real exchange rate and zero hidden fees at 55,000+ ATMs.</p>
+                            <h3>{settings.bank_feat_3_title}</h3>
+                            <p>{settings.bank_feat_3_desc}</p>
                         </div>
                     </div>
                 </div>
@@ -85,8 +86,8 @@ export default function BankPage() {
             <section className={styles.compareSection}>
                 <div className={styles.container}>
                     <div className={styles.compareHeader}>
-                        <h2>Stop paying to hold your own money.</h2>
-                        <p>We believe banking should be free, simple, and transparent.</p>
+                        <h2>{settings.bank_compare_title}</h2>
+                        <p>{settings.bank_compare_desc}</p>
                     </div>
 
                     <div className={styles.tableWrapper}>
@@ -94,7 +95,7 @@ export default function BankPage() {
                             <thead>
                                 <tr>
                                     <th>Feature</th>
-                                    <th className={styles.thTrust}>TrustBank</th>
+                                    <th className={styles.thTrust}>{settings.site_name}</th>
                                     <th>Traditional Banks</th>
                                 </tr>
                             </thead>

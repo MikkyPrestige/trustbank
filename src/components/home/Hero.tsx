@@ -2,7 +2,13 @@ import Link from "next/link";
 import Image from "next/image";
 import styles from "./home.module.css";
 
-export default function Hero() {
+interface HeroProps {
+    title?: string;
+    subtitle?: string;
+    ctaText?: string;
+}
+
+export default function Hero({ title, subtitle, ctaText }: HeroProps) {
     return (
         <section className={styles.hero}>
             <div className={styles.heroBg}>
@@ -18,18 +24,31 @@ export default function Hero() {
 
             <div className={styles.container}>
                 <div className={styles.heroContent}>
-                    <span className={styles.heroBadge}>TRUSTBANK PERSONAL</span>
+                    <span className={styles.heroBadge}>TRUST BANK PERSONAL</span>
+
                     <h1 className={styles.heroTitle}>
-                        FINANCIAL FREEDOM <br />
-                        STARTS HERE.
+                        {title ? (
+                            <span dangerouslySetInnerHTML={{ __html: title.replace(/\n/g, '<br/>') }} />
+                        ) : (
+                            <>
+                                FINANCIAL FREEDOM <br /> STARTS HERE.
+                            </>
+                        )}
                     </h1>
+
+                    {/* 2. DYNAMIC SUBTITLE */}
                     <p className={styles.heroSub}>
-                        Experience the perfect blend of human support and modern technology.
-                        Open a checking account today and get a <strong>$200 bonus</strong>.
+                        {subtitle || (
+                            <>
+                                Experience the perfect blend of human support and modern technology.
+                                Open a checking account today and get a <strong>$200 bonus</strong>.
+                            </>
+                        )}
                     </p>
+
                     <div className={styles.ctaRow}>
                         <Link href="/register" className={styles.btnPrimary}>
-                            OPEN ACCOUNT
+                            {ctaText || "OPEN ACCOUNT"}
                         </Link>
                         <Link href="/rates" className={styles.btnOutline}>
                             SEE CURRENT RATES

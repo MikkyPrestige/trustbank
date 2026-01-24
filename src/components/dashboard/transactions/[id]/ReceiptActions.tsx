@@ -10,7 +10,6 @@ export default function ReceiptActions({ styles }: { styles: any }) {
     };
 
     const handleShare = async () => {
-        // Basic share functionality for mobile/supported browsers
         if (navigator.share) {
             try {
                 await navigator.share({

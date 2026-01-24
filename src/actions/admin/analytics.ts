@@ -13,7 +13,7 @@ export async function getBankRevenue() {
         const totalAgg = await db.ledgerEntry.aggregate({
             _sum: { amount: true },
             where: {
-                type: 'FEE',
+                type: TransactionType.FEE,
                 status: TransactionStatus.COMPLETED
             }
         });
@@ -25,7 +25,7 @@ export async function getBankRevenue() {
         const todayAgg = await db.ledgerEntry.aggregate({
             _sum: { amount: true },
             where: {
-                type: 'FEE',
+                type: TransactionType.FEE,
                 status: TransactionStatus.COMPLETED,
                 createdAt: { gte: startOfDay }
             }

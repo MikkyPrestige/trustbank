@@ -1,46 +1,70 @@
+import { getSiteSettings } from "@/lib/get-settings";
 import Image from "next/image";
+import Link from "next/link";
 import styles from "./insure.module.css";
-import CoverageWizard from "@/components/insure/CoverageWizard";
+import CoverageWizard from "@/components/main/insure/CoverageWizard";
 import { Umbrella, HeartPulse, Home, Car, Activity, ArrowRight, ShieldCheck } from "lucide-react";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Insurance Coverage | TrustBank",
+    description: "Find the right coverage for your life, home, and business.",
+};
 
 const PRODUCTS = [
     {
         title: "Medicare Insurance",
-        desc: "Navigate your options with confidence. We help you find the right plan for your health needs.",
-        icon: <HeartPulse size={32} className={styles.iconTeal} />
+        desc: "Navigate your options with confidence. We help you find the right plan.",
+        icon: <HeartPulse size={32} className={styles.iconTeal} />,
+        href: "/insure#medicare"
     },
     {
         title: "Auto Insurance",
-        desc: "Comprehensive coverage for the road ahead. Get protected against accidents and theft.",
-        icon: <Car size={32} className={styles.iconBlue} />
+        desc: "Comprehensive coverage for the road ahead. Get protected against accidents.",
+        icon: <Car size={32} className={styles.iconBlue} />,
+        href: "/insure#auto"
     },
     {
         title: "Home & Renters",
-        desc: "Protect your sanctuary. Coverage for structural damage, personal property, and liability.",
-        icon: <Home size={32} className={styles.iconOrange} />
+        desc: "Protect your sanctuary. Coverage for structural damage and property.",
+        icon: <Home size={32} className={styles.iconOrange} />,
+        href: "/insure#home"
     },
     {
         title: "Life Insurance",
-        desc: "Secure your family's financial future with Term, Whole, or Universal life options.",
-        icon: <Umbrella size={32} className={styles.iconPurple} />
+        desc: "Secure your family's financial future with Term or Whole life options.",
+        icon: <Umbrella size={32} className={styles.iconPurple} />,
+        href: "/insure#life"
     },
     {
         title: "Accident Protection",
-        desc: "Cash benefits paid directly to you for hospital stays or accidental injuries.",
-        icon: <Activity size={32} className={styles.iconRed} />
+        desc: "Cash benefits paid directly to you for hospital stays or injuries.",
+        icon: <Activity size={32} className={styles.iconRed} />,
+        href: "/insure#accident"
     },
     {
         title: "Business Insurance",
-        desc: "Safeguard your hard work with liability, property, and workers' comp solutions.",
-        icon: <ShieldCheck size={32} className={styles.iconGold} />
+        desc: "Safeguard your hard work with liability and workers' comp solutions.",
+        icon: <ShieldCheck size={32} className={styles.iconGold} />,
+        href: "/insure#business"
     }
 ];
 
-export default function InsurePage() {
+// 3. IMPROVEMENT: Data-driven Partner logos
+const PARTNERS = [
+    { name: "Allstate", src: "/logos/allstate-1.png" },
+    { name: "Prudential", src: "/logos/prudential-1.png" },
+    { name: "MetLife", src: "/logos/metlife-1.png" },
+    { name: "Liberty Mutual", src: "/logos/liberty-1.png" },
+];
+
+export default async function InsurePage() {
+    const settings = await getSiteSettings();
+
     return (
         <main className={styles.main}>
 
-            {/* 1. HERO SECTION */}
+            {/* HERO SECTION */}
             <section className={styles.heroBackground}>
                 <Image
                     src="/insure-hero.png"
@@ -54,95 +78,63 @@ export default function InsurePage() {
                 <div className={styles.heroContent}>
                     <div className={styles.tealBadge}>Trust Assurance</div>
                     <h1 className={styles.heroTitle}>
-                        Prepared for the <br />
-                        <span className={styles.highlight}>unexpected.</span>
+                        {settings.insure_hero_title} <br />
+                        <span className={styles.highlight}>{settings.insure_hero_highlight}</span>
                     </h1>
                     <p className={styles.heroDesc}>
-                        Life is unpredictable. Your coverage shouldn&apos;t be.
-                        We partner with top-rated carriers to bring you protection that actually pays out when you need it.
+                        {settings.insure_hero_desc}
                     </p>
                 </div>
             </section>
 
-            {/* 2. WIZARD SECTION */}
+            {/* WIZARD SECTION */}
             <section className={styles.wizardSection}>
                 <div className={styles.container}>
                     <CoverageWizard />
                 </div>
             </section>
 
-            {/* 3. PRODUCT GRID */}
+            {/* PRODUCT GRID */}
             <section className={styles.productsSection}>
                 <div className={styles.container}>
                     <div className={styles.sectionHeader}>
-                        <h2>Coverage Solutions</h2>
-                        <p>A full suite of insurance products designed for every stage of life.</p>
+                        <h2>{settings.insure_products_title}</h2>
+                        <p>{settings.insure_products_desc}</p>
                     </div>
 
                     <div className={styles.grid}>
                         {PRODUCTS.map((p, i) => (
-                            <div key={i} className={styles.card}>
+                            <Link key={i} href={p.href} className={styles.card}>
                                 <div className={styles.cardHeader}>
                                     {p.icon}
                                     <div className={styles.arrowBox}><ArrowRight size={16} /></div>
                                 </div>
                                 <h3>{p.title}</h3>
                                 <p>{p.desc}</p>
-                            </div>
+                            </Link>
                         ))}
                     </div>
                 </div>
             </section>
 
-            {/* 4. PARTNER STRIP */}
+            {/* PARTNER STRIP */}
             <section className={styles.partnerStrip}>
                 <div className={styles.container}>
-                    <h3>Backed by the world&apos;s strongest carriers</h3>
+                    <h3>{settings.insure_partners_title}</h3>
 
                     <div className={styles.logos}>
-                        {/* 1. Allstate */}
-                        <div className={styles.logoItem}>
-                            <Image
-                                src="/logos/allstate-1.png"
-                                alt="Allstate"
-                                width={120}
-                                height={40}
-                                className={styles.logoImg}
-                            />
-                        </div>
-
-                        {/* 2. Prudential */}
-                        <div className={styles.logoItem}>
-                            <Image
-                                src="/logos/prudential-1.png"
-                                alt="Prudential"
-                                width={120}
-                                height={40}
-                                className={styles.logoImg}
-                            />
-                        </div>
-
-                        {/* 3. MetLife */}
-                        <div className={styles.logoItem}>
-                            <Image
-                                src="/logos/metlife-1.png"
-                                alt="MetLife"
-                                width={120}
-                                height={40}
-                                className={styles.logoImg}
-                            />
-                        </div>
-
-                        {/* 4. Liberty Mutual */}
-                        <div className={styles.logoItem}>
-                            <Image
-                                src="/logos/liberty-1.png"
-                                alt="Liberty Mutual"
-                                width={120}
-                                height={40}
-                                className={styles.logoImg}
-                            />
-                        </div>
+                        {PARTNERS.map((partner) => (
+                            <div key={partner.name} className={styles.logoItem}>
+                                <Image
+                                    src={partner.src}
+                                    alt={`${partner.name} logo`}
+                                    width={120}
+                                    height={40}
+                                    className={styles.logoImg}
+                                    style={{ objectFit: 'contain' }}
+                                />
+                            </div>
+                        ))}
                     </div>
                 </div>
             </section>

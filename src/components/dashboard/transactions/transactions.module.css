@@ -175,6 +175,11 @@
   color: var(--text-main);
   font-size: 0.9rem;
   vertical-align: middle;
+  /* cursor: pointer; */
+}
+.table td a,
+.table td button {
+  pointer-events: auto;
 }
 .table tr:last-child td {
   border-bottom: none;
@@ -318,6 +323,22 @@
   padding: 60px;
   color: var(--text-muted);
   gap: 12px;
+}
+
+.clickableRow {
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    transform 0.1s ease;
+}
+
+.clickableRow:hover {
+  background-color: var(--bg-surface);
+}
+
+.clickableRow:active {
+  background-color: var(--border);
+  transform: scale(0.998);
 }
 
 @media (max-width: 768px) {

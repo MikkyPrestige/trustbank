@@ -3,14 +3,15 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { X, User, Mail, ArrowRight, ShieldCheck } from 'lucide-react';
-import styles from './styles/RegisterModal.module.css'
+import styles from './styles/RegisterModal.module.css';
 
 interface RegisterModalProps {
     isOpen: boolean;
     onClose: () => void;
+    siteName?: string; // 👈 Added prop for CMS Name
 }
 
-export default function RegisterModal({ isOpen, onClose }: RegisterModalProps) {
+export default function RegisterModal({ isOpen, onClose, siteName = "TrustBank" }: RegisterModalProps) {
     const router = useRouter();
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
@@ -19,9 +20,16 @@ export default function RegisterModal({ isOpen, onClose }: RegisterModalProps) {
     // Close on ESC
     useEffect(() => {
         const handleEsc = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
-        window.addEventListener('keydown', handleEsc);
-        return () => window.removeEventListener('keydown', handleEsc);
-    }, [onClose]);
+        if (isOpen) {
+            window.addEventListener('keydown', handleEsc);
+            // Lock body scroll
+            document.body.style.overflow = 'hidden';
+        }
+        return () => {
+            window.removeEventListener('keydown', handleEsc);
+            document.body.style.overflow = 'unset';
+        };
+    }, [isOpen, onClose]);
 
     const handleContinue = (e: React.FormEvent) => {
         e.preventDefault();
@@ -45,7 +53,9 @@ export default function RegisterModal({ isOpen, onClose }: RegisterModalProps) {
     return (
         <div className={styles.overlay} onClick={onClose}>
             <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-                <button className={styles.closeBtn} onClick={onClose}><X size={20} /></button>
+                <button className={styles.closeBtn} onClick={onClose} aria-label="Close">
+                    <X size={20} />
+                </button>
 
                 <div className={styles.header}>
                     <div className={styles.securityBadge}>
@@ -53,39 +63,35 @@ export default function RegisterModal({ isOpen, onClose }: RegisterModalProps) {
                         <span>FDIC Insured Application</span>
                     </div>
                     <h2>Start Your Journey</h2>
-                    <p>Begin your application to join TrustBank Enterprise.</p>
+                    <p>Begin your application to join {siteName}.</p>
                 </div>
 
                 <form onSubmit={handleContinue} className={styles.form}>
                     {/* Full Name */}
                     <div className={styles.inputGroup}>
                         <div className={styles.iconBox}><User size={18} /></div>
-                        <div className={styles.fieldWrapper}>
-                            <label className={styles.floatingLabel}>Legal Full Name</label>
-                            <input
-                                type="text"
-                                required
-                                className={styles.input}
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                                autoFocus
-                            />
-                        </div>
+                        <input
+                            type="text"
+                            required
+                            placeholder="Legal Full Name"
+                            className={styles.input}
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            autoFocus
+                        />
                     </div>
 
                     {/* Email */}
                     <div className={styles.inputGroup}>
                         <div className={styles.iconBox}><Mail size={18} /></div>
-                        <div className={styles.fieldWrapper}>
-                            <label className={styles.floatingLabel}>Email Address</label>
-                            <input
-                                type="email"
-                                required
-                                className={styles.input}
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                            />
-                        </div>
+                        <input
+                            type="email"
+                            required
+                            placeholder="Email Address"
+                            className={styles.input}
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                        />
                     </div>
 
                     <button type="submit" disabled={isLoading} className={styles.submitBtn}>

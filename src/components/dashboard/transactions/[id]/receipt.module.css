@@ -1,148 +1,151 @@
+/* Container centers the receipt */
 .container {
   max-width: 600px;
   margin: 0 auto;
-  padding: 2rem;
-  color: var(--text-main);
+  padding: 2rem 1rem;
 }
 
 .headerNav {
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
 }
 
 .backLink {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 6px;
   color: var(--text-muted);
   text-decoration: none;
+  font-weight: 500;
   font-size: 0.9rem;
   transition: color 0.2s;
 }
+.backLink:hover { color: var(--text-main); }
 
-.backLink:hover {
-  color: var(--primary);
-}
-
-/* RECEIPT CARD */
+/* The Card itself */
 .receiptCard {
   background: var(--bg-card);
+  border-radius: 20px;
+  box-shadow: 0 10px 40px -10px rgba(0,0,0,0.08);
   border: 1px solid var(--border);
-  border-radius: 24px;
-  padding: 2.5rem;
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.2);
-  position: relative;
   overflow: hidden;
+  padding: 2.5rem;
 }
 
+/* 1. Header */
+.bankHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px dashed var(--border); /* Dashed line implies "tear-off" */
+}
+
+.bankName {
+  font-weight: 800;
+  font-size: 1.25rem;
+  letter-spacing: -0.5px;
+  color: var(--text-main);
+}
+
+.receiptLabel {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+/* 2. Hero Section */
 .receiptHeader {
-  text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  text-align: center;
   margin-bottom: 2rem;
 }
 
 .iconBox {
-  width: 64px;
-  height: 64px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 0.5rem;
+  margin-bottom: 1rem;
 }
 
 .amount {
   font-size: 2.5rem;
   font-weight: 800;
-  margin: 0;
   color: var(--text-main);
+  margin-bottom: 0.5rem;
   letter-spacing: -1px;
 }
 
+.creditText { color: var(--success); }
+
+/* Status Badges */
 .statusBadge {
-  font-size: 0.8rem;
-  font-weight: 700;
-  padding: 6px 16px;
+  padding: 6px 12px;
   border-radius: 20px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: capitalize;
 }
 
-/* COLORS */
-.success {
-  background: rgba(34, 197, 94, 0.1);
-  color: #22c55e;
-}
+.success { background: var(--success-bg, #dcfce7); color: var(--success); }
+.pending { background: var(--info-bg, #eff6ff); color: var(--info, #2563eb); }
+.failed { background: var(--danger-bg, #fee2e2); color: var(--danger); }
 
-.pending {
-  background: rgba(234, 179, 8, 0.1);
-  color: #eab308;
-}
-
-.failed {
-  background: rgba(239, 68, 68, 0.1);
-  color: #ef4444;
-}
-
+/* 3. THE MISSING DIVIDER */
 .divider {
   height: 1px;
   background: var(--border);
-  margin: 2rem 0;
-  position: relative;
+  margin: 1.5rem 0;
+  width: 100%;
 }
 
-/* Scalloped edge effect (Optional cool receipt detail) */
-.divider::before, .divider::after {
-  content: '';
-  position: absolute;
-  top: -6px;
-  width: 12px;
-  height: 12px;
-  background: var(--bg-background); /* Matches page background */
-  border-radius: 50%;
-}
-.divider::before { left: -31px; }
-.divider::after { right: -31px; }
-
-/* DETAILS */
+/* Details */
 .detailsList {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.25rem;
 }
 
 .detailRow {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
+  font-size: 0.95rem;
 }
 
-.label {
-  color: var(--text-muted);
-  font-size: 0.9rem;
-}
+.label { color: var(--text-muted); font-weight: 500; }
 
-.value {
-  font-weight: 600;
-  color: var(--text-main);
-  text-align: right;
+.value { color: var(--text-main); font-weight: 600; text-align: right; }
+.valueHighlight { color: var(--text-main); font-weight: 700; font-size: 1rem; text-align: right; }
+
+.multiValue {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
 }
+.subValue { font-size: 0.8rem; color: var(--text-muted); margin-top: 2px; }
 
 .monoValue {
   font-family: monospace;
-  font-weight: 600;
-  color: var(--text-main);
   background: var(--bg-surface);
   padding: 4px 8px;
-  border-radius: 4px;
+  border-radius: 6px;
   font-size: 0.85rem;
+  color: var(--text-muted);
 }
 
-/* FOOTER */
+/* Actions Footer */
 .footer {
-  margin-top: 3rem;
+  margin-top: 2.5rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border);
   display: flex;
   gap: 1rem;
   justify-content: center;
@@ -152,31 +155,28 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  background: var(--bg-surface);
-  border: 1px solid var(--border);
-  color: var(--text-main);
   padding: 10px 20px;
   border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 0.9rem;
   cursor: pointer;
-  font-weight: 500;
   transition: all 0.2s;
 }
 
 .actionBtn:hover {
-  background: var(--bg-secondary);
+  background: var(--bg-surface);
   border-color: var(--text-muted);
+  color: var(--text-main);
 }
 
-.logoWatermark {
-  position: absolute;
-  bottom: 2rem;
-  left: 0;
-  right: 0;
+.disclaimer {
+  margin-top: 2rem;
   text-align: center;
-  font-size: 4rem;
-  font-weight: 900;
-  color: var(--text-main);
-  opacity: 0.03;
-  pointer-events: none;
-  z-index: 0;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  opacity: 0.7;
+  line-height: 1.5;
 }

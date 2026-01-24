@@ -36,6 +36,14 @@
 }
 
 /* CONTROLS */
+.controls {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.5rem;
+  width: 100%;
+}
+
 .sliderLabel {
   display: flex;
   justify-content: space-between;
@@ -53,8 +61,9 @@
   height: 6px;
   -webkit-appearance: none;
   background: rgba(255, 255, 255, 0.1);
+  accent-color: #d97706;
   border-radius: 4px;
-  margin-bottom: 3rem;
+  margin-bottom: 2rem;
   cursor: pointer;
 }
 .slider::-webkit-slider-thumb {

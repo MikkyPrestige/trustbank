@@ -1,9 +1,13 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Car, Home, Briefcase, GraduationCap, Calculator, ArrowRight, ChevronRight, Percent } from "lucide-react";
+import { Car, Home, Briefcase, GraduationCap, Calculator, ChevronRight, Percent } from "lucide-react";
 import styles from "./home.module.css";
+import { getSiteSettings } from "@/lib/get-settings";
 
-export default function LoanSection() {
+export default async function LoanSection() {
+    // 1. Fetch Dynamic Data
+    const settings = await getSiteSettings();
+
     return (
         <section className={styles.loanSection}>
             <div className={styles.container}>
@@ -11,10 +15,9 @@ export default function LoanSection() {
                 {/* 1. HEADER & CATEGORIES */}
                 <div className={styles.loanHeader}>
                     <div className={styles.headerContent}>
-                        <h2 className={styles.sectionTitleDark}>Borrow with Confidence</h2>
+                        <h2 className={styles.sectionTitleDark}>{settings.home_loan_title}</h2>
                         <p className={styles.sectionDescDark}>
-                            Whether you’re buying a home, a new car, or consolidating debt,
-                            we have the transparent terms you need.
+                            {settings.home_loan_desc}
                         </p>
                     </div>
 
@@ -57,7 +60,8 @@ export default function LoanSection() {
                             <div className={styles.loanStatRow}>
                                 <div>
                                     <span className={styles.statLabel}>30-Year Fixed</span>
-                                    <span className={styles.statValue}>6.12% <small>APR</small></span>
+                                    {/* DYNAMIC MORTGAGE RATE */}
+                                    <span className={styles.statValue}>{settings.rate_mortgage_30yr}% <small>APR</small></span>
                                 </div>
                                 <div className={styles.verticalDivider}></div>
                                 <div>
@@ -67,10 +71,10 @@ export default function LoanSection() {
                             </div>
 
                             <div className={styles.loanActions}>
-                                <Link href="/mortgage" className={styles.btnWhite}>
+                                <Link href="/borrow" className={styles.btnWhite}>
                                     Get Pre-Approved
                                 </Link>
-                                <Link href="/mortgage/calculator" className={styles.linkLight}>
+                                <Link href="/payments" className={styles.linkLight}>
                                     Calculate Payment <ChevronRight size={14} />
                                 </Link>
                             </div>
@@ -96,7 +100,7 @@ export default function LoanSection() {
                             <h3>On the road faster</h3>
                             <p>
                                 Finance a new car or refinance your current one.
-                                Rates as low as <strong>5.89% APR</strong> for well-qualified buyers.
+                                Rates as low as <strong>{settings.rate_auto_low}% APR</strong> for well-qualified buyers.
                             </p>
 
                             <ul className={styles.loanChecklist}>
@@ -106,10 +110,10 @@ export default function LoanSection() {
                             </ul>
 
                             <div className={styles.loanActions}>
-                                <Link href="/auto-loans" className={styles.btnBlueOutline}>
+                                <Link href="/borrow" className={styles.btnBlueOutline}>
                                     View Auto Rates
                                 </Link>
-                                <Link href="/auto-loans/calculator" className={styles.linkDark}>
+                                <Link href="payments" className={styles.linkDark}>
                                     Estimate Payment <ChevronRight size={14} />
                                 </Link>
                             </div>
@@ -128,13 +132,13 @@ export default function LoanSection() {
 
                 </div>
 
-                {/* 3. CALCULATOR STRIP (Bottom) */}
+                {/* 3. CALCULATOR STRIP */}
                 <div className={styles.toolsStrip}>
                     <div className={styles.toolItem}>
                         <Calculator size={20} className={styles.toolIcon} />
                         <div>
                             <h4>Mortgage Calculator</h4>
-                            <Link href="/calculators/mortgage">Estimate monthly payments &rarr;</Link>
+                            <Link href="/payments">Estimate monthly payments &rarr;</Link>
                         </div>
                     </div>
                     <div className={styles.toolDivider}></div>
@@ -150,7 +154,7 @@ export default function LoanSection() {
                         <Briefcase size={20} className={styles.toolIcon} />
                         <div>
                             <h4>Business Lines</h4>
-                            <Link href="/business/loans">Explore capital options &rarr;</Link>
+                            <Link href="/borrow">Explore capital options &rarr;</Link>
                         </div>
                     </div>
                 </div>

@@ -1,396 +1,270 @@
-/* --- 1. PAGE LAYOUT --- */
+/* PAGE WRAPPER */
 .pageWrapper {
   min-height: 100vh;
+  width: 100%;
   display: flex;
+  align-items: center;
   justify-content: center;
-  padding: 60px 20px;
-  background-color: var(--bg-surface);
   position: relative;
   overflow-x: hidden;
-  margin-top: 30px;
+  padding: 2rem 1rem;
+  background-color: var(--bg-app);
 }
 
-/* Ambient Mesh Gradient (Using Variables/Opacity) */
+/* AMBIENT BACKGROUND */
 .ambientMesh {
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  /* Subtle accent glow tailored to theme */
+  right: 0;
+  bottom: 0;
   background:
     radial-gradient(
       circle at 10% 20%,
-      rgba(59, 130, 246, 0.08),
+      var(--primary-light, rgba(59, 130, 246, 0.1)),
       transparent 40%
     ),
     radial-gradient(
       circle at 90% 80%,
-      rgba(99, 102, 241, 0.08),
+      var(--success-light, rgba(34, 197, 94, 0.1)),
       transparent 40%
     );
-  pointer-events: none;
   z-index: 0;
+  pointer-events: none;
 }
 
-/* --- 2. CONTAINER --- */
+/* MAIN CONTAINER */
 .formContainer {
+  width: 100%;
+  max-width: 1000px;
   position: relative;
   z-index: 10;
-  width: 100%;
-  max-width: 1100px;
-  animation: slideUp 0.6s ease-out;
-  border-radius: 50px;
+  animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* HEADER */
 .header {
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 2rem;
 }
 
 .brandBadge {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: var(--bg-surface); /* ✅ Variable */
-  color: var(--text-muted); /* ✅ Variable */
-  border: 1px solid var(--border); /* ✅ Variable */
-  padding: 6px 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 4px 12px;
   border-radius: 50px;
-  font-size: 0.7rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+  backdrop-filter: blur(4px);
 }
 
 .header h1 {
-  font-size: 2.2rem;
+  font-size: 2rem;
   font-weight: 800;
-  color: var(--text-main); /* ✅ Variable */
-  margin: 0 0 10px 0;
+  color: var(--text-main);
+  margin-bottom: 0.25rem;
   letter-spacing: -0.5px;
 }
+
 .header p {
   color: var(--text-muted);
   font-size: 1rem;
 }
 
-/* --- 3. GLASS FORM --- */
+/* GLASS FORM CARD */
 .glassForm {
-  background: var(--bg-card); /* ✅ Variable */
-  border: 1px solid var(--border); /* ✅ Variable */
+  background: var(--bg-card);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
   border-radius: 20px;
-  padding: 20px;
-  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.05);
+  padding: 2rem;
+  box-shadow: var(--shadow-card, 0 25px 50px -12px rgba(0, 0, 0, 0.5));
 }
 
-/* ERROR BANNER */
+/* ALERTS */
 .errorBanner {
   background: rgba(239, 68, 68, 0.1);
-  color: #ef4444;
   border: 1px solid rgba(239, 68, 68, 0.2);
-  padding: 12px;
-  border-radius: 8px;
-  text-align: center;
+  color: #ef4444;
+  padding: 1rem;
+  border-radius: 12px;
   font-size: 0.9rem;
-  font-weight: 600;
-  margin-bottom: 30px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 10px;
+  gap: 12px;
+  margin-bottom: 2rem;
+  animation: fadeIn 0.3s ease-out;
 }
 
-/* Split Layout Grid */
+/* SPLIT LAYOUT (The Core Grid) */
 .splitLayout {
   display: grid;
-  grid-template-columns: 1fr 1fr; /* Two equal columns */
-  gap: 40px; /* Space between columns */
-  align-items: start;
+  grid-template-columns: 1fr;
+  gap: 2rem;
 }
 
-.colLeft,
+/* COLUMN STYLES */
+.colLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
 .colRight {
   display: flex;
   flex-direction: column;
-  min-width: 0;
+  gap: 1.5rem;
 }
 
-/* --- 4. SECTIONS --- */
+@media (min-width: 900px) {
+  .splitLayout {
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: start;
+  }
+
+  /* Vertical Divider Line */
+  .colLeft {
+    position: relative;
+  }
+  .colLeft::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: -1.5rem;
+    bottom: 0;
+    width: 1px;
+    background: linear-gradient(
+      to bottom,
+      transparent,
+      var(--border),
+      transparent
+    );
+  }
+}
+
+/* SECTION LABELS */
 .sectionLabel {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 20px;
-  margin-top: 10px;
-  color: var(--text-main);
+  gap: 8px;
+  color: var(--primary);
   font-weight: 700;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
 }
-.sectionLabel svg {
-  color: #3b82f6;
-} /* Accent Color for icons */
 
+/* INPUT GROUPS */
 .fieldGroup {
-  margin-bottom: 40px;
-  border-left: 2px solid var(--border); /* Visual guide line */
-  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
-/* GRIDS */
-.inputRow {
-  margin-bottom: 16px;
-  width: 100%;
-}
+/* 2-Column Grid */
 .grid2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  margin-bottom: 16px;
+  gap: 1rem;
 }
 
-/* --- 5. INPUT STYLING --- */
+/* 3-Column Grid (Fixes hanging spaces) */
+.grid3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 0.8fr;
+  gap: 1rem;
+}
+
+@media (max-width: 600px) {
+  .grid2,
+  .grid3 {
+    grid-template-columns: 1fr;
+  }
+}
+
 .inputWrapper {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
   position: relative;
   width: 100%;
 }
 
 .inputWrapper label {
-  font-size: 0.8rem;
-  font-weight: 600;
+  font-size: 0.75rem;
+  font-weight: 700;
   color: var(--text-muted);
+  margin-left: 2px;
+  text-transform: uppercase;
+}
+
+.inputIconBox {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  color: var(--text-muted);
+  pointer-events: none;
+  z-index: 2;
 }
 
 .inputWrapper input,
 .inputWrapper select {
-  background: var(--bg-surface); /* ✅ Variable */
-  border: 1px solid var(--border); /* ✅ Variable */
-  border-radius: 10px;
-  padding: 12px 16px 12px 42px; /* Left padding for icon space */
-  font-size: 0.95rem;
-  color: var(--text-main);
-  transition: all 0.2s ease;
   width: 100%;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  color: var(--text-main);
+  font-size: 0.9rem;
+  height: 44px;
   outline: none;
-}
-/* Select inputs usually don't have icons, reduce padding */
-.inputWrapper select {
-  padding-left: 16px;
+  transition: all 0.2s;
 }
 
-/* Icon inside input */
-.inputIconBox {
-  position: absolute;
-  left: 14px;
-  top: 38px; /* Adjust based on label height */
-  color: var(--text-muted);
-  pointer-events: none;
+.inputWrapper:has(.inputIconBox) input {
+  padding-left: 38px;
 }
 
-/* FOCUS STATES */
 .inputWrapper input:focus,
 .inputWrapper select:focus {
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+  border-color: var(--primary);
   background: var(--bg-card);
+  box-shadow: 0 0 0 1px var(--primary);
 }
 
 .pinInput {
   letter-spacing: 4px;
-  text-align: center;
   font-family: monospace;
-  padding-left: 16px !important;
-}
-
-/* --- 6. NOK BOX --- */
-.nokBox {
-  background: rgba(59, 130, 246, 0.03);
-  border: 1px dashed var(--border);
-  border-radius: 12px;
-  padding: 20px;
-  margin-top: 20px;
-}
-.miniHeader {
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  margin-bottom: 16px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-/* --- 7. KYC & UPLOAD --- */
-.kycContainer {
-  background: var(--bg-surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 24px;
-}
-
-.dropZone {
-  position: relative;
-  border: 2px dashed var(--border);
-  border-radius: 12px;
-  background: var(--bg-card);
-  transition: 0.2s;
-  overflow: hidden;
-  cursor: pointer;
-  margin-top: 16px;
-}
-.dropZone:hover {
-  border-color: #3b82f6;
-  background: rgba(59, 130, 246, 0.03);
-}
-
-.fileInput {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-  cursor: pointer;
-  z-index: 2;
-}
-.dropContent {
-  padding: 30px;
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  text-align: center;
-  gap: 12px;
-}
-
-.cloudIcon {
-  width: 48px;
-  height: 48px;
-  background: rgba(59, 130, 246, 0.1);
-  color: #3b82f6;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.uploadText {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  gap: 4px;
-}
-
-.mainText {
-  font-weight: 600;
-  color: var(--text-main);
-  font-size: 0.95rem;
-  display: block;
-}
-.subText {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-}
-.fileSuccess {
-  font-weight: 700;
-  color: #22c55e;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.complianceNote {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  margin-top: 12px;
   text-align: center;
 }
 
-/* --- 8. FOOTER --- */
-.footer {
-  margin-top: 40px;
-}
-
-.primaryBtn {
-  width: 100%;
-  background: #0f172a; /* Keep dark for branding, or use var(--primary) if you have it */
-  color: white;
-  border: none;
-  padding: 16px;
-  border-radius: 12px;
-  font-size: 1.1rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-}
-.primaryBtn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.1);
-}
-
-.legalText {
-  text-align: center;
-  font-size: 0.8rem;
-  color: var(--text-muted);
-  margin-top: 20px;
-}
-.loginLink {
-  text-align: center;
-  margin-top: 16px;
-  font-size: 0.9rem;
-  color: var(--text-muted);
-}
-.loginLink a {
-  color: #3b82f6;
-  font-weight: 600;
-  text-decoration: none;
-}
-
-/* --- SUCCESS SCREEN --- */
-.successCard {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  padding: 60px 40px;
-  border-radius: 24px;
-  text-align: center;
-  max-width: 500px;
-}
-.successIcon {
-  color: #22c55e;
-  margin-bottom: 24px;
-}
-.successDetails {
-  margin: 20px 0 40px 0;
-  color: var(--text-muted);
-}
-
-/* ========================================= */
-/* NEW ADDITIONS FOR PROFILE PHOTO     */
-/* ========================================= */
-
+/* PHOTO UPLOAD */
 .photoUploadRow {
   display: flex;
   align-items: center;
-  gap: 20px;
-  padding: 10px 0;
+  gap: 1rem;
+  background: var(--bg-surface);
+  padding: 0.75rem;
+  border-radius: 12px;
+  border: 1px solid var(--border);
 }
 
 .previewCircle {
-  width: 70px;
-  height: 70px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
-  background: var(--bg-surface); /* Matches your variables */
-  border: 2px dashed var(--border);
+  background: var(--bg-card);
+  border: 1px dashed var(--border);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -407,90 +281,236 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  justify-content: center;
 }
-
-/* OVERRIDE: The profile photo input needs to be visible,
-   unlike the Dropzone file input which is opacity: 0.
-*/
-.photoInputWrapper .fileInput {
-  position: static;
-  opacity: 1;
-  width: 100%;
-  height: auto;
-  padding: 10px;
-  background: var(--bg-surface);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  color: var(--text-muted);
-  cursor: pointer;
-}
-
-/* Custom file selector button style to match your theme */
-.photoInputWrapper .fileInput::file-selector-button {
-  background: var(--bg-card);
+.photoInputWrapper label {
+  font-size: 0.8rem;
+  font-weight: 600;
   color: var(--text-main);
-  border: 1px solid var(--border);
-  padding: 6px 12px;
-  border-radius: 6px;
-  margin-right: 10px;
-  cursor: pointer;
 }
-
+.fileInput {
+  font-size: 0.75rem;
+}
 .fileHint {
   font-size: 0.75rem;
   color: var(--text-muted);
-  margin-top: 4px;
-  display: block;
 }
-
 .successText {
   color: #22c55e;
-  font-weight: 600;
+  font-weight: 500;
 }
 
-/* ANIMATION */
+/* NOK BOX */
+.nokBox {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+  padding: 1rem;
+  border-radius: 12px;
+  margin-top: 0.5rem;
+}
+
+.miniHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 0.75rem;
+  opacity: 0.8;
+  text-transform: uppercase;
+}
+
+/* DOCUMENT UPLOAD */
+.dropZone {
+  position: relative;
+  border: 2px dashed var(--border);
+  border-radius: 12px;
+  background: var(--bg-surface);
+  transition: all 0.2s;
+  overflow: hidden;
+  cursor: pointer;
+  min-height: 120px;
+}
+
+.dropZone:hover {
+  border-color: var(--primary);
+  background: rgba(59, 130, 246, 0.05);
+}
+
+.dropZone input[type="file"] {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 5;
+}
+
+.dropContent {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.5rem;
+}
+
+.cloudIcon {
+  width: 36px;
+  height: 36px;
+  background: var(--bg-card);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary);
+  border: 1px solid var(--border);
+}
+
+.uploadText {
+  display: flex;
+  flex-direction: column;
+}
+
+.mainText {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+.subText {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.fileSuccess {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #22c55e;
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: rgba(34, 197, 94, 0.1);
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+.complianceNote {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-align: center;
+  margin-top: 0.5rem;
+  opacity: 0.7;
+}
+
+/* FOOTER */
+.footer {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  border-top: 1px solid var(--border);
+  padding-top: 1.5rem;
+}
+
+.primaryBtn {
+  background: var(--primary);
+  color: white;
+  border: none;
+  height: 50px;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.2s;
+  width: 100%;
+}
+
+.primaryBtn:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.primaryBtn:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.legalText {
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+.loginLink {
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+.loginLink a {
+  color: var(--primary);
+  font-weight: 700;
+  text-decoration: none;
+}
+.loginLink a:hover {
+  text-decoration: underline;
+}
+
+/* SUCCESS PAGE */
+.successCard {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 4rem 2rem;
+  text-align: center;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: var(--shadow-card);
+  animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.successIcon {
+  color: #22c55e;
+  margin-bottom: 1.5rem;
+  display: inline-block;
+}
+
+.successCard h1 {
+  font-size: 2rem;
+  color: var(--text-main);
+  margin-bottom: 1rem;
+}
+
+.successDetails {
+  background: var(--bg-surface);
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin: 2rem 0;
+  font-size: 0.95rem;
+  color: var(--text-muted);
+}
+
+/* ANIMATIONS */
 @keyframes slideUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(30px);
   }
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
-
-/* RESPONSIVE */
-@media (max-width: 768px) {
-  .grid2 {
-    grid-template-columns: 1fr;
-    gap: 10px;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
   }
-  .pageWrapper {
-    padding: 40px 16px;
+  to {
+    opacity: 1;
   }
-  .glassForm {
-    padding: 24px;
-  }
-
-  .splitLayout {
-    grid-template-columns: 1fr; /* Stack on smaller screens */
-    gap: 0;
-  }
-
-  .colLeft {
-    margin-bottom: 20px;
-  }
-
-  .formContainer {
-    max-width: 600px; /* Revert to narrow width on mobile */
-  }
-}
-
-/* DARK MODE OVERRIDES (Only if needed, otherwise variables handle it) */
-@media (prefers-color-scheme: dark) {
-  .primaryBtn {
-    background: #3b82f6;
-  } /* Brighter blue on dark mode */
 }

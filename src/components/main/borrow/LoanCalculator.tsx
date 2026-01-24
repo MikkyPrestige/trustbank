@@ -4,13 +4,18 @@ import { useState, useMemo } from 'react';
 import styles from './LoanCalculator.module.css';
 import { DollarSign, Calendar, Percent } from 'lucide-react';
 
-export default function LoanCalculator() {
+// 1. Accept Props
+interface LoanCalculatorProps {
+    defaultRate?: number;
+}
+
+export default function LoanCalculator({ defaultRate = 6.99 }: LoanCalculatorProps) {
     const [amount, setAmount] = useState(25000);
     const [months, setMonths] = useState(36);
-    const [rate, setRate] = useState(5.5);
 
-    // ✅ ADDED: Calculate directly using useMemo
-    // This runs only when amount, months, or rate changes.
+    // 2. Use prop as initial state
+    const [rate, setRate] = useState(defaultRate);
+
     const monthlyPayment = useMemo(() => {
         const principal = amount;
         const calculatedInterest = rate / 100 / 12;
@@ -22,7 +27,6 @@ export default function LoanCalculator() {
         return isFinite(monthly) ? monthly : 0;
     }, [amount, months, rate]);
 
-    // Slider Background Fill Logic
     const getBackgroundSize = (val: number, min: number, max: number) => {
         return { backgroundSize: `${((val - min) * 100) / (max - min)}% 100%` };
     };

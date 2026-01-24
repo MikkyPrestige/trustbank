@@ -188,6 +188,13 @@
   color: #a855f7;
 }
 
+.iconTeal {
+  color: #0d9488;
+}
+
+.iconOrange {
+  color: #ea580c;
+}
 /* TRUST STRIP */
 .trustStrip {
   background: var(--bg-surface);

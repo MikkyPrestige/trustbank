@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Globe, ShieldCheck, Wifi } from "lucide-react";
 import styles from "./home.module.css";
+import { getSiteSettings } from "@/lib/get-settings";
 
 const HOTSPOTS = [
     { city: "New York", top: "34%", left: "28%" },
@@ -14,7 +15,10 @@ const HOTSPOTS = [
     { city: "Sao Paulo", top: "70%", left: "32%" },
 ];
 
-export default function GlobalReach() {
+export default async function GlobalReach() {
+    // 1. Fetch Dynamic Data
+    const settings = await getSiteSettings();
+
     return (
         <section className={styles.globalSection}>
             <div className={styles.container}>
@@ -22,11 +26,10 @@ export default function GlobalReach() {
                 {/* HEADLINE */}
                 <div className={styles.globalHeader}>
                     <h2 className={styles.sectionTitleDark}>
-                        Banking Without <span className={styles.highlightBlue}>Borders.</span>
+                        {settings.home_global_title} <span className={styles.highlightBlue}>{settings.home_global_highlight}</span>
                     </h2>
                     <p className={styles.sectionDescDark}>
-                        Whether you are closing a deal in Tokyo or visiting family in New York,
-                        your money moves with you. Zero foreign transaction fees on all Gold Cards.
+                        {settings.home_global_desc}
                     </p>
                 </div>
 
@@ -40,7 +43,7 @@ export default function GlobalReach() {
                         quality={100}
                     />
 
-                    {/* Pulsing Hotspots */}
+                    {/* Pulsing Hotspots (Visual only, no CMS needed for coordinates) */}
                     {HOTSPOTS.map((spot) => (
                         <div
                             key={spot.city}
@@ -50,7 +53,6 @@ export default function GlobalReach() {
                             <div className={styles.hotspotPulse}></div>
                             <div className={styles.hotspotDot}></div>
 
-                            {/* Tooltip on Hover */}
                             <div className={styles.hotspotTooltip}>
                                 <span className={styles.tooltipCity}>{spot.city}</span>
                                 <span className={styles.tooltipStatus}>Operational</span>
@@ -64,7 +66,7 @@ export default function GlobalReach() {
                     <div className={styles.statItem}>
                         <Globe size={24} className={styles.statIcon} />
                         <div>
-                            <strong>180+ Countries</strong>
+                            <strong>{settings.global_stat_countries} Countries</strong>
                             <span>Accepted worldwide</span>
                         </div>
                     </div>
@@ -72,7 +74,7 @@ export default function GlobalReach() {
                     <div className={styles.statItem}>
                         <Wifi size={24} className={styles.statIcon} />
                         <div>
-                            <strong>100% Digital</strong>
+                            <strong>{settings.global_stat_digital} Digital</strong>
                             <span>Manage from anywhere</span>
                         </div>
                     </div>
@@ -81,7 +83,7 @@ export default function GlobalReach() {
                         <ShieldCheck size={24} className={styles.statIcon} />
                         <div>
                             <strong>Global Fraud Shield</strong>
-                            <span>24/7 Monitoring</span>
+                            <span>{settings.global_stat_fraud} Monitoring</span>
                         </div>
                     </div>
                 </div>

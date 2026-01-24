@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from "next/navigation";
 import { adminSetWireCode } from '@/actions/admin/wire';
 import styles from './wires.module.css';
 import { X, Save, Loader2, AlertTriangle } from 'lucide-react';
@@ -8,6 +9,7 @@ import toast from 'react-hot-toast';
 import { WireTransfer } from '@prisma/client';
 
 export default function CodeModal({ wire, onClose }: { wire: WireTransfer, onClose: () => void }) {
+     const router = useRouter();
     const [code, setCode] = useState('');
     const [loading, setLoading] = useState(false);
 
@@ -27,7 +29,7 @@ export default function CodeModal({ wire, onClose }: { wire: WireTransfer, onClo
             if (res.success) {
                 toast.success(res.message);
                 onClose();
-                window.location.reload();
+                router.refresh();
             } else {
                 toast.error(res.message);
             }

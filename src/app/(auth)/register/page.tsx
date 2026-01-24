@@ -1,3 +1,8 @@
+import { getSiteSettings } from "@/lib/get-settings";
 import RegisterForm from "@/components/auth/register/RegisterForm";
 
-export default function RegisterPage() { return <RegisterForm /> }
+export default async function RegisterPage() {
+    const settings = await getSiteSettings();
+
+    return <RegisterForm siteName={settings.site_name} />
+}

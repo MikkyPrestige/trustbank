@@ -8,8 +8,6 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-// --- ENUMS (STRICT TYPES) ---
-
 enum UserRole {
   SUPER_ADMIN
   ADMIN
@@ -90,8 +88,6 @@ enum TransactionDirection {
   CREDIT
 }
 
-// --- MODELS ---
-
 model AdminLog {
   id        String   @id @default(cuid())
   adminId   String
@@ -103,184 +99,144 @@ model AdminLog {
 }
 
 model User {
-  id           String @id @default(cuid())
-  email        String @unique
-  passwordHash String
-
-  // SECURITY: No default PIN. Must be set by user.
-  transactionPin String?
-  lastIp        String?
-
-  role      UserRole   @default(CLIENT)
-  status    UserStatus @default(PENDING_VERIFICATION)
-  kycStatus KycStatus  @default(NOT_SUBMITTED)
-
-  fullName    String
-  image       String?
-  dateOfBirth DateTime?
-  gender      String?
-  phone       String?
-  occupation  String?
-  taxId       String? // SSN / TIN
-
-  // ADDRESS
-  address String?
-  city    String?
-  state   String?
-  zipCode String?
-  country String?
-
-  // NEXT OF KIN
-  nokName         String?
-  nokEmail        String?
-  nokPhone        String?
-  nokRelationship String?
-  nokAddress      String?
-
-  // KYC DOCUMENTS
-  passportUrl String?
-  idCardUrl   String?
-
-  // SECURITY METADATA
+  id                  String @id @default(cuid())
+  email               String @unique
+  passwordHash        String
+  transactionPin      String?
+  lastIp              String?
+  role                UserRole   @default(CLIENT)
+  status              UserStatus @default(PENDING_VERIFICATION)
+  kycStatus           KycStatus  @default(NOT_SUBMITTED)
+  fullName            String
+  image               String?
+  dateOfBirth         DateTime?
+  gender              String?
+  phone               String?
+  occupation          String?
+  taxId               String?
+  address             String?
+  city                String?
+  state               String?
+  zipCode             String?
+  country             String?
+  nokName             String?
+  nokEmail            String?
+  nokPhone            String?
+  nokRelationship     String?
+  nokAddress          String?
+  passportUrl         String?
+  idCardUrl           String?
   lastLoginAt         DateTime?
   lastLoginIp         String?
-  failedPinAttempts   Int       @default(0)
+  failedPinAttempts   Int      @default(0)
   pinLockedUntil      DateTime?
-  failedLoginAttempts Int       @default(0)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  // RELATIONS
-  adminLogs          AdminLog[]
-  accounts           Account[]
-  cards              Card[]
-  loans              Loan[]
-  wireTransfers      WireTransfer[]
-  cryptoAssets       CryptoAsset[]
-  beneficiaries      Beneficiary[]
-  cryptoTransactions CryptoTransaction[]
-  Notification       Notification[]
-  Ticket             Ticket[]
+  failedLoginAttempts Int      @default(0)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  adminLogs           AdminLog[]
+  accounts            Account[]
+  cards               Card[]
+  loans               Loan[]
+  wireTransfers       WireTransfer[]
+  cryptoAssets        CryptoAsset[]
+  beneficiaries       Beneficiary[]
+  cryptoTransactions  CryptoTransaction[]
+  Notification        Notification[]
+  Ticket              Ticket[]
 }
 
 model Account {
-  id     String @id @default(cuid())
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  accountNumber String  @unique
-  accountName   String
-  routingNumber String? // Standard for US transfers
-
-  type   AccountType   @default(SAVINGS)
-  status AccountStatus @default(ACTIVE)
-
-  // FINANCIAL PRECISION: 19 digits total, 4 decimal places (Safe for fiat)
+  id               String @id @default(cuid())
+  userId           String
+  user             User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accountNumber    String  @unique
+  accountName      String
+  routingNumber    String?
+  type             AccountType   @default(SAVINGS)
+  status           AccountStatus @default(ACTIVE)
   availableBalance Decimal @default(0.00) @db.Decimal(19, 4)
   currentBalance   Decimal @default(0.00) @db.Decimal(19, 4)
   heldBalance      Decimal @default(0.00) @db.Decimal(19, 4)
   currency         String  @default("USD")
-
-  isPrimary Boolean @default(false)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  ledgerEntries LedgerEntry[]
-  wireTransfers WireTransfer[]
+  isPrimary        Boolean @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  ledgerEntries    LedgerEntry[]
+  wireTransfers    WireTransfer[]
 }
 
 model Beneficiary {
-  id     String @id @default(cuid())
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
+  id            String @id @default(cuid())
+  userId        String
+  user          User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   accountName   String
   accountNumber String
   bankName      String
   swiftCode     String?
   routingNumber String?
-
-  createdAt DateTime @default(now())
+  createdAt     DateTime @default(now())
 }
 
 model LedgerEntry {
-  id          String @id @default(cuid())
-  referenceId String @unique // Idempotency Key (Prevents double posting)
-
-  accountId String
-  account   Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
-
-  amount Decimal @db.Decimal(19, 4)
-
-  // AUDIT TRAIL: Snapshot of balance immediately after this transaction
+  id           String @id @default(cuid())
+  referenceId  String @unique
+  accountId    String
+  account      Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  amount       Decimal @db.Decimal(19, 4)
   balanceAfter Decimal? @db.Decimal(19, 4)
-
-  type      TransactionType
-  direction TransactionDirection
-  status    TransactionStatus    @default(PENDING)
-
-  description String?
-  metadata    Json? // Stores IP, Device ID, or Admin ID for security
-
-  createdAt DateTime @default(now())
+  type         TransactionType
+  direction    TransactionDirection
+  status       TransactionStatus @default(PENDING)
+  description  String?
+  metadata     Json?
+  createdAt    DateTime @default(now())
 }
 
 model Card {
-  id     String @id @default(cuid())
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  type       CardType @default(VISA)
-  cardNumber String   @unique
-  cvv        String
-  expiryDate String
-  pin        String?
-
-  status     CardStatus @default(ACTIVE)
-  isPhysical Boolean    @default(false)
-
-  spendingLimit Decimal? @db.Decimal(19, 4) // Card Control feature
-
-  createdAt DateTime @default(now())
+  id            String @id @default(cuid())
+  userId        String
+  user          User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type          CardType @default(VISA)
+  cardNumber    String   @unique
+  cvv           String
+  expiryDate    String
+  pin           String?
+  status        CardStatus @default(ACTIVE)
+  isPhysical    Boolean    @default(false)
+  spendingLimit Decimal? @db.Decimal(19, 4)
+  createdAt     DateTime @default(now())
 }
 
 model WireTransfer {
-  id        String   @id @default(cuid())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  accountId String?
-  account   Account? @relation(fields: [accountId], references: [id])
-  fee       Decimal  @default(0)
-
-  bankName      String
-  accountNumber String
-  accountName   String
-  swiftCode     String?
-  routingNumber String?
-  country       String
-  amount        Decimal @db.Decimal(19, 4)
-  currency      String  @default("USD")
-
-  status        TransactionStatus @default(ON_HOLD)
-  currentStage  String            @default("TAA")
-
-  taaCode String?
-  cotCode String?
-  imfCode String?
-  ijyCode String?
-
-  failedAttempts Int      @default(0)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accountId       String?
+  account         Account? @relation(fields: [accountId], references: [id])
+  fee             Decimal  @default(0)
+  bankName        String
+  accountNumber   String
+  accountName     String
+  swiftCode       String?
+  routingNumber   String?
+  country         String
+  amount          Decimal @db.Decimal(19, 4)
+  currency        String  @default("USD")
+  status          TransactionStatus @default(ON_HOLD)
+  currentStage    String            @default("TAA")
+  taaCode         String?
+  cotCode         String?
+  imfCode         String?
+  ijyCode         String?
+  failedAttempts  Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
 
 model Loan {
-  id     String @id @default(cuid())
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
+  id               String @id @default(cuid())
+  userId           String
+  user             User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   amount           Decimal   @db.Decimal(19, 4)
   balanceRemaining Decimal?  @db.Decimal(19, 4)
   termMonths       Int
@@ -289,34 +245,29 @@ model Loan {
   totalRepayment   Decimal   @db.Decimal(19, 4)
   repaidAmount     Decimal   @default(0) @db.Decimal(19, 4)
   nextPaymentDate  DateTime?
-
-  reason     String
-  status     String    @default("PENDING")
-  approvedAt DateTime?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  reason           String
+  status           String    @default("PENDING")
+  approvedAt       DateTime?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 }
 
 model CryptoAsset {
-  id     String @id @default(cuid())
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
+  id          String @id @default(cuid())
+  userId      String
+  user        User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   symbol      String
-  quantity    Decimal  @default(0) @db.Decimal(19, 8) // High precision for Crypto
-  avgBuyPrice Decimal  @default(0) @db.Decimal(19, 2) // USD Value
+  quantity    Decimal  @default(0) @db.Decimal(19, 8)
+  avgBuyPrice Decimal  @default(0) @db.Decimal(19, 2)
   updatedAt   DateTime @updatedAt
-
   @@unique([userId, symbol])
 }
 
 model CryptoTransaction {
-  id     String @id @default(cuid())
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  type        String // Kept simple string for flexible logs (BUY, SELL, SEND, RECEIVE)
+  id          String @id @default(cuid())
+  userId      String
+  user        User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type        String
   symbol      String
   amount      Decimal  @db.Decimal(19, 8)
   priceAtTime Decimal  @db.Decimal(19, 2)
@@ -327,48 +278,77 @@ model CryptoTransaction {
 model SystemSettings {
   id          String  @id @default(cuid())
   key         String  @unique
-  value       String
+  value       String  @db.Text
+  group       String
+  type        String
   description String?
+  updatedAt   DateTime @updatedAt
 }
 
-// --- NOTIFICATIONS ---
 model Notification {
-  id     String @id @default(cuid())
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  title   String
-  message String
+  id        String @id @default(cuid())
+  userId    String
+  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  message   String
   link      String?
-  isRead  Boolean @default(false)
-  type    String  @default("INFO") // INFO, SUCCESS, WARNING, ERROR
-
+  isRead    Boolean @default(false)
+  type      String  @default("INFO")
   createdAt DateTime @default(now())
 }
 
-// --- SUPPORT TICKETS ---
 model Ticket {
-  id     String @id @default(cuid())
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  subject  String
-  status   String @default("OPEN") // OPEN, CLOSED
-  priority String @default("NORMAL") // LOW, NORMAL, HIGH
-
-  messages TicketMessage[]
-
+  id        String @id @default(cuid())
+  userId    String
+  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subject   String
+  status    String @default("OPEN")
+  priority  String @default("NORMAL")
+  messages  TicketMessage[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model TicketMessage {
-  id       String @id @default(cuid())
-  ticketId String
-  ticket   Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
-
-  sender  String // "USER" or "ADMIN"
-  message String @db.Text
-
+  id        String @id @default(cuid())
+  ticketId  String
+  ticket    Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  sender    String
+  message   String @db.Text
   createdAt DateTime @default(now())
+}
+
+model FaqItem {
+  id        String   @id @default(cuid())
+  question  String
+  answer    String   @db.Text
+  category  String   @default("General")
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model JobListing {
+  id          String   @id @default(cuid())
+  title       String
+  department  String
+  location    String
+  type        String
+  description String   @db.Text
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Branch {
+  id        String   @id @default(cuid())
+  name      String
+  address   String
+  city      String
+  phone     String
+  email     String?
+  hours     String?  @default("Mon - Fri: 9:00 AM - 5:00 PM")
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

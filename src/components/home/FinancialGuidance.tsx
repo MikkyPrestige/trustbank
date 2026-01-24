@@ -1,9 +1,13 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, ShieldAlert, TrendingUp, Home, Briefcase, ChevronRight } from "lucide-react";
+import { ArrowRight, ShieldAlert, ChevronRight, Home } from "lucide-react";
 import styles from "./home.module.css";
+import { getSiteSettings } from "@/lib/get-settings"; // 👈 Import Fetcher
 
-export default function FinancialGuidance() {
+export default async function FinancialGuidance() {
+    // 1. Fetch Dynamic Data
+    const settings = await getSiteSettings();
+
     return (
         <section className={styles.guideSection}>
             <div className={styles.container}>
@@ -11,9 +15,9 @@ export default function FinancialGuidance() {
                 {/* SECTION HEADER */}
                 <div className={styles.guideHeader}>
                     <div>
-                        <h2 className={styles.sectionTitleDark}>Financial Guidance & Support</h2>
+                        <h2 className={styles.sectionTitleDark}>{settings.home_guide_title}</h2>
                         <p className={styles.sectionDescDark}>
-                            Expert insights and tools to help you achieve your goals, from buying a home to securing your retirement.
+                            {settings.home_guide_desc}
                         </p>
                     </div>
                     <Link href="/learn" className={styles.linkUnderline}>
@@ -24,7 +28,7 @@ export default function FinancialGuidance() {
                 {/* BENTO GRID LAYOUT */}
                 <div className={styles.guideGrid}>
 
-                    {/* CARD 1: HERO (Retirement/Planning) - Large Vertical */}
+                    {/* CARD 1: HERO (Retirement/Planning) */}
                     <div className={styles.guideCardLarge}>
                         <Image
                             src="/guide-retirement.png"
@@ -34,7 +38,7 @@ export default function FinancialGuidance() {
                         />
                         <div className={styles.cardOverlay}>
                             <span className={styles.tagBlue}>PLANNING</span>
-                            <h3>Secure your next chapter</h3>
+                            <h3>{settings.guide_article_1_title}</h3>
                             <p>Protect what you&apos;ve built as you look ahead. Strategies for a stronger retirement.</p>
                             <Link href="/retirement" className={styles.btnGlass}>
                                 Unlock Options <ChevronRight size={16} />
@@ -42,13 +46,13 @@ export default function FinancialGuidance() {
                         </div>
                     </div>
 
-                    {/* CARD 2: SECURITY (The "Yellow Shield" Idea) */}
+                    {/* CARD 2: SECURITY */}
                     <div className={styles.guideCardGold}>
                         <div className={styles.securityContent}>
                             <div className={styles.iconCircleWhite}>
                                 <ShieldAlert size={32} className={styles.iconGold} />
                             </div>
-                            <h3>Fraud & Scam Alert</h3>
+                            <h3>{settings.guide_article_2_title}</h3>
                             <p>Spot the latest tactics scammers are using and how to shield yourself.</p>
                             <Link href="/security" className={styles.linkDark}>
                                 Get the latest <ArrowRight size={16} />
@@ -68,14 +72,14 @@ export default function FinancialGuidance() {
                             <div className={styles.iconWrapperSmall}>
                                 <Home size={20} color="white" />
                             </div>
-                            <h3>Buying a Home?</h3>
+                            <h3>{settings.guide_article_3_title}</h3>
                             <Link href="/mortgage" className={styles.linkWhite}>
                                 Calculate Rate <ChevronRight size={14} />
                             </Link>
                         </div>
                     </div>
 
-                    {/* CARD 4: BUSINESS (Wide) */}
+                    {/* CARD 4: BUSINESS */}
                     <div className={styles.guideCardWide}>
                         <Image
                             src="/guide-business.png"
@@ -85,7 +89,7 @@ export default function FinancialGuidance() {
                         />
                         <div className={styles.cardOverlaySide}>
                             <span className={styles.tagWhite}>BUSINESS</span>
-                            <h3>How Rising Rates Impact Business</h3>
+                            <h3>{settings.guide_article_4_title}</h3>
                             <Link href="/business" className={styles.btnGlassSmall}>
                                 Read Article
                             </Link>

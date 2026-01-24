@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { getSiteSettings } from "@/lib/get-settings";
 import BalanceAdjuster from "@/components/admin/users/[id]/BalanceAdjuster";
 import UserActions from "@/components/admin/users/[id]/UserActions";
 import IssueCardButton from "@/components/admin/users/[id]/IssueCardButton";
@@ -16,6 +17,8 @@ export default async function UserDetailsPage({ params }: { params: Promise<{ id
     const { id } = await params;
 
     await requireAdmin();
+
+    const settings = await getSiteSettings();
 
     const user = await db.user.findUnique({
         where: { id },
@@ -50,7 +53,7 @@ export default async function UserDetailsPage({ params }: { params: Promise<{ id
                     <p className={styles.subtitle}>ID: {user.id}</p>
                     <p className={styles.subtitle}>Joined: {formatDate(user.createdAt)}</p>
                 </div>
-                <UserActions userId={user.id} status={user.status} />
+                <UserActions userId={user.id} status={user.status} siteName={settings.site_name} />
             </header>
 
             <div className={styles.grid}>

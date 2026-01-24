@@ -11,9 +11,10 @@ const initialState = { message: '', success: false };
 interface Props {
     userId: string;
     onClose: () => void;
+    siteName?: string; // 👈 CMS Integration
 }
 
-export default function ResetPasswordModal({ userId, onClose }: Props) {
+export default function ResetPasswordModal({ userId, onClose, siteName = "TrustBank" }: Props) {
     const [state, action, isPending] = useActionState(adminResetPassword, initialState);
 
     if (state.success) {
@@ -24,9 +25,12 @@ export default function ResetPasswordModal({ userId, onClose }: Props) {
     return (
         <div className={styles.overlay}>
             <div className={styles.modal}>
+
+                {/* Header */}
                 <div className={styles.modalHeader}>
                     <h3 className={styles.modalTitle}>
-                        <KeyRound size={20} style={{ display: 'inline', marginRight: '8px', verticalAlign: 'middle' }} />
+                        {/* Extracted style to class */}
+                        <KeyRound size={20} className={styles.headerIcon} />
                         Reset Password
                     </h3>
                     <button onClick={onClose} className={styles.closeBtn}>
@@ -34,7 +38,8 @@ export default function ResetPasswordModal({ userId, onClose }: Props) {
                     </button>
                 </div>
 
-                <p style={{ color: '#888', marginBottom: '1.5rem', lineHeight: '1.5' }}>
+                {/* Description (Extracted style to class) */}
+                <p className={styles.description}>
                     Enter a new temporary password. The user should change this immediately after logging in.
                 </p>
 
@@ -46,7 +51,7 @@ export default function ResetPasswordModal({ userId, onClose }: Props) {
                         <input
                             name="newPassword"
                             type="text"
-                            placeholder="e.g. TrustBank2024!"
+                            placeholder={`e.g. ${siteName}2024!`}
                             required
                             className={styles.input}
                             autoComplete="off"

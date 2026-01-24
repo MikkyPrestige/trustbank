@@ -1,44 +1,64 @@
+import { getSiteSettings } from "@/lib/get-settings";
 import Image from "next/image";
 import styles from "./save.module.css";
 import SavingsCalculator from "@/components/main/save/SavingsCalculator";
-import { ShieldCheck, ArrowRight, TrendingUp, PiggyBank, Lock, Award, Star } from "lucide-react";
+import { ShieldCheck, ArrowRight, TrendingUp, PiggyBank, Lock, Award, Star, Briefcase, Sun } from "lucide-react";
 
-const PRODUCTS = [
-    {
-        title: "High Yield Savings",
-        apy: "4.50% APY",
-        desc: "Make your money work harder. No monthly fees and daily compounding interest.",
-        icon: <TrendingUp size={32} className={styles.iconGreen} />,
-        link: "Start Saving"
-    },
-    {
-        title: "Trust Certificates (CDs)",
-        apy: "5.10% APY",
-        desc: "Lock in a guaranteed rate for a fixed term. Perfect for risk-free growth.",
-        icon: <Award size={32} className={styles.iconGold} />,
-        link: "View Rates"
-    },
-    {
-        title: "Money Market",
-        apy: "4.25% APY",
-        desc: "Higher rates with check-writing privileges. Flexibility meets growth.",
-        icon: <PiggyBank size={32} className={styles.iconBlue} />,
-        link: "Open Account"
-    },
-    {
-        title: "Trust Kids Club",
-        apy: "3.00% APY",
-        desc: "Teach the next generation financial literacy with a dedicated custodial account.",
-        icon: <Star size={32} className={styles.iconPurple} />,
-        link: "Learn More"
-    }
-];
+export default async function SavePage() {
+    const settings = await getSiteSettings();
 
-export default function SavePage() {
+    // Dynamic Product List
+    const PRODUCTS = [
+        {
+            title: "High Yield Savings",
+            apy: `${settings.rate_hysa_apy}% APY`,
+            desc: "Make your money work harder. No monthly fees and daily compounding interest.",
+            icon: <TrendingUp size={32} className={styles.iconGreen} />,
+            link: "Start Saving"
+        },
+        {
+            title: "Trust Certificates (CDs)",
+            apy: `${settings.rate_cd_apy}% APY`,
+            desc: "Lock in a guaranteed rate for a fixed term. Perfect for risk-free growth.",
+            icon: <Award size={32} className={styles.iconGold} />,
+            link: "View Rates"
+        },
+        {
+            title: "Money Market",
+            apy: `${settings.rate_mma_apy}% APY`,
+            desc: "Higher rates with check-writing privileges. Flexibility meets growth.",
+            icon: <PiggyBank size={32} className={styles.iconBlue} />,
+            link: "Open Account"
+        },
+        {
+            title: "Trust Kids Club",
+            apy: `${settings.rate_kids_apy}% APY`,
+            desc: "Teach the next generation financial literacy with a dedicated custodial account.",
+            icon: <Star size={32} className={styles.iconPurple} />,
+            link: "Learn More"
+        },
+        // NEW CARD 1
+        {
+            title: "Business Savings",
+            apy: `${settings.rate_business_apy || "2.50"}% APY`,
+            desc: "Keep your operating cash growing while maintaining full liquidity for payroll.",
+            icon: <Briefcase size={32} className={styles.iconTeal} />,
+            link: "Business Info"
+        },
+        // NEW CARD 2
+        {
+            title: "Retirement IRA",
+            apy: `~${settings.rate_ira_apy || "7.00"}% Rtrn`,
+            desc: "Tax-advantaged accounts to secure your future. Traditional and Roth options available.",
+            icon: <Sun size={32} className={styles.iconOrange} />,
+            link: "Plan Retirement"
+        }
+    ];
+
     return (
         <main className={styles.main}>
 
-            {/* 1. HERO SECTION (Background Image) */}
+            {/* 1. HERO SECTION */}
             <section className={styles.heroBackground}>
                 <Image
                     src="/save-hero.png"
@@ -52,12 +72,11 @@ export default function SavePage() {
                 <div className={styles.heroContent}>
                     <div className={styles.pillBadge}><ShieldCheck size={16} /> FDIC Insured</div>
                     <h1 className={styles.heroTitle}>
-                        Grow your wealth with <br />
-                        <span className={styles.highlight}>unshakable security.</span>
+                        {settings.save_hero_title} <br />
+                        <span className={styles.highlight}>{settings.save_hero_highlight}</span>
                     </h1>
                     <p className={styles.heroDesc}>
-                        Whether you are saving for a rainy day, a dream vacation, or your
-                        family’s future—TrustBank gives you industry-leading rates to get there faster.
+                        {settings.save_hero_desc}
                     </p>
                 </div>
             </section>
@@ -65,7 +84,7 @@ export default function SavePage() {
             {/* 2. CALCULATOR SECTION */}
             <section className={styles.calcSection}>
                 <div className={styles.container}>
-                    <SavingsCalculator />
+                    <SavingsCalculator defaultApy={Number(settings.rate_hysa_apy)} />
                 </div>
             </section>
 
@@ -95,7 +114,7 @@ export default function SavePage() {
                 </div>
             </section>
 
-            {/* 4. WHY TRUST? (Security Focus) */}
+            {/* 4. WHY TRUST? */}
             <section className={styles.trustStrip}>
                 <div className={styles.container}>
                     <div className={styles.trustContent}>

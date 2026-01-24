@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import {
     ArrowUpRight, ArrowDownLeft, Send, Globe, CreditCard as CardIcon,
     Plus, MoreHorizontal, Eye, EyeOff, Copy, Check, AlertTriangle, Wifi, Repeat, Banknote, Lock, X, UserCog, Users, Landmark
@@ -10,6 +11,8 @@ import {
 import toast from "react-hot-toast";
 import BalanceCard from "./BalanceCard";
 import NotificationDropdown from "./NotificationDropdown";
+import DashboardBanner from "./DashboardBanner";
+import PromoSidebar from "./PromoSidebar";
 import styles from "../dashboard.module.css";
 
 interface DashboardViewProps {
@@ -17,9 +20,11 @@ interface DashboardViewProps {
     totalBalance: number;
     beneficiaries: any[];
     trend: number;
+    settings: any;
 }
 
-export default function DashboardView({ user, totalBalance, beneficiaries, trend }: DashboardViewProps) {
+export default function DashboardView({ user, totalBalance, beneficiaries, trend, settings }: DashboardViewProps) {
+    const router = useRouter();
     const [isVisible, setIsVisible] = useState(true);
     const [copiedId, setCopiedId] = useState<string | null>(null);
     const [showMore, setShowMore] = useState(false);
@@ -86,8 +91,16 @@ export default function DashboardView({ user, totalBalance, beneficiaries, trend
                 </div>
             )}
 
-            <div className={styles.mainGrid}>
+            {/* CMS ALERT BANNER  */}
+            <div style={{ padding: '0 40px', marginTop: '24px' }}>
+                <DashboardBanner
+                    show={settings.dashboard_alert_show === "true"}
+                    type={settings.dashboard_alert_type}
+                    message={settings.dashboard_alert_msg}
+                />
+            </div>
 
+            <div className={styles.mainGrid}>
                 {/* --- LEFT COLUMN --- */}
                 <div className={styles.leftCol}>
                     <BalanceCard
@@ -157,7 +170,12 @@ export default function DashboardView({ user, totalBalance, beneficiaries, trend
                                         .sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
                                         .slice(0, 5)
                                         .map((tx: any) => (
-                                            <tr key={tx.id}>
+                                            <tr
+                                                key={tx.id}
+                                                onClick={() => router.push(`/dashboard/transactions/${tx.id}`)}
+                                                className={styles.clickableRow}
+                                                style={{ cursor: 'pointer' }}
+                                            >
                                                 <td>
                                                     <div className={styles.txRow}>
                                                         <div className={`${styles.txIcon} ${tx.direction === 'CREDIT' ? styles.txIconCredit : styles.txIconDebit}`}>
@@ -167,7 +185,7 @@ export default function DashboardView({ user, totalBalance, beneficiaries, trend
                                                     </div>
                                                 </td>
                                                 <td className={styles.txDate}>
-                                                    {new Date(tx.createdAt).toLocaleDateString()}
+                                                    {new Date(tx.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
                                                 </td>
                                                 <td className={`${styles.txAmount} ${tx.direction === 'CREDIT' ? styles.amountPositive : styles.amountNegative}`}>
                                                     {tx.direction === 'CREDIT' ? '+' : '-'}{displayMoney(Number(tx.amount)).replace('$', '')}
@@ -180,10 +198,15 @@ export default function DashboardView({ user, totalBalance, beneficiaries, trend
                     </div>
                 </div>
 
-                {/* --- RIGHT COLUMN --- */}
+                {/* --- RIGHT COLUMN  --- */}
                 <div className={styles.rightCol}>
-
-                    {/* QUICK ACTIONS */}
+                    <PromoSidebar
+                        title={settings.dashboard_promo_title}
+                        desc={settings.dashboard_promo_desc}
+                        rate={settings.rate_hysa_apy}
+                        btnLabel={settings.dashboard_promo_btn}
+                        href={settings.dashboard_promo_link}
+                    />
                     <div className={styles.actionsGrid}>
                         <Link href="/dashboard/transfer" className={styles.quickAction}>
                             <div className={styles.actionIcon}><Send size={18} /></div>
@@ -285,7 +308,9 @@ export default function DashboardView({ user, totalBalance, beneficiaries, trend
                             <div className={styles.cardShine}></div>
 
                             <div className={styles.cardTop}>
-                                <span className={styles.bankLogo}>TRUSTBANK</span>
+                                <span className={styles.bankLogo}>
+                                    {settings.site_name ? settings.site_name.toUpperCase() : 'TRUSTBANK'}
+                                </span>
                                 <Wifi size={24} className={styles.contactless} color="rgba(255,255,255,0.7)" />
                             </div>
 

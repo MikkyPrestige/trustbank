@@ -1,9 +1,13 @@
+import { getSiteSettings } from "@/lib/get-settings";
 import Image from "next/image";
 import styles from "./learn.module.css";
 import WellnessPulse from "@/components/main/learn/WellnessPulse";
 import { BookOpen, Lightbulb, TrendingUp, PlayCircle, ArrowRight } from "lucide-react";
 
-export default function LearnPage() {
+export default async function LearnPage() {
+    // 1. Fetch Dynamic Data
+    const settings = await getSiteSettings();
+
     return (
         <main className={styles.main}>
 
@@ -21,17 +25,20 @@ export default function LearnPage() {
                 <div className={styles.heroContent}>
                     <div className={styles.amberBadge}>Trust Education</div>
                     <h1 className={styles.heroTitle}>
-                        Financial clarity <br />
-                        <span className={styles.highlight}>starts here.</span>
+                        {settings.learn_hero_title} <br />
+                        <span className={styles.highlight}>{settings.learn_hero_highlight}</span>
                     </h1>
                     <p className={styles.heroDesc}>
-                        Expert insights, market analysis, and actionable guides designed
-                        to help you make smarter decisions with your money.
+                        {settings.learn_hero_desc}
                     </p>
                 </div>
 
                 <div className={styles.heroWidget}>
-                    <WellnessPulse />
+                    {/* 2. Pass CMS data to Client Component */}
+                    <WellnessPulse
+                        title={settings.learn_pulse_title}
+                        desc={settings.learn_pulse_desc}
+                    />
                 </div>
             </section>
 
@@ -39,8 +46,8 @@ export default function LearnPage() {
             <section className={styles.contentSection}>
                 <div className={styles.container}>
                     <div className={styles.sectionHeader}>
-                        <h2>Latest Insights</h2>
-                        <p>Curated knowledge for every stage of your financial journey.</p>
+                        <h2>{settings.learn_insights_title}</h2>
+                        <p>{settings.learn_insights_desc}</p>
                     </div>
 
                     <div className={styles.grid}>

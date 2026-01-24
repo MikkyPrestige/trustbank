@@ -1,60 +1,60 @@
-/* 1. THE BACKDROP OVERLAY */
+/* OVERLAY & ANIMATION */
 .overlay {
-  position: fixed;
-  top: 170%;
-  left: 0;
-  width: 100%;
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.5);
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
   backdrop-filter: blur(8px);
+  z-index: 9999;
   display: flex;
-  justify-content: center;
   align-items: center;
-  z-index: 9999 !important;
+  justify-content: center;
+  padding: 1rem;
   animation: fadeIn 0.2s ease-out;
 }
 
-/* 2. THE MODAL ITSELF */
 .modal {
   background: var(--bg-card);
-  padding: 2rem;
-  border-radius: 20px;
   border: 1px solid var(--border);
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2);
   width: 100%;
-  max-width: 480px;
+  max-width: 420px;
+  border-radius: 24px;
+  padding: 2.5rem;
   position: relative;
-  max-height: 90vh;
-  overflow-y: auto;
-  z-index: 10000;
-  animation: scaleIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* CLOSE BUTTON */
 .closeBtn {
- position: absolute;
-    top: 16px; right: 16px;
-    background: var(--bg-surface);
-    border: 1px solid var(--border);
-    border-radius: 50%;
-    width: 32px; height: 32px;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer;
-    z-index: 20;
-    color: var(--text-muted);
-}
-.closeBtn:hover {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
   background: var(--bg-surface);
-  color: var(--text-main);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
 }
 
-/* 3. HEADER & SECURITY */
+.closeBtn:hover {
+  color: var(--text-main);
+  border-color: var(--text-main);
+  transform: rotate(90deg);
+}
+
+/* HEADER */
 .header {
-  text-align: center;
   margin-bottom: 2rem;
+  text-align: center;
 }
 
 .securityBadge {
@@ -62,121 +62,155 @@
   align-items: center;
   gap: 6px;
   background: rgba(34, 197, 94, 0.1);
-  color: #16a34a; /* Green security tint */
-  padding: 6px 12px;
-  border-radius: 50px;
-  font-size: 0.75rem;
+  color: #22c55e;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.7rem;
   font-weight: 700;
+  margin-bottom: 1rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  margin-bottom: 16px;
+  border: 1px solid rgba(34, 197, 94, 0.2);
 }
+
 .shieldIcon {
   display: inline-block;
   animation: pulseSecure 2s infinite ease-in-out;
 }
+
 .header h2 {
-  font-size: 1.8rem;
-  margin: 0 0 8px 0;
+  font-size: 1.75rem;
+  font-weight: 800;
   color: var(--text-main);
+  margin-bottom: 0.5rem;
 }
+
 .header p {
   color: var(--text-muted);
   font-size: 0.95rem;
-  margin: 0;
 }
 
-/* 4. INPUT GROUPS (The Modern Part) */
+/* FORM */
 .form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 1.25rem;
 }
 
+/* ERROR ALERT */
+.errorAlert {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  text-align: center;
+  font-weight: 500;
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* INPUT GROUPS */
 .inputGroup {
-  background: var(--bg-surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
+  position: relative;
   display: flex;
   align-items: center;
-  padding: 8px 16px;
-  transition: all 0.2s ease;
-  position: relative;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg-surface);
+  transition: all 0.2s;
 }
 
-/* Vibrant Focus State */
+.inputGroup:hover {
+  border-color: var(--text-muted);
+}
+
+/* "Focused" state applied via React logic */
 .focused {
-  border-color: #3b82f6; /* Bright Blue */
-  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); /* Blue Glow */
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px var(--primary-light, rgba(59, 130, 246, 0.2));
   background: var(--bg-card);
 }
 
 .iconBox {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
   color: var(--text-muted);
-  padding-right: 12px;
-  border-right: 1px solid var(--border);
+  z-index: 2;
+  pointer-events: none;
   transition: color 0.2s;
 }
-.inputGroup.focused .iconBox {
-  color: #3b82f6;
-  border-right-color: #3b82f6;
+
+/* When focused, icon becomes primary */
+.focused .iconBox {
+  color: var(--primary);
 }
-/* Lock Animation Color */
-.inputGroup.focused .iconLocked {
-  color: #eab308;
-  border-right-color: #eab308;
+
+/* When password field is focused, lock icon stays gold/secure looking (optional) */
+.focused .iconLocked {
+  color: #f59e0b; /* Amber */
 }
 
 .fieldWrapper {
-  flex: 1;
-  margin-left: 12px;
+  width: 100%;
   position: relative;
-  height: 42px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+}
+
+.input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  padding: 1.5rem 1rem 0.5rem 3rem; /* Top padding pushes text down for label */
+  color: var(--text-main);
+  font-size: 1rem;
+  outline: none;
+  height: 56px;
 }
 
 /* Floating Label Logic */
 .floatingLabel {
-  font-size: 0.75rem;
+  position: absolute;
+  left: 3rem;
+  top: 50%;
+  transform: translateY(-50%);
   color: var(--text-muted);
-  font-weight: 600;
-  margin-bottom: 2px;
-}
-.input {
-  background: transparent;
-  border: none;
-  outline: none;
-  font-size: 1rem;
-  color: var(--text-main);
-  font-weight: 600;
-  width: 100%;
-  padding: 0;
-  margin: 0;
+  font-size: 0.95rem;
+  pointer-events: none;
+  transition: all 0.2s;
 }
 
-/* Password Toggle */
+/* Move label up when focused or has value (handled via React state or :valid CSS trick) */
+.focused .floatingLabel,
+.input:not(:placeholder-shown) + .floatingLabel {
+  /* This requires placeholder=" " on input */
+  top: 14px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
 .eyeBtn {
-  background: transparent;
+  background: none;
   border: none;
   color: var(--text-muted);
+  padding: 0 1rem;
   cursor: pointer;
-  padding: 4px;
-  transition: 0.2s;
+  transition: color 0.2s;
 }
+
 .eyeBtn:hover {
   color: var(--text-main);
 }
 
-/* 5. BUTTONS & EXTRAS */
+/* EXTRAS ROW */
 .extrasRow {
   display: flex;
   justify-content: space-between;
   align-items: center;
   font-size: 0.85rem;
-  margin-top: 4px;
 }
+
 .rememberMe {
   display: flex;
   align-items: center;
@@ -184,67 +218,75 @@
   color: var(--text-muted);
   cursor: pointer;
 }
-.forgotLink {
-  color: #3b82f6;
-  text-decoration: none;
-  font-weight: 600;
+
+.rememberMe input {
+  accent-color: var(--primary);
+  width: 16px;
+  height: 16px;
 }
+
+.forgotLink {
+  color: var(--primary);
+  font-weight: 600;
+  text-decoration: none;
+}
+
 .forgotLink:hover {
   text-decoration: underline;
 }
 
+/* SUBMIT BUTTON */
 .submitBtn {
-  margin-top: 12px;
-  background: #0f172a; /* Dark Navy Button */
+  background: var(--primary);
   color: white;
   border: none;
-  padding: 16px;
+  padding: 14px;
   border-radius: 12px;
   font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
-  transition: 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
+  transition:
+    opacity 0.2s,
+    transform 0.1s;
 }
-.submitBtn:hover {
-  background: #1e293b;
+
+.submitBtn:hover:not(:disabled) {
+  opacity: 0.9;
   transform: translateY(-1px);
 }
+
 .submitBtn:disabled {
   opacity: 0.7;
-  cursor: not-allowed;
+  cursor: wait;
 }
 
 .spinner {
   animation: spin 1s linear infinite;
 }
 
+/* FOOTER */
 .footer {
   text-align: center;
-  margin-top: 24px;
-  color: var(--text-muted);
   font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-top: 0.5rem;
 }
+
 .footer a {
-  color: #3b82f6;
+  color: var(--primary);
   font-weight: 700;
   text-decoration: none;
-  margin-left: 6px;
 }
 
-.errorAlert {
-  background: rgba(239, 68, 68, 0.1);
-  color: #ef4444;
-  padding: 12px;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  text-align: center;
+.footer a:hover {
+  text-decoration: underline;
 }
 
+/* ANIMATIONS */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -253,48 +295,20 @@
     opacity: 1;
   }
 }
-@keyframes scaleUp {
+
+@keyframes slideUp {
   from {
     opacity: 0;
-    transform: scale(0.95);
+    transform: translateY(20px) scale(0.95);
   }
   to {
     opacity: 1;
-    transform: scale(1);
+    transform: translateY(0) scale(1);
   }
 }
+
 @keyframes spin {
   100% {
     transform: rotate(360deg);
-  }
-}
-@keyframes pulseSecure {
-  0% {
-    opacity: 0.7;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.1);
-  }
-  100% {
-    opacity: 0.7;
-    transform: scale(1);
-  }
-}
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-@keyframes scaleIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-/* DARK MODE OVERRIDES (Automatic Vibrancy) */
-@media (prefers-color-scheme: dark) {
-  .submitBtn {
-    background: #3b82f6;
-    color: white;
-  } /* Blue Button on Dark */
-  .submitBtn:hover {
-    background: #2563eb;
-  }
-  .inputGroup.focused {
-    border-color: #60a5fa;
-    box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.2);
   }
 }

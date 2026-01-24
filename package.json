@@ -3,13 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-   "dev": "cross-env NODE_OPTIONS='--max-old-space-size=4096' next dev --turbo",
+    "dev": "cross-env NODE_OPTIONS='--max-old-space-size=4096' next dev --turbo",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.1",
+    "@react-google-maps/api": "^2.20.8",
     "bcrypt": "^6.0.0",
     "bcryptjs": "^3.0.3",
     "cloudinary": "^2.8.0",
@@ -35,7 +36,8 @@
     "babel-plugin-react-compiler": "1.0.0",
     "cross-env": "^10.1.0",
     "eslint": "^9",
-    "eslint-config-next": "16.1.1"
+    "eslint-config-next": "16.1.1",
+    "ts-node": "^10.9.2"
   },
   "prisma": {
     "seed": "npx tsx prisma/seed.ts"

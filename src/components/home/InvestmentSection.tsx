@@ -3,10 +3,10 @@ import Image from "next/image";
 import { ArrowRight, Bitcoin, PieChart, Lock, RefreshCcw } from "lucide-react";
 import styles from "./home.module.css";
 import { getLiveMarketData } from "@/lib/marketData";
+import { getSiteSettings } from "@/lib/get-settings";
 
 // Helper to format currency
 const formatPrice = (num: number, isCrypto: boolean) => {
-    // Show more decimals for cheap crypto (like Doge $0.12)
     const decimals = isCrypto && num < 10 ? 4 : 2;
     return new Intl.NumberFormat('en-US', {
         style: 'currency',
@@ -25,8 +25,12 @@ const formatPercent = (num: number) => {
 };
 
 export default async function InvestmentSection() {
-    // 1. Fetch Real Data on the Server
-    const marketData = await getLiveMarketData();
+    // 1. Fetch Real Data & CMS Settings
+    const [marketData, settings] = await Promise.all([
+        getLiveMarketData(),
+        getSiteSettings()
+    ]);
+
     const tickerItems = [...marketData, ...marketData];
 
     return (
@@ -44,7 +48,6 @@ export default async function InvestmentSection() {
                                 </span>
                                 {formatPercent(item.change)}
                             </div>
-                            {/* Divider between every item */}
                             <div className={styles.tickerDivider}></div>
                         </div>
                     ))}
@@ -58,18 +61,16 @@ export default async function InvestmentSection() {
                     <div className={styles.investContent}>
                         <div className={styles.investHeader}>
                             <h2 className={styles.sectionTitleDark}>
-                                Invest in your future.<br />
-                                <span className={styles.highlightBlue}>On your terms.</span>
+                                {settings.home_invest_title}<br />
+                                <span className={styles.highlightBlue}>{settings.home_invest_highlight}</span>
                             </h2>
                             <p className={styles.sectionDescDark}>
-                                Build a diversified portfolio with Stocks, ETFs, and Crypto all in one secure place.
-                                No wallet addresses to manage, just seamless wealth building.
+                                {settings.home_invest_desc}
                             </p>
                         </div>
 
                         {/* Feature List */}
                         <div className={styles.investFeatures}>
-                            {/* ... Features remain the same ... */}
                             <div className={styles.investFeatureItem}>
                                 <div className={styles.iconBoxGlass}>
                                     <PieChart size={24} className={styles.iconBlue} />
@@ -116,7 +117,7 @@ export default async function InvestmentSection() {
                         <div className={styles.phoneWrapper}>
                             <Image
                                 src="/app-invest.png"
-                                alt="TrustBank Investment App"
+                                alt="Investment App"
                                 width={340}
                                 height={680}
                                 className={styles.phoneImage}

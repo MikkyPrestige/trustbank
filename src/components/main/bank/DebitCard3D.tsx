@@ -4,7 +4,12 @@ import { useState, useRef, MouseEvent } from 'react';
 import styles from './DebitCard3D.module.css';
 import { Wifi, Aperture } from 'lucide-react';
 
-export default function DebitCard3D() {
+// 1. Accept Props
+interface DebitCard3DProps {
+    bankName?: string;
+}
+
+export default function DebitCard3D({ bankName = "TrustBank" }: DebitCard3DProps) {
     const cardRef = useRef<HTMLDivElement>(null);
     const [rotate, setRotate] = useState({ x: 0, y: 0 });
 
@@ -18,14 +23,14 @@ export default function DebitCard3D() {
         const mouseX = e.clientX - rect.left;
         const mouseY = e.clientY - rect.top;
 
-        const rotateY = ((mouseX / width) - 0.5) * 30; // Max rotation 30deg
-        const rotateX = ((mouseY / height) - 0.5) * -30; // Invert X axis
+        const rotateY = ((mouseX / width) - 0.5) * 30;
+        const rotateX = ((mouseY / height) - 0.5) * -30;
 
         setRotate({ x: rotateX, y: rotateY });
     };
 
     const handleMouseLeave = () => {
-        setRotate({ x: 0, y: 0 }); // Reset position
+        setRotate({ x: 0, y: 0 });
     };
 
     return (
@@ -39,7 +44,7 @@ export default function DebitCard3D() {
                     transform: `perspective(1000px) rotateX(${rotate.x}deg) rotateY(${rotate.y}deg) scale3d(1, 1, 1)`
                 }}
             >
-                {/* GLOSS EFFECT (Shines based on mouse) */}
+                {/* GLOSS EFFECT */}
                 <div
                     className={styles.gloss}
                     style={{
@@ -51,7 +56,8 @@ export default function DebitCard3D() {
                 {/* CARD CONTENT */}
                 <div className={styles.cardContent}>
                     <div className={styles.cardTop}>
-                        <span className={styles.bankName}>TrustBank</span>
+                        {/* 2. Use Dynamic Bank Name */}
+                        <span className={styles.bankName}>{bankName}</span>
                         <Wifi size={24} className={styles.contactless} />
                     </div>
 

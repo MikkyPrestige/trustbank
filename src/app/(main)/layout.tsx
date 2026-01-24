@@ -1,14 +1,16 @@
-import Navbar from "@/components/layout/header/Navbar";
+import { getSiteSettings } from "@/lib/get-settings";
+import SiteHeader from "@/components/layout/header/SiteHeader";
 import Footer from "@/components/layout/footer/Footer";
 
-export default function MainLayout({ children }: { children: React.ReactNode }) {
+export default async function MainLayout({ children }: { children: React.ReactNode }) {
+    const settings = await getSiteSettings();
     return (
         <>
-            <Navbar />
+            <SiteHeader />
             <main>
                 {children}
             </main>
-            <Footer />
+            <Footer settings={settings} />
         </>
     );
 }

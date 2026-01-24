@@ -1,12 +1,14 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from "next/navigation";
 import Image from 'next/image';
 import { processKyc } from '@/actions/admin/kyc';
 import { Check, X, AlertTriangle } from 'lucide-react';
 import styles from './users.module.css';
 
 export default function KycReviewSection({ user }: { user: any }) {
+    const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [rejectReason, setRejectReason] = useState("");
     const [showRejectInput, setShowRejectInput] = useState(false);
@@ -28,7 +30,7 @@ export default function KycReviewSection({ user }: { user: any }) {
         setLoading(true);
         const res = await processKyc(user.id, decision, rejectReason);
         if (res?.success) {
-            window.location.reload();
+            router.refresh();
         } else {
             alert(res?.message || "Error processing KYC");
             setLoading(false);

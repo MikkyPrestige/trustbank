@@ -4,12 +4,12 @@ import { db } from "@/lib/db";
 import { logAdminAction } from "@/lib/admin-logger";
 import { revalidatePath } from "next/cache";
 import { checkAdminAction } from "@/lib/admin-auth";
-import { canPerform } from "@/lib/permissions"; // 👈 Import Permissions
+import { canPerform } from "@/lib/permissions";
 import {
   TransactionDirection,
   TransactionStatus,
   TransactionType,
-  UserRole // 👈 Import UserRole
+  UserRole
 } from "@prisma/client";
 
 export async function adjustUserBalance(

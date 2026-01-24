@@ -1,9 +1,26 @@
-import { Clock, Phone, Smartphone } from "lucide-react";
+import { Clock, Phone, Smartphone, Megaphone } from "lucide-react";
 import styles from "./home.module.css";
 
-export default function InfoBar() {
+interface InfoBarProps {
+    isActive: boolean;
+    text: string;
+}
+
+export default function InfoBar({ isActive, text }: InfoBarProps) {
     return (
         <section className={styles.infoBarSection}>
+
+            {/* 1. DYNAMIC ANNOUNCEMENT BANNER (Only shows if Active) */}
+            {isActive && (
+                <div className={styles.announcementBanner}>
+                    <div className={styles.announcementContent}>
+                        <Megaphone size={18} className={styles.announcementIcon} />
+                        <span className={styles.announcementText}>{text}</span>
+                    </div>
+                </div>
+            )}
+
+            {/* 2. STATIC CONTACT STRIP (Always Visible) */}
             <div className={styles.infoContainer}>
                 {/* Block 1: Support */}
                 <div className={`${styles.infoBlock} ${styles.blueBlock}`}>

@@ -2,8 +2,12 @@ import Link from "next/link";
 import Image from "next/image";
 import { Apple, Play, ArrowRight, CheckCircle2, Shield } from "lucide-react";
 import styles from "./home.module.css";
+import { getSiteSettings } from "@/lib/get-settings";
 
-export default function FinalCTA() {
+export default async function FinalCTA() {
+    // 1. Fetch Dynamic Data
+    const settings = await getSiteSettings();
+
     return (
         <section className={styles.ctaSection}>
             <div className={styles.container}>
@@ -18,16 +22,24 @@ export default function FinalCTA() {
                             <div className={styles.ctaBadge}>
                                 <Shield size={16} /> Secure & Insured
                             </div>
-                            <h2>Stop just banking. <br />Start building.</h2>
+                            <h2>{settings.home_cta_title}</h2>
                             <p>
-                                Join over 2 million members who have upgraded their financial life with TrustBank.
-                                Open an account in minutes and experience the difference.
+                                {settings.home_cta_desc}
                             </p>
 
                             <div className={styles.ctaBenefitsList}>
-                                <div className={styles.benefitItem}><CheckCircle2 size={20} className={styles.checkIcon} /> No hidden fees</div>
-                                <div className={styles.benefitItem}><CheckCircle2 size={20} className={styles.checkIcon} /> FDIC Insured up to $250k</div>
-                                <div className={styles.benefitItem}><CheckCircle2 size={20} className={styles.checkIcon} /> Get paid 2 days early</div>
+                                <div className={styles.benefitItem}>
+                                    <CheckCircle2 size={20} className={styles.checkIcon} />
+                                    {settings.home_cta_benefit_1}
+                                </div>
+                                <div className={styles.benefitItem}>
+                                    <CheckCircle2 size={20} className={styles.checkIcon} />
+                                    {settings.home_cta_benefit_2}
+                                </div>
+                                <div className={styles.benefitItem}>
+                                    <CheckCircle2 size={20} className={styles.checkIcon} />
+                                    {settings.home_cta_benefit_3}
+                                </div>
                             </div>
 
                             <div className={styles.ctaButtonRow}>
@@ -57,7 +69,7 @@ export default function FinalCTA() {
                         <div className={styles.ctaVisualRight}>
                             <Image
                                 src="/cta-visual.png"
-                                alt="TrustBank App and Card"
+                                alt={`${settings.site_name} App`}
                                 width={500}
                                 height={500}
                                 className={styles.ctaImage}

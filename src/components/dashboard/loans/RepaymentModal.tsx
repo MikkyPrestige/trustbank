@@ -16,7 +16,6 @@ interface Loan {
 export default function RepaymentModal({ loan, maxPayable }: { loan: Loan, maxPayable: number }) {
     const [isOpen, setIsOpen] = useState(false);
 
-    // Initialize as string to handle empty inputs cleanly
     const [amountStr, setAmountStr] = useState<string>(
         Math.min(loan.monthlyPayment, maxPayable).toString()
     );
@@ -25,20 +24,16 @@ export default function RepaymentModal({ loan, maxPayable }: { loan: Loan, maxPa
 
     const remainingBalance = loan.totalRepayment - loan.repaidAmount;
 
-    // Helper to handle input changes cleanly
     const handleAmountChange = (val: string) => {
-        // Allow empty string (user deleted everything)
         if (val === '') {
             setAmountStr('');
             return;
         }
 
-        // Prevent leading zeros unless it's just "0"
         if (val.length > 1 && val.startsWith('0')) {
             val = val.replace(/^0+/, '');
         }
 
-        // Enforce max balance limit
         const numVal = Number(val);
         if (numVal > remainingBalance) {
             setAmountStr(remainingBalance.toString());
@@ -65,7 +60,7 @@ export default function RepaymentModal({ loan, maxPayable }: { loan: Loan, maxPa
 
                 <div className={styles.balanceInfo}>
                     <span>Remaining Balance</span>
-                    <strong style={{ color: '#fff', fontSize: '1.1rem' }}>${remainingBalance.toFixed(2)}</strong>
+                    <strong className={styles.balanceAmount}>${remainingBalance.toFixed(2)}</strong>
                 </div>
 
                 <form action={action}>
@@ -80,7 +75,7 @@ export default function RepaymentModal({ loan, maxPayable }: { loan: Loan, maxPa
                     <div className={styles.group}>
                         <label className={styles.label}>Payment Amount</label>
                         <div className={styles.amountInputWrapper}>
-                            <span className={styles.currencySymbol} style={{ color: '#22c55e' }}>$</span>
+                            <span className={`${styles.currencySymbol} ${styles.currencySymbolGreen}`}>$</span>
 
                             <input
                                 name="amount"
@@ -97,23 +92,21 @@ export default function RepaymentModal({ loan, maxPayable }: { loan: Loan, maxPa
                         type="range"
                         min="1"
                         max={remainingBalance}
-                        // Convert string back to number for slider
                         value={Number(amountStr) || 0}
                         onChange={(e) => setAmountStr(e.target.value)}
                         className={styles.slider}
                     />
 
                     <div className={styles.limits}>
-                        <span onClick={() => setAmountStr(loan.monthlyPayment.toString())} style={{ cursor: 'pointer', borderBottom: '1px dashed #666' }}>
+                        <span onClick={() => setAmountStr(loan.monthlyPayment.toString())} className={styles.limitBtn}>
                             Min: ${loan.monthlyPayment.toFixed(0)}
                         </span>
-                        <span onClick={() => setAmountStr(remainingBalance.toString())} style={{ cursor: 'pointer', borderBottom: '1px dashed #666' }}>
+                        <span onClick={() => setAmountStr(remainingBalance.toString())} className={styles.limitBtn}>
                             Max: ${remainingBalance.toFixed(0)}
                         </span>
                     </div>
 
                     <button
-                        // Disable if empty or 0 or loading
                         disabled={isPending || !amountStr || Number(amountStr) <= 0}
                         className={styles.payConfirmBtn}
                     >

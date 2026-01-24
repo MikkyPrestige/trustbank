@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import styles from './WealthSimulator.module.css';
-import { TrendingUp, Shield, PieChart, Info } from 'lucide-react';
+import { PieChart, Info } from 'lucide-react';
 
 export default function WealthSimulator() {
     const [risk, setRisk] = useState(50);
@@ -76,7 +76,7 @@ export default function WealthSimulator() {
 
                     <div className={styles.note}>
                         <Info size={16} />
-                        <p>Past performance does not guarantee future results. This is a simulation.</p>
+                        <p>Past performance does not guarantee future results.</p>
                     </div>
                 </div>
 

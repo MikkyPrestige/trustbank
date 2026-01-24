@@ -1,12 +1,15 @@
 'use client';
 
-import { createStaffAccount } from "@/actions/admin/staff";
-import styles from "./staff.module.css";
+
 import { useState, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { UserPlus, Mail, Lock, User } from "lucide-react";
 import toast from "react-hot-toast";
+import { createStaffAccount } from "@/actions/admin/staff";
+import styles from "./staff.module.css";
 
 export default function CreateStaffForm() {
+    const router = useRouter();
     const [loading, setLoading] = useState(false);
     const formRef = useRef<HTMLFormElement>(null);
 
@@ -19,8 +22,7 @@ export default function CreateStaffForm() {
             if (res.success) {
                 toast.success(res.message);
                 formRef.current?.reset();
-                // Optional: Force refresh if you want instant list update without page reload
-                window.location.reload();
+                router.refresh();
             } else {
                 toast.error(res.message);
             }

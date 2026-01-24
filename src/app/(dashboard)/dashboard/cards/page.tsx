@@ -1,7 +1,8 @@
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
+import { getSiteSettings } from "@/lib/get-settings";
 import { redirect } from "next/navigation";
-import ManagedCard from "@/components/dashboard/cards/ManagedCard"; // 👈 NEW IMPORT
+import ManagedCard from "@/components/dashboard/cards/ManagedCard";
 import CardControls from "@/components/dashboard/cards/CardControls";
 import { CreditCard, Lock } from "lucide-react";
 import styles from "../../../../components/dashboard/cards/cards.module.css";
@@ -12,12 +13,13 @@ export default async function CardsPage() {
     const session = await auth();
     if (!session?.user?.email) redirect("/login");
 
-    const user = await db.user.findUnique({
-        where: { email: session.user.email },
-        include: {
-            cards: { orderBy: { createdAt: 'desc' } }
-        }
-    });
+    const [user, settings] = await Promise.all([
+        db.user.findUnique({
+            where: { email: session.user.email },
+            include: { cards: true }
+        }),
+        getSiteSettings()
+    ]);
 
     if (!user) return null;
     const isVerified = user.kycStatus === KycStatus.VERIFIED;
@@ -48,13 +50,8 @@ export default async function CardsPage() {
                         <div>
                             {user.cards.map((card) => (
                                 <div key={card.id} className={styles.grid}>
-
-                                    {/* LEFT COLUMN: MANAGED CARD (Handles Card + Freeze) */}
-                                    <ManagedCard card={card} userName={user.fullName} />
-
-                                    {/* RIGHT COLUMN: OTHER CONTROLS */}
+                                    <ManagedCard card={card} userName={user.fullName} siteName={settings.site_name} />
                                     <CardControls card={card} />
-
                                 </div>
                             ))}
                         </div>

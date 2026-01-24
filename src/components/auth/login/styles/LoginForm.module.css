@@ -1,138 +1,137 @@
-/* --- 1. GLOBAL PAGE LAYOUT --- */
+/* PAGE LAYOUT */
 .pageWrapper {
   min-height: 100vh;
+  width: 100%;
   display: flex;
+  align-items: center;
   justify-content: center;
-  align-items: center; /* Center vertically for Login */
-  padding: 40px 20px;
-  background-color: var(--bg-app);
   position: relative;
-  overflow-x: hidden;
+  overflow: hidden;
+  padding: 1rem;
+  background-color: var(--bg-app);
 }
 
-/* Ambient Mesh Gradient */
+/* AMBIENT BACKGROUND ANIMATION */
 .ambientMesh {
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(
-      circle at 50% 30%,
-      rgba(59, 130, 246, 0.08),
-      transparent 50%
+  right: 0;
+  bottom: 0;
+  background:
+    radial-gradient(
+      circle at 15% 50%,
+      var(--primary-light, rgba(59, 130, 246, 0.15)),
+      transparent 25%
     ),
     radial-gradient(
-      circle at 80% 80%,
-      rgba(99, 102, 241, 0.08),
-      transparent 40%
+      circle at 85% 30%,
+      var(--success-light, rgba(34, 197, 94, 0.15)),
+      transparent 25%
     );
-  pointer-events: none;
   z-index: 0;
+  pointer-events: none;
 }
 
-/* --- 2. CONTAINER --- */
+/* CONTAINER */
 .formContainer {
+  width: 100%;
+  max-width: 440px;
   position: relative;
   z-index: 10;
-  width: 100%;
-  max-width: 600px; /* Default max width (Register) */
-  animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* HEADER Styling */
+/* HEADER */
 .header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 2.5rem;
+}
+
+.logo {
+  object-fit: contain;
+  margin-bottom: 0.5rem;
 }
 
 .brandBadge {
-  display: inline-flex;
+display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: var(--bg-surface);
-  color: var(--text-muted);
-  border: 1px solid var(--border);
-  padding: 6px 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 6px 16px;
   border-radius: 50px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 16px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  backdrop-filter: blur(4px);
 }
 
 .header h1 {
   font-size: 2rem;
   font-weight: 800;
   color: var(--text-main);
-  margin: 0 0 8px 0;
+  margin-bottom: 0.5rem;
   letter-spacing: -0.5px;
 }
+
 .header p {
   color: var(--text-muted);
   font-size: 1rem;
 }
 
-/* --- 3. GLASS CARD FORM --- */
+/* GLASS FORM CARD */
 .glassForm {
-  background: var(--bg-card);
+  background: var(--bg-card); /* Uses your global card background */
+  /* If you want it extra glassy, you can override locally:
+     background: rgba(17, 17, 17, 0.7);
+  */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 40px;
-  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.05);
-}
-
-.errorBanner {
-  background: rgba(239, 68, 68, 0.1);
-  color: #ef4444;
-  border: 1px solid rgba(239, 68, 68, 0.2);
-  padding: 12px;
-  border-radius: 8px;
-  text-align: center;
-  font-size: 0.9rem;
-  font-weight: 600;
-  margin-bottom: 24px;
-}
-
-/* --- 4. SECTIONS & INPUTS --- */
-.sectionLabel {
+  border-radius: 24px;
+  padding: 2.5rem;
+  box-shadow: var(--shadow-card, 0 25px 50px -12px rgba(0, 0, 0, 0.5));
   display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 20px;
-  margin-top: 10px;
-  color: var(--text-main);
-  font-weight: 700;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ERROR BANNER */
+.errorBanner {
+  background: rgba(
+    239,
+    68,
+    68,
+    0.1
+  ); /* Keep hardcoded or use var(--danger-light) if exists */
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: #ef4444; /* var(--danger) */
+  padding: 12px;
+  border-radius: 12px;
   font-size: 0.9rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-.fieldGroup {
-  margin-bottom: 30px;
-  border-left: 2px solid var(--border);
-  padding-left: 20px;
+  text-align: center;
+  font-weight: 500;
+  animation: fadeIn 0.3s ease-out;
 }
 
-.inputRow {
-  margin-bottom: 16px;
-  width: 100%;
-}
-.grid2 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  margin-bottom: 16px;
-}
-
-/* INPUT WRAPPER */
+/* INPUTS */
 .inputWrapper {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 0.5rem;
   position: relative;
-  width: 100%;
-  margin-bottom: 20px;
+}
+
+.inputWrapper label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-left: 4px;
 }
 
 .labelRow {
@@ -141,240 +140,147 @@
   align-items: center;
 }
 
-.inputWrapper label {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--text-muted);
-}
-
 .forgotLink {
   font-size: 0.8rem;
-  color: #3b82f6;
+  color: var(--primary);
   text-decoration: none;
   font-weight: 600;
 }
+
 .forgotLink:hover {
   text-decoration: underline;
-}
-
-/* THE INPUT ITSELF */
-.inputWrapper input,
-.inputWrapper select {
-  background: var(--bg-surface);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 14px 16px 14px 44px; /* Space for icon */
-  font-size: 1rem;
-  color: var(--text-main);
-  transition: all 0.2s ease;
-  width: 100%;
-  outline: none;
-}
-.inputWrapper select {
-  padding-left: 16px;
+  opacity: 0.8;
 }
 
 .inputIconBox {
   position: absolute;
+  bottom: 14px;
   left: 14px;
-  top: 40px; /* Adjust based on label height */
   color: var(--text-muted);
   pointer-events: none;
+  z-index: 2;
 }
 
-/* FOCUS STATE */
-.inputWrapper input:focus,
-.inputWrapper select:focus {
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+.inputWrapper input {
+  width: 100%;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 12px 12px 42px;
+  color: var(--text-main);
+  font-size: 1rem;
+  height: 48px;
+  outline: none;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+
+.inputWrapper input:focus {
   background: var(--bg-card);
+  border-color: var(--primary);
+  /* Optional: Add a glow using shadow if your variables support it */
+  box-shadow: 0 0 0 1px var(--primary);
 }
 
-.readOnly {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-.pinInput {
-  letter-spacing: 4px;
-  text-align: center;
-  font-family: monospace;
-  padding-left: 16px !important;
+.inputWrapper input::placeholder {
+  color: var(--text-muted);
+  opacity: 0.5;
 }
 
-/* PASSWORD EYE BUTTON */
+/* EYE BUTTON */
 .eyeBtn {
   position: absolute;
-  right: 14px;
-  top: 38px;
-  background: transparent;
+  bottom: 0;
+  right: 0;
+  height: 48px;
+  width: 48px;
+  background: none;
   border: none;
   color: var(--text-muted);
   cursor: pointer;
-  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
 }
+
 .eyeBtn:hover {
   color: var(--text-main);
 }
 
-/* --- 5. FOOTER & BUTTONS --- */
+/* FOOTER / SUBMIT */
 .footer {
-  margin-top: 24px;
+  margin-top: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
 .primaryBtn {
-  width: 100%;
-  background: #0f172a;
-  color: white;
+  background: var(--primary);
+  color: white; /* Or var(--text-on-primary) if you have it */
   border: none;
-  padding: 16px;
+  height: 50px;
   border-radius: 12px;
-  font-size: 1.05rem;
+  font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
-  transition: 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-}
-.primaryBtn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.1);
-}
-.primaryBtn:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
+  gap: 8px;
+  transition: all 0.2s;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
+.primaryBtn:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.primaryBtn:disabled {
+  opacity: 0.6;
+  cursor: wait;
+  background: var(--text-muted); /* Fallback for disabled state */
+}
+
+.loginLink {
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.loginLink a {
+  color: var(--text-main);
+  font-weight: 600;
+  text-decoration: none;
+  margin-left: 4px;
+}
+
+.loginLink a:hover {
+  text-decoration: underline;
+  color: var(--primary);
+}
+
+/* ANIMATIONS */
 .spin {
   animation: spin 1s linear infinite;
 }
 
-.legalText {
-  text-align: center;
-  font-size: 0.8rem;
-  color: var(--text-muted);
-  margin-top: 20px;
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
 }
-.loginLink {
-  text-align: center;
-  margin-top: 20px;
-  font-size: 0.9rem;
-  color: var(--text-muted);
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
-.loginLink a {
-  color: #3b82f6;
-  font-weight: 600;
-  text-decoration: none;
-}
-
-/* --- 6. EXTRAS (Register Page Specifics) --- */
-.nokBox {
-  background: rgba(59, 130, 246, 0.03);
-  border: 1px dashed var(--border);
-  border-radius: 12px;
-  padding: 20px;
-  margin-top: 20px;
-}
-.miniHeader {
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  margin-bottom: 16px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.kycContainer {
-  background: var(--bg-surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 24px;
-}
-.dropZone {
-  position: relative;
-  border: 2px dashed var(--border);
-  border-radius: 12px;
-  background: var(--bg-card);
-  transition: 0.2s;
-  overflow: hidden;
-  cursor: pointer;
-  margin-top: 16px;
-}
-.dropZone:hover {
-  border-color: #3b82f6;
-  background: rgba(59, 130, 246, 0.03);
-}
-.fileInput {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-  cursor: pointer;
-  z-index: 2;
-}
-.dropContent {
-  padding: 30px;
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  text-align: center;
-  gap: 12px;
-}
-.cloudIcon {
-  width: 48px;
-  height: 48px;
-  background: rgba(59, 130, 246, 0.1);
-  color: #3b82f6;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.mainText {
-  font-weight: 600;
-  color: var(--text-main);
-  font-size: 0.95rem;
-  display: block;
-}
-.subText {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-}
-.fileSuccess {
-  font-weight: 700;
-  color: #22c55e;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.complianceNote {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  margin-top: 12px;
-  text-align: center;
-}
-
-/* Success Card */
-.successCard {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  padding: 60px 40px;
-  border-radius: 24px;
-  text-align: center;
-  max-width: 500px;
-}
-.successIcon {
-  color: #22c55e;
-  margin-bottom: 24px;
-}
-.successDetails {
-  margin: 20px 0 40px 0;
-  color: var(--text-muted);
-}
-
-/* ANIMATION */
 @keyframes slideUp {
   from {
     opacity: 0;
@@ -383,29 +289,5 @@
   to {
     opacity: 1;
     transform: translateY(0);
-  }
-}
-@keyframes spin {
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-/* RESPONSIVE */
-@media (max-width: 768px) {
-  .grid2 {
-    grid-template-columns: 1fr;
-    gap: 10px;
-  }
-  .pageWrapper {
-    padding: 40px 16px;
-  }
-  .glassForm {
-    padding: 24px;
-  }
-}
-@media (prefers-color-scheme: dark) {
-  .primaryBtn {
-    background: #3b82f6;
   }
 }

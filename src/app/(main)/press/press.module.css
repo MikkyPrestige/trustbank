@@ -1,0 +1,151 @@
+.main {
+  min-height: 100vh;
+  background: var(--bg-app);
+}
+
+/* HERO SECTION */
+.hero {
+  background: var(--primary-dark);
+  color: white;
+  padding: 5rem 2rem;
+  text-align: center;
+}
+
+.heroTitle {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  color: var(--text-main);
+}
+
+.heroDesc {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.6;
+  color: var(--text-main);
+}
+
+/* LAYOUT */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 4rem 2rem;
+}
+
+.pressWrapper {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* PRESS ITEMS LIST */
+.pressItem {
+  border-bottom: 1px solid var(--border);
+  padding: 2rem 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 2rem;
+}
+
+.pressItem h3 {
+  margin: 0.5rem 0;
+  font-size: 1.25rem;
+  color: var(--text-main);
+}
+
+.pressItem p {
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.pressDate {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  display: block;
+  margin-bottom: 4px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.pressLink {
+  color: var(--primary);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  text-decoration: none;
+  white-space: nowrap; /* Prevents "Read ->" from breaking */
+  margin-top: 1rem;
+}
+
+.pressLink:hover {
+  text-decoration: underline;
+}
+
+/* MEDIA KIT CARD */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 2rem;
+  margin-top: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.card h3 {
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.card p {
+  color: var(--text-muted);
+}
+
+.downloadBtn {
+  padding: 12px 24px;
+  background: var(--text-main);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: opacity 0.2s;
+  font-size: 0.95rem;
+}
+
+.downloadBtn:hover {
+  opacity: 0.9;
+}
+
+/* MOBILE RESPONSIVE */
+@media (max-width: 600px) {
+  .pressItem {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .pressLink {
+    align-self: flex-start;
+    margin-top: 0;
+  }
+
+  .card {
+    flex-direction: column;
+    text-align: center;
+    gap: 1.5rem;
+  }
+
+  .downloadBtn {
+    width: 100%;
+    justify-content: center;
+  }
+}

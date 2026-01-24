@@ -5,7 +5,12 @@ import { useState } from "react";
 import { ArrowRight, Flame, ShieldCheck, Info, TrendingUp, CheckCircle2 } from "lucide-react";
 import styles from "./home.module.css";
 
-export default function RatesGrid() {
+
+interface RatesGridProps {
+    settings: any;
+}
+
+export default function RatesGrid({ settings }: RatesGridProps) {
     const [activeTab, setActiveTab] = useState<'deposits' | 'borrowing'>('deposits');
 
     return (
@@ -15,9 +20,9 @@ export default function RatesGrid() {
                 {/* 1. HEADER WITH TABS */}
                 <div className={styles.ratesHeader}>
                     <div className={styles.headerText}>
-                        <h2 className={styles.sectionTitleDark}>Current Market Rates</h2>
+                        <h2 className={styles.sectionTitleDark}>{settings.home_rates_title}</h2>
                         <p className={styles.sectionDescDark}>
-                            Competitive rates designed to help you grow faster and borrow smarter.
+                            {settings.home_rates_desc}
                         </p>
                     </div>
 
@@ -43,7 +48,7 @@ export default function RatesGrid() {
 
                     {activeTab === 'deposits' ? (
                         <>
-                            {/* CARD 1: SAVINGS (Hero) */}
+                            {/* CARD 1: SAVINGS (Uses HYSA Rate from Save Page) */}
                             <div className={`${styles.rateCard} ${styles.featuredCard}`}>
                                 <div className={styles.badge}>
                                     <Flame size={14} fill="white" className={styles.badgeIcon} /> POPULAR
@@ -51,7 +56,7 @@ export default function RatesGrid() {
                                 <div className={styles.cardTop}>
                                     <h3 className={styles.rateTitle}>Platinum Savings</h3>
                                     <div className={styles.rateValue}>
-                                        4.50% <small>APY</small>
+                                        {settings.rate_hysa_apy}% <small>APY</small>
                                     </div>
                                     <p className={styles.rateSub}>
                                         <TrendingUp size={16} /> 7x the national average
@@ -72,12 +77,12 @@ export default function RatesGrid() {
                                 </Link>
                             </div>
 
-                            {/* CARD 2: CD */}
+                            {/* CARD 2: CD (Uses CD Rate from Save Page) */}
                             <div className={styles.rateCard}>
                                 <div className={styles.cardTop}>
                                     <h3 className={styles.rateTitle}>12-Month CD</h3>
                                     <div className={styles.rateValue}>
-                                        5.15% <small>APY</small>
+                                        {settings.rate_cd_apy}% <small>APY</small>
                                     </div>
                                     <p className={styles.rateSub}>
                                         <ShieldCheck size={16} /> Guaranteed return
@@ -98,12 +103,12 @@ export default function RatesGrid() {
                                 </Link>
                             </div>
 
-                            {/* CARD 3: CHECKING */}
+                            {/* CARD 3: CHECKING (Uses Checking Bonus) */}
                             <div className={styles.rateCard}>
                                 <div className={styles.cardTop}>
                                     <h3 className={styles.rateTitle}>Total Checking</h3>
                                     <div className={styles.rateValue}>
-                                        $200 <small>BONUS</small>
+                                        ${settings.rate_checking_bonus} <small>BONUS</small>
                                     </div>
                                     <p className={styles.rateSub}>
                                         <CheckCircle2 size={16} /> With direct deposit
@@ -126,12 +131,12 @@ export default function RatesGrid() {
                         </>
                     ) : (
                         <>
-                            {/* BORROWING CARDS */}
+                            {/* CARD 4: MORTGAGE (Uses 30yr Rate from Borrow Page) */}
                             <div className={styles.rateCard}>
                                 <div className={styles.cardTop}>
                                     <h3 className={styles.rateTitle}>30-Year Fixed</h3>
                                     <div className={styles.rateValue}>
-                                        6.12% <small>APR</small>
+                                        {settings.rate_mortgage_30yr}% <small>APR</small>
                                     </div>
                                     <p className={styles.rateSub}>Purchase or Refinance.</p>
                                 </div>
@@ -141,11 +146,12 @@ export default function RatesGrid() {
                                         <strong>Low</strong>
                                     </div>
                                 </div>
-                                <Link href="/loans" className={styles.btnOutlineDark}>
+                                <Link href="/borrow" className={styles.btnOutlineDark}>
                                     Check Rates <ArrowRight size={18} />
                                 </Link>
                             </div>
 
+                            {/* CARD 5: AUTO (Uses Low Auto Rate from Borrow Page) */}
                             <div className={`${styles.rateCard} ${styles.featuredCard}`}>
                                 <div className={styles.badge}>
                                     <TrendingUp size={14} /> LOW RATE
@@ -153,7 +159,7 @@ export default function RatesGrid() {
                                 <div className={styles.cardTop}>
                                     <h3 className={styles.rateTitle}>Auto Loans</h3>
                                     <div className={styles.rateValue}>
-                                        4.99% <small>APR</small>
+                                        {settings.rate_auto_low}% <small>APR</small>
                                     </div>
                                     <p className={styles.rateSub}>New or Used vehicles.</p>
                                 </div>
@@ -163,16 +169,17 @@ export default function RatesGrid() {
                                         <strong>Up to 72 mo</strong>
                                     </div>
                                 </div>
-                                <Link href="/loans" className={styles.btnFull}>
+                                <Link href="/borrow" className={styles.btnFull}>
                                     Apply Now <ArrowRight size={18} />
                                 </Link>
                             </div>
 
+                            {/* CARD 6: PERSONAL (Uses Personal Rate from Borrow Page) */}
                             <div className={styles.rateCard}>
                                 <div className={styles.cardTop}>
                                     <h3 className={styles.rateTitle}>Personal Loan</h3>
                                     <div className={styles.rateValue}>
-                                        7.49% <small>APR</small>
+                                        {settings.rate_personal_apr}% <small>APR</small>
                                     </div>
                                     <p className={styles.rateSub}>Consolidate debt instantly.</p>
                                 </div>
@@ -182,7 +189,7 @@ export default function RatesGrid() {
                                         <strong>Same Day</strong>
                                     </div>
                                 </div>
-                                <Link href="/loans" className={styles.btnOutlineDark}>
+                                <Link href="/borrow" className={styles.btnOutlineDark}>
                                     View Options <ArrowRight size={18} />
                                 </Link>
                             </div>

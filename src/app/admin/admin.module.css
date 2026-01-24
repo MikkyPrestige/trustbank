@@ -29,23 +29,29 @@
 }
 
 .brand {
-  padding: 1.5rem;
-  font-size: 1.25rem;
-  font-weight: 800;
-  letter-spacing: -0.5px;
-  color: var(--text-main);
   display: flex;
   align-items: center;
+  gap: 12px;
+  padding: 0 12px 24px 12px;
   border-bottom: 1px solid var(--border);
+  margin-bottom: 16px;
+}
+
+.brandLogo {
+  object-fit: contain;
+  width: auto;
+  height: 32px;
+  max-width: 140px;
 }
 
 .brandBadge {
-  color: var(--danger);
-  font-size: 0.7em;
-  margin-left: 8px;
-  background: rgba(239, 68, 68, 0.1);
+  background: #f59e0b;
+  color: #000;
+  font-size: 0.65rem;
+  font-weight: 800;
   padding: 2px 6px;
   border-radius: 4px;
+  letter-spacing: 0.5px;
 }
 
 .navLinks {

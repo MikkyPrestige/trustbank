@@ -14,16 +14,19 @@ interface VirtualCardProps {
         type: string;
     };
     userName: string;
-    overrideStatus?: string; // 👈 NEW PROP
+    overrideStatus?: string;
+    siteName?: string;
 }
 
-export default function VirtualCard({ card, userName, overrideStatus }: VirtualCardProps) {
+export default function VirtualCard({ card, userName, overrideStatus, siteName }: VirtualCardProps) {
     const [showDetails, setShowDetails] = useState(false);
     const [copied, setCopied] = useState(false);
 
     // Use the override status if it exists, otherwise use the card's DB status
     const currentStatus = overrideStatus || card.status; // 👈 USE THIS
     const isFrozen = currentStatus === 'FROZEN';
+
+    const bankLabel = siteName ? siteName.toUpperCase() : 'TRUSTBANK';
 
     const cleanNum = card.cardNumber.replace(/\D/g, '');
 
@@ -60,7 +63,7 @@ export default function VirtualCard({ card, userName, overrideStatus }: VirtualC
 
             <div className={styles.cardContent}>
                 <div className={styles.cardTop}>
-                    <span className={styles.bankName}>TrustBank</span>
+                    <span className={styles.bankName}>{bankLabel}</span>
                     <span className={styles.cardType}>{card.type}</span>
                 </div>
 

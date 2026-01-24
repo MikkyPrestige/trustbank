@@ -1,10 +1,10 @@
-
 import { auth } from '@/auth';
 import { db } from '@/lib/db';
+import { getSiteSettings } from "@/lib/get-settings";
 import { redirect } from 'next/navigation';
 import { UserRole } from "@prisma/client";
 import Sidebar from "@/components/dashboard/Sidebar";
-import styles from "../../components/dashboard/dashboard.module.css"
+import styles from "../../components/dashboard/dashboard.module.css";
 
 export default async function DashboardLayout({
     children,
@@ -14,8 +14,8 @@ export default async function DashboardLayout({
     const session = await auth();
     if (!session?.user?.email) redirect("/login");
 
-    // 1. Fetch User & Counts
-    const [user, actionCount, waitingCount] = await Promise.all([
+    // 1. Fetch Data
+    const [user, actionCount, waitingCount, settings] = await Promise.all([
         db.user.findUnique({
             where: { email: session.user.email },
             select: {
@@ -23,30 +23,21 @@ export default async function DashboardLayout({
                 kycStatus: true, status: true, id: true
             }
         }),
-        // Count 1: User MUST Act (Enter Codes) -> RED BADGE
         db.wireTransfer.count({
-            where: {
-                userId: session.user.id,
-                status: 'ON_HOLD'
-            }
+            where: { userId: session.user.id, status: 'ON_HOLD' }
         }),
-        // Count 2: User is Waiting (Admin Review) -> BLUE/DEFAULT BADGE
         db.wireTransfer.count({
-            where: {
-                userId: session.user.id,
-                status: 'PENDING_AUTH'
-            }
-        })
+            where: { userId: session.user.id, status: 'PENDING_AUTH' }
+        }),
+        getSiteSettings()
     ]);
 
     if (!user) redirect("/login");
 
-    if (
-        (user.status as string) === 'SUSPENDED') {
+    if ((user.status as string) === 'SUSPENDED') {
         redirect("/login?error=AccountSuspended");
     }
 
-    // 2. Prepare props for the Sidebar
     const sidebarData = {
         user: {
             name: user.fullName || 'User',
@@ -60,7 +51,9 @@ export default async function DashboardLayout({
             pendingReview: waitingCount
         },
         isAdmin: user.role === UserRole.ADMIN || user.role === UserRole.SUPER_ADMIN || user.role === UserRole.SUPPORT,
-        isSuperAdmin: user.role === UserRole.SUPER_ADMIN
+        isSuperAdmin: user.role === UserRole.SUPER_ADMIN,
+        logoUrl: settings.site_logo,
+        siteName: settings.site_name
     };
 
     return (

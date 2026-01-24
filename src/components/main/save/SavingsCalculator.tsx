@@ -2,23 +2,26 @@
 
 import { useState, useMemo } from 'react';
 import styles from './SavingsCalculator.module.css';
-import { DollarSign, TrendingUp, Calendar, PiggyBank } from 'lucide-react';
+import { DollarSign, TrendingUp } from 'lucide-react';
 
-export default function SavingsCalculator() {
+// 1. Accept Props
+interface CalculatorProps {
+    defaultApy?: number;
+}
+
+export default function SavingsCalculator({ defaultApy = 4.50 }: CalculatorProps) {
     const [initialDeposit, setInitialDeposit] = useState(5000);
     const [monthlyContrib, setMonthlyContrib] = useState(500);
     const [years, setYears] = useState(10);
-    const [apy, setApy] = useState(4.50); // Trust High Yield Rate
 
-    // ✅ Derived State (No useEffect needed)
+    // 2. Use prop as initial state
+    const [apy, setApy] = useState(defaultApy);
+
     const result = useMemo(() => {
         const r = apy / 100 / 12;
         const n = years * 12;
 
-        // Future Value of Initial Deposit
         const fvInitial = initialDeposit * Math.pow(1 + r, n);
-
-        // Future Value of Monthly Contributions
         const fvContrib = monthlyContrib * ((Math.pow(1 + r, n) - 1) / r);
 
         const total = fvInitial + fvContrib;
@@ -32,7 +35,6 @@ export default function SavingsCalculator() {
         };
     }, [initialDeposit, monthlyContrib, years, apy]);
 
-    // Slider Background Logic
     const getBgSize = (val: number, min: number, max: number) => {
         return { backgroundSize: `${((val - min) * 100) / (max - min)}% 100%` };
     };
@@ -45,15 +47,13 @@ export default function SavingsCalculator() {
                 </div>
                 <div>
                     <h3>Watch Your Wealth Grow</h3>
-                    <p>See the power of TrustBank&apos;s industry-leading APY.</p>
+                    <p>See the power of TrustBank&apos;s industry-leading {apy}% APY.</p>
                 </div>
             </div>
 
             <div className={styles.grid}>
-                {/* INPUTS */}
                 <div className={styles.inputs}>
 
-                    {/* Initial Deposit */}
                     <div className={styles.inputGroup}>
                         <label>Initial Deposit</label>
                         <div className={styles.inputWrapper}>
@@ -74,7 +74,6 @@ export default function SavingsCalculator() {
                         />
                     </div>
 
-                    {/* Monthly Contribution */}
                     <div className={styles.inputGroup}>
                         <label>Monthly Contribution</label>
                         <div className={styles.inputWrapper}>
@@ -95,7 +94,6 @@ export default function SavingsCalculator() {
                         />
                     </div>
 
-                    {/* Duration & APY Row */}
                     <div className={styles.row}>
                         <div className={styles.inputGroup}>
                             <label>Duration (Years)</label>

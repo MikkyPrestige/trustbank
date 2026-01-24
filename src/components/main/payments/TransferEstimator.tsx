@@ -15,7 +15,20 @@ const FLAGS: Record<string, string> = {
     'EUR': '🇪🇺', 'GBP': '🇬🇧', 'NGN': '🇳🇬', 'CAD': '🇨🇦', 'USD': '🇺🇸'
 };
 
-export default function TransferEstimator() {
+// 1. Define Props Interface
+interface EstimatorProps {
+    title?: string;
+    desc?: string;
+    feeLabel?: string;
+    feeValue?: string;
+}
+
+export default function TransferEstimator({
+    title = "Global Transfer Engine",
+    desc = "Send money internationally with zero hidden fees.",
+    feeLabel = "Transfer Fee",
+    feeValue = "$0.00 (Free)"
+}: EstimatorProps) {
     const [amount, setAmount] = useState(1000);
     const [currency, setCurrency] = useState('EUR');
     const [converting, setConverting] = useState(false);
@@ -35,8 +48,8 @@ export default function TransferEstimator() {
             <div className={styles.header}>
                 <div className={styles.iconBox}><Globe size={28} /></div>
                 <div>
-                    <h3>Global Transfer Engine</h3>
-                    <p>Send money internationally with zero hidden fees.</p>
+                    <h3>{title}</h3>
+                    <p>{desc}</p>
                 </div>
             </div>
 
@@ -93,8 +106,8 @@ export default function TransferEstimator() {
             {/* INFO GRID */}
             <div className={styles.infoGrid}>
                 <div className={styles.infoItem}>
-                    <span className={styles.infoLabel}>Transfer Fee</span>
-                    <span className={styles.infoValueFree}>$0.00 (Free)</span>
+                    <span className={styles.infoLabel}>{feeLabel}</span>
+                    <span className={styles.infoValueFree}>{feeValue}</span>
                 </div>
                 <div className={styles.infoItem}>
                     <span className={styles.infoLabel}>Arrival</span>

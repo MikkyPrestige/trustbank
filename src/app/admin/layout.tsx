@@ -1,6 +1,8 @@
 import { auth } from "@/auth";
 import { requireAdmin } from "@/lib/admin-auth";
+import { getSiteSettings } from "@/lib/get-settings"; // 👈 Import CMS
 import Link from "next/link";
+import Image from "next/image"; // 👈 Import Image
 import styles from "./admin.module.css";
 import {
     LayoutDashboard,
@@ -12,7 +14,8 @@ import {
     ShieldAlert,
     LogOut,
     IdCard,
-    MessageSquareText
+    MessageSquareText,
+    Settings // 👈 Import Settings Icon
 } from "lucide-react";
 
 export default async function AdminLayout({
@@ -20,16 +23,28 @@ export default async function AdminLayout({
 }: {
     children: React.ReactNode;
 }) {
-    // 🔒 Gatekeeper: Ensure only admins enter this layout
+    // 🔒 Gatekeeper
     await requireAdmin();
     const session = await auth();
     const role = session?.user?.role;
 
+    // 1. Fetch Dynamic Settings
+    const settings = await getSiteSettings();
+
     return (
         <div className={styles.layoutContainer}>
             <nav className={styles.nav}>
+
+                {/* 2. DYNAMIC BRANDING */}
                 <div className={styles.brand}>
-                    TrustBank <span className={styles.brandBadge}>ADMIN</span>
+                    <Image
+                        src={settings.site_logo || "/logo.png"}
+                        alt={settings.site_name || "TrustBank"}
+                        width={120}
+                        height={32}
+                        className={styles.brandLogo}
+                    />
+                    <span className={styles.brandBadge}>ADMIN</span>
                 </div>
 
                 <div className={styles.navLinks}>
@@ -75,6 +90,11 @@ export default async function AdminLayout({
 
                     <Link href="/admin/generator" className={styles.navLink}>
                         <Activity size={18} /> TXNs
+                    </Link>
+
+                    {/* 👇 NEW LINK: Site Settings (CMS) */}
+                    <Link href="/admin/settings" className={styles.navLink}>
+                        <Settings size={18} /> Site Settings
                     </Link>
 
                     {role === 'SUPER_ADMIN' && (

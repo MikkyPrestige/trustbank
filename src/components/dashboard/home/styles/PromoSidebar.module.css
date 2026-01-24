@@ -1,0 +1,69 @@
+.card {
+    background: linear-gradient(135deg, #0f172a, #1e293b); /* Dark Navy Gradient */
+    border-radius: 16px;
+    padding: 1.5rem;
+    color: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.iconCircle {
+    background: rgba(255, 255, 255, 0.1);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+    color: #fbbf24; /* Gold */
+}
+
+.title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.rateRow {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    margin-bottom: 0.5rem;
+}
+
+.rateValue {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #fbbf24; /* Gold */
+    line-height: 1;
+}
+
+.rateLabel {
+    font-size: 0.875rem;
+    color: #94a3b8;
+    font-weight: 600;
+}
+
+.desc {
+    font-size: 0.9rem;
+    color: #cbd5e1;
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+}
+
+.ctaBtn {
+    display: block;
+    width: 100%;
+    text-align: center;
+    background: #fbbf24; /* Gold */
+    color: #0f172a; /* Dark Text */
+    font-weight: 700;
+    padding: 12px;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.ctaBtn:hover {
+    background: #f59e0b;
+}

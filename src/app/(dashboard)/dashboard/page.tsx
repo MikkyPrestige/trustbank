@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
+import { getSiteSettings } from "@/lib/get-settings";
 import { redirect } from "next/navigation";
 import DashboardView from "@/components/dashboard/home/DashboardView";
 import { TransactionDirection, TransactionStatus } from "@prisma/client";
@@ -10,6 +11,8 @@ export default async function DashboardPage() {
     if (!session?.user?.email) {
         redirect("/login");
     }
+
+    const settings = await getSiteSettings();
 
     // 1. Fetch User with Accounts and Ledger Entries
     const userRaw = await db.user.findUnique({
@@ -121,6 +124,7 @@ export default async function DashboardPage() {
             totalBalance={totalBalance}
             beneficiaries={beneficiaries}
             trend={trendPercent}
+            settings={settings}
         />
     );
 }

@@ -2,32 +2,49 @@
 
 import { useActionState, useState } from 'react';
 import { login } from '@/actions/user/login';
+import Image from 'next/image';
 import Link from 'next/link';
 import { Lock, Mail, ArrowRight, ShieldCheck, Eye, EyeOff, Loader2 } from 'lucide-react';
 import styles from './styles/LoginForm.module.css';
 
-export default function LoginForm() {
+interface LoginFormProps {
+    siteName?: string; // 👈 CMS Dynamic Branding
+}
+
+export default function LoginForm({ siteName = "TrustBank" }: LoginFormProps) {
     const [state, action, isPending] = useActionState(login, undefined);
     const [showPassword, setShowPassword] = useState(false);
 
     return (
         <div className={styles.pageWrapper}>
 
+            {/* 1. Ambient Background */}
             <div className={styles.ambientMesh}></div>
 
-            <div className={styles.formContainer} style={{ maxWidth: '480px' }}>
+            {/* 2. Main Content */}
+            <div className={styles.formContainer}>
 
-                {/* 2. Header */}
+                {/* Header */}
                 <div className={styles.header}>
+                    <Image
+                        src="/logo.png"
+                        alt={siteName}
+                        width={180}
+                        height={50}
+                        className={styles.logo}
+                        priority
+                    />
                     <div className={styles.brandBadge}>
-                        <ShieldCheck size={16} />
-                        <span>Secure Session</span>
+                        <ShieldCheck size={14} />
+                        <span>Secure Session • 256-bit Encrypted</span>
                     </div>
-                    <h1>Welcome Back</h1>
-                    <p>Access your digital vault.</p>
+                    <div>
+                        <h1>Welcome Back</h1>
+                        <p>Access your {siteName} digital vault.</p>
+                    </div>
                 </div>
 
-                {/* 3. Glass Form */}
+                {/* Glass Form */}
                 <form action={action} className={styles.glassForm}>
 
                     {/* Error Alert */}
@@ -73,6 +90,7 @@ export default function LoginForm() {
                             type="button"
                             className={styles.eyeBtn}
                             onClick={() => setShowPassword(!showPassword)}
+                            title={showPassword ? "Hide password" : "Show password"}
                         >
                             {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                         </button>
@@ -89,7 +107,7 @@ export default function LoginForm() {
                         </button>
 
                         <div className={styles.loginLink}>
-                            New to TrustBank? <Link href="/register">Open an Account</Link>
+                            New to {siteName}? <Link href="/register">Open an Account</Link>
                         </div>
                     </div>
 

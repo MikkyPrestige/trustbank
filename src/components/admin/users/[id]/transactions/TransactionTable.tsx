@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useActionState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { deleteTransaction, updateTransaction } from "@/actions/admin/transaction";
 import { Pencil, Trash2, X, Calendar, FileText, DollarSign, ArrowUpRight, ArrowDownLeft, ArrowLeftRight, Wallet, Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
@@ -10,6 +11,7 @@ import { LedgerEntry, Account } from "@prisma/client";
 type TransactionWithAccount = LedgerEntry & { account: Account };
 
 export default function TransactionTable({ transactions }: { transactions: TransactionWithAccount[] }) {
+    const router = useRouter();
     const [editingTrx, setEditingTrx] = useState<TransactionWithAccount | null>(null);
     const [deletingId, setDeletingId] = useState<string | null>(null);
 
@@ -21,8 +23,7 @@ export default function TransactionTable({ transactions }: { transactions: Trans
             const res = await deleteTransaction(id);
             if (res.success) {
                 toast.success("Transaction deleted & balance reverted");
-                // In a real app, you might want to router.refresh() here
-                window.location.reload(); // use router.refresh()  here now
+                router.refresh();
             } else {
                 toast.error(res.message);
             }
@@ -119,6 +120,7 @@ export default function TransactionTable({ transactions }: { transactions: Trans
 
 // Sub-component for the Edit Form
 function EditModal({ trx, onClose }: { trx: TransactionWithAccount, onClose: () => void }) {
+    const router = useRouter();
     const [state, action, isPending] = useActionState(updateTransaction, undefined);
 
     useEffect(() => {
@@ -126,13 +128,12 @@ function EditModal({ trx, onClose }: { trx: TransactionWithAccount, onClose: () 
             if (state.success) {
                 toast.success(state.message || "Transaction Updated!");
                 onClose();
-                window.location.reload();
+                router.refresh()
             } else {
-                // 🛑 THIS WAS MISSING: Now we catch and show the error
                 toast.error(state.message || "Update failed");
             }
         }
-    }, [state, onClose]);
+    }, [state, onClose, router]);
 
     const dateStr = new Date(trx.createdAt).toISOString().split('T')[0];
 

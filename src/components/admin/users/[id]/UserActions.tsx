@@ -20,9 +20,10 @@ import toast from 'react-hot-toast';
 interface UserActionsProps {
     userId: string;
     status: UserStatus;
+    siteName?: string;
 }
 
-export default function UserActions({ userId, status }: UserActionsProps) {
+export default function UserActions({ userId, status, siteName = "TrustBank" }: UserActionsProps) {
     const [loading, setLoading] = useState(false);
     const [showReset, setShowReset] = useState(false);
     const [showStatusMenu, setShowStatusMenu] = useState(false);
@@ -134,6 +135,7 @@ export default function UserActions({ userId, status }: UserActionsProps) {
                 <ResetPasswordModal
                     userId={userId}
                     onClose={() => setShowReset(false)}
+                    siteName={siteName}
                 />
             )}
 

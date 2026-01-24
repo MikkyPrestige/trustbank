@@ -1,19 +1,21 @@
 'use client';
 
 import { useActionState, useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { submitClearanceCode } from '@/actions/user/clearance';
 import styles from './styles/status.module.css';
 import toast from 'react-hot-toast';
 
-const VERIFICATION_DELAY = 8000; // 8 seconds simulation
+const VERIFICATION_DELAY = 8000; // 8 seconds
 
 export default function ClearanceForm({ wire }: { wire: any }) {
+    const router = useRouter();
     const [state, action, isPending] = useActionState(submitClearanceCode, undefined);
 
     const [verifying, setVerifying] = useState(false);
     const [progress, setProgress] = useState(0);
 
-    // 1. Unified Side Effect for Server Response
+    // Unified Side Effect for Server Response
     useEffect(() => {
         if (state?.message) {
             if (state.success) {
@@ -29,7 +31,7 @@ export default function ClearanceForm({ wire }: { wire: any }) {
         }
     }, [state]);
 
-    // 2. Handle visual progress bar
+    //  Handle visual progress bar
     useEffect(() => {
         if (!verifying) return;
 
@@ -41,15 +43,17 @@ export default function ClearanceForm({ wire }: { wire: any }) {
             setProgress((prev) => {
                 if (prev >= 100) {
                     clearInterval(timer);
-                    window.location.reload();
-                    return 100;
+                    toast.success("Verification Complete");
+                    router.refresh();
+                    setVerifying(false);
+                    return 0;
                 }
                 return prev + increment;
             });
         }, intervalTime);
 
         return () => clearInterval(timer);
-    }, [verifying]);
+    }, [verifying, router]);
 
     const getStageInfo = (stage: string) => {
         switch (stage) {

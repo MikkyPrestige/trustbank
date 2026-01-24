@@ -1,9 +1,13 @@
+import { getSiteSettings } from "@/lib/get-settings"; // 👈 Import Fetcher
 import Image from "next/image";
 import styles from "./payments.module.css";
 import TransferEstimator from "@/components/main/payments/TransferEstimator";
 import { Zap, Smartphone, CreditCard, Mail, Building, ArrowRight, RefreshCw } from "lucide-react";
 
-export default function PaymentsPage() {
+export default async function PaymentsPage() {
+    // 1. Fetch Dynamic Data
+    const settings = await getSiteSettings();
+
     return (
         <main className={styles.main}>
 
@@ -21,18 +25,23 @@ export default function PaymentsPage() {
                 <div className={styles.heroContent}>
                     <div className={styles.neonBadge}><Zap size={14} /> Instant Settlement</div>
                     <h1 className={styles.heroTitle}>
-                        Move money at the <br />
-                        <span className={styles.highlight}>speed of thought.</span>
+                        {settings.payments_hero_title} <br />
+                        <span className={styles.highlight}>{settings.payments_hero_highlight}</span>
                     </h1>
                     <p className={styles.heroDesc}>
-                        From splitting dinner bills to settling international invoices.
-                        Experience the next generation of seamless, borderless payments.
+                        {settings.payments_hero_desc}
                     </p>
                 </div>
 
                 {/* Overlapping Interactive Component */}
                 <div className={styles.heroWidget}>
-                    <TransferEstimator />
+                    {/* 2. Pass CMS data to Client Component */}
+                    <TransferEstimator
+                        title={settings.payments_widget_title}
+                        desc={settings.payments_widget_desc}
+                        feeLabel={settings.payments_widget_fee_label}
+                        feeValue={settings.payments_widget_fee_value}
+                    />
                 </div>
             </section>
 
@@ -40,8 +49,8 @@ export default function PaymentsPage() {
             <section className={styles.methodsSection}>
                 <div className={styles.container}>
                     <div className={styles.sectionHeader}>
-                        <h2>Ways to Pay</h2>
-                        <p>Flexible options for every transaction type.</p>
+                        <h2>{settings.payments_methods_title}</h2>
+                        <p>{settings.payments_methods_desc}</p>
                     </div>
 
                     <div className={styles.grid}>
@@ -60,14 +69,14 @@ export default function PaymentsPage() {
                         <div className={styles.card}>
                             <div className={styles.iconBox}><CreditCard size={32} /></div>
                             <h3>Loan Center</h3>
-                            <p>Manage your TrustBank Auto, Home, or Personal loans. Make one-time principal payments easily.</p>
+                            <p>Manage your {settings.site_name} Auto, Home, or Personal loans. Make one-time principal payments easily.</p>
                             <a href="#" className={styles.link}>Manage Loans <ArrowRight size={16} /></a>
                         </div>
                     </div>
                 </div>
             </section>
 
-            {/* 3. TRADITIONAL PAYMENTS (The "Boring" stuff from screenshot) */}
+            {/* 3. TRADITIONAL PAYMENTS */}
             <section className={styles.utilityStrip}>
                 <div className={styles.container}>
                     <div className={styles.utilityRow}>

@@ -4,7 +4,16 @@ import { useState } from 'react';
 import styles from './WellnessPulse.module.css';
 import { Activity, Brain, Target, TrendingUp, ArrowRight } from 'lucide-react';
 
-export default function WellnessPulse() {
+// 1. Define Props Interface
+interface WellnessPulseProps {
+    title?: string;
+    desc?: string;
+}
+
+export default function WellnessPulse({
+    title = "Financial Wellness Pulse",
+    desc = "Rate your confidence (1-10) to get a personalized reading."
+}: WellnessPulseProps) {
     const [scores, setScores] = useState({ savings: 5, debt: 5, goals: 5 });
     const [showResult, setShowResult] = useState(false);
 
@@ -21,8 +30,8 @@ export default function WellnessPulse() {
             <div className={styles.header}>
                 <div className={styles.iconBox}><Brain size={28} /></div>
                 <div>
-                    <h3>Financial Wellness Pulse</h3>
-                    <p>Rate your confidence (1-10) to get a personalized reading.</p>
+                    <h3>{title}</h3>
+                    <p>{desc}</p>
                 </div>
             </div>
 

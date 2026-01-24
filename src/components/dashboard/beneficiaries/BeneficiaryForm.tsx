@@ -1,6 +1,7 @@
 'use client';
 
-import { useActionState, useEffect } from 'react';
+import { useActionState, useEffect, useState } from 'react';
+import { useRouter } from "next/navigation";
 import { addBeneficiary } from '@/actions/user/beneficiary';
 import { UserPlus, Loader2, Building2, CreditCard, User, Globe, Hash } from 'lucide-react';
 import styles from './beneficiaries.module.css';
@@ -9,6 +10,18 @@ import toast from 'react-hot-toast';
 const initialState = { message: '', success: false };
 
 export default function BeneficiaryForm() {
+    const [formId, setFormId] = useState(0);
+    const router = useRouter();
+
+    const handleReset = () => {
+        router.refresh();
+        setFormId((prev) => prev + 1);
+    };
+
+    return <BeneficiaryFormContent key={formId} onReset={handleReset} />;
+}
+
+function BeneficiaryFormContent({ onReset }: { onReset: () => void }) {
     const [state, action, isPending] = useActionState(addBeneficiary, initialState);
 
     useEffect(() => {
@@ -22,7 +35,7 @@ export default function BeneficiaryForm() {
             <div className={styles.successBox}>
                 <h3>Success!</h3>
                 <p>Beneficiary saved to your contacts.</p>
-                <button onClick={() => window.location.reload()} className={styles.btnSecondary}>
+                <button onClick={onReset} className={styles.btnSecondary}>
                     Add Another
                 </button>
             </div>

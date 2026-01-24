@@ -5,7 +5,7 @@ import LoanApplicationForm from "@/components/dashboard/loans/LoanApplicationFor
 import RepaymentModal from "@/components/dashboard/loans/RepaymentModal";
 import styles from "../../../../components/dashboard/loans/loans.module.css";
 import { TrendingUp, PieChart, CheckCircle, Lock, History } from "lucide-react";
-import { KycStatus } from "@prisma/client"; // ✅ Import Enum
+import { KycStatus } from "@prisma/client";
 
 export default async function LoansPage() {
     const session = await auth();
@@ -15,7 +15,6 @@ export default async function LoansPage() {
         where: { id: session.user.id }
     });
 
-    // ✅ Strict Enum Check
     const isVerified = user?.kycStatus === KycStatus.VERIFIED;
 
     const rawLoans = await db.loan.findMany({
@@ -29,7 +28,6 @@ export default async function LoansPage() {
     });
     const maxPayable = Number(account?.availableBalance || 0);
 
-    // --- CALCULATE TOTALS ---
     const totalBorrowed = rawLoans
         .filter(l => l.status === 'APPROVED' || l.status === 'PAID')
         .reduce((sum, l) => sum + Number(l.totalRepayment), 0);
@@ -39,7 +37,6 @@ export default async function LoansPage() {
 
     const remainingDebt = totalBorrowed - totalRepaid;
 
-    // Convert Decimals to Numbers for Client Components
     const loans = rawLoans.map(loan => ({
         ...loan,
         amount: Number(loan.amount),
@@ -59,7 +56,7 @@ export default async function LoansPage() {
             {/* SUMMARY STATS */}
             <div className={styles.statsGrid}>
                 <div className={styles.statCard}>
-                    <div className={styles.iconBox} style={{ color: '#ef4444', background: 'rgba(239, 68, 68, 0.1)' }}>
+                    <div className={`${styles.iconBox} ${styles.iconRed}`}>
                         <TrendingUp size={24} />
                     </div>
                     <div>
@@ -70,18 +67,18 @@ export default async function LoansPage() {
                     </div>
                 </div>
                 <div className={styles.statCard}>
-                    <div className={styles.iconBox} style={{ color: '#22c55e', background: 'rgba(34,197,94,0.1)' }}>
+                    <div className={`${styles.iconBox} ${styles.iconGreen}`}>
                         <CheckCircle size={24} />
                     </div>
                     <div>
                         <p className={styles.statLabel}>Total Repaid</p>
-                        <h3 className={styles.statValue} style={{ color: '#22c55e' }}>
+                        <h3 className={`${styles.statValue} ${styles.statValueGreen}`}>
                             {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(totalRepaid)}
                         </h3>
                     </div>
                 </div>
                 <div className={styles.statCard}>
-                    <div className={styles.iconBox} style={{ color: '#3b82f6', background: 'rgba(59,130,246,0.1)' }}>
+                    <div className={`${styles.iconBox} ${styles.iconBlue}`}>
                         <PieChart size={24} />
                     </div>
                     <div>
@@ -98,7 +95,7 @@ export default async function LoansPage() {
                 <div className={styles.glassCard}>
                     {!isVerified ? (
                         <div className={styles.lockedState}>
-                            <div style={{ background: 'rgba(239,68,68,0.1)', padding: '1rem', borderRadius: '50%' }}>
+                            <div className={styles.lockIconWrapper}>
                                 <Lock size={40} className={styles.lockIcon} />
                             </div>
                             <h2>Loan Access Locked</h2>
@@ -146,13 +143,16 @@ export default async function LoansPage() {
 
                                         {/* PROGRESS BAR */}
                                         {(loan.status === 'APPROVED' || loan.status === 'PAID') && (
-                                            <div style={{ margin: '12px 0' }}>
-                                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: '#666', marginBottom: '6px' }}>
+                                            <div className={styles.progressWrapper}>
+                                                <div className={styles.progressStats}>
                                                     <span>Paid: ${loan.repaidAmount.toFixed(0)}</span>
                                                     <span>Total: ${loan.totalRepayment.toFixed(0)}</span>
                                                 </div>
-                                                <div style={{ height: '6px', background: '#222', borderRadius: '3px', overflow: 'hidden' }}>
-                                                    <div style={{ width: `${progress}%`, background: loan.status === 'PAID' ? '#22c55e' : '#3b82f6', height: '100%', borderRadius: '3px' }}></div>
+                                                <div className={styles.progressBar}>
+                                                    <div
+                                                        className={`${styles.progressFill} ${loan.status === 'PAID' ? styles.fillGreen : styles.fillBlue}`}
+                                                        style={{ width: `${progress}%` }}
+                                                    ></div>
                                                 </div>
                                             </div>
                                         )}

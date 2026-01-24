@@ -1,0 +1,140 @@
+.main {
+  background: var(--bg-app);
+  min-height: 100vh;
+  padding-bottom: 5rem;
+}
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* HEADER */
+.header {
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border);
+  padding: 4rem 0;
+  text-align: center;
+}
+.header h1 {
+  font-size: 2.5rem;
+  color: var(--text-main);
+  margin-bottom: 1rem;
+}
+.highlight {
+  color: var(--primary);
+}
+.header p {
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* CONTENT */
+.content {
+  padding-top: 4rem;
+}
+.rateGroup {
+  margin-bottom: 4rem;
+}
+.rateGroup h2 {
+  font-size: 1.5rem;
+  color: var(--text-main);
+  margin-bottom: 1.5rem;
+  border-left: 4px solid var(--primary);
+  padding-left: 1rem;
+}
+
+/* TABLES */
+.tableWrapper {
+  background: var(--bg-card);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+.rateTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+.rateTable th {
+  background: var(--bg-surface);
+  text-align: left;
+  padding: 1rem 1.5rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--border);
+}
+.rateTable td {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-main);
+  font-size: 1rem;
+}
+.rateTable tr:last-child td {
+  border-bottom: none;
+}
+
+.tag {
+  display: inline-block;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  color: var(--primary);
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-left: 8px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.apy {
+  color: var(--success, #16a34a);
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+.apr {
+  color: var(--primary);
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+.rateTable a {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 500;
+}
+.rateTable a:hover {
+  text-decoration: underline;
+}
+
+/* DISCLAIMER */
+.disclaimerBox {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-top: 4rem;
+}
+.disclaimerBox h4 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 0.5rem;
+  color: var(--text-main);
+  font-size: 0.95rem;
+}
+.disclaimerBox p {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin: 0;
+}
+
+@media (max-width: 640px) {
+  .rateTable th:nth-child(2),
+  .rateTable td:nth-child(2) {
+    display: none;
+  }
+}

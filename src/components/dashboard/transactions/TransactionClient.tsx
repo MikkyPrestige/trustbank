@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import {
@@ -10,26 +11,26 @@ import {
 } from 'lucide-react';
 import styles from "./transactions.module.css";
 
-// Define the shape of our Transaction based on Prisma
 interface Transaction {
     id: string;
-    amount: number | string; // Prisma Decimal comes as string often
+    amount: number | string;
     description: string;
     accountName?: string;
-    status: string; // 'COMPLETED', 'PENDING', 'FAILED'
-    type: string;   // 'DEPOSIT', 'WITHDRAWAL', 'CRYPTO_BUY', etc.
-    direction: string; // 'CREDIT', 'DEBIT'
+    status: string;
+    type: string;
+    direction: string;
     createdAt: Date | string;
 }
 
 export default function TransactionClient({ transactions }: { transactions: Transaction[] }) {
+    const router = useRouter();
     const [search, setSearch] = useState("");
     const [filterType, setFilterType] = useState("ALL");
     const [currentPage, setCurrentPage] = useState(1);
 
     const ITEMS_PER_PAGE = 10;
 
-    // 1. FILTERING LOGIC (Aligns with Backend Enums)
+    // 1. FILTERING LOGIC
     const filtered = useMemo(() => {
         return transactions.filter((t: Transaction) => {
             const query = search.toLowerCase();
@@ -44,13 +45,12 @@ export default function TransactionClient({ transactions }: { transactions: Tran
                 new Date(t.createdAt).toLocaleDateString().toLowerCase().includes(query);
 
             // Filter Logic
-            const isCrypto = type.startsWith("CRYPTO"); // Covers CRYPTO_BUY, CRYPTO_SEND, etc.
+            const isCrypto = type.startsWith("CRYPTO");
             let matchesType = true;
 
             switch (filterType) {
                 // --- BANK FILTERS ---
                 case "BANK":
-                    // Show Bank Deposits, Withdrawals, Transfers, Bills
                     matchesType = !isCrypto;
                     break;
                 case "BANK_IN":
@@ -77,7 +77,7 @@ export default function TransactionClient({ transactions }: { transactions: Tran
                     matchesType = type === "CRYPTO_RECEIVE";
                     break;
 
-                default: // ALL
+                default:
                     matchesType = true;
             }
 
@@ -90,7 +90,7 @@ export default function TransactionClient({ transactions }: { transactions: Tran
         let income = 0;
         let expense = 0;
         filtered.forEach(t => {
-            if (t.status === 'COMPLETED') { // Only count completed
+            if (t.status === 'COMPLETED') {
                 const val = Number(t.amount);
                 if (t.direction === 'CREDIT') income += val;
                 else expense += val;
@@ -140,16 +140,13 @@ export default function TransactionClient({ transactions }: { transactions: Tran
     // Helper to render icon
     const renderIcon = (t: Transaction) => {
         const type = t.type || "";
-        // Crypto Icons
         if (type === 'CRYPTO_BUY') return <TrendingUp size={18} />;
         if (type === 'CRYPTO_SELL') return <TrendingDown size={18} />;
         if (type === 'CRYPTO_SEND') return <ArrowUpRight size={18} />;
         if (type === 'CRYPTO_RECEIVE') return <ArrowDownLeft size={18} />;
-
-        // Bank Icons
         if (type === 'WIRE_TRANSFER' || type === 'TRANSFER') return <RefreshCcw size={18} />;
-        if (t.direction === 'CREDIT') return <ArrowDownLeft size={18} />; // Money In
-        return <ArrowUpRight size={18} />; // Money Out
+        if (t.direction === 'CREDIT') return <ArrowDownLeft size={18} />;
+        return <ArrowUpRight size={18} />;
     };
 
     return (
@@ -247,24 +244,26 @@ export default function TransactionClient({ transactions }: { transactions: Tran
                                 </tr>
                             ) : (
                                 paginatedData.map(t => (
-                                    <tr key={t.id}>
+                                    <tr
+                                        key={t.id}
+                                        onClick={() => router.push(`/dashboard/transactions/${t.id}`)}
+                                        className={styles.clickableRow}
+                                    >
                                         <td data-label="Description">
                                             <div className={styles.descCell}>
                                                 <div className={`${styles.iconBox} ${t.type.startsWith('CRYPTO') ? styles.cryptoIcon :
-                                                    t.direction === 'CREDIT' ? styles.creditIcon : styles.debitIcon
+                                                        t.direction === 'CREDIT' ? styles.creditIcon : styles.debitIcon
                                                     }`}>
                                                     {renderIcon(t)}
                                                 </div>
                                                 <div className={styles.descText}>
                                                     <span className={styles.merchant}>{t.description}</span>
-                                                    {/* Format: CRYPTO_BUY -> Crypto Buy */}
                                                     <span className={styles.subType}>
                                                         {t.type.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, (l: string) => l.toUpperCase())}
                                                     </span>
                                                 </div>
                                             </div>
                                         </td>
-
                                         <td data-label="Account" className={styles.accInfo}>{t.accountName || 'Primary'}</td>
                                         <td data-label="Date" className={styles.dateInfo}>{new Date(t.createdAt).toLocaleDateString()}</td>
                                         <td data-label="Status">

@@ -10,35 +10,39 @@ import styles from './styles/LoginModal.module.css';
 interface LoginModalProps {
     isOpen: boolean;
     onClose: () => void;
+    siteName?: string; // 👈 CMS Prop
 }
 
-export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
-    // Standard Next.js Server Action Hook
+export default function LoginModal({ isOpen, onClose, siteName = "TrustBank" }: LoginModalProps) {
     const [state, action, isPending] = useActionState(login, undefined);
-
     const [showPassword, setShowPassword] = useState(false);
     const [focusedField, setFocusedField] = useState<string | null>(null);
 
-    // Close on ESC key
+    // Close on ESC
     useEffect(() => {
         const handleEsc = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
-        window.addEventListener('keydown', handleEsc);
-        return () => window.removeEventListener('keydown', handleEsc);
-    }, [onClose]);
+        if (isOpen) {
+            window.addEventListener('keydown', handleEsc);
+            document.body.style.overflow = 'hidden';
+        }
+        return () => {
+            window.removeEventListener('keydown', handleEsc);
+            document.body.style.overflow = 'unset';
+        };
+    }, [isOpen, onClose]);
 
     if (!isOpen) return null;
 
     return (
         <div className={styles.overlay} onClick={onClose}>
-            {/* Stop propagation so clicking inside doesn't close it */}
             <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
 
                 {/* CLOSE BUTTON */}
-                <button className={styles.closeBtn} onClick={onClose}>
+                <button className={styles.closeBtn} onClick={onClose} aria-label="Close">
                     <X size={20} />
                 </button>
 
-                {/* HEADER: SECURITY BADGE */}
+                {/* HEADER */}
                 <div className={styles.header}>
                     <div className={styles.securityBadge}>
                         <ShieldCheck size={14} className={styles.shieldIcon} />
@@ -48,10 +52,8 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                     <p>Enter your credentials to access the vault.</p>
                 </div>
 
-                {/* THE FORM */}
+                {/* FORM */}
                 <form action={action} className={styles.form}>
-
-                    {/* ERROR ALERT */}
                     {state?.message && (
                         <div className={styles.errorAlert}>
                             {state.message}
@@ -60,20 +62,20 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
 
                     {/* EMAIL FIELD */}
                     <div className={`${styles.inputGroup} ${focusedField === 'email' ? styles.focused : ''}`}>
-                        <div className={styles.iconBox}>
-                            <Mail size={18} />
-                        </div>
+                        <div className={styles.iconBox}><Mail size={18} /></div>
                         <div className={styles.fieldWrapper}>
-                            <label className={styles.floatingLabel}>Email Address</label>
+                            {/* Input comes BEFORE label if using CSS peer selectors, but here we use simple overlay */}
                             <input
                                 name="email"
                                 type="email"
                                 required
+                                placeholder=" " // Required for CSS :placeholder-shown trick
                                 className={styles.input}
                                 onFocus={() => setFocusedField('email')}
                                 onBlur={(e) => !e.target.value && setFocusedField(null)}
                                 onChange={(e) => e.target.value && setFocusedField('email')}
                             />
+                            <label className={styles.floatingLabel}>Email Address</label>
                         </div>
                     </div>
 
@@ -83,28 +85,29 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                             <Lock size={18} />
                         </div>
                         <div className={styles.fieldWrapper}>
-                            <label className={styles.floatingLabel}>Password</label>
                             <input
                                 name="password"
                                 type={showPassword ? 'text' : 'password'}
                                 required
+                                placeholder=" "
                                 className={styles.input}
                                 onFocus={() => setFocusedField('password')}
                                 onBlur={(e) => !e.target.value && setFocusedField(null)}
                                 onChange={(e) => e.target.value && setFocusedField('password')}
                             />
+                            <label className={styles.floatingLabel}>Password</label>
                         </div>
-                        {/* TOGGLE VISIBILITY */}
                         <button
                             type="button"
                             className={styles.eyeBtn}
                             onClick={() => setShowPassword(!showPassword)}
+                            title={showPassword ? "Hide password" : "Show password"}
                         >
                             {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                         </button>
                     </div>
 
-                    {/* FORGOT PASSWORD ROW */}
+                    {/* EXTRAS */}
                     <div className={styles.extrasRow}>
                         <label className={styles.rememberMe}>
                             <input type="checkbox" name="remember" />
@@ -115,7 +118,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                         </Link>
                     </div>
 
-                    {/* SUBMIT BUTTON */}
+                    {/* SUBMIT */}
                     <button type="submit" disabled={isPending} className={styles.submitBtn}>
                         {isPending ? (
                             <>Authenticating <Loader2 size={18} className={styles.spinner} /></>
@@ -126,7 +129,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
 
                     {/* FOOTER */}
                     <div className={styles.footer}>
-                        New to TrustBank? <Link href="/register">Open an Account</Link>
+                        New to {siteName}? <Link href="/register">Open an Account</Link>
                     </div>
                 </form>
             </div>

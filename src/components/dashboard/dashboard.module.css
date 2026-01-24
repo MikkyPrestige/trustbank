@@ -2,7 +2,7 @@
 .layoutShell {
   display: flex;
   min-height: 100vh;
-  background-color: var(--bg-subtle, #f8fafc);
+  background-color: var(--bg-app);
 }
 
 /* Dark Mode adjustment */
@@ -243,10 +243,46 @@
 /* --- 4. MAIN CONTENT AREA --- */
 .mainContent {
   flex: 1;
-  overflow-x: hidden;
-  position: relative;
+  background: var(--bg-app);
+  padding: 2rem;
+  overflow-y: auto;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
+.contentGrid {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 2rem;
+  align-items: start;
+  width: 100%;
+}
+
+.pageContent {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  min-width: 0;
+}
+
+.rightSidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  position: sticky;
+  top: 2rem;
+}
+
+@media (max-width: 1024px) {
+  .contentGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .rightSidebar {
+    display: none;
+  }
+}
 /* --- 5. DASHBOARD HEADER --- */
 .header {
   position: sticky;
@@ -439,6 +475,22 @@
   padding: 40px;
   text-align: center;
   color: var(--text-muted);
+}
+
+.clickableRow {
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    transform 0.1s ease;
+}
+
+.clickableRow:hover {
+  background-color: var(--bg-surface);
+}
+
+.clickableRow:active {
+  background-color: var(--border);
+  transform: scale(0.998);
 }
 
 /* --- RESPONSIVE MOBILE --- */
@@ -1012,110 +1064,109 @@
   opacity: 0.8;
 }
 
-
 .frozenWrapper {
-    padding: 0 40px;
+  padding: 0 40px;
 }
 
 .sectionSpacer {
-    margin-top: 30px;
+  margin-top: 30px;
 }
 
 .sectionSpacerSmall {
-    margin-top: 30px;
-    margin-bottom: 10px;
-    padding: 0;
+  margin-top: 30px;
+  margin-bottom: 10px;
+  padding: 0;
 }
 
 .noMargin {
-    margin: 0 !important;
+  margin: 0 !important;
 }
 
 .linkPrimary {
-    font-size: 0.85rem;
-    color: var(--primary);
+  font-size: 0.85rem;
+  color: var(--primary);
 }
 
 .iconSuccess {
-    color: var(--success);
+  color: var(--success);
 }
 
 .textSuccess {
-    color: var(--success) !important;
+  color: var(--success) !important;
 }
 
 /* --- ACCOUNT ROW STYLING --- */
 .balWrapper {
-    text-align: right;
+  text-align: right;
 }
 
 .balSub {
-    font-size: 0.85rem;
-    color: var(--text-muted);
-    font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-weight: 600;
 }
 
 /* --- TRANSACTION ROW STYLING --- */
 .txRow {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .txIcon {
-    padding: 8px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  padding: 8px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .txIconCredit {
-    background: rgba(34, 197, 94, 0.1);
-    color: var(--success);
+  background: rgba(34, 197, 94, 0.1);
+  color: var(--success);
 }
 
 .txIconDebit {
-    background: rgba(239, 68, 68, 0.1);
-    color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
 }
 
 .txDesc {
-    font-weight: 600;
+  font-weight: 600;
 }
 
 .txDate {
-    color: var(--text-muted);
-    font-size: 0.85rem;
+  color: var(--text-muted);
+  font-size: 0.85rem;
 }
 
 .txAmount {
-    text-align: right;
-    font-weight: 700;
+  text-align: right;
+  font-weight: 700;
 }
 
 /* --- CARD STYLING --- */
 .cardFrozen {
-    filter: grayscale(1);
-    opacity: 0.8;
+  filter: grayscale(1);
+  opacity: 0.8;
 }
 
 .visaCardEmpty {
-    display: block;
-    height: 200px;
-    background: var(--bg-surface);
-    border: 1px dashed var(--border);
-    border-radius: 16px;
-    box-shadow: none;
-    text-decoration: none;
-    overflow: hidden;
+  display: block;
+  height: 200px;
+  background: var(--bg-surface);
+  border: 1px dashed var(--border);
+  border-radius: 16px;
+  box-shadow: none;
+  text-decoration: none;
+  overflow: hidden;
 }
 
 .visaCardEmptyContent {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--text-muted);
 }
