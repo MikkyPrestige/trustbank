@@ -1,12 +1,12 @@
 'use server';
 
 import { db } from "@/lib/db";
-import { logAdminAction } from "@/lib/admin-logger";
+import { logAdminAction } from "@/lib/utils/admin-logger";
 import { revalidatePath } from "next/cache";
 import bcrypt from "bcryptjs";
 import { UserRole, UserStatus } from "@prisma/client";
-import { checkAdminAction } from "@/lib/admin-auth";
-import { canPerform } from "@/lib/permissions"; // 👈 Import Permissions
+import { checkAdminAction } from "@/lib/auth/admin-auth";
+import { canPerform } from "@/lib/auth/permissions"; // 👈 Import Permissions
 
 // 1. CREATE STAFF ACCOUNT (Fresh Account)
 // 🛡️ PERMISSION: 'ADMIN_MGMT' (Super Admin Only)

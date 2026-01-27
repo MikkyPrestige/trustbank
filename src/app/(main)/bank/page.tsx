@@ -1,21 +1,19 @@
-import { getSiteSettings } from "@/lib/get-settings";
+import { getSiteSettings } from "@/lib/content/get-settings";
 import Image from "next/image";
 import styles from "./bank.module.css";
 import DebitCard3D from "@/components/main/bank/DebitCard3D";
-import { Zap, Smartphone, Globe, Check, X } from "lucide-react";
+import { Zap, Smartphone, Globe, Check, X, ArrowRight } from "lucide-react";
 
 export default async function BankPage() {
-    // 1. Fetch Dynamic Content
     const settings = await getSiteSettings();
 
     return (
         <main className={styles.main}>
-
             {/* 1. HERO SECTION */}
             <section className={styles.heroBackground}>
                 <Image
-                    src="/bank-hero.png"
-                    alt="Paying with TrustBank Card"
+                    src={settings.bank_hero_img || "/bank-hero.png"}
+                    alt={settings.bank_hero_alt || "TrustBank Banking"}
                     fill
                     className={styles.heroBgImage}
                     priority
@@ -31,13 +29,13 @@ export default async function BankPage() {
                         {settings.bank_hero_desc}
                     </p>
                     <div className={styles.heroActions}>
-                        <button className={styles.primaryBtn}>Open Account</button>
-                        <button className={styles.secondaryBtn}>View Features</button>
+                        <button className={styles.primaryBtn}>{settings.bank_hero_btn_primary}</button>
+                        <button className={styles.secondaryBtn}>{settings.bank_hero_btn_secondary}</button>
                     </div>
                 </div>
             </section>
 
-            {/* 2. CARD SHOWCASE SECTION */}
+            {/* 2. CARD SHOWCASE */}
             <section className={styles.cardSection}>
                 <div className={styles.container}>
                     <div className={styles.cardGrid}>
@@ -45,11 +43,10 @@ export default async function BankPage() {
                             <div className={styles.badge}>{settings.bank_card_badge}</div>
                             <h2>{settings.bank_card_title}</h2>
                             <p>{settings.bank_card_desc}</p>
-
                             <ul className={styles.featureList}>
-                                <li><Check size={20} className={styles.check} /> Contactless & Chip Enabled</li>
-                                <li><Check size={20} className={styles.check} /> Instant Lock/Unlock in App</li>
-                                <li><Check size={20} className={styles.check} /> Zero Foreign Transaction Fees</li>
+                                <li><Check size={20} className={styles.check} /> {settings.bank_card_feat_1}</li>
+                                <li><Check size={20} className={styles.check} /> {settings.bank_card_feat_2}</li>
+                                <li><Check size={20} className={styles.check} /> {settings.bank_card_feat_3}</li>
                             </ul>
                         </div>
                         <div className={styles.cardVisual}>
@@ -59,7 +56,76 @@ export default async function BankPage() {
                 </div>
             </section>
 
-            {/* 3. FEATURES GRID */}
+            {/* 3. CHECKING & SAVINGS SECTION (ID: cs) */}
+            <section id="cs" className={styles.productSection}>
+                <div className={styles.container}>
+                    <div className={styles.productGrid}>
+                        <div className={styles.productImageWrapper}>
+                            <Image
+                                src={settings.bank_cs_img || "/bank-cs.png"}
+                                alt={settings.bank_cs_img_alt}
+                                fill
+                                className={styles.productImage}
+                            />
+                        </div>
+                        <div className={styles.productContent}>
+                            <h2 className={styles.productTitle}>{settings.bank_cs_title}</h2>
+                            <p className={styles.productDesc}>{settings.bank_cs_desc}</p>
+                            <button className={styles.productBtn}>
+                                {settings.bank_cs_btn} <ArrowRight size={18} />
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* 4. BUSINESS BANKING SECTION (ID: business) */}
+            <section id="business" className={`${styles.productSection} ${styles.bgAlt}`}>
+                <div className={styles.container}>
+                    <div className={`${styles.productGrid} ${styles.reverseGrid}`}>
+                        <div className={styles.productContent}>
+                            <h2 className={styles.productTitle}>{settings.bank_biz_title}</h2>
+                            <p className={styles.productDesc}>{settings.bank_biz_desc}</p>
+                            <button className={styles.productBtn}>
+                                {settings.bank_biz_btn} <ArrowRight size={18} />
+                            </button>
+                        </div>
+                        <div className={styles.productImageWrapper}>
+                            <Image
+                                src={settings.bank_biz_img || "/bank-biz.png"}
+                                alt={settings.bank_biz_img_alt}
+                                fill
+                                className={styles.productImage}
+                            />
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* 5. STUDENT BANKING SECTION (ID: student) */}
+            <section id="student" className={styles.productSection}>
+                <div className={styles.container}>
+                    <div className={styles.productGrid}>
+                        <div className={styles.productImageWrapper}>
+                            <Image
+                                src={settings.bank_stu_img || "/bank-stu.png"}
+                                alt={settings.bank_stu_img_alt}
+                                fill
+                                className={styles.productImage}
+                            />
+                        </div>
+                        <div className={styles.productContent}>
+                            <h2 className={styles.productTitle}>{settings.bank_stu_title}</h2>
+                            <p className={styles.productDesc}>{settings.bank_stu_desc}</p>
+                            <button className={styles.productBtn}>
+                                {settings.bank_stu_btn} <ArrowRight size={18} />
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* 6. FEATURES GRID */}
             <section className={styles.featureSection}>
                 <div className={styles.container}>
                     <div className={styles.features}>
@@ -82,7 +148,7 @@ export default async function BankPage() {
                 </div>
             </section>
 
-            {/* 4. COMPARISON TABLE */}
+            {/* 7. COMPARISON TABLE */}
             <section className={styles.compareSection}>
                 <div className={styles.container}>
                     <div className={styles.compareHeader}>
@@ -94,34 +160,39 @@ export default async function BankPage() {
                         <table className={styles.compareTable}>
                             <thead>
                                 <tr>
-                                    <th>Feature</th>
+                                    <th>{settings.bank_compare_col_1}</th>
                                     <th className={styles.thTrust}>{settings.site_name}</th>
-                                    <th>Traditional Banks</th>
+                                    <th>{settings.bank_compare_col_2}</th>
                                 </tr>
                             </thead>
                             <tbody>
+                                {/* ROW 1: MONTHLY FEE */}
                                 <tr>
-                                    <td>Monthly Maintenance Fee</td>
-                                    <td className={styles.tdTrust}>$0</td>
-                                    <td>$12 - $25</td>
+                                    <td>{settings.bank_tbl_row_1_label}</td>
+                                    <td className={styles.tdTrust}>{settings.bank_fee_monthly}</td>
+                                    <td>{settings.competitor_fee_monthly}</td>
                                 </tr>
+                                {/* ROW 2: OVERDRAFT */}
                                 <tr>
-                                    <td>Overdraft Fees</td>
-                                    <td className={styles.tdTrust}>$0</td>
-                                    <td>$35 per item</td>
+                                    <td>{settings.bank_tbl_row_2_label}</td>
+                                    <td className={styles.tdTrust}>{settings.bank_fee_overdraft}</td>
+                                    <td>{settings.competitor_fee_overdraft}</td>
                                 </tr>
+                                {/* ROW 3: FOREIGN TX */}
                                 <tr>
-                                    <td>Foreign Transaction Fees</td>
-                                    <td className={styles.tdTrust}>0%</td>
-                                    <td>3%</td>
+                                    <td>{settings.bank_tbl_row_3_label}</td>
+                                    <td className={styles.tdTrust}>{settings.bank_fee_foreign}</td>
+                                    <td>{settings.competitor_fee_foreign}</td>
                                 </tr>
+                                {/* ROW 4: MIN BALANCE */}
                                 <tr>
-                                    <td>Minimum Balance</td>
-                                    <td className={styles.tdTrust}>$0</td>
-                                    <td>$1,500</td>
+                                    <td>{settings.bank_tbl_row_4_label}</td>
+                                    <td className={styles.tdTrust}>{settings.bank_min_balance}</td>
+                                    <td>{settings.competitor_min_balance}</td>
                                 </tr>
+                                {/* ROW 5: DIRECT DEPOSIT */}
                                 <tr>
-                                    <td>Early Direct Deposit</td>
+                                    <td>{settings.bank_tbl_row_5_label}</td>
                                     <td className={styles.tdTrust}><Check size={20} /></td>
                                     <td><X size={20} /></td>
                                 </tr>
@@ -130,7 +201,6 @@ export default async function BankPage() {
                     </div>
                 </div>
             </section>
-
         </main>
     );
 }

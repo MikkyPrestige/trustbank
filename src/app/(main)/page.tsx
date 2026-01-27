@@ -1,4 +1,4 @@
-import { getSiteSettings } from "@/lib/get-settings";
+import { getSiteSettings } from "@/lib/content/get-settings";
 import Hero from "@/components/home/Hero";
 import InfoBar from "@/components/home/InfoBar";
 import RatesGrid from "@/components/home/RatesGrid";
@@ -17,13 +17,17 @@ export default async function Home() {
     return (
         <main className={styles.main}>
             <Hero
+                badgeText={settings.hero_badge}
                 title={settings.hero_title}
                 subtitle={settings.hero_subtitle}
                 ctaText={settings.hero_cta_text}
+                imgSrc={settings.home_hero_img}
+                imgAlt={settings.home_hero_alt}
             />
             <InfoBar
                 isActive={settings.announcement_active === 'true'}
                 text={settings.announcement_text}
+                phone={settings.contact_phone}
             />
             <RatesGrid settings={settings} />
             <CardShowcase />

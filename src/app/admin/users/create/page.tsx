@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
-import { requireAdmin } from '@/lib/admin-auth';
+import { requireAdmin } from '@/lib/auth/admin-auth';
 import CreateUserForm from '@/components/admin/users/create/CreateUserForm';
 import styles from "../../../../components/admin/users/create/create-user.module.css"
 

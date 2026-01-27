@@ -2,7 +2,7 @@ import { db } from "@/lib/db";
 import Link from "next/link";
 import TransactionTable from "@/components/admin/users/[id]/transactions/TransactionTable";
 import { ChevronLeft } from "lucide-react";
-import { requireAdmin } from "@/lib/admin-auth";
+import { requireAdmin } from "@/lib/auth/admin-auth";
 import { notFound } from "next/navigation";
 import styles from "../../../../../components/admin/users/[id]/transactions/transactions.module.css"
 

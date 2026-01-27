@@ -1,17 +1,20 @@
 import Image from "next/image";
 import styles from "./home.module.css";
+import { getSiteSettings } from "@/lib/content/get-settings";
 
-// Define logos here for easy management
-const PARTNERS = [
-    { name: "Visa", src: "/partner-1.png", width: 90, height: 30 },
-    { name: "Mastercard", src: "/partner-2.png", width: 70, height: 40 },
-    { name: "Stripe", src: "/partner-3.png", width: 80, height: 35 },
-    { name: "PayPal", src: "/partner-4.png", width: 90, height: 25 },
-    { name: "American Express", src: "/partner-5.png", width: 80, height: 50 },
-    { name: "AWS", src: "/partner-6.png", width: 60, height: 40 },
-];
+export default async function PartnerStrip() {
+    const settings = await getSiteSettings();
 
-export default function PartnerStrip() {
+    //  Construct Array dynamically
+    const PARTNERS = [
+        { src: settings.partner_img_1 || "/partner-1.png" },
+        { src: settings.partner_img_2 || "/partner-2.png" },
+        { src: settings.partner_img_3 || "/partner-3.png" },
+        { src: settings.partner_img_4 || "/partner-4.png" },
+        { src: settings.partner_img_5 || "/partner-5.png" },
+        { src: settings.partner_img_6 || "/partner-6.png" },
+    ];
+
     return (
         <section className={styles.partnerSection}>
             <div className={styles.partnerContainer}>
@@ -24,39 +27,45 @@ export default function PartnerStrip() {
                         {/* 1. Original Set */}
                         {PARTNERS.map((p, i) => (
                             <div key={`p1-${i}`} className={styles.logoItem}>
-                                <Image
-                                    src={p.src}
-                                    alt={p.name}
-                                    width={p.width}
-                                    height={p.height}
-                                    className={styles.logoImage}
-                                />
+                                <div className={styles.imgWrapper}>
+                                    <Image
+                                        src={p.src}
+                                        alt="Partner Logo"
+                                        fill
+                                        className={styles.logoImage}
+                                        style={{ objectFit: 'contain' }}
+                                    />
+                                </div>
                             </div>
                         ))}
 
                         {/* 2. Duplicate Set (For seamless loop) */}
                         {PARTNERS.map((p, i) => (
                             <div key={`p2-${i}`} className={styles.logoItem} aria-hidden="true">
-                                <Image
-                                    src={p.src}
-                                    alt={p.name}
-                                    width={p.width}
-                                    height={p.height}
-                                    className={styles.logoImage}
-                                />
+                                <div className={styles.imgWrapper}>
+                                    <Image
+                                        src={p.src}
+                                        alt="Partner Logo"
+                                        fill
+                                        className={styles.logoImage}
+                                        style={{ objectFit: 'contain' }}
+                                    />
+                                </div>
                             </div>
                         ))}
 
-                        {/* 3. Triplicate Set (To ensure wide screens are full) */}
+                        {/* 3. Triplicate Set (For wide screens) */}
                         {PARTNERS.map((p, i) => (
                             <div key={`p3-${i}`} className={styles.logoItem} aria-hidden="true">
-                                <Image
-                                    src={p.src}
-                                    alt={p.name}
-                                    width={p.width}
-                                    height={p.height}
-                                    className={styles.logoImage}
-                                />
+                                <div className={styles.imgWrapper}>
+                                    <Image
+                                        src={p.src}
+                                        alt="Partner Logo"
+                                        fill
+                                        className={styles.logoImage}
+                                        style={{ objectFit: 'contain' }}
+                                    />
+                                </div>
                             </div>
                         ))}
 

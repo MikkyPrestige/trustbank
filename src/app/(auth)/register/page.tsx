@@ -1,4 +1,4 @@
-import { getSiteSettings } from "@/lib/get-settings";
+import { getSiteSettings } from "@/lib/content/get-settings";
 import RegisterForm from "@/components/auth/register/RegisterForm";
 
 export default async function RegisterPage() {

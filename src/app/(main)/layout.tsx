@@ -1,4 +1,4 @@
-import { getSiteSettings } from "@/lib/get-settings";
+import { getSiteSettings } from "@/lib/content/get-settings";
 import SiteHeader from "@/components/layout/header/SiteHeader";
 import Footer from "@/components/layout/footer/Footer";
 

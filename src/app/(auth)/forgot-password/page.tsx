@@ -1,4 +1,4 @@
-import { getSiteSettings } from "@/lib/get-settings";
+import { getSiteSettings } from "@/lib/content/get-settings";
 import ForgotPasswordCard from "@/components/auth/forgotPassword/ForgotPasswordCard";
 
 export const metadata = {

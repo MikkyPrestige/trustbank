@@ -3,7 +3,7 @@
 import { db } from "@/lib/db";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
-import { uploadFileToCloud } from "@/lib/upload";
+import { uploadFileToCloud } from "@/lib/utils/upload";
 import {
   Prisma,
   UserRole,

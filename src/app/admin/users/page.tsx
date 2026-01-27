@@ -1,7 +1,7 @@
 import { db } from "@/lib/db";
 import Link from "next/link";
 import { Plus, History, UserPlus, Archive, ArrowLeft } from "lucide-react";
-import { requireAdmin } from "@/lib/admin-auth";
+import { requireAdmin } from "@/lib/auth/admin-auth";
 import { auth } from "@/auth";
 import UserSearch from "@/components/admin/users/UserSearch";
 import UserFilters from "@/components/admin/users/UserFilters";

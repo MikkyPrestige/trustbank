@@ -2,10 +2,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { ChevronRight, ShieldCheck, Zap, Globe } from "lucide-react";
 import styles from "./home.module.css";
-import { getSiteSettings } from "@/lib/get-settings"; // 👈 Import Fetcher
+import { getSiteSettings } from "@/lib/content/get-settings";
 
 export default async function CardShowcase() {
-    // 1. Fetch Dynamic Data
     const settings = await getSiteSettings();
 
     return (
@@ -30,25 +29,28 @@ export default async function CardShowcase() {
                         </p>
 
                         <div className={styles.cardFeatures}>
+                            {/* FEATURE 1 */}
                             <div className={styles.featureItem}>
                                 <Globe size={24} className={styles.goldIcon} />
                                 <div>
                                     <strong>{settings.home_card_feat_1}</strong>
-                                    <p>Spend globally like a local. 0% fees on international transactions.</p>
+                                    <p>{settings.home_card_feat_1_desc}</p>
                                 </div>
                             </div>
+                            {/* FEATURE 2 */}
                             <div className={styles.featureItem}>
                                 <ShieldCheck size={24} className={styles.goldIcon} />
                                 <div>
                                     <strong>{settings.home_card_feat_2}</strong>
-                                    <p>Your purchases are insured up to $10,000 against damage or theft.</p>
+                                    <p>{settings.home_card_feat_2_desc}</p>
                                 </div>
                             </div>
+                            {/* FEATURE 3 */}
                             <div className={styles.featureItem}>
                                 <Zap size={24} className={styles.goldIcon} />
                                 <div>
                                     <strong>{settings.home_card_feat_3}</strong>
-                                    <p>Earn 3x points on travel and dining. Redeem instantly in the app.</p>
+                                    <p>{settings.home_card_feat_3_desc}</p>
                                 </div>
                             </div>
                         </div>
@@ -63,13 +65,13 @@ export default async function CardShowcase() {
                         </div>
                     </div>
 
-                    {/* Right: The Floating Card Visual */}
+                    {/* Right: Floating Card Visual */}
                     <div className={styles.cardVisual}>
                         <div className={styles.goldGlow}></div>
 
                         <Image
-                            src="/card-front.png"
-                            alt={`${settings.site_name} Onyx Card`}
+                            src={settings.home_card_img || "/card-front.png"}
+                            alt={settings.home_card_alt || `${settings.site_name} Credit Card`}
                             width={600}
                             height={400}
                             className={styles.realCard}

@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { checkAdminAction } from "@/lib/admin-auth";
+import { checkAdminAction } from "@/lib/auth/admin-auth";
 import { redirect } from "next/navigation";
 import AdminTicketList from "@/components/admin/support/AdminTicketList";
 import styles from "../../../components/admin/support/support.module.css";

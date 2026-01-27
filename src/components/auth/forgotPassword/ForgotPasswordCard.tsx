@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { ShieldAlert, ArrowLeft, Phone } from "lucide-react";
 import styles from "./forgotPassword.module.css";
-import { DEFAULT_SETTINGS } from "@/lib/get-settings";
+import { DEFAULT_SETTINGS } from "@/lib/content/get-settings";
 
 interface Props {
     siteName?: string;

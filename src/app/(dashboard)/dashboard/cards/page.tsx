@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
-import { getSiteSettings } from "@/lib/get-settings";
+import { getSiteSettings } from "@/lib/content/get-settings";
 import { redirect } from "next/navigation";
 import ManagedCard from "@/components/dashboard/cards/ManagedCard";
 import CardControls from "@/components/dashboard/cards/CardControls";

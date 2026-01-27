@@ -21,9 +21,10 @@ interface Branch {
 
 interface Props {
     initialBranches: Branch[];
+    settings: any;
 }
 
-export default function LocationsClient({ initialBranches }: Props) {
+export default function LocationsClient({ initialBranches, settings }: Props) {
     const [query, setQuery] = useState('');
 
     const filteredBranches = useMemo(() => {
@@ -41,16 +42,16 @@ export default function LocationsClient({ initialBranches }: Props) {
             {/* HEADER */}
             <div className={styles.header}>
                 <div className={styles.container}>
-                    <h1>Find a Branch or ATM</h1>
+                    <h1>{settings.locations_hero_title}</h1>
                     <div className={styles.searchBar}>
                         <Search className={styles.searchIcon} />
                         <input
                             type="text"
-                            placeholder="Enter city, state, or zip..."
+                            placeholder={settings.locations_search_placeholder}
                             value={query}
                             onChange={(e) => setQuery(e.target.value)}
                         />
-                        <button>Search</button>
+                        <button>{settings.locations_search_btn_text}</button>
                     </div>
                 </div>
             </div>
@@ -61,18 +62,18 @@ export default function LocationsClient({ initialBranches }: Props) {
                     {/* LEFT: LIST */}
                     <div className={styles.listCol}>
                         <div className={styles.resultsCount}>
-                            {filteredBranches.length} locations found
+                            {filteredBranches.length} {settings.locations_results_label}
                         </div>
 
                         <div className={styles.list}>
                             {filteredBranches.length === 0 ? (
-                                <div style={{ padding: '2rem', textAlign: 'center', color: '#666' }}>
-                                    <p>No locations found matching &quot;<strong>{query}</strong>&quot;</p>
+                                <div className={styles.noResults}>
+                                    <p>{settings.locations_no_results_text} &quot;<strong>{query}</strong>&quot;</p>
                                     <button
                                         onClick={() => setQuery('')}
-                                        style={{ marginTop: '10px', color: 'var(--primary)', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}
+                                        className={styles.clearBtn}
                                     >
-                                        Clear Search
+                                        {settings.locations_clear_btn_text}
                                     </button>
                                 </div>
                             ) : (
@@ -89,33 +90,28 @@ export default function LocationsClient({ initialBranches }: Props) {
                                             <div className={styles.branchDetails}>
                                                 <div className={styles.detailRow}>
                                                     <MapPin size={16} className={styles.icon} />
-                                                    <span>
-                                                        {branch.address}, {branch.city} {branch.state ? `, ${branch.state}` : ''}
-                                                    </span>
+                                                    <span>{branch.address}, {branch.city} {branch.state ? `, ${branch.state}` : ''}</span>
                                                 </div>
                                                 <div className={styles.detailRow}>
                                                     <Phone size={16} className={styles.icon} />
-                                                    <a href={`tel:${branch.phone}`} className={styles.link}>
-                                                        {branch.phone}
-                                                    </a>
+                                                    <a href={`tel:${branch.phone}`} className={styles.link}>{branch.phone}</a>
                                                 </div>
                                                 <div className={styles.detailRow}>
                                                     <Clock size={16} className={styles.icon} />
-                                                    <span className={styles.openStatus}>Open Now</span>
+                                                    <span className={styles.openStatus}>{settings.locations_open_label}</span>
                                                     <span className={styles.hours}>• {branch.hours || "9AM - 5PM"}</span>
                                                 </div>
                                             </div>
 
                                             <div className={styles.services}>
                                                 {branch.hasAtm && (
-                                                    <span className={styles.serviceTag}><CheckCircle2 size={12} /> 24h ATM</span>
+                                                    <span className={styles.serviceTag}><CheckCircle2 size={12} /> {settings.locations_tag_atm}</span>
                                                 )}
                                                 {branch.hasDriveThru && (
-                                                    <span className={styles.serviceTag}><CheckCircle2 size={12} /> Drive-Thru</span>
+                                                    <span className={styles.serviceTag}><CheckCircle2 size={12} /> {settings.locations_tag_drive_thru}</span>
                                                 )}
-                                                <span className={styles.serviceTag}><CheckCircle2 size={12} /> Notary</span>
+                                                <span className={styles.serviceTag}><CheckCircle2 size={12} /> {settings.locations_tag_notary}</span>
                                             </div>
-
                                             <div className={styles.actions}>
                                                 <a
                                                     href={googleMapsUrl}
@@ -123,7 +119,7 @@ export default function LocationsClient({ initialBranches }: Props) {
                                                     rel="noopener noreferrer"
                                                     className={`${styles.navBtn} ${styles.fullWidthBtn}`}
                                                 >
-                                                    <Navigation size={14} /> Get Directions
+                                                    <Navigation size={14} /> {settings.locations_directions_btn_text}
                                                 </a>
                                             </div>
                                         </div>
@@ -133,7 +129,7 @@ export default function LocationsClient({ initialBranches }: Props) {
                         </div>
                     </div>
 
-                    {/* RIGHT: MAP (Passes Filtered Branches!) */}
+                    {/* RIGHT: MAP */}
                     <div className={styles.mapCol}>
                         <BranchMap branches={filteredBranches} />
                     </div>

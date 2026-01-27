@@ -1,8 +1,8 @@
-import { getSiteSettings } from "@/lib/get-settings";
+import { getSiteSettings } from "@/lib/content/get-settings";
 import { getLiveMarketData } from "@/lib/marketData";
 import Image from "next/image";
 import Link from "next/link";
-import { Bitcoin, ShieldCheck, Zap, Globe, Lock } from "lucide-react";
+import { Bitcoin, ShieldCheck, Zap, Globe, Lock, ArrowRight } from "lucide-react";
 import styles from "./crypto.module.css";
 
 export default async function CryptoPage() {
@@ -12,8 +12,9 @@ export default async function CryptoPage() {
         getLiveMarketData()
     ]);
 
-    // 2. Filter for Crypto only (Helper returns stocks too)
-    const cryptoAssets = marketData.filter(item => item.isCrypto);
+    // 2. Filter for Crypto only (Generic logic assuming 'type' or similar exists, or just taking top 5)
+    // Adjust logic based on your actual marketData structure
+    const cryptoAssets = marketData.filter(item => item.isCrypto).slice(0, 5);
 
     // Helper to format currency
     const formatPrice = (num: number) => {
@@ -30,22 +31,39 @@ export default async function CryptoPage() {
             {/* 1. HERO */}
             <section className={styles.hero}>
                 <div className={styles.container}>
-                    <div className={styles.heroContent}>
-                        <div className={styles.badge}><Bitcoin size={16} /> Crypto 2.0</div>
-                        <h1>
-                            {settings.crypto_hero_title} <br />
-                            <span className={styles.highlight}>{settings.crypto_hero_highlight}</span>
-                        </h1>
-                        <p>{settings.crypto_hero_desc}</p>
-                        <div className={styles.heroActions}>
-                            <Link href="/register" className={styles.btnPrimary}>Start Trading</Link>
-                            <Link href="/learn" className={styles.btnSecondary}>Learn Crypto</Link>
+                    <div className={styles.heroGrid}>
+                        <div className={styles.heroContent}>
+                            <div className={styles.badge}><Bitcoin size={16} /> Crypto 2.0</div>
+                            <h1 className={styles.heroTitle}>
+                                {settings.crypto_hero_title} <br />
+                                <span className={styles.highlight}>{settings.crypto_hero_highlight}</span>
+                            </h1>
+                            <p className={styles.heroDesc}>{settings.crypto_hero_desc}</p>
+                            <div className={styles.heroActions}>
+                                {/* CMS Controlled Buttons */}
+                                <Link href="/register" className={styles.btnPrimary}>
+                                    {settings.crypto_hero_btn_primary || "Start Trading"}
+                                </Link>
+                                <Link href="/learn" className={styles.btnSecondary}>
+                                    {settings.crypto_hero_btn_secondary || "Learn Crypto"}
+                                </Link>
+                            </div>
                         </div>
-                    </div>
-                    <div className={styles.heroVisual}>
-                        <div className={styles.floatingCoin} style={{ top: '10%', right: '10%' }}><Bitcoin size={40} /></div>
-                        <div className={styles.floatingCoin} style={{ bottom: '20%', left: '10%' }}><Zap size={40} /></div>
-                        <Image src="/crypto-phone.png" alt="Crypto App" width={300} height={600} className={styles.phoneImg} />
+
+                        <div className={styles.heroVisual}>
+                            <div className={styles.floatingCoin} style={{ top: '10%', right: '10%' }}><Bitcoin size={40} /></div>
+                            <div className={styles.floatingCoin} style={{ bottom: '20%', left: '10%', animationDelay: '1s' }}><Zap size={40} /></div>
+
+                            <div className={styles.phoneWrapper}>
+                                <Image
+                                    src={settings.crypto_hero_img || "/crypto-phone.png"}
+                                    alt={settings.crypto_hero_alt || "Crypto App"}
+                                    fill
+                                    className={styles.phoneImg}
+                                    priority
+                                />
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -55,8 +73,10 @@ export default async function CryptoPage() {
                 <div className={styles.container}>
                     <div className={styles.tableCard}>
                         <div className={styles.tableHeader}>
-                            <h3>Top Assets</h3>
-                            <span className={styles.liveIndicator}><span className={styles.dot}></span> Live Prices</span>
+                            <h3>{settings.crypto_table_title || "Top Assets"}</h3>
+                            <span className={styles.liveIndicator}>
+                                <span className={styles.dot}></span> Live Prices
+                            </span>
                         </div>
                         <div className={styles.tableWrapper}>
                             <table className={styles.assetTable}>
@@ -74,8 +94,9 @@ export default async function CryptoPage() {
                                             <td>
                                                 <div className={styles.assetName}>
                                                     <span className={styles.symbolIcon}>{asset.symbol[0]}</span>
-                                                    <div>
-                                                        <strong>{asset.symbol}</strong> {/* Using Symbol as name for simplicity */}
+                                                    <div className={styles.assetMeta}>
+                                                        <strong>{asset.symbol}</strong>
+                                                        <span className={styles.assetFullname}>Bitcoin</span>
                                                     </div>
                                                 </div>
                                             </td>
@@ -84,7 +105,9 @@ export default async function CryptoPage() {
                                                 {asset.change >= 0 ? '+' : ''}{asset.change.toFixed(2)}%
                                             </td>
                                             <td>
-                                                <button className={styles.tradeBtn}>Trade</button>
+                                                <Link href={`/trade/${asset.symbol}`} className={styles.tradeBtn}>
+                                                    Trade
+                                                </Link>
                                             </td>
                                         </tr>
                                     ))}
@@ -99,24 +122,24 @@ export default async function CryptoPage() {
             <section className={styles.featuresSection}>
                 <div className={styles.container}>
                     <div className={styles.sectionHeader}>
-                        <h2>Institutional Grade Security</h2>
-                        <p>We take the complexity out of custody. Your assets are safe, insured, and accessible.</p>
+                        <h2>{settings.crypto_sec_title || "Institutional Grade Security"}</h2>
+                        <p>{settings.crypto_sec_desc || "We take the complexity out of custody."}</p>
                     </div>
                     <div className={styles.featureGrid}>
                         <div className={styles.featureCard}>
-                            <Lock size={32} className={styles.iconBlue} />
-                            <h3>Cold Storage</h3>
-                            <p>98% of assets are held offline in geographically distributed air-gapped vaults.</p>
+                            <div className={styles.iconBox}><Lock size={32} className={styles.iconBlue} /></div>
+                            <h3>{settings.crypto_feat1_title}</h3>
+                            <p>{settings.crypto_feat1_desc}</p>
                         </div>
                         <div className={styles.featureCard}>
-                            <ShieldCheck size={32} className={styles.iconGreen} />
-                            <h3>Insured Custody</h3>
-                            <p>We partner with qualified custodians to provide insurance against theft or hacks.</p>
+                            <div className={styles.iconBox}><ShieldCheck size={32} className={styles.iconGreen} /></div>
+                            <h3>{settings.crypto_feat2_title}</h3>
+                            <p>{settings.crypto_feat2_desc}</p>
                         </div>
                         <div className={styles.featureCard}>
-                            <Globe size={32} className={styles.iconPurple} />
-                            <h3>Global Liquidity</h3>
-                            <p>Instant execution on large orders through our deep liquidity network.</p>
+                            <div className={styles.iconBox}><Globe size={32} className={styles.iconPurple} /></div>
+                            <h3>{settings.crypto_feat3_title}</h3>
+                            <p>{settings.crypto_feat3_desc}</p>
                         </div>
                     </div>
                 </div>

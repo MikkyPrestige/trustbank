@@ -1,7 +1,7 @@
 'use server';
 
 import { db } from "@/lib/db";
-import { logAdminAction } from "@/lib/admin-logger";
+import { logAdminAction } from "@/lib/utils/admin-logger";
 import { revalidatePath } from "next/cache";
 import bcrypt from "bcryptjs";
 import {
@@ -12,8 +12,8 @@ import {
   CardType,
   CardStatus
 } from "@prisma/client";
-import { checkAdminAction } from "@/lib/admin-auth";
-import { canPerform } from "@/lib/permissions";
+import { checkAdminAction } from "@/lib/auth/admin-auth";
+import { canPerform } from "@/lib/auth/permissions";
 import { z } from "zod";
 
 const resetSchema = z.object({

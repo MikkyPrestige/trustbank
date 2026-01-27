@@ -1,9 +1,9 @@
 'use server';
 
-import { getAuthenticatedUser } from "@/lib/user-guard";
+import { getAuthenticatedUser } from "@/lib/auth/user-guard";
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
-import { checkPermissions, checkInboundLimit } from "@/lib/security";
+import { checkPermissions, checkInboundLimit } from "@/lib/auth/security";
 import { getLiveMarketData } from "@/lib/marketData";
 import {
   UserStatus,

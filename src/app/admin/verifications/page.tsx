@@ -1,7 +1,7 @@
 import { db } from "@/lib/db";
 import Link from "next/link";
 import VerificationRow from "@/components/admin/verifications/VerificationRow";
-import { requireAdmin } from "@/lib/admin-auth";
+import { requireAdmin } from "@/lib/auth/admin-auth";
 import { ArrowLeft, PartyPopper } from "lucide-react";
 import styles from "../../../components/admin/verifications/verifications.module.css"
 

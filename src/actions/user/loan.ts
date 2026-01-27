@@ -1,8 +1,8 @@
 'use server';
 
-import { getAuthenticatedUser } from "@/lib/user-guard";
+import { getAuthenticatedUser } from "@/lib/auth/user-guard";
 import { db } from "@/lib/db";
-import { checkPermissions, verifyPin } from "@/lib/security";
+import { checkPermissions, verifyPin } from "@/lib/auth/security";
 import { revalidatePath } from "next/cache";
 import {
   KycStatus,

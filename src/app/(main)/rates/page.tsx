@@ -1,4 +1,4 @@
-import { getSiteSettings } from "@/lib/get-settings";
+import { getSiteSettings } from "@/lib/content/get-settings";
 import styles from "./rates.module.css";
 import { CheckCircle2 } from "lucide-react";
 
@@ -79,25 +79,25 @@ export default async function RatesPage() {
                                         <td><strong>Auto Loan (New)</strong></td>
                                         <td>Up to 72 mo</td>
                                         <td className={styles.apr}>{settings.rate_auto_apr}%</td>
-                                        <td><a href="/auto-loans">View</a></td>
+                                        <td><a href="/borrow">View</a></td>
                                     </tr>
                                     <tr>
                                         <td><strong>Personal Loan</strong></td>
                                         <td>12 - 60 mo</td>
                                         <td className={styles.apr}>{settings.rate_personal_apr}%</td>
-                                        <td><a href="/loans">View</a></td>
+                                        <td><a href="/borrow">View</a></td>
                                     </tr>
                                     <tr>
                                         <td><strong>Mortgage (30yr Fixed)</strong></td>
                                         <td>30 Years</td>
                                         <td className={styles.apr}>{settings.rate_mortgage_30yr}%</td>
-                                        <td><a href="/mortgage">View</a></td>
+                                        <td><a href="#">View</a></td>
                                     </tr>
                                     <tr>
                                         <td><strong>Credit Card</strong></td>
                                         <td>Variable</td>
                                         <td className={styles.apr}>{settings.rate_credit_intro_apr}% Intro</td>
-                                        <td><a href="/cards">View</a></td>
+                                        <td><a href="#">View</a></td>
                                     </tr>
                                 </tbody>
                             </table>

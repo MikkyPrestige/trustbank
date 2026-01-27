@@ -5,7 +5,6 @@ import Image from "next/image";
 import { useState, useEffect } from "react";
 import { Lock, Menu, Globe, ChevronDown, MapPin, TrendingUp } from "lucide-react";
 import styles from "./Navbar.module.css";
-// import { MEGA_MENUS } from "@/lib/navbar.data"; // 👈 Removed hardcoded import
 
 // Sub-components
 import DesktopMenu from "./DesktopMenu";
@@ -17,7 +16,7 @@ import RegisterModal from "@/components/auth/register/RegisterModal";
 interface NavbarProps {
     logoUrl?: string;
     siteName?: string;
-    menus: any; // 👈 NEW: Accepts the dynamic menu object
+    menus: any;
 }
 
 export default function Navbar({ logoUrl, siteName, menus }: NavbarProps) {

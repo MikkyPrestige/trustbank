@@ -1,60 +1,105 @@
-import { getSiteSettings } from "@/lib/get-settings";
+import { getSiteSettings } from "@/lib/content/get-settings";
 import LoanCalculator from '@/components/main/borrow/LoanCalculator';
-import { CreditCard, Home, Car, GraduationCap, ArrowRight, ShieldCheck, Zap, Percent } from 'lucide-react';
+import { CreditCard, Home, Car, GraduationCap, ArrowRight, ShieldCheck, Zap, Percent, Banknote } from 'lucide-react';
 import Image from 'next/image';
 import styles from './borrow.module.css';
 
 export default async function BorrowPage() {
-    // 1. Fetch Dynamic Data
     const settings = await getSiteSettings();
 
-    const LOAN_PRODUCTS = [
+    // 1. ANCHOR SECTIONS (Rich Content)
+    // These link to the ID for smooth scrolling or external pages
+    const ANCHORS = [
         {
-            title: "Personal Loans",
-            desc: "Consolidate debt or fund a major purchase with fixed rates and no hidden fees.",
-            icon: <Zap size={32} className={styles.iconYellow} />,
-            rate: `From ${settings.rate_personal_apr}% APR` // Dynamic
+            id: 'cc',
+            title: settings.borrow_cc_title,
+            desc: settings.borrow_cc_desc,
+            btn: settings.borrow_cc_btn,
+            img: settings.borrow_cc_img || "/borrow-cc.png",
+            alt: settings.borrow_cc_img_alt
         },
         {
-            title: "Mortgages",
-            desc: "Buy your dream home with our flexible 15 and 30-year fixed rate options.",
+            id: 'pl',
+            title: settings.borrow_pl_title,
+            desc: settings.borrow_pl_desc,
+            btn: settings.borrow_pl_btn,
+            img: settings.borrow_pl_img || "/borrow-pl.png",
+            alt: settings.borrow_pl_img_alt
+        },
+        {
+            id: 'mt',
+            title: settings.borrow_mt_title,
+            desc: settings.borrow_mt_desc,
+            btn: settings.borrow_mt_btn,
+            img: settings.borrow_mt_img || "/borrow-mt.png",
+            alt: settings.borrow_mt_img_alt
+        },
+        {
+            id: 'al',
+            title: settings.borrow_al_title,
+            desc: settings.borrow_al_desc,
+            btn: settings.borrow_al_btn,
+            img: settings.borrow_al_img || "/borrow-al.png",
+            alt: settings.borrow_al_img_alt
+        },
+        {
+            id: 'sl',
+            title: settings.borrow_sl_title,
+            desc: settings.borrow_sl_desc,
+            btn: settings.borrow_sl_btn,
+            img: settings.borrow_sl_img || "/borrow-sl.png",
+            alt: settings.borrow_sl_img_alt
+        },
+    ];
+
+    // 2. RATE GRID (Quick Comparison)
+    // Uses the generic prod1-6 fields to show APRs side-by-side
+    const RATE_PRODUCTS = [
+        {
+            title: settings.borrow_prod1_title, // Personal Loan
+            desc: settings.borrow_prod1_desc,
+            icon: <Banknote size={32} className={styles.iconGreen} />,
+            rate: `From ${settings.rate_personal_apr}% APR`
+        },
+        {
+            title: settings.borrow_prod2_title, // Mortgage
+            desc: settings.borrow_prod2_desc,
             icon: <Home size={32} className={styles.iconBlue} />,
-            rate: settings.rate_mortgage_label // Dynamic Text
+            rate: settings.rate_mortgage_label
         },
         {
-            title: "Auto Loans",
-            desc: "New or used, hit the road faster with approvals in as little as 60 seconds.",
-            icon: <Car size={32} className={styles.iconGreen} />,
-            rate: `From ${settings.rate_auto_apr}% APR` // Dynamic
+            title: settings.borrow_prod3_title, // Auto
+            desc: settings.borrow_prod3_desc,
+            icon: <Car size={32} className={styles.iconOrange} />,
+            rate: `From ${settings.rate_auto_apr}% APR`
         },
         {
-            title: "Student Loans",
-            desc: "Invest in your future. Competitive rates for undergraduate and graduate studies.",
+            title: settings.borrow_prod4_title, // Student
+            desc: settings.borrow_prod4_desc,
             icon: <GraduationCap size={32} className={styles.iconPurple} />,
-            rate: settings.rate_student_label // Dynamic Text
+            rate: settings.rate_student_label
         },
         {
-            title: "Credit Cards",
-            desc: `Earn 3% cash back on all dining and travel with the ${settings.site_name} Titanium Card.`,
+            title: settings.borrow_prod5_title, // Credit Card
+            desc: settings.borrow_prod5_desc,
             icon: <CreditCard size={32} className={styles.iconRed} />,
-            rate: `${settings.rate_credit_intro_apr}% Intro APR` // Dynamic
+            rate: `${settings.rate_credit_intro_apr} Intro APR`
         },
         {
-            title: "Home Equity",
-            desc: "Unlock the value of your home for renovations or big life events.",
-            icon: <Percent size={32} className={styles.iconOrange} />,
-            rate: settings.rate_home_equity_label // Dynamic Text
+            title: settings.borrow_prod6_title, // Home Equity (Unique to Grid)
+            desc: settings.borrow_prod6_desc,
+            icon: <Percent size={32} className={styles.iconGold} />,
+            rate: settings.rate_home_equity_label
         }
     ];
 
     return (
         <main className={styles.main}>
-
             {/* 1. HERO SECTION */}
             <section className={styles.heroBackground}>
                 <Image
-                    src="/loan-human.png"
-                    alt="Couple with new home keys"
+                    src={settings.borrow_hero_img || "/borrow-hero.png"}
+                    alt={settings.borrow_hero_alt || "TrustBank Borrowing"}
                     fill
                     className={styles.heroBgImage}
                     priority
@@ -83,26 +128,48 @@ export default async function BorrowPage() {
                     </div>
                 </div>
             </section>
-            <div className={styles.statDivider}></div>
 
             {/* 2. CALCULATOR SECTION */}
             <section className={styles.calcSection}>
                 <div className={styles.container}>
-                    {/* Pass the default APR to the calculator */}
-                    <LoanCalculator defaultRate={Number(settings.rate_personal_apr)} />
+                    <LoanCalculator defaultRate={Number(settings.rate_personal_apr)} settings={settings} />
                 </div>
             </section>
 
-            {/* 3. PRODUCT GRID */}
+            {/* 3. ANCHOR SECTIONS (Zig-Zag) */}
+            {ANCHORS.map((p, i) => (
+                <section key={p.id} id={p.id} className={`${styles.productSection} ${i % 2 !== 0 ? styles.bgAlt : ''}`}>
+                    <div className={styles.container}>
+                        <div className={`${styles.productGrid} ${i % 2 !== 0 ? styles.reverseGrid : ''}`}>
+                            <div className={styles.productContent}>
+                                <h2 className={styles.productTitle}>{p.title}</h2>
+                                <p className={styles.productDesc}>{p.desc}</p>
+                                <a href="#" className={styles.productBtn}>
+                                    {p.btn} <ArrowRight size={18} />
+                                </a>
+                            </div>
+                            <div className={styles.productImageWrapper}>
+                                <Image
+                                    src={p.img}
+                                    alt={p.alt || p.title}
+                                    fill
+                                    className={styles.productImage}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            ))}
+
+            {/* 4. RATE GRID (Supplemental) */}
             <section className={styles.productsSection}>
                 <div className={styles.container}>
                     <div className={styles.sectionHeader}>
-                        <h2>Lending Solutions</h2>
-                        <p>Choose the product that fits your life stage.</p>
+                        <h2>{settings.borrow_grid_title}</h2>
+                        <p>{settings.borrow_grid_desc}</p>
                     </div>
-
-                    <div className={styles.productGrid}>
-                        {LOAN_PRODUCTS.map((product, i) => (
+                    <div className={styles.rateGrid}>
+                        {RATE_PRODUCTS.map((product, i) => (
                             <div key={i} className={styles.productCard}>
                                 <div className={styles.cardHeader}>
                                     {product.icon}
@@ -111,7 +178,7 @@ export default async function BorrowPage() {
                                 <h3>{product.title}</h3>
                                 <p>{product.desc}</p>
                                 <a href="#" className={styles.cardLink}>
-                                    Check Rates <ArrowRight size={16} />
+                                    {settings.borrow_prod_btn_text} <ArrowRight size={16} />
                                 </a>
                             </div>
                         ))}
@@ -119,22 +186,22 @@ export default async function BorrowPage() {
                 </div>
             </section>
 
-            {/* 4. WHY TRUST BANK STRIP */}
+            {/* 5. TRUST STRIP */}
             <section className={styles.trustStrip}>
                 <div className={styles.container}>
                     <div className={styles.trustGrid}>
                         <div className={styles.trustItem}>
                             <ShieldCheck size={40} className={styles.iconBlue} />
                             <div>
-                                <h4>Payment Protection</h4>
-                                <p>We safeguard you and your family with Borrower Security.</p>
+                                <h4>{settings.borrow_trust1_title}</h4>
+                                <p>{settings.borrow_trust1_desc}</p>
                             </div>
                         </div>
                         <div className={styles.trustItem}>
                             <Zap size={40} className={styles.iconYellow} />
                             <div>
-                                <h4>Instant Decisions</h4>
-                                <p>Apply online and get a decision in under 60 seconds.</p>
+                                <h4>{settings.borrow_trust2_title}</h4>
+                                <p>{settings.borrow_trust2_desc}</p>
                             </div>
                         </div>
                     </div>

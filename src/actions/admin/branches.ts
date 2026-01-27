@@ -2,7 +2,7 @@
 
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
-import { checkAdminAction } from "@/lib/admin-auth";
+import { checkAdminAction } from "@/lib/auth/admin-auth";
 
 // --- CREATE ---
 export async function createBranch(formData: FormData) {

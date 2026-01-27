@@ -10,28 +10,64 @@
 
 /* HERO */
 .hero {
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-  color: white;
-  padding: 6rem 1.5rem;
+  position: relative;
+  height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
+  color: white;
+  overflow: hidden;
+}
+
+.heroImageWrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.heroImage {
+  object-fit: cover;
+  object-position: center;
+}
+
+.heroOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.3),
+    rgba(0, 0, 0, 0.7)
+  );
+  z-index: 1;
+}
+
+.heroContent {
+  position: relative;
+  z-index: 2;
+  max-width: 800px;
+  padding: 0 20px;
 }
 
 .heroContent h1 {
   font-size: 3rem;
   font-weight: 800;
-  margin-bottom: 1.5rem;
+  letter-spacing: -0.5px;
 }
 
 .heroContent p {
-  font-size: 1.25rem;
-  color: #94a3b8;
-  max-width: 600px;
-  margin: 0 auto 2.5rem auto;
+  font-size: 1.15rem;
+  opacity: 0.9;
+  line-height: 1.6;
+  margin-bottom: 2rem;
 }
 
 .primaryBtn {
   background: var(--primary);
-  color: white;
+  color: var(--text-main);
   border: none;
   padding: 14px 28px;
   font-size: 1rem;
@@ -219,7 +255,7 @@
     justify-content: center;
   }
 
-   .type {
+  .type {
     margin-top: 4px;
     display: inline-block;
   }

@@ -2,7 +2,7 @@ import { db } from "@/lib/db";
 import styles from "./logs.module.css";
 import { ShieldAlert, User, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
-import { requireAdmin } from "@/lib/admin-auth";
+import { requireAdmin } from "@/lib/auth/admin-auth";
 
 export default async function AdminAuditLogsPage({
     searchParams

@@ -1,10 +1,10 @@
 'use server';
 
 import { db } from "@/lib/db";
-import { logAdminAction } from "@/lib/admin-logger";
+import { logAdminAction } from "@/lib/utils/admin-logger";
 import { revalidatePath } from "next/cache";
-import { checkAdminAction } from "@/lib/admin-auth";
-import { canPerform } from "@/lib/permissions";
+import { checkAdminAction } from "@/lib/auth/admin-auth";
+import { canPerform } from "@/lib/auth/permissions";
 import {
   TransactionDirection,
   TransactionStatus,

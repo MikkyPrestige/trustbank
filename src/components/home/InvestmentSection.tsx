@@ -3,7 +3,7 @@ import Image from "next/image";
 import { ArrowRight, Bitcoin, PieChart, Lock, RefreshCcw } from "lucide-react";
 import styles from "./home.module.css";
 import { getLiveMarketData } from "@/lib/marketData";
-import { getSiteSettings } from "@/lib/get-settings";
+import { getSiteSettings } from "@/lib/content/get-settings";
 
 // Helper to format currency
 const formatPrice = (num: number, isCrypto: boolean) => {
@@ -25,7 +25,6 @@ const formatPercent = (num: number) => {
 };
 
 export default async function InvestmentSection() {
-    // 1. Fetch Real Data & CMS Settings
     const [marketData, settings] = await Promise.all([
         getLiveMarketData(),
         getSiteSettings()
@@ -36,7 +35,7 @@ export default async function InvestmentSection() {
     return (
         <section className={styles.investSection}>
 
-            {/* 1. REAL-TIME TICKER STRIP */}
+            {/* 1. REAL-TIME TICKER STRIP  */}
             <div className={styles.tickerStrip}>
                 <div className={styles.tickerTrack}>
                     {tickerItems.map((item, index) => (
@@ -71,37 +70,40 @@ export default async function InvestmentSection() {
 
                         {/* Feature List */}
                         <div className={styles.investFeatures}>
+                            {/* FEATURE 1 */}
                             <div className={styles.investFeatureItem}>
                                 <div className={styles.iconBoxGlass}>
                                     <PieChart size={24} className={styles.iconBlue} />
                                 </div>
                                 <div>
-                                    <h4>Smart Portfolios</h4>
-                                    <p>Automated investing based on your risk tolerance.</p>
+                                    <h4>{settings.home_invest_feat1}</h4>
+                                    <p>{settings.home_invest_feat1_desc}</p>
                                 </div>
                             </div>
+                            {/* FEATURE 2 */}
                             <div className={styles.investFeatureItem}>
                                 <div className={styles.iconBoxGlass}>
                                     <Bitcoin size={24} className={styles.iconGold} />
                                 </div>
                                 <div>
-                                    <h4>Integrated Crypto</h4>
-                                    <p>Buy, sell, and hold top cryptocurrencies instantly.</p>
+                                    <h4>{settings.home_invest_feat2}</h4>
+                                    <p>{settings.home_invest_feat2_desc}</p>
                                 </div>
                             </div>
+                            {/* FEATURE 3 */}
                             <div className={styles.investFeatureItem}>
                                 <div className={styles.iconBoxGlass}>
                                     <Lock size={24} className={styles.iconGreen} />
                                 </div>
                                 <div>
-                                    <h4>Bank-Grade Security</h4>
-                                    <p>SIPC insurance for securities. Cold storage for crypto.</p>
+                                    <h4>{settings.home_invest_feat3}</h4>
+                                    <p>{settings.home_invest_feat3_desc}</p>
                                 </div>
                             </div>
                         </div>
 
                         <div className={styles.investActions}>
-                            <Link href="/invest" className={styles.btnPrimary}>
+                            <Link href="/investors" className={styles.btnPrimary}>
                                 Start Investing
                             </Link>
                             <Link href="/crypto" className={styles.linkDark}>
@@ -116,8 +118,8 @@ export default async function InvestmentSection() {
 
                         <div className={styles.phoneWrapper}>
                             <Image
-                                src="/app-invest.png"
-                                alt="Investment App"
+                                src={settings.home_invest_img || "/app-invest.png"}
+                                alt={settings.home_invest_alt || "Investment App Dashboard"}
                                 width={340}
                                 height={680}
                                 className={styles.phoneImage}

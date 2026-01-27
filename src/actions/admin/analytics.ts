@@ -1,7 +1,7 @@
 'use server';
 
 import { db } from "@/lib/db";
-import { checkAdminAction } from "@/lib/admin-auth";
+import { checkAdminAction } from "@/lib/auth/admin-auth";
 import { TransactionType, TransactionStatus } from "@prisma/client";
 
 export async function getBankRevenue() {

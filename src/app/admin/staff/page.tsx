@@ -4,7 +4,7 @@ import CreateStaffForm from "@/components/admin/staff/CreateStaffForm";
 import PromoteStaffForm from "@/components/admin/staff/PromoteStaffForm";
 import StaffList from "@/components/admin/staff/StaffList";
 import { ShieldCheck } from "lucide-react";
-import { requireSuperAdmin } from "@/lib/admin-auth";
+import { requireSuperAdmin } from "@/lib/auth/admin-auth";
 import styles from "../../../components/admin/staff/staff.module.css"
 
 export default async function StaffManagementPage() {

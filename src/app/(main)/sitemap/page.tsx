@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Network } from 'lucide-react';
-import { MEGA_MENUS } from '@/lib/navbar.data';
+import { MEGA_MENUS } from '@/lib/content/navbar.data';
 import styles from './sitemap.module.css';
 
 export default function SitemapPage() {

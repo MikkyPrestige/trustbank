@@ -1,12 +1,49 @@
-import { getSiteSettings } from "@/lib/get-settings";
+import { getSiteSettings } from "@/lib/content/get-settings";
 import Image from "next/image";
 import styles from "./learn.module.css";
 import WellnessPulse from "@/components/main/learn/WellnessPulse";
 import { BookOpen, Lightbulb, TrendingUp, PlayCircle, ArrowRight } from "lucide-react";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Financial Learning Center | TrustBank",
+    description: "Expert guides, market insights, and tools to help you make smarter money moves.",
+};
 
 export default async function LearnPage() {
-    // 1. Fetch Dynamic Data
     const settings = await getSiteSettings();
+
+    // Helper Array for Articles
+    // The first article is "Large" (Featured), others are standard cards
+    const ARTICLES = [
+        {
+            tag: settings.learn_art1_tag,
+            title: settings.learn_art1_title,
+            desc: settings.learn_art1_desc,
+            img: settings.learn_art1_img || "/learn-invest.png",
+            alt: settings.learn_art1_alt || "Investment Chart",
+            linkText: settings.learn_art1_link,
+            isLarge: true
+        },
+        {
+            tag: settings.learn_art2_tag,
+            title: settings.learn_art2_title,
+            desc: settings.learn_art2_desc,
+            img: settings.learn_art2_img || "/learn-tax.png",
+            alt: settings.learn_art2_alt || "Tax Documents",
+            linkText: settings.learn_art2_link,
+            isLarge: false
+        },
+        {
+            tag: settings.learn_art3_tag,
+            title: settings.learn_art3_title,
+            desc: settings.learn_art3_desc,
+            img: settings.learn_art3_img || "/learn-business.png",
+            alt: settings.learn_art3_alt || "Business Strategy",
+            linkText: settings.learn_art3_link,
+            isLarge: false
+        }
+    ];
 
     return (
         <main className={styles.main}>
@@ -14,35 +51,34 @@ export default async function LearnPage() {
             {/* 1. HERO SECTION */}
             <section className={styles.heroBackground}>
                 <Image
-                    src="/learn-hero.png"
-                    alt="Planning Finances"
+                    src={settings.learn_hero_img || "/learn-hero.png"}
+                    alt={settings.learn_hero_alt || "Financial Learning"}
                     fill
                     className={styles.heroBgImage}
                     priority
                 />
                 <div className={styles.heroOverlay}></div>
 
-                <div className={styles.heroContent}>
-                    <div className={styles.amberBadge}>Trust Education</div>
-                    <h1 className={styles.heroTitle}>
-                        {settings.learn_hero_title} <br />
-                        <span className={styles.highlight}>{settings.learn_hero_highlight}</span>
-                    </h1>
-                    <p className={styles.heroDesc}>
-                        {settings.learn_hero_desc}
-                    </p>
-                </div>
+                <div className={styles.container}>
+                    <div className={styles.heroContent}>
+                        <div className={styles.amberBadge}>Trust Education</div>
+                        <h1 className={styles.heroTitle}>
+                            {settings.learn_hero_title} <br />
+                            <span className={styles.highlight}>{settings.learn_hero_highlight}</span>
+                        </h1>
+                        <p className={styles.heroDesc}>
+                            {settings.learn_hero_desc}
+                        </p>
+                    </div>
 
-                <div className={styles.heroWidget}>
-                    {/* 2. Pass CMS data to Client Component */}
-                    <WellnessPulse
-                        title={settings.learn_pulse_title}
-                        desc={settings.learn_pulse_desc}
-                    />
+                    <div className={styles.heroWidget}>
+                        {/* Interactive Quiz Widget */}
+                        <WellnessPulse settings={settings} />
+                    </div>
                 </div>
             </section>
 
-            {/* 2. FEATURED GUIDES (Magazine Style) */}
+            {/* 2. FEATURED GUIDES (Magazine Layout) */}
             <section className={styles.contentSection}>
                 <div className={styles.container}>
                     <div className={styles.sectionHeader}>
@@ -51,59 +87,26 @@ export default async function LearnPage() {
                     </div>
 
                     <div className={styles.grid}>
-
-                        <div className={styles.cardLarge}>
-                            <div className={styles.cardImageWrapper}>
-                                <div className={styles.tag}>INVESTING</div>
-                                <Image
-                                    src="/learn-invest.png"
-                                    alt="Rising Rates"
-                                    fill
-                                    className={styles.articleImg}
-                                />
+                        {ARTICLES.map((art, i) => (
+                            <div key={i} className={art.isLarge ? styles.cardLarge : styles.card}>
+                                <div className={styles.cardImageWrapper}>
+                                    <div className={styles.tag}>{art.tag}</div>
+                                    <Image
+                                        src={art.img}
+                                        alt={art.alt}
+                                        fill
+                                        className={styles.articleImg}
+                                    />
+                                </div>
+                                <div className={styles.cardContent}>
+                                    <h3>{art.title}</h3>
+                                    <p>{art.desc}</p>
+                                    <a href="#" className={styles.readLink}>
+                                        {art.linkText} <ArrowRight size={16} />
+                                    </a>
+                                </div>
                             </div>
-                            <div className={styles.cardContent}>
-                                <h3>The Impact of Rising Rates on Your Portfolio</h3>
-                                <p>Understanding how the Federal Reserve&apos;s latest moves affect bonds, stocks, and savings yields in 2026.</p>
-                                <a href="#" className={styles.readLink}>Read Analysis <ArrowRight size={16} /></a>
-                            </div>
-                        </div>
-
-                        {/* Article 2 */}
-                        <div className={styles.card}>
-                            <div className={styles.cardImageWrapper}>
-                                <div className={styles.tag}>BASICS</div>
-                                <Image
-                                    src="/learn-tax.png"
-                                    alt="Tax Tips"
-                                    fill
-                                    className={styles.articleImg}
-                                />
-                            </div>
-                            <div className={styles.cardContent}>
-                                <h3>5 Tax Moves to Make Before April</h3>
-                                <p>Don&apos;t leave money on the table. Here is your checklist for the upcoming tax season.</p>
-                                <a href="#" className={styles.readLink}>Get Checklist <ArrowRight size={16} /></a>
-                            </div>
-                        </div>
-
-                        {/* Article 3 */}
-                        <div className={styles.card}>
-                            <div className={styles.cardImageWrapper}>
-                                <div className={styles.tag}>BUSINESS</div>
-                                <Image
-                                    src="/learn-business.png"
-                                    alt="Side Hustle"
-                                    fill
-                                    className={styles.articleImg}
-                                />
-                            </div>
-                            <div className={styles.cardContent}>
-                                <h3>Scaling Your Side Hustle</h3>
-                                <p>When is the right time to open a business account? We break down the timeline.</p>
-                                <a href="#" className={styles.readLink}>Learn More <ArrowRight size={16} /></a>
-                            </div>
-                        </div>
+                        ))}
                     </div>
                 </div>
             </section>
@@ -111,25 +114,29 @@ export default async function LearnPage() {
             {/* 3. CATEGORY STRIP */}
             <section className={styles.categoryStrip}>
                 <div className={styles.container}>
+                    {/* Item 1 */}
                     <div className={styles.categoryItem}>
                         <BookOpen size={32} className={styles.catIcon} />
-                        <h3>Finance 101</h3>
-                        <p>Budgeting & Credit</p>
+                        <h3>{settings.learn_cat1_title}</h3>
+                        <p>{settings.learn_cat1_desc}</p>
                     </div>
+                    {/* Item 2 */}
                     <div className={styles.categoryItem}>
                         <TrendingUp size={32} className={styles.catIcon} />
-                        <h3>Market News</h3>
-                        <p>Daily Updates</p>
+                        <h3>{settings.learn_cat2_title}</h3>
+                        <p>{settings.learn_cat2_desc}</p>
                     </div>
+                    {/* Item 3 */}
                     <div className={styles.categoryItem}>
                         <Lightbulb size={32} className={styles.catIcon} />
-                        <h3>Life Hacks</h3>
-                        <p>Saving Tips</p>
+                        <h3>{settings.learn_cat3_title}</h3>
+                        <p>{settings.learn_cat3_desc}</p>
                     </div>
+                    {/* Item 4 */}
                     <div className={styles.categoryItem}>
                         <PlayCircle size={32} className={styles.catIcon} />
-                        <h3>Webinars</h3>
-                        <p>Watch On-Demand</p>
+                        <h3>{settings.learn_cat4_title}</h3>
+                        <p>{settings.learn_cat4_desc}</p>
                     </div>
                 </div>
             </section>

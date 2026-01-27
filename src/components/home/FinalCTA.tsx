@@ -2,10 +2,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { Apple, Play, ArrowRight, CheckCircle2, Shield } from "lucide-react";
 import styles from "./home.module.css";
-import { getSiteSettings } from "@/lib/get-settings";
+import { getSiteSettings } from "@/lib/content/get-settings";
 
 export default async function FinalCTA() {
-    // 1. Fetch Dynamic Data
     const settings = await getSiteSettings();
 
     return (
@@ -68,8 +67,8 @@ export default async function FinalCTA() {
                         {/* RIGHT SIDE: THE VISUAL */}
                         <div className={styles.ctaVisualRight}>
                             <Image
-                                src="/cta-visual.png"
-                                alt={`${settings.site_name} App`}
+                                src={settings.home_cta_img || "/cta-visual.png"}
+                                alt={settings.home_cta_alt || `${settings.site_name} Mobile App`}
                                 width={500}
                                 height={500}
                                 className={styles.ctaImage}

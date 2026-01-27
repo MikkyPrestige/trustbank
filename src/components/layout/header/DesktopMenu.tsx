@@ -5,7 +5,6 @@ import { useState, useRef } from "react";
 import { ChevronRight } from "lucide-react";
 import styles from "./Navbar.module.css";
 
-// Define the shape of the menu data (or import the interface if preferred)
 interface DesktopMenuProps {
     menus: any;
 }
@@ -16,7 +15,6 @@ export default function DesktopMenu({ menus }: DesktopMenuProps) {
 
     const handleMouseEnter = (menuName: string) => {
         if (timeoutRef.current) clearTimeout(timeoutRef.current);
-        // Use 'menus' prop instead of constant
         if (menus[menuName]) setActiveMenu(menuName);
         else setActiveMenu(null);
     };
@@ -39,7 +37,7 @@ export default function DesktopMenu({ menus }: DesktopMenuProps) {
                     {Object.keys(menus).map((key) => (
                         <Link
                             key={key}
-                            href={`/${key.toLowerCase()}`}
+                            href={key === 'COMPANY' ? '/about' : `/${key.toLowerCase()}`}
                             className={`${styles.navItem} ${activeMenu === key ? styles.active : ''}`}
                             onMouseEnter={() => handleMouseEnter(key)}
                         >

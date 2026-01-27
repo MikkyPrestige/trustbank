@@ -1,7 +1,7 @@
 import { db } from "@/lib/db";
 import GeneratorForm from "@/components/admin/generator/GeneratorForm";
 import styles from "../../../components/admin/generator/generator.module.css";
-import { requireAdmin } from "@/lib/admin-auth";
+import { requireAdmin } from "@/lib/auth/admin-auth";
 import { Bot } from "lucide-react";
 
 export default async function AdminGeneratorPage() {

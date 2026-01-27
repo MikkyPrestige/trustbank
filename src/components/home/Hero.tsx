@@ -3,18 +3,21 @@ import Image from "next/image";
 import styles from "./home.module.css";
 
 interface HeroProps {
+    badgeText?: string;
     title?: string;
     subtitle?: string;
     ctaText?: string;
+    imgSrc?: string;
+    imgAlt?: string;
 }
 
-export default function Hero({ title, subtitle, ctaText }: HeroProps) {
+export default function Hero({ badgeText, title, subtitle, ctaText, imgSrc, imgAlt }: HeroProps) {
     return (
         <section className={styles.hero}>
             <div className={styles.heroBg}>
                 <Image
-                    src="/hero-human.png"
-                    alt="Banking Lifestyle"
+                    src={imgSrc || "/hero-human.png"}
+                    alt={imgAlt || "Banking Lifestyle"}
                     fill
                     style={{ objectFit: "cover", objectPosition: "top center" }}
                     priority
@@ -24,7 +27,9 @@ export default function Hero({ title, subtitle, ctaText }: HeroProps) {
 
             <div className={styles.container}>
                 <div className={styles.heroContent}>
-                    <span className={styles.heroBadge}>TRUST BANK PERSONAL</span>
+                    <span className={styles.heroBadge}>
+                        {badgeText || "TRUST BANK PERSONAL"}
+                    </span>
 
                     <h1 className={styles.heroTitle}>
                         {title ? (
@@ -36,7 +41,6 @@ export default function Hero({ title, subtitle, ctaText }: HeroProps) {
                         )}
                     </h1>
 
-                    {/* 2. DYNAMIC SUBTITLE */}
                     <p className={styles.heroSub}>
                         {subtitle || (
                             <>

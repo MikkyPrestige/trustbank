@@ -1,6 +1,6 @@
 'use server';
 
-import { getAuthenticatedUser } from "@/lib/user-guard";
+import { getAuthenticatedUser } from "@/lib/auth/user-guard";
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { CardStatus, KycStatus } from "@prisma/client";

@@ -1,56 +1,69 @@
-import { getSiteSettings } from "@/lib/get-settings";
+import { getSiteSettings } from "@/lib/content/get-settings";
+import { Phone, Mail, MapPin, MessageSquare } from "lucide-react";
 import styles from "./contact.module.css";
-import { Phone, Mail, MessageCircle } from "lucide-react";
+import Image from "next/image";
 
 export default async function ContactPage() {
     const settings = await getSiteSettings();
 
-    const supportEmail = `support@${settings.site_name.toLowerCase().replace(/\s+/g, '')}.com`;
-
     return (
         <main className={styles.main}>
+            {/* HERO SECTION */}
             <section className={styles.hero}>
-                <h1 className={styles.heroTitle}>Contact {settings.site_name}</h1>
-                <p className={styles.heroDesc}>
-                    Have a question? We are here to help 24/7.
-                </p>
+                <div className={styles.heroImageWrapper}>
+                    <Image
+                        src={settings.support_hero_img || "/support-hero.png"}
+                        alt={settings.support_hero_alt || "Contact Support"}
+                        fill
+                        className={styles.heroImage}
+                        priority
+                    />
+                    <div className={styles.heroOverlay} />
+                </div>
+
+                <div className={styles.heroContent}>
+                    <h1>{settings.support_hero_title}</h1>
+                    <p>{settings.support_hero_desc}</p>
+                </div>
             </section>
 
             <div className={styles.container}>
                 <div className={styles.grid}>
-
-                    {/* EMERGENCY CARD */}
-                    <div className={`${styles.card} ${styles.emergencyCard}`}>
-                        <div className={`${styles.iconBox} ${styles.emergencyIconBox}`}>
-                            <Phone size={24} />
-                        </div>
-                        <h3 className={styles.emergencyTitle}>Lost or Stolen Card?</h3>
-                        <p>Call our emergency hotline immediately to freeze your account.</p>
-                        <p className={styles.emergencyPhone}>+1 (800) 555-9111</p>
-                    </div>
-
-                    {/* GENERAL SUPPORT */}
+                    {/* Card 1: Call */}
                     <div className={styles.card}>
-                        <div className={styles.iconBox}><MessageCircle size={24} /></div>
-                        <h3>Existing Customers</h3>
-                        <p>The fastest way to get help is via the secure messenger in your dashboard.</p>
-                        <a href="/dashboard" className={styles.actionLink}>
-                            Log in to Chat &rarr;
-                        </a>
+                        <div className={styles.iconBox}><Phone size={24} /></div>
+                        <h3>{settings.support_phone_title}</h3>
+                        <p className={styles.value}>{settings.support_phone}</p>
+                        <p className={styles.sub}>{settings.support_hours}</p>
                     </div>
 
-                    {/* EMAIL */}
+                    {/* Card 2: Email */}
                     <div className={styles.card}>
                         <div className={styles.iconBox}><Mail size={24} /></div>
-                        <h3>General Inquiries</h3>
-                        <p>For partnership opportunities or media inquiries.</p>
-                        <p className={styles.emailWrapper}>
-                            <a href={`mailto:${supportEmail}`} className={styles.emailLink}>
-                                {supportEmail}
-                            </a>
-                        </p>
+                        <h3>{settings.support_email_title}</h3>
+                        <p className={styles.value}>{settings.support_email}</p>
+                        <p className={styles.sub}>{settings.support_email_desc}</p>
                     </div>
 
+                    {/* Card 3: Visit */}
+                    <div className={styles.card}>
+                        <div className={styles.iconBox}><MapPin size={24} /></div>
+                        <h3>{settings.support_address_title}</h3>
+                        <p className={styles.value}>{settings.support_address_label}</p>
+                        <p className={styles.sub}>{settings.support_address}</p>
+                    </div>
+                </div>
+
+                {/* FAQ Teaser */}
+                <div className={styles.faqTeaser}>
+                    <MessageSquare size={48} className={styles.faqIcon} />
+                    <div>
+                        <h2>{settings.support_faq_title}</h2>
+                        <p>{settings.support_faq_desc}</p>
+                        <a href={settings.support_faq_link || "/help"} className={styles.link}>
+                            {settings.support_faq_linkText} &rarr;
+                        </a>
+                    </div>
                 </div>
             </div>
         </main>

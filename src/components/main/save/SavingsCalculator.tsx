@@ -7,14 +7,13 @@ import { DollarSign, TrendingUp } from 'lucide-react';
 // 1. Accept Props
 interface CalculatorProps {
     defaultApy?: number;
+    settings: any;
 }
 
-export default function SavingsCalculator({ defaultApy = 4.50 }: CalculatorProps) {
+export default function SavingsCalculator({ defaultApy = 4.50, settings }: CalculatorProps) {
     const [initialDeposit, setInitialDeposit] = useState(5000);
     const [monthlyContrib, setMonthlyContrib] = useState(500);
     const [years, setYears] = useState(10);
-
-    // 2. Use prop as initial state
     const [apy, setApy] = useState(defaultApy);
 
     const result = useMemo(() => {
@@ -46,8 +45,8 @@ export default function SavingsCalculator({ defaultApy = 4.50 }: CalculatorProps
                     <TrendingUp size={28} />
                 </div>
                 <div>
-                    <h3>Watch Your Wealth Grow</h3>
-                    <p>See the power of TrustBank&apos;s industry-leading {apy}% APY.</p>
+                    <h3>{settings.save_calc_title}</h3>
+                    <p>{settings.save_calc_desc_prefix} {apy}% APY.</p>
                 </div>
             </div>
 
@@ -141,7 +140,7 @@ export default function SavingsCalculator({ defaultApy = 4.50 }: CalculatorProps
                         </div>
                     </div>
 
-                    <button className={styles.ctaBtn}>Start Saving Today</button>
+                    <button className={styles.ctaBtn}>{settings.save_calc_cta}</button>
                 </div>
             </div>
         </div>

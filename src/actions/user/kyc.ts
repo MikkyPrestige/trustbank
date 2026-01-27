@@ -1,9 +1,9 @@
 'use server';
 
-import { getAuthenticatedUser } from "@/lib/user-guard";
+import { getAuthenticatedUser } from "@/lib/auth/user-guard";
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
-import { uploadFileToCloud } from "@/lib/upload";
+import { uploadFileToCloud } from "@/lib/utils/upload";
 import { KycStatus, UserRole } from "@prisma/client";
 
 export async function submitKyc(prevState: any, formData: FormData) {

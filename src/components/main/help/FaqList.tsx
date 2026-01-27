@@ -26,7 +26,6 @@ const getCategoryIcon = (category: string) => {
 };
 
 export default function FaqList({ faqs }: FaqListProps) {
-    // 1. Change state to track ID instead of Index (better for grouped lists)
     const [openId, setOpenId] = useState<string | null>(null);
 
     const toggleFAQ = (id: string) => {

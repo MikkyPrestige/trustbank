@@ -1,6 +1,7 @@
 .main {
   background: var(--bg-app);
   min-height: 100vh;
+  color: var(--text-main);
 }
 
 .container {
@@ -9,7 +10,9 @@
   padding: 0 20px;
 }
 
-/* HERO */
+/* =========================================
+   1. HERO SECTION
+   ========================================= */
 .heroBackground {
   position: relative;
   width: 100%;
@@ -18,24 +21,21 @@
   display: flex;
   align-items: center;
   justify-content: flex-start;
+  overflow: hidden;
+  background: var(--bg-surface);
 }
+
 .heroBgImage {
   object-fit: cover;
   z-index: 0;
+  opacity: 0.5;
 }
+
 .heroOverlay {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  /* Richer, darker gradient for "Exclusive" feel */
-  background: linear-gradient(
-    90deg,
-    rgba(10, 10, 10, 0.95) 0%,
-    rgba(10, 10, 10, 0.7) 50%,
-    rgba(10, 10, 10, 0.2) 100%
-  );
+  top: 0; left: 0; width: 100%; height: 100%;
+  /* Gradient from app bg to transparent */
+  background: linear-gradient(90deg, var(--bg-app) 0%, rgba(0,0,0,0) 100%);
   z-index: 1;
 }
 
@@ -49,9 +49,9 @@
 
 .goldBadge {
   display: inline-block;
-  color: #eab308;
-  border: 1px solid rgba(234, 179, 8, 0.4);
-  background: rgba(234, 179, 8, 0.1);
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  background: rgba(245, 158, 11, 0.1); /* Subtle gold tint */
   padding: 8px 16px;
   border-radius: 50px;
   font-size: 0.8rem;
@@ -65,24 +65,29 @@
 .heroTitle {
   font-size: 4rem;
   font-weight: 800;
-  color: white;
+  color: var(--text-main);
   line-height: 1.1;
   margin-bottom: 24px;
-  font-family: serif; /* Wealth often uses Serif for elegance */
+  font-family: serif;
 }
+
 .highlight {
-  background: linear-gradient(to right, #eab308, #ca8a04); /* Gold Gradient */
+  /* Gradient text using accent color */
+  background: linear-gradient(to right, var(--accent), #d97706);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+
 .heroDesc {
   font-size: 1.25rem;
-  color: #a1a1aa;
+  color: var(--text-body);
   line-height: 1.7;
   max-width: 550px;
 }
 
-/* SIMULATOR */
+/* =========================================
+   2. SIMULATOR
+   ========================================= */
 .simSection {
   margin-top: -25px;
   margin-bottom: 50px;
@@ -90,20 +95,25 @@
   z-index: 10;
 }
 
-/* SERVICES */
+/* =========================================
+   3. SERVICES GRID
+   ========================================= */
 .servicesSection {
   padding-bottom: 100px;
 }
+
 .sectionHeader {
   text-align: center;
   margin-bottom: 60px;
 }
+
 .sectionHeader h2 {
   font-size: 2.5rem;
   color: var(--text-main);
   margin-bottom: 10px;
   font-family: serif;
 }
+
 .sectionHeader p {
   color: var(--text-muted);
 }
@@ -118,27 +128,31 @@
   background: var(--bg-card);
   border: 1px solid var(--border);
   padding: 40px;
-  border-radius: 4px; /* Sharper corners for wealth */
+  border-radius: 4px;
   transition: 0.3s;
   display: flex;
   flex-direction: column;
+  box-shadow: var(--shadow-sm);
 }
+
 .card:hover {
-  border-color: #eab308;
+  border-color: var(--accent);
   transform: translateY(-5px);
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-card);
 }
 
 .cardIcon {
-  color: #eab308;
+  color: var(--accent);
   margin-bottom: 24px;
 }
+
 .card h3 {
   font-size: 1.5rem;
   color: var(--text-main);
   margin-bottom: 16px;
   font-family: serif;
 }
+
 .card p {
   color: var(--text-muted);
   line-height: 1.6;
@@ -150,25 +164,26 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #eab308;
+  color: var(--accent);
   text-decoration: none;
   font-weight: 600;
   font-size: 0.9rem;
 }
+
 .link:hover {
   gap: 12px;
 }
 
-/* ADVISOR SECTION */
+/* =========================================
+   4. ADVISOR SECTION
+   ========================================= */
 .advisorSection {
   padding: 50px 0 100px 0;
 }
+
 .advisorBox {
-  background: linear-gradient(
-    135deg,
-    #1c1917 0%,
-    #0c0a09 100%
-  ); /* Warm dark grey */
+  /* Use bg-surface for distinct section */
+  background: var(--bg-surface);
   border-radius: 2px;
   padding: 60px;
   position: relative;
@@ -183,14 +198,16 @@
   z-index: 2;
   max-width: 600px;
 }
+
 .advisorContent h2 {
   font-size: 2.5rem;
-  color: white;
+  color: var(--text-main);
   margin-bottom: 20px;
   font-family: serif;
 }
+
 .advisorContent p {
-  color: #a8a29e;
+  color: var(--text-body);
   line-height: 1.6;
   margin-bottom: 30px;
 }
@@ -201,17 +218,18 @@
   gap: 12px;
   margin-bottom: 40px;
 }
+
 .checkList span {
   display: flex;
   align-items: center;
   gap: 12px;
-  color: white;
+  color: var(--text-main);
   font-weight: 500;
 }
 
 .goldBtn {
-  background: #eab308;
-  color: #000;
+  background: var(--accent);
+  color: #000; /* Force black text for contrast on Gold */
   padding: 16px 32px;
   border: none;
   font-weight: 700;
@@ -221,11 +239,13 @@
   letter-spacing: 1px;
   font-size: 0.85rem;
 }
+
 .goldBtn:hover {
-  background: #ca8a04;
+  opacity: 0.9;
+  transform: translateY(-2px);
 }
 
-/* Abstract Graphic */
+/* Visuals */
 .advisorVisual {
   position: absolute;
   right: -100px;
@@ -234,32 +254,108 @@
   height: 500px;
   pointer-events: none;
 }
+
 .goldCircle {
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  border: 1px solid rgba(234, 179, 8, 0.1);
-  box-shadow: 0 0 100px rgba(234, 179, 8, 0.05);
+  border: 1px solid var(--accent);
+  opacity: 0.2;
 }
 
+/* =========================================
+   5. PRODUCT ANCHOR SECTIONS
+   ========================================= */
+.productSection {
+  padding: 6rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.bgAlt {
+  background-color: var(--bg-surface);
+}
+
+.productGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5rem;
+  align-items: center;
+}
+
+.reverseGrid {
+  direction: rtl;
+}
+
+.reverseGrid > * {
+  direction: ltr;
+}
+
+.productImageWrapper {
+  position: relative;
+  height: 450px;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+}
+
+.productImage {
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+
+.productImageWrapper:hover .productImage {
+  transform: scale(1.05);
+}
+
+.productContent {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.productTitle {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 1rem;
+  font-family: serif;
+}
+
+.productDesc {
+  font-size: 1.15rem;
+  color: var(--text-muted);
+  line-height: 1.7;
+  margin-bottom: 2rem;
+}
+
+.productBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: none;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  padding: 12px 24px;
+  border-radius: 2px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.productBtn:hover {
+  background: rgba(251, 191, 36, 0.1);
+  gap: 14px;
+}
+
+/* Responsive */
 @media (max-width: 900px) {
-  .heroBackground {
-    height: 70vh;
-  }
-  .heroTitle {
-    font-size: 3rem;
-  }
-  .advisorBox {
-    padding: 40px;
-    text-align: center;
-  }
-  .advisorContent {
-    margin: 0 auto;
-  }
-  .checkList {
-    align-items: center;
-  }
-  .advisorVisual {
-    display: none;
-  }
+  .heroBackground { height: 70vh; }
+  .productGrid { grid-template-columns: 1fr; gap: 3rem; text-align: center; }
+  .productContent { align-items: center; }
+  .productImageWrapper { height: 300px; order: -1; }
+  .reverseGrid .productImageWrapper { order: -1; }
 }

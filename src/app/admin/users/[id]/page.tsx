@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { getSiteSettings } from "@/lib/get-settings";
+import { getSiteSettings } from "@/lib/content/get-settings";
 import BalanceAdjuster from "@/components/admin/users/[id]/BalanceAdjuster";
 import UserActions from "@/components/admin/users/[id]/UserActions";
 import IssueCardButton from "@/components/admin/users/[id]/IssueCardButton";
@@ -8,7 +8,7 @@ import KycReviewSection from "@/components/admin/users/[id]/KycReviewSection";
 import LocalTransferList from "@/components/admin/users/[id]/LocalTransferList";
 
 import { CreditCard, Activity, User, MapPin, HeartHandshake, History, Wallet, ArrowLeft, ArrowRightLeft } from "lucide-react";
-import { requireAdmin } from "@/lib/admin-auth";
+import { requireAdmin } from "@/lib/auth/admin-auth";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import styles from "../../../../components/admin/users/[id]/users.module.css"

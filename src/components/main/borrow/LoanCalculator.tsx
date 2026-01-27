@@ -7,13 +7,12 @@ import { DollarSign, Calendar, Percent } from 'lucide-react';
 // 1. Accept Props
 interface LoanCalculatorProps {
     defaultRate?: number;
+    settings: any;
 }
 
-export default function LoanCalculator({ defaultRate = 6.99 }: LoanCalculatorProps) {
+export default function LoanCalculator({ defaultRate = 6.99, settings }: LoanCalculatorProps) {
     const [amount, setAmount] = useState(25000);
     const [months, setMonths] = useState(36);
-
-    // 2. Use prop as initial state
     const [rate, setRate] = useState(defaultRate);
 
     const monthlyPayment = useMemo(() => {
@@ -34,8 +33,8 @@ export default function LoanCalculator({ defaultRate = 6.99 }: LoanCalculatorPro
     return (
         <div className={styles.calculatorCard}>
             <div className={styles.header}>
-                <h3>Estimate Your Payment</h3>
-                <p>See how affordable your dream project can be.</p>
+                <h3>{settings.borrow_calc_title}</h3>
+                <p>{settings.borrow_calc_desc}</p>
             </div>
 
             <div className={styles.calcGrid}>
@@ -45,7 +44,7 @@ export default function LoanCalculator({ defaultRate = 6.99 }: LoanCalculatorPro
                     {/* AMOUNT SLIDER */}
                     <div className={styles.inputGroup}>
                         <div className={styles.labelRow}>
-                            <label><DollarSign size={16} /> Loan Amount</label>
+                            <label><DollarSign size={16} />{settings.borrow_calc_label_amt}</label>
                             <span className={styles.valueDisplay}>${amount.toLocaleString()}</span>
                         </div>
                         <input
@@ -60,7 +59,7 @@ export default function LoanCalculator({ defaultRate = 6.99 }: LoanCalculatorPro
                     {/* MONTHS SLIDER */}
                     <div className={styles.inputGroup}>
                         <div className={styles.labelRow}>
-                            <label><Calendar size={16} /> Term (Months)</label>
+                            <label><Calendar size={16} />{settings.borrow_calc_label_term}</label>
                             <span className={styles.valueDisplay}>{months} Months</span>
                         </div>
                         <input
@@ -82,7 +81,7 @@ export default function LoanCalculator({ defaultRate = 6.99 }: LoanCalculatorPro
                     {/* INTEREST RATE */}
                     <div className={styles.inputGroup}>
                         <div className={styles.labelRow}>
-                            <label><Percent size={16} /> Interest Rate (APR)</label>
+                            <label><Percent size={16} /> {settings.borrow_calc_label_rate}</label>
                             <span className={styles.valueDisplay}>{rate}%</span>
                         </div>
                         <input
@@ -97,27 +96,27 @@ export default function LoanCalculator({ defaultRate = 6.99 }: LoanCalculatorPro
 
                 {/* RESULT BOX */}
                 <div className={styles.resultBox}>
-                    <span className={styles.resultLabel}>Estimated Monthly Payment</span>
+                    <span className={styles.resultLabel}>{settings.borrow_calc_res_monthly}</span>
                     <div className={styles.resultAmount}>
                         ${monthlyPayment.toLocaleString(undefined, { maximumFractionDigits: 2 })}
                     </div>
 
                     <div className={styles.breakdown}>
                         <div className={styles.breakdownItem}>
-                            <span>Total Principal</span>
+                            <span>{settings.borrow_calc_label_princ}</span>
                             <strong>${amount.toLocaleString()}</strong>
                         </div>
                         <div className={styles.breakdownItem}>
-                            <span>Total Interest</span>
+                            <span>{settings.borrow_calc_label_int}</span>
                             <strong>${((monthlyPayment * months) - amount).toLocaleString(undefined, { maximumFractionDigits: 0 })}</strong>
                         </div>
                         <div className={styles.breakdownTotal}>
-                            <span>Total Cost</span>
+                            <span>{settings.borrow_calc_res_total}</span>
                             <strong>${(monthlyPayment * months).toLocaleString(undefined, { maximumFractionDigits: 0 })}</strong>
                         </div>
                     </div>
 
-                    <button className={styles.applyBtn}>Apply for this Loan</button>
+                    <button className={styles.applyBtn}>{settings.borrow_calc_cta}</button>
                 </div>
             </div>
         </div>

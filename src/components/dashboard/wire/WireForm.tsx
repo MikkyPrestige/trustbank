@@ -5,7 +5,7 @@ import { initiateWireTransfer } from '@/actions/user/wire';
 import styles from './styles/wire.module.css';
 import Link from 'next/link';
 import { ShieldAlert, Users, Save, Globe, Building2, Hash, Lock, Loader2, User } from 'lucide-react';
-import { countries } from '@/lib/countries';
+import { countries } from '@/lib/data/countries';
 import toast from 'react-hot-toast';
 
 interface Account {

@@ -4,49 +4,40 @@ import { useState, ReactNode } from 'react';
 import styles from './CoverageWizard.module.css';
 import { Shield, Home, Heart, Activity, ArrowRight, CheckCircle2 } from 'lucide-react';
 
-// 1. Define the Shape of an Option
-interface WizardOption {
-    label: string;
-    value: string;
-    icon?: ReactNode;
+interface CoverageWizardProps {
+    settings: any; // 👈 Accept Settings
 }
 
-// 2. Define the Shape of a Question
-interface WizardQuestion {
-    id: number;
-    question: string;
-    options: WizardOption[];
-}
-
-const QUESTIONS: WizardQuestion[] = [
-    {
-        id: 1,
-        question: "What matters most to you right now?",
-        options: [
-            { label: "My Family's Future", icon: <Heart size={24} />, value: 'family' },
-            { label: "My Assets (Home/Car)", icon: <Home size={24} />, value: 'assets' },
-            { label: "My Health", icon: <Activity size={24} />, value: 'health' }
-        ]
-    },
-    {
-        id: 2,
-        question: "What is your current life stage?",
-        options: [
-            { label: "Just Starting Out", value: 'early' },
-            { label: "Growing Family", value: 'mid' },
-            { label: "Approaching Retirement", value: 'late' }
-        ]
-    }
-];
-
-export default function CoverageWizard() {
+export default function CoverageWizard({ settings }: CoverageWizardProps) {
     const [step, setStep] = useState(0);
     const [selections, setSelections] = useState<Record<number, string>>({});
     const [showResult, setShowResult] = useState(false);
 
+    // Dynamic Questions using CMS Labels
+    const questions = [
+        {
+            id: 1,
+            question: settings.insure_wiz_step1,
+            options: [
+                { label: "My Family's Future", icon: <Heart size={24} />, value: 'family' },
+                { label: "My Assets (Home/Car)", icon: <Home size={24} />, value: 'assets' },
+                { label: "My Health", icon: <Activity size={24} />, value: 'health' }
+            ]
+        },
+        {
+            id: 2,
+            question: settings.insure_wiz_step2,
+            options: [
+                { label: "Just Starting Out", value: 'early' },
+                { label: "Growing Family", value: 'mid' },
+                { label: "Approaching Retirement", value: 'late' }
+            ]
+        }
+    ];
+
     const handleSelect = (val: string) => {
         setSelections({ ...selections, [step]: val });
-        if (step < QUESTIONS.length - 1) {
+        if (step < questions.length - 1) {
             setStep(step + 1);
         } else {
             setShowResult(true);
@@ -62,22 +53,22 @@ export default function CoverageWizard() {
     const getRecommendation = () => {
         if (selections[0] === 'health' || selections[1] === 'late') {
             return {
-                title: "Medicare & Supplemental Health",
-                desc: "As you mature, filling the gaps in healthcare becomes critical. Our Medicare specialists can guide you.",
-                product: "Medicare Insurance"
+                title: settings.insure_prod1_title, // Medicare
+                desc: settings.insure_prod1_desc,
+                link: "#medicare"
             };
         }
         if (selections[0] === 'assets') {
             return {
-                title: "Bundled Home & Auto",
-                desc: "Protect your biggest investments. Bundling your policies can save you up to 20% annually.",
-                product: "Property & Casualty"
+                title: settings.insure_prod3_title, // Home
+                desc: settings.insure_prod3_desc,
+                link: "#home"
             };
         }
         return {
-            title: "Term Life Insurance",
-            desc: "The most affordable way to ensure your loved ones are financially secure, no matter what happens.",
-            product: "Life Insurance"
+            title: settings.insure_prod4_title, // Life
+            desc: settings.insure_prod4_desc,
+            link: "#life"
         };
     };
 
@@ -86,8 +77,8 @@ export default function CoverageWizard() {
             <div className={styles.wizardHeader}>
                 <div className={styles.iconBox}><Shield size={28} /></div>
                 <div>
-                    <h3>Coverage Finder</h3>
-                    <p>Not sure what you need? Answer 2 questions.</p>
+                    <h3>{settings.insure_wiz_title}</h3>
+                    <p>{settings.insure_wiz_desc}</p>
                 </div>
             </div>
 
@@ -97,10 +88,10 @@ export default function CoverageWizard() {
                         <div className={styles.progressFill} style={{ width: `${((step + 1) / 2) * 100}%` }}></div>
                     </div>
 
-                    <h4 className={styles.questionText}>{QUESTIONS[step].question}</h4>
+                    <h4 className={styles.questionText}>{questions[step].question}</h4>
 
                     <div className={styles.optionsGrid}>
-                        {QUESTIONS[step].options.map((opt, i) => (
+                        {questions[step].options.map((opt, i) => (
                             <button key={i} className={styles.optionBtn} onClick={() => handleSelect(opt.value)}>
                                 {opt.icon && <span className={styles.btnIcon}>{opt.icon}</span>}
                                 {opt.label}
@@ -112,16 +103,16 @@ export default function CoverageWizard() {
                 <div className={styles.resultBox}>
                     <span className={styles.matchLabel}>
                         <CheckCircle2 size={14} className={styles.checkIcon} />
-                        Best Match
+                        {settings.insure_wiz_match}
                     </span>
                     <h2>{getRecommendation().title}</h2>
                     <p>{getRecommendation().desc}</p>
 
                     <div className={styles.resultActions}>
-                        <button className={styles.primaryBtn}>
-                            View {getRecommendation().product} <ArrowRight size={16} className={styles.btnArrow} />
-                        </button>
-                        <button className={styles.resetBtn} onClick={reset}>Start Over</button>
+                        <a href={getRecommendation().link} className={styles.primaryBtn}>
+                            {settings.insure_wiz_btn_view} <ArrowRight size={16} className={styles.btnArrow} />
+                        </a>
+                        <button className={styles.resetBtn} onClick={reset}>{settings.insure_wiz_btn_reset}</button>
                     </div>
                 </div>
             )}

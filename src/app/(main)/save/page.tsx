@@ -1,68 +1,43 @@
-import { getSiteSettings } from "@/lib/get-settings";
+import { getSiteSettings } from "@/lib/content/get-settings";
 import Image from "next/image";
 import styles from "./save.module.css";
 import SavingsCalculator from "@/components/main/save/SavingsCalculator";
-import { ShieldCheck, ArrowRight, TrendingUp, PiggyBank, Lock, Award, Star, Briefcase, Sun } from "lucide-react";
+import { ShieldCheck, ArrowRight, TrendingUp, Briefcase, Sun, Lock } from "lucide-react";
 
 export default async function SavePage() {
     const settings = await getSiteSettings();
 
-    // Dynamic Product List
-    const PRODUCTS = [
+    const GRID_PRODUCTS = [
         {
-            title: "High Yield Savings",
+            title: settings.save_prod1_title, // HYSA
             apy: `${settings.rate_hysa_apy}% APY`,
-            desc: "Make your money work harder. No monthly fees and daily compounding interest.",
-            icon: <TrendingUp size={32} className={styles.iconGreen} />,
-            link: "Start Saving"
+            desc: settings.save_prod1_desc,
+            link: settings.save_prod1_link,
+            icon: <TrendingUp size={32} className={styles.iconGreen} />
         },
         {
-            title: "Trust Certificates (CDs)",
-            apy: `${settings.rate_cd_apy}% APY`,
-            desc: "Lock in a guaranteed rate for a fixed term. Perfect for risk-free growth.",
-            icon: <Award size={32} className={styles.iconGold} />,
-            link: "View Rates"
+            title: settings.save_prod5_title, // Business
+            apy: `${settings.rate_business_apy}% APY`,
+            desc: settings.save_prod5_desc,
+            link: settings.save_prod5_link,
+            icon: <Briefcase size={32} className={styles.iconTeal} />
         },
         {
-            title: "Money Market",
-            apy: `${settings.rate_mma_apy}% APY`,
-            desc: "Higher rates with check-writing privileges. Flexibility meets growth.",
-            icon: <PiggyBank size={32} className={styles.iconBlue} />,
-            link: "Open Account"
-        },
-        {
-            title: "Trust Kids Club",
-            apy: `${settings.rate_kids_apy}% APY`,
-            desc: "Teach the next generation financial literacy with a dedicated custodial account.",
-            icon: <Star size={32} className={styles.iconPurple} />,
-            link: "Learn More"
-        },
-        // NEW CARD 1
-        {
-            title: "Business Savings",
-            apy: `${settings.rate_business_apy || "2.50"}% APY`,
-            desc: "Keep your operating cash growing while maintaining full liquidity for payroll.",
-            icon: <Briefcase size={32} className={styles.iconTeal} />,
-            link: "Business Info"
-        },
-        // NEW CARD 2
-        {
-            title: "Retirement IRA",
-            apy: `~${settings.rate_ira_apy || "7.00"}% Rtrn`,
-            desc: "Tax-advantaged accounts to secure your future. Traditional and Roth options available.",
-            icon: <Sun size={32} className={styles.iconOrange} />,
-            link: "Plan Retirement"
+            title: settings.save_prod6_title, // Retirement
+            apy: `~${settings.rate_ira_apy}% Rtrn`,
+            desc: settings.save_prod6_desc,
+            link: settings.save_prod6_link,
+            icon: <Sun size={32} className={styles.iconOrange} />
         }
     ];
 
     return (
         <main className={styles.main}>
-
-            {/* 1. HERO SECTION */}
+            {/* 1. HERO */}
             <section className={styles.heroBackground}>
                 <Image
-                    src="/save-hero.png"
-                    alt="Grandfather planting tree with granddaughter"
+                    src={settings.save_hero_img || "/save-hero.png"}
+                    alt={settings.save_hero_alt || "TrustBank Savings"}
                     fill
                     className={styles.heroBgImage}
                     priority
@@ -70,34 +45,92 @@ export default async function SavePage() {
                 <div className={styles.heroOverlay}></div>
 
                 <div className={styles.heroContent}>
-                    <div className={styles.pillBadge}><ShieldCheck size={16} /> FDIC Insured</div>
+                    <div className={styles.pillBadge}><ShieldCheck size={16} /> {settings.save_fdic_badge}</div>
                     <h1 className={styles.heroTitle}>
                         {settings.save_hero_title} <br />
                         <span className={styles.highlight}>{settings.save_hero_highlight}</span>
                     </h1>
-                    <p className={styles.heroDesc}>
-                        {settings.save_hero_desc}
-                    </p>
+                    <p className={styles.heroDesc}>{settings.save_hero_desc}</p>
                 </div>
             </section>
 
-            {/* 2. CALCULATOR SECTION */}
+            {/* 2. CALCULATOR */}
             <section className={styles.calcSection}>
                 <div className={styles.container}>
-                    <SavingsCalculator defaultApy={Number(settings.rate_hysa_apy)} />
+                    <SavingsCalculator
+                        defaultApy={Number(settings.rate_hysa_apy)}
+                        settings={settings}
+                    />
                 </div>
             </section>
 
-            {/* 3. PRODUCT GRID */}
-            <section className={styles.productSection}>
+            {/* 3. CDS SECTION (#cds) */}
+            <section id="cds" className={styles.productSection}>
+                <div className={styles.container}>
+                    <div className={styles.productGrid}>
+                        <div className={styles.productImageWrapper}>
+                            <Image src={settings.save_cds_img || "/save-cds.png"} alt={settings.save_cds_img_alt} fill className={styles.productImage} />
+                        </div>
+                        <div className={styles.productContent}>
+                            <span className={styles.apyDisplay}>Up to {settings.rate_cd_apy}% APY</span>
+                            <h2 className={styles.productTitle}>{settings.save_cds_title}</h2>
+                            <p className={styles.productDesc}>{settings.save_cds_desc}</p>
+                            <a href="#" className={styles.productBtn}>
+                                {settings.save_cds_btn} <ArrowRight size={18} />
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* 4. MMA SECTION (#mma) */}
+            <section id="mma" className={`${styles.productSection} ${styles.bgAlt}`}>
+                <div className={styles.container}>
+                    <div className={`${styles.productGrid} ${styles.reverseGrid}`}>
+                        <div className={styles.productContent}>
+                            <span className={styles.apyDisplay}>Up to {settings.rate_mma_apy}% APY</span>
+                            <h2 className={styles.productTitle}>{settings.save_mma_title}</h2>
+                            <p className={styles.productDesc}>{settings.save_mma_desc}</p>
+                            <a href="#" className={styles.productBtn}>
+                                {settings.save_mma_btn} <ArrowRight size={18} />
+                            </a>
+                        </div>
+                        <div className={styles.productImageWrapper}>
+                            <Image src={settings.save_mma_img || "/save-mma.png"} alt={settings.save_mma_img_alt} fill className={styles.productImage} />
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* 5. KIDS CLUB SECTION (#kids) */}
+            <section id="kids" className={styles.productSection}>
+                <div className={styles.container}>
+                    <div className={styles.productGrid}>
+                        <div className={styles.productImageWrapper}>
+                            <Image src={settings.save_kids_img || "/save-kids.png"} alt={settings.save_kids_img_alt} fill className={styles.productImage} />
+                        </div>
+                        <div className={styles.productContent}>
+                            <span className={styles.apyDisplay}>{settings.rate_kids_apy}% APY</span>
+                            <h2 className={styles.productTitle}>{settings.save_kids_title}</h2>
+                            <p className={styles.productDesc}>{settings.save_kids_desc}</p>
+                            <a href="#" className={styles.productBtn}>
+                                {settings.save_kids_btn} <ArrowRight size={18} />
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* 6. MORE PRODUCTS GRID (The "Supplemental" List) */}
+            <section className={styles.suppSection}>
                 <div className={styles.container}>
                     <div className={styles.sectionHeader}>
-                        <h2>Savings Solutions</h2>
-                        <p>Choose the account that fits your financial timeline.</p>
+                        <h2>{settings.save_prod_title}</h2>
+                        <p>{settings.save_prod_subtitle}</p>
                     </div>
 
                     <div className={styles.grid}>
-                        {PRODUCTS.map((p, i) => (
+                        {GRID_PRODUCTS.map((p, i) => (
                             <div key={i} className={styles.card}>
                                 <div className={styles.cardHeader}>
                                     {p.icon}
@@ -105,35 +138,34 @@ export default async function SavePage() {
                                 </div>
                                 <h3>{p.title}</h3>
                                 <p>{p.desc}</p>
-                                <button className={styles.cardBtn}>
+                                <a href="#" className={styles.cardBtn}>
                                     {p.link} <ArrowRight size={16} />
-                                </button>
+                                </a>
                             </div>
                         ))}
                     </div>
                 </div>
             </section>
 
-            {/* 4. WHY TRUST? */}
+            {/* 7. TRUST SECTION */}
             <section className={styles.trustStrip}>
                 <div className={styles.container}>
                     <div className={styles.trustContent}>
                         <div className={styles.trustText}>
-                            <h2>Your money is safe with us.</h2>
-                            <p>We use military-grade encryption and are fully FDIC insured up to $250,000 per depositor.</p>
+                            <h2>{settings.save_trust_title}</h2>
+                            <p>{settings.save_trust_desc}</p>
                         </div>
                         <div className={styles.trustIcons}>
                             <div className={styles.trustBadge}>
-                                <Lock size={24} /> 256-bit Encryption
+                                <Lock size={24} /> {settings.save_trust_badge_1}
                             </div>
                             <div className={styles.trustBadge}>
-                                <ShieldCheck size={24} /> Fraud Monitoring
+                                <ShieldCheck size={24} /> {settings.save_trust_badge_2}
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
-
         </main>
     );
 }

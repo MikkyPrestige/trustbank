@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
-import { getSiteSettings } from "@/lib/get-settings"; // 👈 Import Settings
+import { getSiteSettings } from "@/lib/content/get-settings"; // 👈 Import Settings
 import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
 import { ChevronLeft, Clock, AlertTriangle, ArrowDownLeft, ArrowUpRight } from "lucide-react";

@@ -1,6 +1,7 @@
-import { getJobs } from "@/lib/get-jobs";
-import { getSiteSettings } from "@/lib/get-settings";
+import { getJobs } from "@/lib/content/get-jobs";
+import { getSiteSettings } from "@/lib/content/get-settings";
 import { Users, Zap, Heart, ArrowRight, MapPin } from "lucide-react";
+import Image from "next/image";
 import styles from "./careers.module.css";
 
 export default async function CareersPage() {
@@ -14,10 +15,24 @@ export default async function CareersPage() {
 
             {/* 1. HERO */}
             <section className={styles.hero}>
+                <div className={styles.heroImageWrapper}>
+                    <Image
+                        src={settings.careers_hero_img || "/careers-hero.png"}
+                        alt={settings.careers_hero_img_alt || "Our Team"}
+                        fill
+                        className={styles.heroImage}
+                        priority
+                    />
+                    <div className={styles.heroOverlay} />
+                </div>
+
                 <div className={styles.heroContent}>
-                    <h1>Build the Future of Banking</h1>
-                    <p>Join a team that values innovation, integrity, and putting people first. We are redefining what it means to be a bank.</p>
-                    <button className={styles.primaryBtn}>View Open Roles</button>
+                    <h1>{settings.careers_hero_title}</h1>
+                    <p>{settings.careers_hero_desc}</p>
+
+                    <a href={settings.careers_hero_btn_link || "#jobs"} className={styles.primaryBtn}>
+                        {settings.careers_hero_btn_text}
+                    </a>
                 </div>
             </section>
 
@@ -26,38 +41,43 @@ export default async function CareersPage() {
                 <div className={styles.container}>
                     <div className={styles.sectionHeader}>
                         <h2>Why {settings.site_name}?</h2>
-                        <p>More than just a paycheck. A place to grow.</p>
+                        <p>{settings.careers_values_subtitle}</p>
                     </div>
 
                     <div className={styles.valuesGrid}>
+                        {/* Value 1 */}
                         <div className={styles.valueCard}>
                             <div className={styles.iconBox}><Zap size={24} /></div>
-                            <h3>Innovation First</h3>
-                            <p>We leverage modern tech to solve old problems. No legacy systems holding you back.</p>
+                            <h3>{settings.careers_val1_title}</h3>
+                            <p>{settings.careers_val1_desc}</p>
                         </div>
+
+                        {/* Value 2 */}
                         <div className={styles.valueCard}>
                             <div className={styles.iconBox}><Users size={24} /></div>
-                            <h3>Inclusive Culture</h3>
-                            <p>We believe diverse teams build better products. Bring your authentic self to work.</p>
+                            <h3>{settings.careers_val2_title}</h3>
+                            <p>{settings.careers_val2_desc}</p>
                         </div>
+
+                        {/* Value 3 */}
                         <div className={styles.valueCard}>
                             <div className={styles.iconBox}><Heart size={24} /></div>
-                            <h3>Comprehensive Benefits</h3>
-                            <p>From 401k matching to premium health covers, we take care of you and your family.</p>
+                            <h3>{settings.careers_val3_title}</h3>
+                            <p>{settings.careers_val3_desc}</p>
                         </div>
                     </div>
                 </div>
             </section>
 
             {/* 3. JOB BOARD */}
-            <section className={styles.jobsSection}>
+            <section id="jobs" className={styles.jobsSection}>
                 <div className={styles.container}>
-                    <h2 className={styles.jobsTitle}>Open Positions</h2>
+                    <h2 className={styles.jobsTitle}>{settings.careers_jobs_title}</h2>
 
                     <div className={styles.jobList}>
                         {jobs.length === 0 ? (
                             <div className={styles.noRoles} style={{ textAlign: 'center', padding: '2rem' }}>
-                                <p>No open positions at the moment. Please check back later.</p>
+                                <p>{settings.careers_jobs_no_roles}</p>
                             </div>
                         ) : (
                             jobs.map((job) => (
@@ -82,10 +102,9 @@ export default async function CareersPage() {
 
                     <div className={styles.noRoles}>
                         <p>
-                            Don&apos;t see the right fit?{' '}
                             <a href={`mailto:careers@${settings.site_name.toLowerCase().replace(/\s/g, '')}.com`}>
-                                Email us your resume
-                            </a>.
+                                {settings.careers_jobs_email_text}
+                            </a>
                         </p>
                     </div>
                 </div>

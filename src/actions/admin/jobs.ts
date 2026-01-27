@@ -2,7 +2,7 @@
 
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
-import { checkAdminAction } from "@/lib/admin-auth";
+import { checkAdminAction } from "@/lib/auth/admin-auth";
 
 // --- CREATE ---
 export async function createJob(formData: FormData) {
@@ -29,7 +29,7 @@ export async function createJob(formData: FormData) {
                 isActive: true
             }
         });
-        revalidatePath('/admin/jobs');
+        revalidatePath('/admin/careers');
         revalidatePath('/careers');
         return { success: true, message: "Job posted successfully" };
     } catch (error) {
@@ -57,7 +57,7 @@ export async function updateJob(id: string, formData: FormData) {
             where: { id },
             data: { title, department, location, type, description, isActive }
         });
-        revalidatePath('/admin/jobs');
+        revalidatePath('/admin/careers');
         revalidatePath('/careers');
         return { success: true, message: "Job updated" };
     } catch (error) {
@@ -75,7 +75,7 @@ export async function deleteJob(id: string) {
 
     try {
         await db.jobListing.delete({ where: { id } });
-        revalidatePath('/admin/jobs');
+        revalidatePath('/admin/careers');
         revalidatePath('/careers');
         return { success: true, message: "Job deleted" };
     } catch (error) {
@@ -96,7 +96,7 @@ export async function toggleJobStatus(id: string, currentStatus: boolean) {
             where: { id },
             data: { isActive: !currentStatus }
         });
-        revalidatePath('/admin/jobs');
+        revalidatePath('/admin/careers');
         revalidatePath('/careers');
         return { success: true, message: "Status updated" };
     } catch (error) {

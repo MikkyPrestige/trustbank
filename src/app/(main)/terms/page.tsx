@@ -1,4 +1,4 @@
-import { getLegalContent } from "@/lib/get-legal";
+import { getLegalContent } from "@/lib/content/get-legal";
 import LegalPageLayout from "@/components/main/legal/LegalPageLayout";
 
 export default async function TermsPage() {

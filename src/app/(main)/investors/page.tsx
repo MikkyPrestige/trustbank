@@ -1,70 +1,99 @@
-import { getSiteSettings } from "@/lib/get-settings";
+import { getSiteSettings } from "@/lib/content/get-settings";
+import { getFinancialReports } from "@/lib/content/get-reports";
 import styles from "./investors.module.css";
+import Image from "next/image";
 import { FileText, PieChart, Download, ExternalLink } from "lucide-react";
 
 export default async function InvestorsPage() {
-    const settings = await getSiteSettings();
+    // 1. Fetch Settings AND Reports
+    const [settings, reports] = await Promise.all([
+        getSiteSettings(),
+        getFinancialReports()
+    ]);
+
+    const isPositive = settings.invest_stock_change.includes("▲") || settings.invest_stock_change.includes("+");
 
     return (
         <main className={styles.main}>
+            {/* HERO SECTION */}
             <section className={styles.hero}>
-                <h1 className={styles.heroTitle}>Investor Relations</h1>
-                <p className={styles.heroDesc}>
-                    Financial information and corporate governance for shareholders of {settings.site_name}.
-                </p>
+                <div className={styles.heroImageWrapper}>
+                    <Image
+                        src={settings.invest_hero_img || "/investors-hero.png"}
+                        alt={settings.invest_hero_img_alt || "Investor Relations"}
+                        fill
+                        className={styles.heroImage}
+                        priority
+                    />
+                    <div className={styles.heroOverlay} />
+                </div>
+
+                <div className={styles.heroContent}>
+                    <h1 className={styles.heroTitle}>{settings.invest_hero_title}</h1>
+                    <p className={styles.heroDesc}>{settings.invest_hero_desc}</p>
+                </div>
             </section>
 
-            {/* STOCK TICKER MOCK */}
+            {/* STOCK TICKER (Keep existing dynamic code) */}
             <section className={styles.statsStrip}>
                 <div className={styles.container}>
                     <div className={styles.tickerContainer}>
                         <div className={styles.priceBox}>
-                            <span className={styles.stockPrice}>$142.50</span>
-                            <span className={styles.stockChange}>▲ 1.2%</span>
+                            <span className={styles.stockPrice}>{settings.invest_stock_price}</span>
+                            <span
+                                className={styles.stockChange}
+                                style={{ color: isPositive ? '#22c55e' : '#ef4444' }}
+                            >
+                                {settings.invest_stock_change}
+                            </span>
                         </div>
-
                         <div className={styles.tickerDivider}></div>
-
-                        <div>
-                            <span className={styles.tickerSymbol}>NYSE: TRST</span>
-                            <span className={styles.marketCap}>Market Cap: $12.4B</span>
+                        <div className={styles.marketInfo}>
+                            <span className={styles.tickerSymbol}>{settings.invest_ticker_symbol}</span>
+                            <span className={styles.marketCap}>{settings.invest_market_cap}</span>
                         </div>
                     </div>
                 </div>
             </section>
 
+            {/* FINANCIAL REPORTS GRID */}
             <div className={styles.container}>
-                <h2 className={styles.sectionTitle}>Financial Reports</h2>
+                <h2 className={styles.sectionTitle}>{settings.invest_reports_title}</h2>
+
                 <div className={styles.grid}>
-                    {/* Q3 Report */}
-                    <div className={styles.card}>
-                        <div className={styles.iconBox}><FileText size={24} /></div>
-                        <h3>Q3 2024 Earnings</h3>
-                        <p>Quarterly report ending Sept 30, 2024.</p>
-                        <a href="#" className={styles.downloadLink}>
-                            Download PDF <Download size={16} />
-                        </a>
-                    </div>
+                    {reports.length === 0 ? (
+                        <div className={styles.emptyState}>
+                            <p>No financial reports available at this time.</p>
+                        </div>
+                    ) : (
+                        reports.map((report) => (
+                            <div key={report.id} className={styles.card}>
+                                <div className={styles.iconBox}>
+                                    {report.type === 'LINK' ? <PieChart size={24} /> : <FileText size={24} />}
+                                </div>
 
-                    {/* Annual Report */}
-                    <div className={styles.card}>
-                        <div className={styles.iconBox}><FileText size={24} /></div>
-                        <h3>2023 Annual Report</h3>
-                        <p>Full year fiscal audit and review.</p>
-                        <a href="#" className={styles.downloadLink}>
-                            Download PDF <Download size={16} />
-                        </a>
-                    </div>
+                                <h3>{report.title}</h3>
+                                <p>{report.summary}</p>
 
-                    {/* SEC Filings */}
-                    <div className={styles.card}>
-                        <div className={styles.iconBox}><PieChart size={24} /></div>
-                        <h3>SEC Filings</h3>
-                        <p>View all 10-K and 8-K filings directly on EDGAR.</p>
-                        <a href="#" className={styles.downloadLink}>
-                            View External <ExternalLink size={16} />
-                        </a>
-                    </div>
+                                <a
+                                    href={report.fileUrl}
+                                    className={styles.downloadLink}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    {report.type === 'LINK' ? (
+                                        <>
+                                            {settings.invest_view_link_text} <ExternalLink size={16} />
+                                        </>
+                                    ) : (
+                                        <>
+                                            {settings.invest_download_pdf_text} <Download size={16} />
+                                        </>
+                                    )}
+                                </a>
+                            </div>
+                        ))
+                    )}
                 </div>
             </div>
         </main>

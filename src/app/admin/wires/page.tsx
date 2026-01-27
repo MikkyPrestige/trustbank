@@ -2,7 +2,7 @@ import { db } from "@/lib/db";
 import WireRow from "@/components/admin/wires/WireRow";
 import Link from "next/link";
 import { ArrowLeft, FolderOpen } from "lucide-react";
-import { requireAdmin } from "@/lib/admin-auth";
+import { requireAdmin } from "@/lib/auth/admin-auth";
 import styles from "../../../components/admin/wires/wires.module.css"
 
 export default async function AdminWiresPage() {

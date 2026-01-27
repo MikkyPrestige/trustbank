@@ -53,7 +53,7 @@ export default function BranchMap({ branches }: BranchMapProps) {
     if (!isLoaded) {
         return (
             <div className={styles.loaderContainer}>
-                <Loader2 className="animate-spin" size={32} color="var(--text-muted)" />
+                <Loader2 className={styles.spin} size={32} color="var(--text-muted)" />
             </div>
         );
     }

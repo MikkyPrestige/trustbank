@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import LoanDecisionButtons from "@/components/admin/loans/LoanDecisionButtons";
-import { requireAdmin } from "@/lib/admin-auth";
+import { requireAdmin } from "@/lib/auth/admin-auth";
 import Link from "next/link";
 import { ArrowLeft, AlertCircle, PieChart, Banknote } from "lucide-react";
 import styles from "../../../components/admin/loans/loans.module.css"

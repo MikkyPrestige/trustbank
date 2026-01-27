@@ -2,9 +2,9 @@
 
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
-import { checkAdminAction } from "@/lib/admin-auth";
-import { logAdminAction } from "@/lib/admin-logger";
-import { canPerform } from "@/lib/permissions";
+import { checkAdminAction } from "@/lib/auth/admin-auth";
+import { logAdminAction } from "@/lib/utils/admin-logger";
+import { canPerform } from "@/lib/auth/permissions";
 import { KycStatus, UserRole } from "@prisma/client";
 
 export async function processKyc(userId: string, decision: 'APPROVE' | 'REJECT', reason?: string) {

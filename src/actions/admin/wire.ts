@@ -1,10 +1,10 @@
 'use server';
 
 import { db } from "@/lib/db";
-import { logAdminAction } from "@/lib/admin-logger";
-import { canPerform } from "@/lib/permissions";
+import { logAdminAction } from "@/lib/utils/admin-logger";
+import { canPerform } from "@/lib/auth/permissions";
 import { revalidatePath } from "next/cache";
-import { checkAdminAction } from "@/lib/admin-auth";
+import { checkAdminAction } from "@/lib/auth/admin-auth";
 import { TransactionStatus, UserRole, TransactionType, TransactionDirection, Prisma } from "@prisma/client";
 
 // GENERATE CODES

@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
-import { requireAdmin } from "@/lib/admin-auth";
-import { getSiteSettings } from "@/lib/get-settings"; // 👈 Import CMS
+import { requireAdmin } from "@/lib/auth/admin-auth";
+import { getSiteSettings } from "@/lib/content/get-settings"; // 👈 Import CMS
 import Link from "next/link";
 import Image from "next/image"; // 👈 Import Image
 import styles from "./admin.module.css";

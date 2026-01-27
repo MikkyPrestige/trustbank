@@ -1,8 +1,8 @@
 'use server';
 
-import { getAuthenticatedUser } from "@/lib/user-guard";
+import { getAuthenticatedUser } from "@/lib/auth/user-guard";
 import { db } from "@/lib/db";
-import { uploadFileToCloud } from "@/lib/upload";
+import { uploadFileToCloud } from "@/lib/utils/upload";
 import { revalidatePath } from "next/cache";
 
 

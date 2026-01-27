@@ -1,40 +1,39 @@
 .main {
   background: var(--bg-app);
   min-height: 100vh;
+  color: var(--text-main);
 }
+
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 1.5rem;
 }
 
-/* HERO (Split Layout: Text Left, Widget Right) */
+/* =========================================
+   1. HERO SECTION
+   ========================================= */
 .heroBackground {
   position: relative;
-  width: 100%;
-  min-height: 85vh;
+  height: 70vh;
+  min-height: 600px;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+  background: var(--bg-surface);
   overflow: hidden;
-  padding-top: 50px; /* Space for Navbar */
 }
+
 .heroBgImage {
   object-fit: cover;
   z-index: 0;
+  opacity: 0.5;
 }
+
 .heroOverlay {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    135deg,
-    rgba(15, 23, 42, 0.95) 0%,
-    rgba(15, 23, 42, 0.7) 60%,
-    rgba(30, 27, 75, 0.4) 100%
-  );
+  inset: 0;
+  background: linear-gradient(90deg, var(--bg-app) 0%, rgba(0,0,0,0) 100%);
   z-index: 1;
 }
 
@@ -42,240 +41,295 @@
   position: relative;
   z-index: 2;
   max-width: 600px;
-  padding: 0 5%;
-  margin: -5rem auto 0 1%;
-}
-
-.heroWidget {
-  position: relative;
-  z-index: 3;
-  margin-right: 10%;
-  animation: slideUp 0.6s ease-out;
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(40px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  padding: 2rem;
+  margin-left: 2%;
 }
 
 .neonBadge {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  color: #818cf8;
-  background: rgba(99, 102, 241, 0.1);
-  border: 1px solid rgba(99, 102, 241, 0.3);
+  gap: 8px;
+  background: var(--primary-light);
+  color: var(--primary);
+  border: 1px solid var(--primary);
+  font-weight: 700;
   padding: 8px 16px;
   border-radius: 50px;
-  font-weight: 700;
-  margin-bottom: 24px;
-  font-size: 0.8rem;
-  box-shadow: 0 0 15px rgba(99, 102, 241, 0.2);
+  font-size: 0.85rem;
+  margin-bottom: 1.5rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: var(--shadow-glow);
 }
 
 .heroTitle {
   font-size: 3.5rem;
   font-weight: 800;
-  color: white;
   line-height: 1.1;
-  margin-bottom: 24px;
-}
-.highlight {
-  background: linear-gradient(
-    to right,
-    #818cf8,
-    #c084fc
-  ); /* Indigo to Purple */
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-.heroDesc {
-  font-size: 1.2rem;
-  color: #cbd5e1;
-  line-height: 1.6;
-  max-width: 480px;
+  margin-bottom: 1.5rem;
+  color: var(--text-main);
 }
 
-/* METHODS GRID */
-.methodsSection {
-  padding: 100px 0;
-  background: var(--bg-app);
+.highlight {
+  color: var(--primary);
+  text-shadow: var(--shadow-glow);
 }
+
+.heroDesc {
+  font-size: 1.25rem;
+  color: var(--text-body);
+  line-height: 1.6;
+}
+
+/* Floating Widget */
+.heroWidget {
+  position: absolute;
+  right: 5%;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  width: 400px;
+}
+
+/* =========================================
+   2. ANCHOR SECTIONS
+   ========================================= */
+.productSection {
+  padding: 6rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.bgAlt {
+  background-color: var(--bg-surface);
+}
+
+.productGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5rem;
+  align-items: center;
+}
+
+.reverseGrid {
+  direction: rtl;
+}
+
+.reverseGrid > * {
+  direction: ltr;
+}
+
+.productImageWrapper {
+  position: relative;
+  height: 450px;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+}
+
+.productImage {
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.productImageWrapper:hover .productImage {
+  transform: scale(1.05);
+}
+
+.productContent {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.productTitle {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 1rem;
+}
+
+.productDesc {
+  font-size: 1.15rem;
+  color: var(--text-muted);
+  line-height: 1.7;
+  margin-bottom: 2rem;
+}
+
+.productBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--primary);
+  color: var(--text-invert);
+  border: none;
+  padding: 14px 28px;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-sm);
+}
+
+.productBtn:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-glow);
+}
+
+/* =========================================
+   3. SUPPLEMENTAL GRID
+   ========================================= */
+.suppSection {
+  padding: 6rem 0;
+  background: var(--bg-surface);
+}
+
 .sectionHeader {
   text-align: center;
-  margin-bottom: 60px;
+  margin-bottom: 4rem;
 }
+
 .sectionHeader h2 {
-  font-size: 2.5rem;
+  font-size: 2.25rem;
   color: var(--text-main);
-  margin-bottom: 10px;
+  margin-bottom: 0.5rem;
 }
+
 .sectionHeader p {
   color: var(--text-muted);
+  font-size: 1.1rem;
 }
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 30px;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+  max-width: 900px;
+  margin: 0 auto;
 }
 
 .card {
   background: var(--bg-card);
   border: 1px solid var(--border);
-  padding: 30px;
-  border-radius: 20px;
-  transition: 0.3s;
-}
-.card:hover {
-  transform: translateY(-5px);
-  border-color: #6366f1;
-  box-shadow: 0 10px 30px rgba(99, 102, 241, 0.15);
+  border-radius: 16px;
+  padding: 2.5rem;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
 }
 
-.iconBox {
-  background: rgba(99, 102, 241, 0.1);
-  color: #6366f1;
-  width: 60px;
-  height: 60px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 16px;
-  margin-bottom: 20px;
+.card:hover {
+  transform: translateY(-5px);
+  border-color: var(--primary);
+  box-shadow: var(--shadow-card);
+}
+
+.cardHeader {
+  margin-bottom: 1.5rem;
+  color: var(--primary);
 }
 
 .card h3 {
-  font-size: 1.4rem;
+  font-size: 1.5rem;
   color: var(--text-main);
-  margin-bottom: 12px;
+  margin-bottom: 1rem;
 }
+
 .card p {
   color: var(--text-muted);
-  line-height: 1.5;
-  font-size: 0.95rem;
-  margin-bottom: 24px;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+  flex-grow: 1;
 }
 
-.link {
-  display: flex;
+.cardLink {
+  background: transparent;
+  color: var(--primary);
+  border: 2px solid var(--primary);
+  padding: 10px 24px;
+  border-radius: 50px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
   align-items: center;
   gap: 8px;
-  color: #6366f1;
-  text-decoration: none;
-  font-weight: 700;
-}
-.link:hover {
-  gap: 12px;
 }
 
-/* UTILITY STRIP */
+.cardLink:hover {
+  background: var(--primary);
+  color: var(--text-invert);
+}
+
+/* =========================================
+   4. UTILITY STRIP
+   ========================================= */
 .utilityStrip {
-    background: var(--bg-surface);
-    border-top: 1px solid var(--border);
-    padding: 100px 0; /* More breathing room */
-    position: relative;
-}
-
-/* Add a subtle background glow behind the strip */
-.utilityStrip::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 50%; transform: translateX(-50%);
-    width: 60%; height: 100%;
-    background: radial-gradient(circle, rgba(99, 102, 241, 0.05) 0%, transparent 70%);
-    pointer-events: none;
+  background: var(--bg-surface);
+  border-top: 1px solid var(--border);
+  padding: 3rem 0;
 }
 
 .utilityRow {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 40px;
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 2rem;
 }
 
-/* Turn items into "Action Cards" */
 .utilityItem {
-    display: flex;
-    flex-direction: column; /* Stack Icon on top of text */
-    align-items: center;
-    text-align: center;
-    padding: 40px;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 24px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 2rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  width: 300px;
+  transition: transform 0.2s;
+  box-shadow: var(--shadow-sm);
 }
 
-/* Hover Effect: Lift and Glow */
 .utilityItem:hover {
-    transform: translateY(-10px);
-    border-color: #6366f1; /* Indigo Border */
-    box-shadow: 0 20px 40px rgba(99, 102, 241, 0.15);
+  transform: translateY(-2px);
+  border-color: var(--border-hover);
 }
 
-/* The Icon: Make it Huge and Glowing */
 .utilIcon {
-    color: #6366f1; /* Indigo Brand Color */
-    background: rgba(99, 102, 241, 0.1);
-    width: 80px; /* Huge touch target */
-    height: 80px;
-    padding: 20px;
-    border-radius: 50%; /* Perfect Circle */
-    margin-bottom: 24px;
-    transition: 0.3s;
+  color: var(--text-muted);
 }
 
-.utilityItem:hover .utilIcon {
-    background: #6366f1;
-    color: white; /* Invert colors on hover */
-    transform: scale(1.1) rotate(-10deg); /* Playful animation */
-}
-
-/* Typography Upgrade */
 .utilityItem h4 {
-    color: var(--text-main);
-    font-size: 1.5rem; /* Much bigger */
-    font-weight: 800;
-    margin: 0 0 12px 0;
+  font-size: 1rem;
+  color: var(--text-main);
+  margin-bottom: 2px;
 }
 
 .utilityItem p {
-    color: var(--text-muted);
-    font-size: 1rem;
-    line-height: 1.6;
-    margin: 0;
-    max-width: 250px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin: 0;
 }
 
-/* Add a visual "Arrow" to show it's clickable */
-.utilityItem::after {
-    content: '→';
-    position: absolute;
-    bottom: 20px;
-    opacity: 0;
-    font-size: 1.5rem;
-    color: #6366f1;
-    transition: 0.3s;
-    transform: translateY(10px);
+/* Neon Icon */
+.iconNeon {
+  color: var(--primary);
+  filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.4));
 }
 
-.utilityItem:hover::after {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-/* Mobile Adjustments */
-@media (max-width: 768px) {
-    .utilityStrip { padding: 60px 0; }
-    .utilityRow { gap: 20px; }
-    .utilityItem { padding: 30px; }
+/* Responsive */
+@media (max-width: 968px) {
+  .heroBackground { height: auto; flex-direction: column; padding: 4rem 0; text-align: center; }
+  .heroContent { margin-left: 0; margin-bottom: 3rem; }
+  .heroWidget { position: relative; right: auto; top: auto; transform: none; width: 90%; max-width: 400px; }
+  .productGrid { grid-template-columns: 1fr; gap: 3rem; text-align: center; }
+  .productContent { align-items: center; }
+  .productImageWrapper { height: 300px; order: -1; }
+  .reverseGrid .productImageWrapper { order: -1; }
+  .utilityRow { flex-direction: column; align-items: center; }
 }

@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Globe, ShieldCheck, Wifi } from "lucide-react";
 import styles from "./home.module.css";
-import { getSiteSettings } from "@/lib/get-settings";
+import { getSiteSettings } from "@/lib/content/get-settings";
 
 const HOTSPOTS = [
     { city: "New York", top: "34%", left: "28%" },
@@ -36,14 +36,14 @@ export default async function GlobalReach() {
                 {/* THE MAP VISUAL */}
                 <div className={styles.mapWrapper}>
                     <Image
-                        src="/world-map-dark.png"
-                        alt="Global Network"
+                        src={settings.home_global_img || "/world-map-dark.png"}
+                        alt={settings.home_global_alt || "Global Network Map"}
                         fill
                         className={styles.mapImage}
                         quality={100}
                     />
 
-                    {/* Pulsing Hotspots (Visual only, no CMS needed for coordinates) */}
+                    {/* Pulsing Hotspots */}
                     {HOTSPOTS.map((spot) => (
                         <div
                             key={spot.city}

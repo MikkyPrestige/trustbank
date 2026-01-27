@@ -1,4 +1,4 @@
-import { getSiteSettings } from "@/lib/get-settings";
+import { getSiteSettings } from "@/lib/content/get-settings";
 import LoginForm from "@/components/auth/login/LoginForm";
 
 export default async function LoginPage() {

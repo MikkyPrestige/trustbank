@@ -1,6 +1,6 @@
 import { auth } from '@/auth';
 import { db } from '@/lib/db';
-import { getSiteSettings } from "@/lib/get-settings";
+import { getSiteSettings } from "@/lib/content/get-settings";
 import { redirect } from 'next/navigation';
 import { UserRole } from "@prisma/client";
 import Sidebar from "@/components/dashboard/Sidebar";

@@ -283,3 +283,38 @@ display: flex;
     text-decoration: underline;
     color: var(--primary);
 }
+
+/* NO RESULTS STATE */
+.noResults {
+  padding: 3rem 2rem;
+  text-align: center;
+  color: var(--text-muted);
+  background: var(--bg-surface);
+  border-radius: 12px;
+  border: 1px dashed var(--border);
+  margin-top: 1rem;
+}
+
+.noResults p {
+  font-size: 1.05rem;
+  margin-bottom: 1rem;
+}
+
+.clearBtn {
+  margin-top: 0.5rem;
+  color: var(--primary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: underline;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: opacity 0.2s;
+}
+
+.clearBtn:hover {
+  opacity: 0.8;
+}
+
+.spin { animation: spin 0.6s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }

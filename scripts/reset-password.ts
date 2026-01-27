@@ -9,10 +9,13 @@ async function main() {
   const newPassword = args[1];
 
   if (!email || !newPassword) {
-    console.error("Usage: npx tsx reset-password.ts <email> <newpassword>");
+    console.error("Usage: npx tsx scripts/reset-password.ts <email> <newpassword>");
     process.exit(1);
   }
 
+  console.log(`Resetting password for: ${email}...`);
+
+  // Hash the new password
   const hashedPassword = await bcrypt.hash(newPassword, 10);
 
   try {
@@ -20,14 +23,25 @@ async function main() {
       where: { email },
       data: {
         passwordHash: hashedPassword,
+        failedLoginAttempts: 0,
         failedPinAttempts: 0,
-        pinLockedUntil: null
+        pinLockedUntil: null,
+        status: 'ACTIVE'
       }
     });
-    console.log(`✅ Success! Password for ${user.email} has been reset.`);
-  } catch (e) {
-    console.error("❌ Error: User not found or DB error.");
+    console.log(`Success! Password reset for ${user.fullName}.`);
+    console.log(`   (Locks cleared & Fail counters reset to 0)`);
+
+  } catch (e: any) {
+    if (e.code === 'P2025') {
+        console.error("Error: User not found.");
+    } else {
+        console.error("Database Error:", e.message);
+    }
   }
 }
 
-main();
+main()
+  .finally(async () => {
+    await db.$disconnect();
+  });

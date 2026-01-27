@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, ShieldAlert, ChevronRight, Home } from "lucide-react";
 import styles from "./home.module.css";
-import { getSiteSettings } from "@/lib/get-settings"; // 👈 Import Fetcher
+import { getSiteSettings } from "@/lib/content/get-settings";
 
 export default async function FinancialGuidance() {
     // 1. Fetch Dynamic Data
@@ -31,8 +31,9 @@ export default async function FinancialGuidance() {
                     {/* CARD 1: HERO (Retirement/Planning) */}
                     <div className={styles.guideCardLarge}>
                         <Image
-                            src="/guide-retirement.png"
-                            alt="Retirement Planning"
+                            // DYNAMIC
+                            src={settings.guide_article_1_img || "/guide-retirement.png"}
+                            alt={settings.guide_article_1_alt || ""}
                             fill
                             className={styles.cardBgImage}
                         />
@@ -46,7 +47,7 @@ export default async function FinancialGuidance() {
                         </div>
                     </div>
 
-                    {/* CARD 2: SECURITY */}
+                    {/* CARD 2: SECURITY (Icon only - No image needed) */}
                     <div className={styles.guideCardGold}>
                         <div className={styles.securityContent}>
                             <div className={styles.iconCircleWhite}>
@@ -63,8 +64,9 @@ export default async function FinancialGuidance() {
                     {/* CARD 3: HOME OWNERSHIP */}
                     <div className={styles.guideCardSmall}>
                         <Image
-                            src="/guide-home.png"
-                            alt="Buying a Home"
+                            // DYNAMIC
+                            src={settings.guide_article_3_img || "/guide-home.png"}
+                            alt={settings.guide_article_3_alt || ""}
                             fill
                             className={styles.cardBgImage}
                         />
@@ -82,8 +84,9 @@ export default async function FinancialGuidance() {
                     {/* CARD 4: BUSINESS */}
                     <div className={styles.guideCardWide}>
                         <Image
-                            src="/guide-business.png"
-                            alt="Business Banking"
+                            // DYNAMIC
+                            src={settings.guide_article_4_img || "/guide-business.png"}
+                            alt={settings.guide_article_4_alt || ""}
                             fill
                             className={styles.cardBgImage}
                         />

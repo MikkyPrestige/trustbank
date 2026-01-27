@@ -1,32 +1,44 @@
-// scripts/sync-balances.ts
-const { PrismaClient } = require('@prisma/client');
+import { PrismaClient } from '@prisma/client';
 
 const db = new PrismaClient();
 
 async function main() {
-  console.log("🔄 Starting Balance Sync...");
+  console.log("Starting Intelligent Balance Sync...");
 
   // 1. Get all accounts
   const accounts = await db.account.findMany();
+  console.log(`Found ${accounts.length} accounts. Checking integrity...`);
 
-  console.log(`Found ${accounts.length} accounts.`);
+  let updatedCount = 0;
 
-  // 2. Loop through and update Current Balance to match Available Balance
   for (const acc of accounts) {
-    // Only update if currentBalance is 0 (to avoid overwriting valid data if any exists)
-    // Or just overwrite all if you want a clean slate.
-    if (Number(acc.currentBalance) === 0) {
+    // 2. The Banking Equation: Current = Available + Held
+    const available = Number(acc.availableBalance);
+    const held = Number(acc.heldBalance);
+    const current = Number(acc.currentBalance);
+
+    const calculatedCurrent = available + held;
+
+    // 3. Only update if the math is wrong (Drift Detection)
+    if (Math.abs(current - calculatedCurrent) > 0.001) {
+
+        console.log(`Drift detected for Account ${acc.accountNumber.slice(-4)}`);
+        console.log(`  - DB Current:   $${current.toFixed(2)}`);
+        console.log(`  - Should be:    $${calculatedCurrent.toFixed(2)} (Avail: ${available} + Held: ${held})`);
+
         await db.account.update({
             where: { id: acc.id },
             data: {
-                currentBalance: acc.availableBalance // <--- COPY THE MONEY OVER
+                currentBalance: calculatedCurrent
             }
         });
-        console.log(`✅ Synced Account ${acc.accountNumber}: $${acc.availableBalance}`);
+
+        console.log(`  Fixed.`);
+        updatedCount++;
     }
   }
 
-  console.log("🎉 All balances synced successfully!");
+  console.log(`\n Sync Complete! Fixed ${updatedCount} accounts.`);
 }
 
 main()

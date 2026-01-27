@@ -1,62 +1,109 @@
-import { getSiteSettings } from "@/lib/get-settings";
+import { getSiteSettings } from "@/lib/content/get-settings";
+import { getPressReleases } from "@/lib/content/get-press";
 import styles from "./press.module.css";
-import { ArrowRight, Download } from "lucide-react";
+import Image from "next/image";
+import { ArrowRight, Download, Mail, Calendar } from "lucide-react";
+import Link from "next/link";
 
 export default async function PressPage() {
-    const settings = await getSiteSettings();
+    const [settings, releases] = await Promise.all([
+        getSiteSettings(),
+        getPressReleases()
+    ]);
+
+    const formatDate = (date: Date) => {
+        return new Intl.DateTimeFormat('en-US', {
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric'
+        }).format(new Date(date));
+    };
 
     return (
         <main className={styles.main}>
+            {/* HERO */}
             <section className={styles.hero}>
-                <h1 className={styles.heroTitle}>Press & Newsroom</h1>
-                <p className={styles.heroDesc}>
-                    Latest updates, product launches, and company announcements from {settings.site_name}.
-                </p>
+                <div className={styles.heroImageWrapper}>
+                    <Image
+                        src={settings.press_hero_img || "/press-hero.png"}
+                        alt={settings.press_hero_img_alt || "Press Newsroom"}
+                        fill
+                        className={styles.heroImage}
+                        priority
+                    />
+                    <div className={styles.heroOverlay} />
+                </div>
+
+                <div className={styles.heroContent}>
+                    <h1 className={styles.heroTitle}>{settings.press_hero_title}</h1>
+                    <p className={styles.heroDesc}>{settings.press_hero_desc}</p>
+
+                    <div className={styles.heroContact}>
+                        <Mail size={16} /> Press Contact:
+                        <a href={`mailto:${settings.press_contact_email}`} className={styles.contactLink}>
+                            {settings.press_contact_email}
+                        </a>
+                    </div>
+                </div>
             </section>
 
             <div className={styles.container}>
-                <div className={styles.pressWrapper}>
+                <div className={styles.contentGrid}>
+                    {/* LEFT: NEWS LIST */}
+                    <div className={styles.newsColumn}>
+                        <h2 className={styles.sectionTitle}>{settings.press_release_title}</h2>
+                        <div className={styles.pressList}>
+                            {releases.length === 0 ? (
+                                <div className={styles.emptyState}>
+                                    <p>{settings.press_empty_state}</p>
+                                </div>
+                            ) : (
+                                releases.map((item) => (
+                                    <div key={item.id} className={styles.pressItem}>
+                                        <div className={styles.metaRow}>
+                                            <span className={styles.categoryBadge}>{item.category}</span>
+                                            <span className={styles.date}>
+                                                <Calendar size={12} /> {formatDate(item.date)}
+                                            </span>
+                                        </div>
 
-                    {/* ITEM 1 */}
-                    <div className={styles.pressItem}>
-                        <div>
-                            <span className={styles.pressDate}>October 24, 2024</span>
-                            <h3>{settings.site_name} Surpasses 2 Million Active Users</h3>
-                            <p>Milestone achievement marks rapid growth in the EMEA region.</p>
+                                        <h3>{item.title}</h3>
+                                        <p className={styles.summary}>{item.summary}</p>
+
+                                        <Link href={item.link || "#"} className={styles.readLink}>
+                                            {settings.press_read_more_text} <ArrowRight size={16} />
+                                        </Link>
+                                    </div>
+                                ))
+                            )}
                         </div>
-                        <a href="#" className={styles.pressLink}>Read <ArrowRight size={16} /></a>
                     </div>
 
-                    {/* ITEM 2 */}
-                    <div className={styles.pressItem}>
-                        <div>
-                            <span className={styles.pressDate}>September 10, 2024</span>
-                            <h3>Launching &quot;{settings.site_name} Wealth&quot;: A New Era</h3>
-                            <p>Introducing commission-free crypto and stock trading for all users.</p>
-                        </div>
-                        <a href="#" className={styles.pressLink}>Read <ArrowRight size={16} /></a>
-                    </div>
+                    {/* RIGHT: SIDEBAR */}
+                    <aside className={styles.sidebar}>
+                        <div className={styles.mediaCard}>
+                            <h3>{settings.press_kit_title}</h3>
+                            <p>{settings.press_kit_desc}</p>
+                            <div className={styles.kitPreview}>
+                                <div className={styles.fileIcon}>{settings.press_file_icon}</div>
+                                <div className={styles.fileInfo}>
+                                    <span>{settings.press_file_name}</span>
+                                    <span className={styles.fileSize}>{settings.press_file_size}</span>
+                                </div>
+                            </div>
 
-                    {/* ITEM 3 */}
-                    <div className={styles.pressItem}>
-                        <div>
-                            <span className={styles.pressDate}>August 15, 2024</span>
-                            <h3>{settings.site_name} Partners with Visa for Global Payments</h3>
-                            <p>Strategic partnership expands cross-border payment capabilities.</p>
+                            <a href={settings.press_kit_link} className={styles.downloadBtn}>
+                                <Download size={18} /> {settings.press_download_btn_text}
+                            </a>
                         </div>
-                        <a href="#" className={styles.pressLink}>Read <ArrowRight size={16} /></a>
-                    </div>
 
-                    {/* MEDIA KIT CARD */}
-                    <div className={styles.card}>
-                        <div>
-                            <h3>Media Kit</h3>
-                            <p>Download official logos, executive headshots, and brand guidelines.</p>
+                        <div className={styles.infoCard}>
+                            <h4>{settings.press_about_title}</h4>
+                            <p className={styles.tinyText}>
+                                {settings.press_about_desc}
+                            </p>
                         </div>
-                        <button className={styles.downloadBtn}>
-                            <Download size={18} /> Download Kit
-                        </button>
-                    </div>
+                    </aside>
 
                 </div>
             </div>

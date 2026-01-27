@@ -1,10 +1,10 @@
 'use server';
 
 import { db } from "@/lib/db";
-import { checkAdminAction } from "@/lib/admin-auth";
-import { logAdminAction } from "@/lib/admin-logger";
+import { checkAdminAction } from "@/lib/auth/admin-auth";
+import { logAdminAction } from "@/lib/utils/admin-logger";
 import { revalidatePath } from "next/cache";
-import { canPerform } from "@/lib/permissions";
+import { canPerform } from "@/lib/auth/permissions";
 import { UserRole } from "@prisma/client";
 
 // 1. ADMIN REPLY
