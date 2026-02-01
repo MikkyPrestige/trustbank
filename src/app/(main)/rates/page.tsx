@@ -1,17 +1,37 @@
 import { getSiteSettings } from "@/lib/content/get-settings";
 import styles from "./rates.module.css";
 import { CheckCircle2 } from "lucide-react";
+import Link from "next/link";
+import Image from "next/image";
 
 export default async function RatesPage() {
     const settings = await getSiteSettings();
+    const content = settings.content || {};
 
     return (
         <main className={styles.main}>
 
+            {/* HEADER SECTION */}
             <section className={styles.header}>
-                <div className={styles.container}>
-                    <h1>{settings.rates_hero_title} <span className={styles.highlight}>{settings.rates_hero_highlight}</span></h1>
-                    <p>{settings.rates_hero_desc}</p>
+                <div className={styles.bgImageWrapper}>
+                    <Image
+                        src={content.rates_hero_img || "/placeholder.jpg"}
+                        alt={content.rates_hero_alt || "Current market rates"}
+                        fill
+                        priority
+                        className={styles.bgImage}
+                    />
+                    <div className={styles.overlay}></div>
+                </div>
+
+                <div className={styles.headerContent}>
+                    <div className={styles.container}>
+                        <h1>
+                            {content.rates_hero_title}
+                            <span className={styles.highlight}> {content.rates_hero_highlight}</span>
+                        </h1>
+                        <p>{content.rates_hero_desc}</p>
+                    </div>
                 </div>
             </section>
 
@@ -20,41 +40,51 @@ export default async function RatesPage() {
 
                     {/* 1. DEPOSIT RATES */}
                     <div className={styles.rateGroup}>
-                        <h2>Savings & Certificates</h2>
+                        <h2>{content.rates_title_deposit}</h2>
+
                         <div className={styles.tableWrapper}>
                             <table className={styles.rateTable}>
                                 <thead>
                                     <tr>
-                                        <th>Account Product</th>
-                                        <th>Interest Rate</th>
-                                        <th>APY*</th>
-                                        <th>Min. Balance</th>
+                                        <th>{content.rates_dep_head_prod}</th>
+                                        <th>{content.rates_dep_head_rate}</th>
+                                        <th>{content.rates_dep_head_apy}</th>
+                                        <th>{content.rates_dep_head_min}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    {/* HYSA - USING 'settings.' FOR DATA */}
                                     <tr>
-                                        <td><strong>Platinum Savings</strong><span className={styles.tag}>Popular</span></td>
-                                        <td>4.40%</td>
+                                        <td>
+                                            <strong>{settings.rate_hysa_name}</strong>
+                                            {content.rates_tag_popular && (
+                                                <span className={styles.tag}>{content.rates_tag_popular}</span>
+                                            )}
+                                        </td>
+                                        <td>{settings.rate_hysa_rate}%</td>
                                         <td className={styles.apy}>{settings.rate_hysa_apy}%</td>
-                                        <td>$0.00</td>
+                                        <td>{settings.rate_hysa_min}</td>
                                     </tr>
+                                    {/* MMA */}
                                     <tr>
-                                        <td><strong>Money Market</strong></td>
-                                        <td>4.15%</td>
+                                        <td><strong>{settings.rate_mma_name}</strong></td>
+                                        <td>{settings.rate_mma_rate}%</td>
                                         <td className={styles.apy}>{settings.rate_mma_apy}%</td>
-                                        <td>$2,500.00</td>
+                                        <td>{settings.rate_mma_min}</td>
                                     </tr>
+                                    {/* CD */}
                                     <tr>
-                                        <td><strong>12-Month CD</strong></td>
-                                        <td>5.05%</td>
+                                        <td><strong>{settings.rate_cd_name}</strong></td>
+                                        <td>{settings.rate_cd_rate}%</td>
                                         <td className={styles.apy}>{settings.rate_cd_apy}%</td>
-                                        <td>$500.00</td>
+                                        <td>{settings.rate_cd_min}</td>
                                     </tr>
+                                    {/* KIDS */}
                                     <tr>
-                                        <td><strong>Kids Club Savings</strong></td>
-                                        <td>2.95%</td>
+                                        <td><strong>{settings.rate_kids_name}</strong></td>
+                                        <td>{settings.rate_kids_rate}%</td>
                                         <td className={styles.apy}>{settings.rate_kids_apy}%</td>
-                                        <td>$0.00</td>
+                                        <td>{settings.rate_kids_min}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -63,41 +93,46 @@ export default async function RatesPage() {
 
                     {/* 2. LENDING RATES */}
                     <div className={styles.rateGroup}>
-                        <h2>Borrowing Rates</h2>
+                        <h2>{content.rates_title_borrow}</h2>
+
                         <div className={styles.tableWrapper}>
                             <table className={styles.rateTable}>
                                 <thead>
                                     <tr>
-                                        <th>Loan Type</th>
-                                        <th>Term</th>
-                                        <th>APR as low as*</th>
-                                        <th>Details</th>
+                                        <th>{content.rates_loan_head_type}</th>
+                                        <th>{content.rates_loan_head_term}</th>
+                                        <th>{content.rates_loan_head_apr}</th>
+                                        <th>{content.rates_loan_head_detail}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    {/* AUTO */}
                                     <tr>
-                                        <td><strong>Auto Loan (New)</strong></td>
-                                        <td>Up to 72 mo</td>
+                                        <td><strong>{settings.rate_auto_name}</strong></td>
+                                        <td>{settings.rate_auto_term}</td>
                                         <td className={styles.apr}>{settings.rate_auto_apr}%</td>
-                                        <td><a href="/borrow">View</a></td>
+                                        <td><Link href="/borrow">{content.rates_btn_view}</Link></td>
                                     </tr>
+                                    {/* PERSONAL */}
                                     <tr>
-                                        <td><strong>Personal Loan</strong></td>
-                                        <td>12 - 60 mo</td>
+                                        <td><strong>{settings.rate_personal_name}</strong></td>
+                                        <td>{settings.rate_personal_term}</td>
                                         <td className={styles.apr}>{settings.rate_personal_apr}%</td>
-                                        <td><a href="/borrow">View</a></td>
+                                        <td><Link href="/borrow">{content.rates_btn_view}</Link></td>
                                     </tr>
+                                    {/* MORTGAGE */}
                                     <tr>
-                                        <td><strong>Mortgage (30yr Fixed)</strong></td>
-                                        <td>30 Years</td>
+                                        <td><strong>{settings.rate_mortgage_name}</strong></td>
+                                        <td>{settings.rate_mortgage_term}</td>
                                         <td className={styles.apr}>{settings.rate_mortgage_30yr}%</td>
-                                        <td><a href="#">View</a></td>
+                                        <td><Link href="/borrow">{content.rates_btn_view}</Link></td>
                                     </tr>
+                                    {/* CREDIT CARD */}
                                     <tr>
-                                        <td><strong>Credit Card</strong></td>
-                                        <td>Variable</td>
-                                        <td className={styles.apr}>{settings.rate_credit_intro_apr}% Intro</td>
-                                        <td><a href="#">View</a></td>
+                                        <td><strong>{settings.rate_cc_name}</strong></td>
+                                        <td>{settings.rate_cc_term}</td>
+                                        <td className={styles.apr}>{settings.rate_cc_intro}</td>
+                                        <td><Link href="/borrow">{content.rates_btn_view}</Link></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -106,12 +141,11 @@ export default async function RatesPage() {
 
                     {/* DISCLAIMER */}
                     <div className={styles.disclaimerBox}>
-                        <h4><CheckCircle2 size={16} /> Important Rate Information</h4>
-                        <p>
-                            *APY = Annual Percentage Yield. APR = Annual Percentage Rate. Rates are subject to change at any time without notice.
-                            Fees may reduce earnings on accounts. Penalty for early withdrawal from Certificates of Deposit.
-                            Loan rates based on creditworthiness.
-                        </p>
+                        <h4>
+                            <CheckCircle2 size={16} />
+                            {content.rates_disclaimer_title}
+                        </h4>
+                        <p>{content.rates_disclaimer}</p>
                     </div>
 
                 </div>

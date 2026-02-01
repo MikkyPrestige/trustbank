@@ -2,190 +2,200 @@
 
 import { getAuthenticatedUser } from "@/lib/auth/user-guard";
 import { db } from "@/lib/db";
-import { checkPermissions, verifyPin } from "@/lib/auth/security";
+import { checkPermissions, verifyPin, checkMaintenanceMode } from "@/lib/security";
 import { revalidatePath } from "next/cache";
 import {
-  KycStatus,
   TransactionType,
   TransactionDirection,
   TransactionStatus,
   UserRole
 } from "@prisma/client";
 
-// --- APPLY ---
+// ==========================================
+// 📝 APPLY FOR LOAN
+// ==========================================
 export async function applyForLoan(prevState: any, formData: FormData) {
   const { success, message, user } = await getAuthenticatedUser();
 
-    if (!success || !user) {
-        return { message };
-    }
+  // 1. 🚧 Global Kill Switch
+  if (await checkMaintenanceMode()) {
+      return { success: false, message: "System is currently under maintenance. Please try again later." };
+  }
 
-    const amount = Number(formData.get("amount"));
-    const months = Number(formData.get("months"));
-    const reason = formData.get("reason") as string;
-    const pin = formData.get("pin") as string;
+  if (!success || !user) return { message };
 
-    if (!amount || amount < 1000) return { message: "Minimum loan is $1,000" };
-    if (!months) return { message: "Please select a term" };
+  const amount = Number(formData.get("amount"));
+  const months = Number(formData.get("months"));
+  const reason = formData.get("reason") as string;
+  const pin = formData.get("pin") as string;
 
-    // 1. PIN Check
-    const pinValidation = await verifyPin(user.id, pin);
-    if (!pinValidation.success) return { message: pinValidation.error };
+  if (!amount || amount < 1000) return { message: "Minimum loan is $1,000" };
+  if (!months) return { message: "Please select a term" };
 
-    // 2. Permission Check
-    const permission = await checkPermissions(user.id, 'LOAN');
-    if (!permission.allowed) return { message: `🚫 ${permission.error}` };
+  // 2. 🔐 Verify PIN
+  const pinValidation = await verifyPin(user.id, pin);
+  if (!pinValidation.success) return { message: pinValidation.error };
 
-    // 3. KYC Check
-    if (user.kycStatus !== KycStatus.VERIFIED) {
-        return { message: "Access Denied. Identity verification required for loans." };
-    }
+  // 3. 🛡️ Permission Check (Handles Feature Flag & KYC)
+ const permission = await checkPermissions(user.id, 'LOAN_APPLY');
+  if (!permission.allowed) {
+      return { message: `🚫 ${permission.error}` };
+  }
 
-    const interestRate = 5.0;
-    const totalInterest = amount * (interestRate / 100);
-    const totalRepayment = amount + totalInterest;
-    const monthlyPayment = totalRepayment / months;
+  // Calculation
+  const interestRate = 5.0;
+  const totalInterest = amount * (interestRate / 100);
+  const totalRepayment = amount + totalInterest;
+  const monthlyPayment = totalRepayment / months;
 
-    try {
-        // 1. CRITICAL DB WRITE (Transaction)
-        const loan = await db.$transaction(async (tx) => {
-            return await tx.loan.create({
-                data: {
-                    userId: user.id,
-                    amount,
-                    termMonths: months,
-                    interestRate,
-                    totalRepayment,
-                    monthlyPayment,
-                    reason,
-                    status: "PENDING"
-                }
-            });
-        });
+  try {
+      // 4. Create Loan
+      const loan = await db.$transaction(async (tx) => {
+          return await tx.loan.create({
+              data: {
+                  userId: user.id,
+                  amount,
+                  termMonths: months,
+                  interestRate,
+                  totalRepayment,
+                  monthlyPayment,
+                  reason,
+                  status: "PENDING"
+              }
+          });
+      });
 
-        // 2. NOTIFY ADMINS (Side Effect - Moved Outside)
-        try {
-            const admins = await db.user.findMany({
-                where: { role: { in: [UserRole.ADMIN, UserRole.SUPER_ADMIN] } },
-                select: { id: true }
-            });
+      // 5. Notify Admins
+      try {
+          const admins = await db.user.findMany({
+              where: { role: { in: [UserRole.ADMIN, UserRole.SUPER_ADMIN] } },
+              select: { id: true }
+          });
 
-            if (admins.length > 0) {
-                await db.notification.createMany({
-                    data: admins.map((admin) => ({
-                        userId: admin.id,
-                        title: "New Loan Application",
-                        message: `Loan Request: $${amount.toLocaleString()} from ${user.fullName || 'User'}`,
-                        type: "INFO",
-                        link: `/admin/loans?id=${loan.id}`,
-                        isRead: false
-                    }))
-                });
-            }
-        } catch (notifErr) {
-            console.error("Loan Notification Failed:", notifErr);
-        }
+          if (admins.length > 0) {
+              await db.notification.createMany({
+                  data: admins.map((admin) => ({
+                      userId: admin.id,
+                      title: "New Loan Application",
+                      message: `Loan Request: $${amount.toLocaleString()} from ${user.fullName || 'User'}`,
+                      type: "INFO",
+                      link: `/admin/loans?id=${loan.id}`,
+                      isRead: false
+                  }))
+              });
+          }
+      } catch (notifErr) {
+          console.error("Loan Notification Failed:", notifErr);
+      }
 
-    } catch (error) {
-        console.error(error);
-        return { message: "Application failed. Try again." };
-    }
+  } catch (error) {
+      console.error(error);
+      return { message: "Application failed. Try again." };
+  }
 
-    revalidatePath("/dashboard/loan");
-    return { success: true, message: "Application Submitted Successfully" };
+  revalidatePath("/dashboard/loans");
+  return { success: true, message: "Application Submitted Successfully" };
 }
 
-// --- REPAY ---
+// ==========================================
+// 💸 REPAY LOAN
+// ==========================================
 export async function repayLoan(prevState: any, formData: FormData) {
   const { success, message, user } = await getAuthenticatedUser();
 
-    if (!success || !user) {
-        return { message };
-    }
+  // 1. 🚧 Global Kill Switch
+  if (await checkMaintenanceMode()) {
+      return { success: false, message: "System is currently under maintenance. Please try again later." };
+  }
 
-    const loanId = formData.get("loanId") as string;
-    const amount = Number(formData.get("amount"));
+  if (!success || !user) return { message };
 
-    if (!amount || amount <= 0) return { message: "Invalid amount." };
+  const permission = await checkPermissions(user.id, 'LOAN_REPAY');
+  if (!permission.allowed) {
+      return { message: `🚫 ${permission.error}` };
+  }
 
-    const loan = await db.loan.findUnique({ where: { id: loanId } });
-    if (!loan || loan.status !== 'APPROVED') return { message: "Invalid loan." };
+  const loanId = formData.get("loanId") as string;
+  const amount = Number(formData.get("amount"));
 
-    const remaining = Number(loan.totalRepayment) - Number(loan.repaidAmount);
-    if (amount > remaining) {
-        return { message: `You only owe $${remaining.toFixed(2)}` };
-    }
+  if (!amount || amount <= 0) return { message: "Invalid amount." };
 
-    // 2. EXECUTE REPAYMENT
-    try {
-        await db.$transaction(async (tx) => {
-            // A. Find Account
-            const account = await tx.account.findFirst({
-                where: { userId: user.id },
-                orderBy: { availableBalance: 'desc' }
-            });
+  const loan = await db.loan.findUnique({ where: { id: loanId } });
+  if (!loan || loan.status !== 'APPROVED') return { message: "Invalid loan." };
 
-            if (!account) throw new Error("No account found.");
+  const remaining = Number(loan.totalRepayment) - Number(loan.repaidAmount);
+  if (amount > remaining) {
+      return { message: `You only owe $${remaining.toFixed(2)}` };
+  }
 
-            // B. Check Funds
-            if (Number(account.availableBalance) < amount) {
-                throw new Error("Insufficient funds.");
-            }
+  try {
+      await db.$transaction(async (tx) => {
+          // A. Find Account
+          const account = await tx.account.findFirst({
+              where: { userId: user.id },
+              orderBy: { availableBalance: 'desc' }
+          });
 
-            // C. Deduct from Account
-            await tx.account.update({
-                where: { id: account.id },
-                data: {
-                    availableBalance: { decrement: amount },
-                    currentBalance: { decrement: amount }
-                }
-            });
+          if (!account) throw new Error("No account found.");
 
-            // D. Update Loan
-            const newRepaidTotal = Number(loan.repaidAmount) + amount;
-            const isFullyPaid = newRepaidTotal >= Number(loan.totalRepayment);
+          // B. Check Funds
+          if (Number(account.availableBalance) < amount) {
+              throw new Error("Insufficient funds.");
+          }
 
-            await tx.loan.update({
-                where: { id: loanId },
-                data: {
-                    repaidAmount: { increment: amount },
-                    status: isFullyPaid ? 'PAID' : 'APPROVED'
-                }
-            });
+          // C. Deduct from Account
+          await tx.account.update({
+              where: { id: account.id },
+              data: {
+                  availableBalance: { decrement: amount },
+                  currentBalance: { decrement: amount }
+              }
+          });
 
-            // E. Ledger Entry
-            await tx.ledgerEntry.create({
-                data: {
-                    accountId: account.id,
-                    amount: amount,
-                    type: TransactionType.LOAN_REPAYMENT,
-                    direction: TransactionDirection.DEBIT,
-                    status: TransactionStatus.COMPLETED,
-                    description: `Loan Repayment`,
-                    referenceId: `REP-${Date.now()}`
-                }
-            });
-        });
+          // D. Update Loan
+          const newRepaidTotal = Number(loan.repaidAmount) + amount;
+          const isFullyPaid = newRepaidTotal >= Number(loan.totalRepayment);
 
-        // 3. NOTIFY USER (Added for completeness)
-        // This is a "nice to have" - confirms payment to the user
-        await db.notification.create({
-            data: {
-                userId: user.id,
-                title: "Repayment Successful",
-                message: `You successfully repaid $${amount.toLocaleString()} towards your loan.`,
-                type: "SUCCESS",
-                link: "/dashboard/loan",
-                isRead: false
-            }
-        });
+          await tx.loan.update({
+              where: { id: loanId },
+              data: {
+                  repaidAmount: { increment: amount },
+                  status: isFullyPaid ? 'PAID' : 'APPROVED'
+              }
+          });
 
-    } catch (error: any) {
-        return { message: error.message || "Repayment failed." };
-    }
+          // E. Ledger Entry
+          await tx.ledgerEntry.create({
+              data: {
+                  accountId: account.id,
+                  amount: amount,
+                  type: TransactionType.LOAN_REPAYMENT,
+                  direction: TransactionDirection.DEBIT,
+                  status: TransactionStatus.COMPLETED,
+                  description: `Loan Repayment`,
+                  referenceId: `REP-${Date.now()}`
+              }
+          });
+      });
 
-    revalidatePath("/dashboard/loan");
-    return { success: true, message: `Payment of $${amount} successful!` };
+      // 3. Notify User
+      await db.notification.create({
+          data: {
+              userId: user.id,
+              title: "Repayment Successful",
+              message: `You successfully repaid $${amount.toLocaleString()} towards your loan.`,
+              type: "SUCCESS",
+              link: "/dashboard/loans",
+              isRead: false
+          }
+      });
+
+  } catch (error: any) {
+      return { message: error.message || "Repayment failed." };
+  }
+
+  revalidatePath("/dashboard/loans");
+  return { success: true, message: `Payment of $${amount} successful!` };
 }
 
 

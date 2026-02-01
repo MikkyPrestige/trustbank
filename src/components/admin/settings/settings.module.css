@@ -23,9 +23,18 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
+  align-items: center;
   border-bottom: 1px solid var(--border);
   margin-bottom: 2rem;
-  padding-bottom: 1px;
+}
+
+.separator {
+  width: 1px;
+  height: 24px;
+  background-color: var(--border);
+  margin: 0 8px;
+  align-self: center;
+  flex-shrink: 0;
 }
 
 .tabBtn {
@@ -209,48 +218,64 @@
   display: flex;
   align-items: center;
   gap: 1rem;
-  padding: 1.25rem;
-  background: var(--bg-surface);
+  background: var(--bg-card);
+  padding: 1.5rem;
   border: 1px solid var(--border);
   border-radius: 12px;
+  color: var(--text-invert);
   text-decoration: none;
-  color: var(--text-main);
-  transition: all 0.2s;
+  transition: all 0.2s ease;
+  width: 100%;
 }
 
 .navCard:hover {
   border-color: var(--primary);
-  background: var(--bg-card);
   transform: translateY(-2px);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-sm);
 }
 
 .navIcon {
-  width: 40px;
-  height: 40px;
-  background: rgba(59, 130, 246, 0.1);
-  color: var(--primary);
-  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  background: var(--bg-surface);
+  color: var(--text-main);
+  flex-shrink: 0;
 }
 
-.navCard h4 {
+.iconPrimary {
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+.navText {
+  flex-grow: 1;
+}
+
+.navTitle {
   margin: 0;
-  font-size: 0.95rem;
-  font-weight: 700;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-main);
+  margin-bottom: 2px;
 }
 
-.navCard p {
-  margin: 2px 0 0;
-  font-size: 0.8rem;
+.navSubtitle {
+  margin: 0;
+  font-size: 0.85rem;
   color: var(--text-muted);
 }
 
-.chevronIcon {
+.chevron {
+  color: var(--text-muted);
   margin-left: auto;
-  opacity: 0.5;
+}
+
+.marginTop {
+  margin-top: 2rem;
 }
 
 /* --- TOGGLE SWITCH --- */
@@ -287,7 +312,7 @@
 
 .saveBtn {
   background: var(--primary);
-  color: white;
+  color: var(--text-invert);
   border: none;
   padding: 12px 32px;
   border-radius: 8px;

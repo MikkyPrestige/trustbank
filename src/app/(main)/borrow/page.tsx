@@ -35,6 +35,14 @@ export default async function BorrowPage() {
             alt: settings.borrow_mt_img_alt
         },
         {
+            id: 'he',
+            title: settings.borrow_prod6_title,
+            desc: settings.borrow_prod6_desc,
+            btn: "Check Eligibility",
+            img: "/borrow-hero.png",
+            alt: "Home Equity Line of Credit"
+        },
+        {
             id: 'al',
             title: settings.borrow_al_title,
             desc: settings.borrow_al_desc,
@@ -49,6 +57,14 @@ export default async function BorrowPage() {
             btn: settings.borrow_sl_btn,
             img: settings.borrow_sl_img || "/borrow-sl.png",
             alt: settings.borrow_sl_img_alt
+        },
+        {
+            id: 'he',
+            title: settings.borrow_he_title,
+            desc: settings.borrow_he_desc,
+            btn: settings.borrow_he_btn,
+            img: settings.borrow_he_img || "/borrow-equity.png",
+            alt: settings.borrow_he_alt
         },
     ];
 

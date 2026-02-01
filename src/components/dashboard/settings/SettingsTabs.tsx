@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
+import Link from "next/link";
 import { useState, useActionState, useRef, useEffect } from 'react';
 import { updateProfile, changePin, changePassword } from '@/actions/user/settings';
 import { updateAvatar } from '@/actions/user/avatar';
@@ -8,7 +9,6 @@ import { User, Lock, Shield, Save, Camera, KeyRound, Loader2, HeartHandshake } f
 import styles from './settings.module.css';
 import toast from 'react-hot-toast';
 
-// ✅ Updated Interface to include new NOK fields
 interface SettingsUser {
     id: string;
     fullName: string;
@@ -18,12 +18,12 @@ interface SettingsUser {
     occupation?: string | null;
     address?: string | null;
     city?: string | null;
+    state?: string | null;
     country?: string | null;
     zipCode?: string | null;
     taxId?: string | null;
     dateOfBirth?: Date | string | null;
     gender?: string | null;
-    // NOK Fields
     nokName?: string | null;
     nokPhone?: string | null;
     nokEmail?: string | null;
@@ -167,6 +167,7 @@ export default function SettingsTabs({ user }: { user: SettingsUser }) {
                         {/* EDITABLE CONTACT FIELDS */}
                         <div className={styles.divider}>Contact Details</div>
 
+                        {/* Row 1: Phone & Occupation */}
                         <div className={styles.grid}>
                             <div className={styles.group}>
                                 <label>Phone Number</label>
@@ -178,18 +179,31 @@ export default function SettingsTabs({ user }: { user: SettingsUser }) {
                             </div>
                         </div>
 
+                        {/* Row 2: Tax ID (Full Width) */}
+                        <div className={styles.group}>
+                            <label>Tax ID / SSN</label>
+                            <input name="taxId" defaultValue={user.taxId || ''} className={styles.input} />
+                        </div>
+
+                        {/* Row 3: Street Address (Full Width) */}
+                        <div className={`${styles.group} ${styles.topMargin}`}>
+                            <label>Street Address</label>
+                            <input name="address" defaultValue={user.address || ''} className={styles.input} />
+                        </div>
+
+                        {/* Row 4 & 5: Paired Address Fields */}
                         <div className={styles.grid}>
-                            <div className={styles.group}>
-                                <label>Zip Code</label>
-                                <input name="zipCode" defaultValue={user.zipCode || ''} className={styles.input} />
-                            </div>
-                            <div className={styles.group}>
-                                <label>Tax ID / SSN</label>
-                                <input name="taxId" defaultValue={user.taxId || ''} className={styles.input} />
-                            </div>
                             <div className={styles.group}>
                                 <label>City</label>
                                 <input name="city" defaultValue={user.city || ''} className={styles.input} />
+                            </div>
+                            <div className={styles.group}>
+                                <label>State / Province</label>
+                                <input name="state" defaultValue={user.state || ''} className={styles.input} />
+                            </div>
+                            <div className={styles.group}>
+                                <label>Zip Code</label>
+                                <input name="zipCode" defaultValue={user.zipCode || ''} className={styles.input} />
                             </div>
                             <div className={styles.group}>
                                 <label>Country</label>
@@ -197,13 +211,8 @@ export default function SettingsTabs({ user }: { user: SettingsUser }) {
                             </div>
                         </div>
 
-                        <div className={styles.group}>
-                            <label>Street Address</label>
-                            <input name="address" defaultValue={user.address || ''} className={styles.input} />
-                        </div>
-
                         <div className={styles.divider}>
-                            <HeartHandshake size={16} style={{ marginRight: '8px' }} />
+                            <HeartHandshake size={16} className={styles.dividerIcon} />
                             Next of Kin
                         </div>
 
@@ -272,7 +281,7 @@ export default function SettingsTabs({ user }: { user: SettingsUser }) {
                                 </div>
                                 <div className={styles.group}>
                                     <label>New 4-Digit PIN</label>
-                                    <input name="newPin" type="password" maxLength={4} className={styles.input} placeholder="••••" required style={{ letterSpacing: '4px', textAlign: 'center' }} />
+                                    <input name="newPin" type="password" maxLength={4} className={`${styles.input} ${styles.pinInput}`} placeholder="••••" required />
                                 </div>
                             </div>
                             <button disabled={pinPending} className={styles.saveBtn}>
@@ -283,7 +292,7 @@ export default function SettingsTabs({ user }: { user: SettingsUser }) {
                         {/* PASSWORD CHANGE */}
                         <form action={passAction} className={styles.card}>
                             <div className={styles.cardHeader}>
-                                <div className={styles.iconBadge} style={{ background: 'rgba(59, 130, 246, 0.1)', color: '#3b82f6' }}><KeyRound size={20} /></div>
+                                <div className={`${styles.iconBadge} ${styles.iconBadgeBlue}`}><KeyRound size={20} /></div>
                                 <div>
                                     <h3>Login Password</h3>
                                     <p>Secure your account access.</p>
@@ -292,12 +301,31 @@ export default function SettingsTabs({ user }: { user: SettingsUser }) {
 
                             <div className={styles.grid}>
                                 <div className={styles.group}>
-                                    <label>Current Password</label>
-                                    <input name="currentPassword" type="password" className={styles.input} required />
+                                    <div className={styles.labelRow}>
+                                        <label>Current Password</label>
+                                        <Link
+                                            href="/forgot-password"
+                                            className={styles.forgotLink}
+                                        >
+                                            Forgot password?
+                                        </Link>
+                                    </div>
+                                    <input
+                                        name="currentPassword"
+                                        type="password"
+                                        className={styles.input}
+                                        required
+                                    />
                                 </div>
                                 <div className={styles.group}>
                                     <label>New Password</label>
-                                    <input name="newPassword" type="password" className={styles.input} required placeholder="Min 8 characters" />
+                                    <input
+                                        name="newPassword"
+                                        type="password"
+                                        className={styles.input}
+                                        required
+                                        placeholder="Min 8 characters"
+                                    />
                                 </div>
                             </div>
                             <button disabled={passPending} className={styles.saveBtn}>

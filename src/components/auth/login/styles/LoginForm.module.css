@@ -58,7 +58,7 @@
 }
 
 .brandBadge {
-display: inline-flex;
+  display: inline-flex;
   align-items: center;
   gap: 8px;
   background: rgba(255, 255, 255, 0.05);
@@ -219,7 +219,7 @@ display: inline-flex;
 
 .primaryBtn {
   background: var(--primary);
-  color: white; /* Or var(--text-on-primary) if you have it */
+  color: var(--text-invert);
   border: none;
   height: 50px;
   border-radius: 12px;

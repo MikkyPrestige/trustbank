@@ -8,13 +8,25 @@ interface CoverageWizardProps {
     settings: any; // 👈 Accept Settings
 }
 
+interface WizardOption {
+    label: string;
+    value: string;
+    icon?: ReactNode;
+}
+
+interface Question {
+    id: number;
+    question: string;
+    options: WizardOption[];
+}
+
 export default function CoverageWizard({ settings }: CoverageWizardProps) {
     const [step, setStep] = useState(0);
     const [selections, setSelections] = useState<Record<number, string>>({});
     const [showResult, setShowResult] = useState(false);
 
     // Dynamic Questions using CMS Labels
-    const questions = [
+    const questions: Question[] = [
         {
             id: 1,
             question: settings.insure_wiz_step1,

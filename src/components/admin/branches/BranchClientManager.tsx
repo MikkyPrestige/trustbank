@@ -2,31 +2,83 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { createBranch, updateBranch, deleteBranch, toggleBranchStatus } from '@/actions/admin/branches';
-import { Plus, Pencil, Trash2, X, Loader2, MapPin, Phone, Building, Mail } from 'lucide-react';
+import { Plus, Pencil, Trash2, X, Loader2, MapPin, Phone, Search, ArrowLeft } from 'lucide-react';
 import toast from 'react-hot-toast';
 import styles from './branches.module.css';
 import { Branch } from '@prisma/client';
+import { useJsApiLoader } from '@react-google-maps/api';
 
 interface Props {
     initialBranches: Branch[];
 }
 
+const LIBRARIES: ("places" | "geometry" | "drawing" | "visualization")[] = ["places"];
+
 export default function BranchClientManager({ initialBranches }: Props) {
     const router = useRouter();
+
+    // Google Maps Script for Geocoding
+    const { isLoaded } = useJsApiLoader({
+        id: 'google-map-script-admin',
+        googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
+        libraries: LIBRARIES
+    });
+
     const [loading, setLoading] = useState(false);
+    const [geoLoading, setGeoLoading] = useState(false);
 
     // Modal
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingItem, setEditingItem] = useState<Branch | null>(null);
 
-    // Form
+    // Form Fields
     const [name, setName] = useState('');
     const [address, setAddress] = useState('');
     const [city, setCity] = useState('');
     const [phone, setPhone] = useState('');
     const [email, setEmail] = useState('');
+    const [hours, setHours] = useState('Mon - Fri: 9:00 AM - 5:00 PM');
+    const [lat, setLat] = useState('40.7128');
+    const [lng, setLng] = useState('-74.0060');
+
     const [isActive, setIsActive] = useState(true);
+    const [hasAtm, setHasAtm] = useState(true);
+    const [hasDriveThru, setHasDriveThru] = useState(false);
+
+    // Geocoding Function
+    const handleAutoGeocode = async () => {
+        if (!isLoaded || !window.google) {
+            toast.error("Google Maps not loaded yet.");
+            return;
+        }
+        if (!address || !city) {
+            toast.error("Please enter Address and City first.");
+            return;
+        }
+
+        setGeoLoading(true);
+        try {
+            const geocoder = new window.google.maps.Geocoder();
+            const fullAddress = `${address}, ${city}`;
+
+            const result = await geocoder.geocode({ address: fullAddress });
+
+            if (result.results && result.results.length > 0) {
+                const location = result.results[0].geometry.location;
+                setLat(location.lat().toString());
+                setLng(location.lng().toString());
+                toast.success("Coordinates found!");
+            } else {
+                toast.error("Could not find coordinates for this address.");
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error("Geocoding failed. Check API key restrictions.");
+        }
+        setGeoLoading(false);
+    };
 
     const openAddModal = () => {
         setEditingItem(null);
@@ -35,7 +87,12 @@ export default function BranchClientManager({ initialBranches }: Props) {
         setCity('');
         setPhone('');
         setEmail('');
+        setHours('Mon - Fri: 9:00 AM - 5:00 PM');
+        setLat('40.7128');
+        setLng('-74.0060');
         setIsActive(true);
+        setHasAtm(true);
+        setHasDriveThru(false);
         setIsModalOpen(true);
     };
 
@@ -46,7 +103,12 @@ export default function BranchClientManager({ initialBranches }: Props) {
         setCity(branch.city);
         setPhone(branch.phone);
         setEmail(branch.email || '');
+        setHours(branch.hours || 'Mon - Fri: 9:00 AM - 5:00 PM');
+        setLat(branch.lat.toString());
+        setLng(branch.lng.toString());
         setIsActive(branch.isActive);
+        setHasAtm(branch.hasAtm);
+        setHasDriveThru(branch.hasDriveThru);
         setIsModalOpen(true);
     };
 
@@ -85,7 +147,12 @@ export default function BranchClientManager({ initialBranches }: Props) {
         formData.append("city", city);
         formData.append("phone", phone);
         formData.append("email", email);
+        formData.append("hours", hours);
+        formData.append("lat", lat);
+        formData.append("lng", lng);
         if (isActive) formData.append("isActive", "on");
+        if (hasAtm) formData.append("hasAtm", "on");
+        if (hasDriveThru) formData.append("hasDriveThru", "on");
 
         const res = editingItem
             ? await updateBranch(editingItem.id, formData)
@@ -103,6 +170,12 @@ export default function BranchClientManager({ initialBranches }: Props) {
 
     return (
         <div className={styles.container}>
+            <div style={{ marginBottom: '1rem' }}>
+                <Link href="/admin/settings" className={styles.backLink}>
+                    <ArrowLeft size={18} />
+                    Back to Settings
+                </Link>
+            </div>
             <div className={styles.header}>
                 <h1 className={styles.title}>Branch Locations</h1>
                 <button onClick={openAddModal} className={styles.addBtn} disabled={loading}>
@@ -132,18 +205,13 @@ export default function BranchClientManager({ initialBranches }: Props) {
                                 </div>
                             </div>
                             <div className={styles.actions}>
-                                <button
-                                    onClick={() => handleToggleStatus(branch)}
-                                    className={styles.iconBtn}
-                                    title={branch.isActive ? "Mark Closed" : "Mark Open"}
-                                    disabled={loading}
-                                >
+                                <button onClick={() => handleToggleStatus(branch)} className={styles.iconBtn} title="Toggle Status">
                                     {branch.isActive ? <X size={16} color="#ef4444" /> : <Plus size={16} color="#22c55e" />}
                                 </button>
-                                <button onClick={() => openEditModal(branch)} className={styles.iconBtn} disabled={loading}>
+                                <button onClick={() => openEditModal(branch)} className={styles.iconBtn}>
                                     <Pencil size={16} />
                                 </button>
-                                <button onClick={() => handleDelete(branch.id)} className={`${styles.iconBtn} ${styles.deleteBtn}`} disabled={loading}>
+                                <button onClick={() => handleDelete(branch.id)} className={`${styles.iconBtn} ${styles.deleteBtn}`}>
                                     <Trash2 size={16} />
                                 </button>
                             </div>
@@ -163,6 +231,7 @@ export default function BranchClientManager({ initialBranches }: Props) {
                         </div>
 
                         <form onSubmit={handleSubmit}>
+                            {/* BASIC INFO */}
                             <div className={styles.formGroup}>
                                 <label className={styles.label}>Branch Name</label>
                                 <input className={styles.input} value={name} onChange={e => setName(e.target.value)} required placeholder="e.g. Downtown HQ" />
@@ -170,7 +239,7 @@ export default function BranchClientManager({ initialBranches }: Props) {
 
                             <div className={styles.formGroup}>
                                 <label className={styles.label}>Address</label>
-                                <input className={styles.input} value={address} onChange={e => setAddress(e.target.value)} required placeholder="123 Finance St, Suite 100" />
+                                <input className={styles.input} value={address} onChange={e => setAddress(e.target.value)} required placeholder="123 Finance St" />
                             </div>
 
                             <div className={styles.grid2}>
@@ -185,8 +254,44 @@ export default function BranchClientManager({ initialBranches }: Props) {
                             </div>
 
                             <div className={styles.formGroup}>
-                                <label className={styles.label}>Contact Email</label>
-                                <input type="email" className={styles.input} value={email} onChange={e => setEmail(e.target.value)} placeholder="branch@trustbank.com" />
+                                <label className={styles.label}>Opening Hours</label>
+                                <input className={styles.input} value={hours} onChange={e => setHours(e.target.value)} placeholder="Mon - Fri: 9AM - 5PM" />
+                            </div>
+
+                            {/* COORDINATES + AUTO FILL BUTTON */}
+                            <div className={styles.formGroup}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                                    <label className={styles.label} style={{ marginBottom: 0 }}>Coordinates</label>
+                                    <button
+                                        type="button"
+                                        onClick={handleAutoGeocode}
+                                        disabled={geoLoading || !isLoaded}
+                                        style={{
+                                            background: '#eff6ff', color: '#2563eb', border: 'none',
+                                            padding: '4px 10px', borderRadius: '4px', fontSize: '0.8rem',
+                                            fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px'
+                                        }}
+                                    >
+                                        {geoLoading ? <Loader2 size={12} className="animate-spin" /> : <Search size={12} />}
+                                        Auto-Fill from Address
+                                    </button>
+                                </div>
+                                <div className={styles.grid2}>
+                                    <input type="number" step="any" className={styles.input} value={lat} onChange={e => setLat(e.target.value)} required placeholder="Latitude" />
+                                    <input type="number" step="any" className={styles.input} value={lng} onChange={e => setLng(e.target.value)} required placeholder="Longitude" />
+                                </div>
+                            </div>
+
+                            {/* CHECKBOXES */}
+                            <div className={styles.grid2} style={{ marginBottom: '1.5rem', marginTop: '1rem' }}>
+                                <label className={styles.checkboxWrapper}>
+                                    <input type="checkbox" checked={hasAtm} onChange={e => setHasAtm(e.target.checked)} className={styles.checkbox} />
+                                    <span>24/7 ATM</span>
+                                </label>
+                                <label className={styles.checkboxWrapper}>
+                                    <input type="checkbox" checked={hasDriveThru} onChange={e => setHasDriveThru(e.target.checked)} className={styles.checkbox} />
+                                    <span>Drive-Thru</span>
+                                </label>
                             </div>
 
                             <div className={styles.formGroup}>

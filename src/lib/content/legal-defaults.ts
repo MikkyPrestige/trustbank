@@ -1,6 +1,6 @@
 export const DEFAULT_PRIVACY = `
 <h2>1. Information We Collect</h2>
-<p>We collect information about you when you open an account, use our mobile app, or visit our website. This includes personal identifiers (Name, SSN), contact information, and financial history.</p>
+<p>We collect information about you when you open an account or visit our website. This includes personal identifiers (Name, SSN), contact information, and financial history.</p>
 
 <h2>2. How We Use Your Information</h2>
 <p>We use your information to process transactions, prevent fraud, comply with regulatory requirements (KYC/AML), and improve our banking services.</p>

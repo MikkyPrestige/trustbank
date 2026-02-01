@@ -138,7 +138,7 @@
 .navBadge {
   margin-left: auto;
   background: var(--danger);
-  color: white;
+  color: var(--text-invert);
   font-size: 0.7rem;
   font-weight: 700;
   padding: 2px 6px;
@@ -177,7 +177,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: var(--text-invert);
   font-weight: 700;
   font-size: 0.9rem;
 }
@@ -560,7 +560,7 @@
 /* --- 8. FROZEN ALERT --- */
 .frozenBanner {
   background: #ef4444;
-  color: white;
+  color: var(--text-invert);
   padding: 16px 24px;
   border-radius: 16px;
   margin-bottom: 24px;
@@ -678,7 +678,7 @@
   background: linear-gradient(125deg, #09090b 0%, #18181b 40%, #27272a 100%);
   border-radius: 24px;
   padding: 28px;
-  color: white;
+  color: var(--text-invert);
   position: relative;
   overflow: hidden;
   box-shadow:
@@ -1038,7 +1038,7 @@
 /* --- BADGES --- */
 .navBadge {
   background: var(--primary);
-  color: white;
+  color: var(--text-invert);
 }
 
 .badgeDanger {

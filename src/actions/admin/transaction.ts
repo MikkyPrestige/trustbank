@@ -1,29 +1,26 @@
 'use server';
 
 import { db } from "@/lib/db";
+// 👇 Verify path matches your file structure
 import { logAdminAction } from "@/lib/utils/admin-logger";
 import { revalidatePath } from "next/cache";
 import { checkAdminAction } from "@/lib/auth/admin-auth";
-import { canPerform } from "@/lib/auth/permissions"; // 👈 Import Permissions
+import { canPerform } from "@/lib/auth/permissions";
 import {
-  TransactionDirection,
-  TransactionStatus,
-  TransactionType,
-  UserRole // 👈 Import UserRole
+    TransactionDirection,
+    TransactionStatus,
+    TransactionType,
+    UserRole
 } from "@prisma/client";
 
 // 1. DELETE TRANSACTION
-// 🛡️ PERMISSION: 'MONEY' (Strictly Admin Only)
 export async function deleteTransaction(transactionId: string) {
     const { authorized, session } = await checkAdminAction();
 
-    // ✅ 1. Session Safety
     if (!authorized || !session || !session.user) {
         return { success: false, message: "Unauthorized" };
     }
-
-    // ✅ 2. Permission Check
-    // Support Agents cannot delete financial records.
+    // permission Check (Support Agents cannot delete financial records.)
     if (!canPerform(session.user.role as UserRole, 'MONEY')) {
         return { success: false, message: "Insufficient permissions. Only Admins can delete transactions." };
     }
@@ -36,8 +33,8 @@ export async function deleteTransaction(transactionId: string) {
             // REVERSE IMPACT (Only if it was completed)
             if (record.status === TransactionStatus.COMPLETED) {
                 const op = record.direction === TransactionDirection.CREDIT
-                    ? { decrement: record.amount } // Was added, so subtract it
-                    : { increment: record.amount }; // Was subtracted, so add it back
+                    ? { decrement: record.amount }
+                    : { increment: record.amount };
 
                 await tx.account.update({
                     where: { id: record.accountId },
@@ -48,7 +45,13 @@ export async function deleteTransaction(transactionId: string) {
             await tx.ledgerEntry.delete({ where: { id: transactionId } });
         });
 
-        await logAdminAction("DELETE_TRX", transactionId, { admin: session.user.email });
+        await logAdminAction(
+            "DELETE_TRX",
+            transactionId,
+            { admin: session.user.email },
+            "WARNING",
+            "SUCCESS"
+        );
 
     } catch (err) {
         console.error("Delete Error:", err);
@@ -60,16 +63,14 @@ export async function deleteTransaction(transactionId: string) {
 }
 
 // 2. UPDATE TRANSACTION
-// 🛡️ PERMISSION: 'MONEY' (Strictly Admin Only)
 export async function updateTransaction(prevState: any, formData: FormData) {
     const { authorized, session } = await checkAdminAction();
 
-    // ✅ 1. Session Safety
     if (!authorized || !session || !session.user) {
         return { success: false, message: "Unauthorized" };
     }
 
-    // ✅ 2. Permission Check
+    // permission Check (Support Agents cannot edit financial records.)
     if (!canPerform(session.user.role as UserRole, 'MONEY')) {
         return { success: false, message: "Insufficient permissions. Only Admins can edit transactions." };
     }
@@ -79,7 +80,6 @@ export async function updateTransaction(prevState: any, formData: FormData) {
     const description = formData.get("description") as string;
     const createdAt = formData.get("createdAt") as string;
 
-    // Inputs come as strings, we must cast to Enums carefully
     const directionInput = formData.get("direction") as "CREDIT" | "DEBIT";
 
     // Map Input to Enums
@@ -99,8 +99,8 @@ export async function updateTransaction(prevState: any, formData: FormData) {
             // B. REVERT OLD BALANCE (Undo the past)
             if (oldRecord.status === TransactionStatus.COMPLETED) {
                 const reverseOp = oldRecord.direction === TransactionDirection.CREDIT
-                    ? { decrement: oldRecord.amount } // Was Credit -> Remove it
-                    : { increment: oldRecord.amount }; // Was Debit -> Add it back
+                    ? { decrement: oldRecord.amount }
+                    : { increment: oldRecord.amount };
 
                 await tx.account.update({
                     where: { id: oldRecord.accountId },
@@ -123,8 +123,8 @@ export async function updateTransaction(prevState: any, formData: FormData) {
             // D. APPLY NEW BALANCE (Apply the future)
             if (updatedRecord.status === TransactionStatus.COMPLETED) {
                 const newOp = updatedRecord.direction === TransactionDirection.CREDIT
-                    ? { increment: amount } // Is Credit -> Add it
-                    : { decrement: amount }; // Is Debit -> Remove it
+                    ? { increment: amount }
+                    : { decrement: amount };
 
                 await tx.account.update({
                     where: { id: updatedRecord.accountId },
@@ -133,7 +133,13 @@ export async function updateTransaction(prevState: any, formData: FormData) {
             }
         });
 
-        await logAdminAction("EDIT_TRX", transactionId, { amount, description, direction: newDirection, admin: session.user.email });
+        await logAdminAction(
+            "EDIT_TRX",
+            transactionId,
+            { amount, description, direction: newDirection, admin: session.user.email },
+            "INFO",
+            "SUCCESS"
+        );
 
     } catch (err) {
         console.error("Update Error:", err);
@@ -148,19 +154,32 @@ export async function updateTransaction(prevState: any, formData: FormData) {
 // 'use server';
 
 // import { db } from "@/lib/db";
-// import { logAdminAction } from "@/lib/admin-logger";
+// import { logAdminAction } from "@/lib/utils/admin-logger";
 // import { revalidatePath } from "next/cache";
-// import { checkAdminAction } from "@/lib/admin-auth";
+// import { checkAdminAction } from "@/lib/auth/admin-auth";
+// import { canPerform } from "@/lib/auth/permissions"; // 👈 Import Permissions
 // import {
 //   TransactionDirection,
 //   TransactionStatus,
-//   TransactionType
-// } from "@prisma/client"; // ✅ Import Enums
+//   TransactionType,
+//   UserRole // 👈 Import UserRole
+// } from "@prisma/client";
 
 // // 1. DELETE TRANSACTION
+// // 🛡️ PERMISSION: 'MONEY' (Strictly Admin Only)
 // export async function deleteTransaction(transactionId: string) {
 //     const { authorized, session } = await checkAdminAction();
-//     if (!authorized) return { success: false, message: "Unauthorized" };
+
+//     // ✅ 1. Session Safety
+//     if (!authorized || !session || !session.user) {
+//         return { success: false, message: "Unauthorized" };
+//     }
+
+//     // ✅ 2. Permission Check
+//     // Support Agents cannot delete financial records.
+//     if (!canPerform(session.user.role as UserRole, 'MONEY')) {
+//         return { success: false, message: "Insufficient permissions. Only Admins can delete transactions." };
+//     }
 
 //     try {
 //         await db.$transaction(async (tx) => {
@@ -182,7 +201,7 @@ export async function updateTransaction(prevState: any, formData: FormData) {
 //             await tx.ledgerEntry.delete({ where: { id: transactionId } });
 //         });
 
-//         await logAdminAction("DELETE_TRX", transactionId, { admin: session?.user?.email });
+//         await logAdminAction("DELETE_TRX", transactionId, { admin: session.user.email });
 
 //     } catch (err) {
 //         console.error("Delete Error:", err);
@@ -194,9 +213,19 @@ export async function updateTransaction(prevState: any, formData: FormData) {
 // }
 
 // // 2. UPDATE TRANSACTION
+// // 🛡️ PERMISSION: 'MONEY' (Strictly Admin Only)
 // export async function updateTransaction(prevState: any, formData: FormData) {
 //     const { authorized, session } = await checkAdminAction();
-//     if (!authorized) return { success: false, message: "Unauthorized" };
+
+//     // ✅ 1. Session Safety
+//     if (!authorized || !session || !session.user) {
+//         return { success: false, message: "Unauthorized" };
+//     }
+
+//     // ✅ 2. Permission Check
+//     if (!canPerform(session.user.role as UserRole, 'MONEY')) {
+//         return { success: false, message: "Insufficient permissions. Only Admins can edit transactions." };
+//     }
 
 //     const transactionId = formData.get("transactionId") as string;
 //     const amount = parseFloat(formData.get("amount") as string);
@@ -257,7 +286,7 @@ export async function updateTransaction(prevState: any, formData: FormData) {
 //             }
 //         });
 
-//         await logAdminAction("EDIT_TRX", transactionId, { amount, description, direction: newDirection, admin: session?.user?.email });
+//         await logAdminAction("EDIT_TRX", transactionId, { amount, description, direction: newDirection, admin: session.user.email });
 
 //     } catch (err) {
 //         console.error("Update Error:", err);

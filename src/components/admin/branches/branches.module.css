@@ -1,7 +1,23 @@
 .container {
   padding: 2rem;
-  max-width: 1000px;
-  margin: 0 auto;
+  background: var(--bg-app);
+  min-height: 100vh;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.backLink:hover {
+  color: var(--primary);
+  transform: translateX(-2px);
 }
 
 .header {
@@ -13,38 +29,35 @@
 
 .title {
   font-size: 1.8rem;
-  font-weight: 800;
+  font-weight: 700;
   color: var(--text-main);
+  margin: 0;
 }
 
 .addBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   background: var(--primary);
-  color: white;
+  color: var(--text-invert);
   border: none;
   padding: 10px 20px;
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  transition: opacity 0.2s;
+  transition: all 0.2s;
 }
 
-.addBtn:hover { opacity: 0.9; }
+.addBtn:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+}
 
-/* LIST */
+/* LIST & CARDS */
 .list {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-}
-
-.emptyState {
-  color: var(--text-muted);
-  text-align: center;
-  padding: 2rem;
-  font-style: italic;
 }
 
 .card {
@@ -55,30 +68,50 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  transition: border-color 0.2s;
+  transition: all 0.2s;
 }
 
-.card:hover { border-color: var(--primary); }
+.card:hover {
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow-sm);
+}
 
 .cardHeader {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 6px;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
 }
 
 .branchName {
+  margin: 0;
   font-size: 1.1rem;
-  font-weight: 700;
   color: var(--text-main);
+}
+
+.statusBadge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.active {
+  background: rgba(34, 197, 94, 0.1);
+  color: var(--success);
+}
+
+.closed {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--danger);
 }
 
 .metaRow {
   display: flex;
-  align-items: center;
-  gap: 16px;
+  gap: 1.5rem;
+  font-size: 0.9rem;
   color: var(--text-muted);
-  font-size: 0.85rem;
 }
 
 .metaItem {
@@ -87,80 +120,68 @@
   gap: 6px;
 }
 
-/* BADGES */
-.statusBadge {
-  font-size: 0.75rem;
-  padding: 2px 8px;
-  border-radius: 100px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.active {
-  background: rgba(34, 197, 94, 0.1);
-  color: #22c55e;
-  border: 1px solid rgba(34, 197, 94, 0.2);
-}
-
-.closed {
-  background: rgba(239, 68, 68, 0.1);
-  color: #ef4444;
-  border: 1px solid rgba(239, 68, 68, 0.2);
-}
-
-/* ACTIONS */
 .actions {
   display: flex;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
 .iconBtn {
-  background: var(--bg-surface);
-  border: 1px solid var(--border);
-  color: var(--text-muted);
   width: 36px;
   height: 36px;
-  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
   cursor: pointer;
+  color: var(--text-main);
   transition: all 0.2s;
 }
 
 .iconBtn:hover {
-  border-color: var(--text-main);
-  color: var(--text-main);
+  background: var(--border);
 }
 
 .deleteBtn:hover {
-  border-color: #ef4444;
-  color: #ef4444;
-  background: rgba(239, 68, 68, 0.05);
+  background: #fee2e2;
+  color: var(--danger);
+  border-color: #fca5a5;
 }
 
-/* MODAL */
+/* =========================================
+   MODAL (THE FIX)
+   ========================================= */
 .modalOverlay {
   position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.7);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5); /* Dim background */
   backdrop-filter: blur(4px);
+  z-index: 50;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 100;
-  padding: 1rem;
+  padding: 1rem; /* Safety padding so modal doesn't touch screen edges */
 }
 
 .modal {
   background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
   width: 100%;
   max-width: 500px;
   padding: 2rem;
-  border-radius: 16px;
-  border: 1px solid var(--border);
-  animation: slideUp 0.3s ease-out;
+  position: relative;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+
+  /* --- SCROLL FIXES --- */
+  max-height: 85vh; /* Never taller than 85% of screen height */
+  overflow-y: auto; /* Enable vertical scrolling if content overflows */
+  display: flex;
+  flex-direction: column;
 }
 
 .modalHeader {
@@ -168,29 +189,51 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1.5rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid var(--border);
 }
 
-.modalTitle { font-size: 1.25rem; font-weight: 700; color: var(--text-main); }
-.closeModalBtn { background: transparent; border: none; color: var(--text-muted); cursor: pointer; padding: 4px; }
-.closeModalBtn:hover { color: var(--text-main); }
+.modalTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+  color: var(--text-main);
+}
 
-/* FORM */
-.formGroup { margin-bottom: 1.25rem; }
-.label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem; color: var(--text-muted); }
+.closeModalBtn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+}
+
+/* FORM STYLES */
+.formGroup {
+  margin-bottom: 1rem;
+}
+
+.label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-main);
+  margin-bottom: 0.5rem;
+}
 
 .input {
   width: 100%;
-  padding: 12px;
-  background: var(--bg-surface);
-  border: 1px solid var(--border);
+  padding: 10px 12px;
   border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg-app);
   color: var(--text-main);
-  font-size: 1rem;
-  outline: none;
+  font-size: 0.95rem;
+  transition: border-color 0.2s;
 }
-.input:focus { border-color: var(--primary); }
+
+.input:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: var(--bg-card);
+}
 
 .grid2 {
   display: grid;
@@ -202,27 +245,43 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  background: var(--bg-surface);
-  padding: 12px;
-  border-radius: 8px;
-  border: 1px solid var(--border);
+  font-size: 0.95rem;
+  color: var(--text-main);
   cursor: pointer;
 }
-.checkbox { width: 18px; height: 18px; cursor: pointer; }
+
+.checkbox {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--primary);
+}
 
 .submitBtn {
   width: 100%;
-  background: var(--primary);
-  color: white;
-  border: none;
   padding: 12px;
+  background: var(--primary);
+  color: var(--text-invert);
+  border: none;
   border-radius: 8px;
-  font-weight: 700;
+  font-weight: 600;
+  font-size: 1rem;
   cursor: pointer;
+  margin-top: 1rem;
+  transition: opacity 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.submitBtn:disabled { opacity: 0.7; cursor: not-allowed; }
 
-@keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+.submitBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Empty State */
+.emptyState {
+  text-align: center;
+  color: var(--text-muted);
+  font-style: italic;
+  margin-top: 2rem;
+}

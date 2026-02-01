@@ -4,7 +4,7 @@
   position: relative;
   z-index: 10;
   font-size: 0.95rem;
-  color: white;
+  color: var(--text-invert);
 }
 
 .container {
@@ -71,7 +71,7 @@
 .value {
   font-size: 1rem;
   font-weight: 800;
-  color: white;
+  color: var(--text-invert);
 }
 
 /* --- 2. MAIN FOOTER (Dark & Serious) --- */
@@ -134,7 +134,7 @@
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  color: white;
+  color: var(--text-invert);
   border: 1px solid rgba(255, 255, 255, 0.1);
   transition: all 0.2s;
 }
@@ -151,7 +151,7 @@
   font-size: 1.1rem;
   font-weight: 700;
   margin-bottom: 24px;
-  color: white;
+  color: var(--text-invert);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -221,7 +221,7 @@
   align-items: center;
   gap: 8px;
   margin-top: 24px;
-  color: white;
+  color: var(--text-invert);
   font-weight: 700;
   text-decoration: none;
   border-bottom: 2px solid var(--accent);
@@ -234,7 +234,7 @@
 
 /* --- 3. REGULATORY STRIP (Clean White) --- */
 .legalStrip {
-  background-color: white;
+  background-color: var(--text-invert);
   padding: 30px 0;
 }
 

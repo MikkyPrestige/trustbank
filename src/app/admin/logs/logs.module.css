@@ -1,8 +1,9 @@
 /* --- LAYOUT --- */
 .container {
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
     width: 100%;
+    padding: 2rem;
     animation: fadeIn 0.3s ease-out;
 }
 
@@ -22,7 +23,7 @@
     margin: 0;
 }
 
-.icon { color: var(--warning); }
+.icon { color: var(--primary); }
 
 .subtitle {
     color: var(--text-muted);
@@ -36,62 +37,172 @@
     border: 1px solid var(--border);
     border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
     overflow-x: auto;
 }
 
 .table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 800px;
+    min-width: 1000px;
 }
 
 .table th {
-    background: rgba(255, 255, 255, 0.02);
+    background: var(--bg-app);
     text-align: left;
-    padding: 1rem;
-    font-size: 0.85rem;
+    padding: 1rem 1.5rem;
+    font-size: 0.8rem;
+    font-weight: 600;
     text-transform: uppercase;
+    letter-spacing: 0.05em;
     color: var(--text-muted);
     border-bottom: 1px solid var(--border);
 }
 
 .table td {
-    padding: 1rem;
+    padding: 1rem 1.5rem;
     border-bottom: 1px solid var(--border);
     vertical-align: middle;
+    color: var(--text-main);
+    font-size: 0.9rem;
 }
 
 .table tr:last-child td { border-bottom: none; }
 
-/* --- CELL STYLES --- */
+.table tr:hover {
+    background-color: var(--bg-app); /* Subtle hover effect using app bg */
+}
+
+/* --- SPECIAL ROWS --- */
+.rowCritical {
+    background-color: rgba(239, 68, 68, 0.08) !important; /* Slight red tint for critical rows */
+}
+
+/* --- BADGES --- */
+.badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid transparent;
+}
+
+/* Using Global Colors directly with opacity */
+.badgeInfo {
+    background: rgba(59, 130, 246, 0.15); /* Blue tint */
+    color: var(--primary);
+    border-color: rgba(59, 130, 246, 0.2);
+}
+
+.badgeWarning {
+    background: rgba(234, 179, 8, 0.15); /* Yellow tint */
+    color: var(--warning);
+    border-color: rgba(234, 179, 8, 0.2);
+}
+
+.badgeCritical {
+    background: rgba(239, 68, 68, 0.15); /* Red tint */
+    color: var(--destructive);
+    border-color: rgba(239, 68, 68, 0.2);
+}
+
+/* --- STATUS ICONS --- */
+.statusCell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.iconSuccess { color: var(--success); }
+.iconWarning { color: var(--accent); }
+.iconError { color: var(--danger); }
+
+/* --- USER INFO --- */
 .adminInfo {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 12px;
+}
+
+.userInfoCol {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.userIcon {
+    color: var(--text-muted);
+    background: var(--bg-app);
+    padding: 6px;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    box-sizing: content-box;
+}
+
+.userName {
     font-weight: 600;
     color: var(--text-main);
+    font-size: 0.9rem;
 }
-.userIcon { color: var(--text-muted); }
 
-.email {
-    font-size: 0.8rem;
+.userEmail {
+    font-size: 0.75rem;
     color: var(--text-muted);
-    margin-left: 22px; /* Align with text */
+}
+
+.anonymous {
+    color: var(--text-muted);
+    font-style: italic;
+    font-size: 0.85rem;
+}
+
+/* --- DATA CELLS --- */
+.actionName {
+    font-weight: 600;
+    color: var(--text-main);
+    font-size: 0.85rem;
+    text-transform: capitalize;
 }
 
 .mono {
-    font-family: monospace;
+    font-family: 'Courier New', monospace;
     font-size: 0.85rem;
     color: var(--text-muted);
 }
 
 .code {
-    background: rgba(0, 0, 0, 0.3);
-    padding: 2px 6px;
-    border-radius: 4px;
-    color: var(--primary);
+    font-family: 'Courier New', monospace;
     font-size: 0.8rem;
+    color: var(--text-muted);
+    background: var(--bg-app);
+    padding: 4px 8px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    max-width: 250px;
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: help;
+}
+
+.ipCell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: monospace;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+.globeIcon {
+    color: var(--text-muted);
+    opacity: 0.6;
 }
 
 .dateCell {
@@ -100,29 +211,17 @@
     white-space: nowrap;
 }
 
-/* --- BADGES --- */
-.badge {
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 0.7rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    display: inline-block;
-    border: 1px solid transparent;
-}
-
-.badgeGreen { background: rgba(34, 197, 94, 0.15); color: #22c55e; border-color: rgba(34, 197, 94, 0.2); }
-.badgeRed { background: rgba(239, 68, 68, 0.15); color: #ef4444; border-color: rgba(239, 68, 68, 0.2); }
-.badgeOrange { background: rgba(234, 179, 8, 0.15); color: #eab308; border-color: rgba(234, 179, 8, 0.2); }
-.badgeGray { background: rgba(255, 255, 255, 0.1); color: var(--text-muted); border-color: var(--border); }
-
 /* --- PAGINATION --- */
 .pagination {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 1.5rem;
-    padding: 0 0.5rem;
+    padding: 1rem 1.5rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-top: none;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
 }
 
 .pageInfo {
@@ -139,17 +238,18 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    background: var(--bg-card);
+    background: transparent;
     border: 1px solid var(--border);
     padding: 0.5rem 1rem;
     border-radius: 8px;
     color: var(--text-main);
     text-decoration: none;
     font-size: 0.9rem;
+    font-weight: 500;
     transition: all 0.2s;
 }
 
-.navBtn:hover {
+.navBtn:hover:not(.disabled) {
     background: var(--bg-app);
     border-color: var(--text-muted);
 }
@@ -157,6 +257,7 @@
 .disabled {
     opacity: 0.5;
     pointer-events: none;
+    background: var(--bg-app);
 }
 
 .empty {
@@ -166,4 +267,4 @@
     font-style: italic;
 }
 
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }

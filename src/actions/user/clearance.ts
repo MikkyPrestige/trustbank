@@ -2,11 +2,16 @@
 
 import { getAuthenticatedUser } from "@/lib/auth/user-guard";
 import { db } from "@/lib/db";
+import { checkMaintenanceMode } from "@/lib/security";
 import { revalidatePath } from "next/cache";
 import { TransactionStatus } from "@prisma/client";
 
 export async function submitClearanceCode(prevState: any, formData: FormData) {
     const { success, message, user } = await getAuthenticatedUser();
+
+    if (await checkMaintenanceMode()) {
+        return { success: false, message: "System is currently under maintenance. Please try again later." };
+    }
     if (!success || !user) return { message };
 
     const code = formData.get("code") as string;

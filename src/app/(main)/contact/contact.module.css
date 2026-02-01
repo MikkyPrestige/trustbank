@@ -12,7 +12,7 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  color: white;
+  color: var(--text-invert);
   overflow: hidden;
 }
 

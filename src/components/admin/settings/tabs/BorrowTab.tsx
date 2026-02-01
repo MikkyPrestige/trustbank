@@ -10,9 +10,10 @@ interface BorrowTabProps {
     borrowMTUrl: string; setBorrowMTUrl: (url: string) => void;
     borrowALUrl: string; setBorrowALUrl: (url: string) => void;
     borrowSLUrl: string; setBorrowSLUrl: (url: string) => void;
+    borrowHeUrl: string; setBorrowHeUrl: (url: string) => void;
 }
 
-export function BorrowTab({ settings, borrowHeroUrl, setBorrowHeroUrl, borrowCCUrl, setBorrowCCUrl, borrowPLUrl, setBorrowPLUrl, borrowMTUrl, setBorrowMTUrl, borrowALUrl, setBorrowALUrl, borrowSLUrl, setBorrowSLUrl }: BorrowTabProps) {
+export function BorrowTab({ settings, borrowHeroUrl, setBorrowHeroUrl, borrowCCUrl, setBorrowCCUrl, borrowPLUrl, setBorrowPLUrl, borrowMTUrl, setBorrowMTUrl, borrowALUrl, setBorrowALUrl, borrowSLUrl, setBorrowSLUrl, borrowHeUrl, setBorrowHeUrl }: BorrowTabProps) {
     return (
         <div className={styles.grid}>
             {/* --- HERO SECTION --- */}
@@ -42,7 +43,7 @@ export function BorrowTab({ settings, borrowHeroUrl, setBorrowHeroUrl, borrowCCU
             {/* Stats */}
             <div className={styles.fullWidth}>
                 <strong>Hero Stats</strong>
-                </div>
+            </div>
             <div className={styles.group}>
                 <label className={styles.label}>Funded Stat</label>
                 <input name="borrow_stat_funded" defaultValue={settings.borrow_stat_funded} className={styles.input} />
@@ -121,7 +122,7 @@ export function BorrowTab({ settings, borrowHeroUrl, setBorrowHeroUrl, borrowCCU
             <div className={styles.group}>
                 <label className={styles.label}>Alt Text</label>
                 <input name="borrow_cc_img_alt" defaultValue={settings.borrow_cc_img_alt} className={styles.input} />
-                </div>
+            </div>
             <div className={`${styles.group} ${styles.fullWidth}`}>
                 <textarea name="borrow_cc_desc" defaultValue={settings.borrow_cc_desc} className={styles.textarea} />
             </div>
@@ -206,6 +207,29 @@ export function BorrowTab({ settings, borrowHeroUrl, setBorrowHeroUrl, borrowCCU
             </div>
             <div className={`${styles.group} ${styles.fullWidth}`}>
                 <textarea name="borrow_sl_desc" defaultValue={settings.borrow_sl_desc} className={styles.textarea} />
+            </div>
+            <div className={styles.fullWidth}>
+                <h4 className={styles.subsectionTitle}>6. Home Equity (#he)</h4>
+            </div>
+            <div className={styles.group}>
+                <label className={styles.label}>Title</label>
+                <input name="borrow_he_title" defaultValue={settings.borrow_he_title} className={styles.input} />
+            </div>
+            <div className={styles.group}>
+                <label className={styles.label}>Button Text</label>
+                <input name="borrow_he_btn" defaultValue={settings.borrow_he_btn} className={styles.input} />
+            </div>
+            <div className={styles.group}>
+                <ImageUploader label="Section Image" value={borrowHeUrl} onChange={setBorrowHeUrl} />
+                <input type="hidden" name="borrow_he_img" value={borrowHeUrl} />
+            </div>
+            <div className={styles.group}>
+                <label className={styles.label}>Image Alt</label>
+                <input name="borrow_he_alt" defaultValue={settings.borrow_he_alt} className={styles.input} />
+            </div>
+            <div className={`${styles.group} ${styles.fullWidth}`}>
+                <label className={styles.label}>Description</label>
+                <input name="borrow_he_desc" defaultValue={settings.borrow_he_desc} className={styles.input} />
             </div>
 
             {/* --- LOAN GRID CONFIG --- */}

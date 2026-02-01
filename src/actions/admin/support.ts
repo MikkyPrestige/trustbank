@@ -22,7 +22,7 @@ export async function adminReplyTicket(ticketId: string, message: string) {
   if(!message.trim()) return { success: false, message: "Message required" };
 
   try {
-    // ✅ FIX: Return the ticket data directly from the transaction
+    // Return the ticket data directly from the transaction
     const ticketInfo = await db.$transaction(async (tx) => {
         // A. Add Message
         await tx.ticketMessage.create({
@@ -40,8 +40,7 @@ export async function adminReplyTicket(ticketId: string, message: string) {
         });
     });
 
-    // C. Send Notification (OUTSIDE Transaction)
-    // TypeScript now knows ticketInfo is { userId, subject } | null
+    // C. Send Notification
     if (ticketInfo) {
         await db.notification.create({
             data: {
@@ -55,7 +54,13 @@ export async function adminReplyTicket(ticketId: string, message: string) {
         });
     }
 
-    await logAdminAction("TICKET_REPLY", ticketId, { admin: session.user.email });
+    await logAdminAction(
+        "TICKET_REPLY",
+        ticketId,
+        { admin: session.user.email },
+        "INFO",
+        "SUCCESS"
+    );
 
   } catch (error) {
     console.error("Support Reply Error:", error);
@@ -81,7 +86,7 @@ export async function closeTicket(ticketId: string) {
     }
 
     try {
-        // ✅ FIX: Return the updated ticket directly from the transaction
+        // Return the updated ticket directly from the transaction
         const closedTicket = await db.$transaction(async (tx) => {
             // A. Update Ticket Status & Return the result
             return await tx.ticket.update({
@@ -91,8 +96,7 @@ export async function closeTicket(ticketId: string) {
             });
         });
 
-        // B. Notify User (OUTSIDE Transaction)
-        // TypeScript guarantees closedTicket exists here because update throws if not found
+        // B. Notify User
         if (closedTicket) {
             await db.notification.create({
                 data: {
@@ -106,7 +110,13 @@ export async function closeTicket(ticketId: string) {
             });
         }
 
-        await logAdminAction("CLOSE_TICKET", ticketId, { admin: session.user.email });
+        await logAdminAction(
+            "CLOSE_TICKET",
+            ticketId,
+            { admin: session.user.email },
+            "INFO",
+            "SUCCESS"
+        );
 
     } catch (error) {
         console.error("Close Ticket Error:", error);
@@ -122,19 +132,29 @@ export async function closeTicket(ticketId: string) {
 // 'use server';
 
 // import { db } from "@/lib/db";
-// import { checkAdminAction } from "@/lib/admin-auth";
-// import { logAdminAction } from "@/lib/admin-logger";
+// import { checkAdminAction } from "@/lib/auth/admin-auth";
+// import { logAdminAction } from "@/lib/utils/admin-logger";
 // import { revalidatePath } from "next/cache";
+// import { canPerform } from "@/lib/auth/permissions";
+// import { UserRole } from "@prisma/client";
 
 // // 1. ADMIN REPLY
 // export async function adminReplyTicket(ticketId: string, message: string) {
 //   const { authorized, session } = await checkAdminAction();
-//   if (!authorized) return { success: false, message: "Unauthorized" };
+
+//   if (!authorized || !session || !session.user) {
+//       return { success: false, message: "Unauthorized" };
+//   }
+
+//   if (!canPerform(session.user.role as UserRole, 'EDIT')) {
+//       return { success: false, message: "Insufficient permissions." };
+//   }
 
 //   if(!message.trim()) return { success: false, message: "Message required" };
 
 //   try {
-//     await db.$transaction(async (tx) => {
+//     // ✅ FIX: Return the ticket data directly from the transaction
+//     const ticketInfo = await db.$transaction(async (tx) => {
 //         // A. Add Message
 //         await tx.ticketMessage.create({
 //             data: {
@@ -144,30 +164,35 @@ export async function closeTicket(ticketId: string) {
 //             }
 //         });
 
-//         // B. Send Notification to User
-//         const ticket = await tx.ticket.findUnique({ where: { id: ticketId } });
-//         if (ticket) {
-//             await tx.notification.create({
-//                 data: {
-//                     userId: ticket.userId,
-//                     title: "Support Reply",
-//                     message: `Admin replied to: ${ticket.subject}`,
-//                     type: "INFO",
-//                     // 👇 ADDED LINK HERE
-//                     link: `/dashboard/support/${ticketId}`
-//                 }
-//             });
-//         }
+//         // B. Fetch ticket details and RETURN them
+//         return await tx.ticket.findUnique({
+//             where: { id: ticketId },
+//             select: { userId: true, subject: true }
+//         });
 //     });
 
-//     await logAdminAction("TICKET_REPLY", ticketId, { admin: session?.user?.email });
+//     // C. Send Notification (OUTSIDE Transaction)
+//     // TypeScript now knows ticketInfo is { userId, subject } | null
+//     if (ticketInfo) {
+//         await db.notification.create({
+//             data: {
+//                 userId: ticketInfo.userId,
+//                 title: "Support Reply",
+//                 message: `Admin replied to: ${ticketInfo.subject}`,
+//                 type: "INFO",
+//                 link: `/dashboard/support/${ticketId}`,
+//                 isRead: false
+//             }
+//         });
+//     }
+
+//     await logAdminAction("TICKET_REPLY", ticketId, { admin: session.user.email });
 
 //   } catch (error) {
 //     console.error("Support Reply Error:", error);
 //     return { success: false, message: "Failed to send reply." };
 //   }
 
-//   // ✅ Revalidate outside try/catch
 //   revalidatePath(`/admin/support/${ticketId}`);
 //   revalidatePath("/admin/support");
 
@@ -177,37 +202,48 @@ export async function closeTicket(ticketId: string) {
 // // 2. CLOSE TICKET
 // export async function closeTicket(ticketId: string) {
 //     const { authorized, session } = await checkAdminAction();
-//     if (!authorized) return { success: false, message: "Unauthorized" };
+
+//     if (!authorized || !session || !session.user) {
+//         return { success: false, message: "Unauthorized" };
+//     }
+
+//     if (!canPerform(session.user.role as UserRole, 'EDIT')) {
+//         return { success: false, message: "Insufficient permissions." };
+//     }
 
 //     try {
-//         // Use transaction to update ticket AND notify user
-//         await db.$transaction(async (tx) => {
-//             // A. Update Ticket Status
-//             const ticket = await tx.ticket.update({
+//         // ✅ FIX: Return the updated ticket directly from the transaction
+//         const closedTicket = await db.$transaction(async (tx) => {
+//             // A. Update Ticket Status & Return the result
+//             return await tx.ticket.update({
 //                 where: { id: ticketId },
-//                 data: { status: "CLOSED" }
-//             });
-
-//             // B. 👇 ADDED: Notify User that ticket is closed
-//             await tx.notification.create({
-//                 data: {
-//                     userId: ticket.userId,
-//                     title: "Ticket Closed",
-//                     message: `Your ticket "${ticket.subject}" has been marked as resolved.`,
-//                     type: "SUCCESS",
-//                     link: `/dashboard/support/${ticketId}`
-//                 }
+//                 data: { status: "CLOSED" },
+//                 select: { userId: true, subject: true }
 //             });
 //         });
 
-//         await logAdminAction("CLOSE_TICKET", ticketId, { admin: session?.user?.email });
+//         // B. Notify User (OUTSIDE Transaction)
+//         // TypeScript guarantees closedTicket exists here because update throws if not found
+//         if (closedTicket) {
+//             await db.notification.create({
+//                 data: {
+//                     userId: closedTicket.userId,
+//                     title: "Ticket Closed",
+//                     message: `Your ticket "${closedTicket.subject}" has been marked as resolved.`,
+//                     type: "SUCCESS",
+//                     link: `/dashboard/support/${ticketId}`,
+//                     isRead: false
+//                 }
+//             });
+//         }
+
+//         await logAdminAction("CLOSE_TICKET", ticketId, { admin: session.user.email });
 
 //     } catch (error) {
 //         console.error("Close Ticket Error:", error);
 //         return { success: false, message: "Error closing ticket." };
 //     }
 
-//     // ✅ Revalidate outside try/catch
 //     revalidatePath(`/admin/support/${ticketId}`);
 //     revalidatePath("/admin/support");
 

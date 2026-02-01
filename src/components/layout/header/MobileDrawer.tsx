@@ -12,6 +12,14 @@ interface MobileDrawerProps {
     menus: any;
 }
 
+const ROUTE_MAP: Record<string, string> = {
+    BANKING: '/bank',
+    LENDING: '/borrow',
+    WEALTH: '/wealth',
+    INSURE: '/insure',
+    RESOURCES: '/learn',
+};
+
 export default function MobileDrawer({ isOpen, onClose, onLogin, onRegister, menus }: MobileDrawerProps) {
     return (
         <>
@@ -31,15 +39,10 @@ export default function MobileDrawer({ isOpen, onClose, onLogin, onRegister, men
                 </div>
 
                 <nav className={styles.mobileNavLinks}>
-                    <Link href="/" className={styles.mobileLink} onClick={onClose}>
-                        Home <ChevronRight size={16} />
-                    </Link>
-
-                    {/* Dynamic Links from 'menus' Prop */}
                     {Object.keys(menus).map((key) => (
                         <Link
                             key={key}
-                            href={`/${key.toLowerCase()}`}
+                            href={ROUTE_MAP[key] || '#'}
                             className={styles.mobileLink}
                             onClick={onClose}
                         >

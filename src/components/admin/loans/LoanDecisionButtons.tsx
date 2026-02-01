@@ -20,7 +20,7 @@ export default function LoanDecisionButtons({ loanId }: { loanId: string }) {
 
             if (res.success) {
                 toast.success(res.message);
-                router.refresh(); // Refresh server components
+                router.refresh();
             } else {
                 toast.error(res.message);
             }

@@ -2,6 +2,7 @@
 
 import { getAuthenticatedUser } from "@/lib/auth/user-guard";
 import { db } from "@/lib/db";
+import { checkMaintenanceMode } from "@/lib/security";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
@@ -16,6 +17,10 @@ const beneficiarySchema = z.object({
 // --- ADD BENEFICIARY ---
 export async function addBeneficiary(prevState: any, formData: FormData) {
 const { success, message, user } = await getAuthenticatedUser();
+
+if (await checkMaintenanceMode()) {
+        return { success: false, message: "System is currently under maintenance. Please try again later." };
+    }
 
     if (!success || !user) {
         return { message };
@@ -84,6 +89,10 @@ const { success, message, user } = await getAuthenticatedUser();
 // --- DELETE BENEFICIARY ---
 export async function deleteBeneficiary(id: string) {
   const { success, message, user } = await getAuthenticatedUser();
+
+  if (await checkMaintenanceMode()) {
+        return { success: false, message: "System is currently under maintenance. Please try again later." };
+    }
 
     if (!success || !user) {
         return { message };

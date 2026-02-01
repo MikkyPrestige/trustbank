@@ -78,13 +78,12 @@ export default function LocationsClient({ initialBranches, settings }: Props) {
                                 </div>
                             ) : (
                                 filteredBranches.map((branch) => {
-                                    const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${branch.address}, ${branch.city}`)}`;
+                                    const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(`${branch.address}, ${branch.city}`)}`;
 
                                     return (
                                         <div key={branch.id} className={styles.branchCard}>
                                             <div className={styles.branchHeader}>
                                                 <h3>{branch.name}</h3>
-                                                <span className={styles.distanceBadge}>0.8 mi</span>
                                             </div>
 
                                             <div className={styles.branchDetails}>

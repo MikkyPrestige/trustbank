@@ -185,7 +185,7 @@ export default function DashboardView({ user, totalBalance, beneficiaries, trend
                                                     </div>
                                                 </td>
                                                 <td className={styles.txDate}>
-                                                    {new Date(tx.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                                                    {new Date(tx.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                                                 </td>
                                                 <td className={`${styles.txAmount} ${tx.direction === 'CREDIT' ? styles.amountPositive : styles.amountNegative}`}>
                                                     {tx.direction === 'CREDIT' ? '+' : '-'}{displayMoney(Number(tx.amount)).replace('$', '')}

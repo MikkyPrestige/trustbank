@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { redirect } from "next/navigation";
+import { getFeatureStatus } from "@/actions/admin/system-status";
 import LoanApplicationForm from "@/components/dashboard/loans/LoanApplicationForm";
 import RepaymentModal from "@/components/dashboard/loans/RepaymentModal";
 import styles from "../../../../components/dashboard/loans/loans.module.css";
@@ -9,6 +10,7 @@ import { KycStatus } from "@prisma/client";
 
 export default async function LoansPage() {
     const session = await auth();
+    const features = await getFeatureStatus();
     if (!session?.user?.id) redirect("/login");
 
     const user = await db.user.findUnique({
@@ -110,7 +112,14 @@ export default async function LoansPage() {
                                 <TrendingUp size={20} color="#3b82f6" />
                                 Apply for a New Loan
                             </h2>
-                            <LoanApplicationForm />
+                            {/* {!features.loans ? (
+                                <div className={styles.btn}>
+                                    ⚠️ Loan applications are temporarily paused by administration.
+                                </div>
+                            ) : (
+                                <LoanApplicationForm />
+                            )} */}
+                                <LoanApplicationForm />
                         </>
                     )}
                 </div>

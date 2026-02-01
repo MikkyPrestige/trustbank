@@ -46,7 +46,7 @@
 .heroTitle {
   font-size: 4.5rem;
   font-weight: 800;
-  color: white;
+  color: var(--text-invert);
   line-height: 1;
   margin-bottom: 24px;
 }
@@ -68,7 +68,7 @@
 }
 .primaryBtn {
   background: #2563eb;
-  color: white;
+  color: var(--text-invert);
   padding: 14px 32px;
   border-radius: 50px;
   font-weight: 700;
@@ -82,7 +82,7 @@
 }
 .secondaryBtn {
   background: transparent;
-  color: white;
+  color: var(--text-invert);
   padding: 14px 32px;
   border-radius: 50px;
   font-weight: 700;

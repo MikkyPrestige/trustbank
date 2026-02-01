@@ -1,7 +1,7 @@
 'use client';
 
 import { GoogleMap, useJsApiLoader, MarkerF } from '@react-google-maps/api';
-import { useMemo, useState, useCallback } from 'react';
+import { useMemo, useState, useCallback, useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
 import styles from './locations.module.css';
 
@@ -27,28 +27,50 @@ export default function BranchMap({ branches }: BranchMapProps) {
 
     const [map, setMap] = useState<google.maps.Map | null>(null);
 
-    const markers = useMemo(() => branches, [branches]);
-
     const onLoad = useCallback((map: google.maps.Map) => {
-        const bounds = new window.google.maps.LatLngBounds();
-
-        markers.forEach(marker => {
-            bounds.extend({ lat: marker.lat, lng: marker.lng });
-        });
-
-        if (markers.length > 1) {
-            map.fitBounds(bounds);
-        } else if (markers.length === 1) {
-            map.setCenter({ lat: markers[0].lat, lng: markers[0].lng });
-            map.setZoom(14);
-        } else {
-            map.setZoom(4);
-        }
-
         setMap(map);
-    }, [markers]);
+    }, []);
 
     const onUnmount = useCallback(() => setMap(null), []);
+
+    useEffect(() => {
+        if (!map || !branches) return;
+
+        // 1. No branches? Show default USA view
+        if (branches.length === 0) {
+            map.setCenter(defaultCenter);
+            map.setZoom(4);
+            return;
+        }
+
+        const bounds = new window.google.maps.LatLngBounds();
+        let hasValidCoords = false;
+
+        branches.forEach((branch) => {
+            if (branch.lat && branch.lng) {
+                bounds.extend({ lat: branch.lat, lng: branch.lng });
+                hasValidCoords = true;
+            }
+        });
+
+        if (!hasValidCoords) return;
+
+        // 2. INTELLIGENT ZOOM HANDLING
+        // If there is only 1 branch OR all branches are at the exact same location
+        if (branches.length === 1 || bounds.getNorthEast().equals(bounds.getSouthWest())) {
+            map.setCenter(bounds.getNorthEast()); // Center on the pins
+            map.setZoom(14); // Set a reasonable street-level zoom
+        } else {
+            // Otherwise, fit bounds normally to show all spread-out pins
+            map.fitBounds(bounds, {
+                top: 50,
+                right: 50,
+                bottom: 50,
+                left: 50
+            });
+        }
+
+    }, [map, branches]);
 
     if (!isLoaded) {
         return (
@@ -75,7 +97,7 @@ export default function BranchMap({ branches }: BranchMapProps) {
                 ]
             }}
         >
-            {markers.map((marker) => (
+            {branches.map((marker) => (
                 <MarkerF
                     key={marker.id}
                     position={{ lat: marker.lat, lng: marker.lng }}

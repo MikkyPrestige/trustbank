@@ -130,7 +130,7 @@
   gap: 8px;
   padding: 12px 20px;
   background: var(--primary);
-  color: white;
+  color: var(--text-invert);
   border: none;
   border-radius: 12px;
   font-weight: 600;
@@ -138,7 +138,7 @@
   transition: 0.2s;
 }
 .exportBtn:hover {
-  background: #2563eb;
+  background: var(--primary-hover);
 }
 
 /* --- GLASS TABLE --- */

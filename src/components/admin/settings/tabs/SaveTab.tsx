@@ -19,13 +19,33 @@ export function SaveTab({
     return (
         <div className={styles.grid}>
             {/* --- HERO SECTION --- */}
-            <div className={styles.fullWidth}><h3 className={styles.sectionTitle}>Save: Hero</h3></div>
-            <div className={styles.group}><label className={styles.label}>Headline</label><input name="save_hero_title" defaultValue={settings.save_hero_title} className={styles.input} /></div>
-            <div className={styles.group}><label className={styles.label}>Highlight (Blue)</label><input name="save_hero_highlight" defaultValue={settings.save_hero_highlight} className={styles.input} /></div>
-            <div className={`${styles.group} ${styles.fullWidth}`}><label className={styles.label}>Description</label><textarea name="save_hero_desc" defaultValue={settings.save_hero_desc} className={styles.textarea} /></div>
-            <div className={styles.group}><ImageUploader label="Hero Image" value={saveHeroUrl} onChange={setSaveHeroUrl} /><input type="hidden" name="save_hero_img" value={saveHeroUrl} /></div>
-            <div className={styles.group}><label className={styles.label}>Alt Text</label><input name="save_hero_alt" defaultValue={settings.save_hero_alt} className={styles.input} /></div>
-            <div className={styles.group}><label className={styles.label}>FDIC Badge</label><input name="save_fdic_badge" defaultValue={settings.save_fdic_badge} className={styles.input} /></div>
+            <div className={styles.fullWidth}>
+                <h3 className={styles.sectionTitle}>Save: Hero</h3>
+            </div>
+            <div className={styles.group}>
+                <label className={styles.label}>Headline</label>
+                <input name="save_hero_title" defaultValue={settings.save_hero_title} className={styles.input} />
+            </div>
+            <div className={styles.group}>
+                <label className={styles.label}>Highlight (Blue)</label>
+                <input name="save_hero_highlight" defaultValue={settings.save_hero_highlight} className={styles.input} />
+            </div>
+            <div className={`${styles.group} ${styles.fullWidth}`}>
+                <label className={styles.label}>Description</label>
+                <textarea name="save_hero_desc" defaultValue={settings.save_hero_desc} className={styles.textarea} />
+            </div>
+            <div className={styles.group}>
+                <ImageUploader label="Hero Image" value={saveHeroUrl} onChange={setSaveHeroUrl} />
+                <input type="hidden" name="save_hero_img" value={saveHeroUrl} />
+            </div>
+            <div className={styles.group}>
+                <label className={styles.label}>Alt Text</label>
+                <input name="save_hero_alt" defaultValue={settings.save_hero_alt} className={styles.input} />
+            </div>
+            <div className={styles.group}>
+                <label className={styles.label}>FDIC Badge</label>
+                <input name="save_fdic_badge" defaultValue={settings.save_fdic_badge} className={styles.input} />
+            </div>
 
             {/* --- CALCULATOR --- */}
             <div className={styles.fullWidth}><hr className={styles.divider} /><h3 className={styles.sectionTitle}>Calculator Labels</h3></div>

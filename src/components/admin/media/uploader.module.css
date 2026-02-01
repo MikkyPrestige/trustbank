@@ -31,8 +31,8 @@
   position: absolute;
   top: 5px;
   right: 5px;
-  background: #ef4444;
-  color: white;
+  background: var(--danger);
+  color: var(--text-invert);
   border: none;
   width: 24px;
   height: 24px;

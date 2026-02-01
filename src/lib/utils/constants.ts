@@ -1,172 +1,153 @@
-export const STATIC_MENUS = {
-    BANK: {
+export const SITE_NAME = "TrustBank";
+export const SITE_DESCRIPTION = "Banking for the Future. Secure, fast, and reliable banking solutions for everyone.";
+export const SITE_LOGO = "/logo.png";
+
+export interface MegaMenuLink {
+    label: string;
+    href: string;
+    desc?: string;
+}
+
+export interface MegaMenuSection {
+    title: string;
+    links: MegaMenuLink[][];
+    promo?: {
+        title: string;
+        desc: string;
+        btnText: string;
+        href: string;
+    };
+}
+
+export const MEGA_MENUS: Record<string, MegaMenuSection> = {
+    // 1. BANKING (Consolidated: Checking, Savings, Payments)
+    BANKING: {
         title: "BANKING",
         links: [
             [
-                { label: "Checking & Savings", href: "/bank" },
-                { label: "Business Banking", href: "/bank#business" },
-                { label: "Student Banking", href: "/bank#student" },
-            ],
-            [
-                { label: "Current Rates", href: "/rates" },
-                { label: "ATMs & Locations", href: "/locations" },
-                { label: "Global Transfers", href: "/payments" },
-            ]
-        ],
-        promo: {
-            title: "Switch in 3 Minutes",
-            desc: "Move your direct deposit to TrustBank and get paid up to 2 days early.",
-            btnText: "Open Checking",
-            href: "/register"
-        }
-    },
-    SAVE: {
-        title: "SAVINGS",
-        links: [
-            [
+                { label: "Everyday Banking", href: "/bank" }, // Header
+                { label: "Checking Accounts", href: "/bank#cs" },
                 { label: "High Yield Savings", href: "/save" },
                 { label: "Certificates of Deposit (CDs)", href: "/save#cds" },
-                { label: "Money Market", href: "/save#mma" },
+                { label: "Business Banking", href: "/bank#business" },
             ],
             [
+                { label: "Payments & Services", href: "/payments" }, // Header
+                { label: "Global Transfers & Wires", href: "/payments#wires" },
                 { label: "Trust Kids Club", href: "/save#kids" },
-                { label: "Retirement (IRAs)", href: "/wealth" },
-                { label: "Savings Calculator", href: "/save" },
+                { label: "Student Banking", href: "/bank#student" },
+                { label: "ATMs & Locations", href: "/locations" },
             ]
         ],
         promo: {
             title: "Earn 4.50% APY",
-            desc: "Watch your wealth grow with our industry-leading High Yield Savings account.",
+            desc: "Open a Platinum Savings account today and watch your wealth grow.",
             btnText: "Start Saving",
             href: "/save"
         }
     },
-    BORROW: {
+
+    // 2. LENDING (Loans, Mortgages, Credit Cards)
+    LENDING: {
         title: "LENDING",
         links: [
             [
+                { label: "Personal", href: "/borrow" }, // Header
                 { label: "Credit Cards", href: "/borrow#cc" },
                 { label: "Personal Loans", href: "/borrow#pl" },
-                { label: "Mortgages", href: "/borrow#mt" },
-            ],
-            [
                 { label: "Auto Loans", href: "/borrow#al" },
                 { label: "Student Loans", href: "/borrow#sl" },
+            ],
+            [
+                { label: "Home", href: "/borrow" }, // Header
+                { label: "Mortgages", href: "/borrow#mt" },
+                { label: "Home Equity (HELOC)", href: "/borrow#he" }, // Links to the new Image Section
+                { label: "First-Time Homebuyer", href: "/borrow#mt" },
                 { label: "Loan Calculator", href: "/borrow" },
             ]
         ],
         promo: {
             title: "0% Intro APR",
-            desc: "Pay no interest for 15 months on purchases and balance transfers.",
-            btnText: "View Cards",
+            desc: "Pay no interest for 15 months with the Titanium Visa® Card.",
+            btnText: "See Offers",
             href: "/borrow"
         }
     },
+
+    // 3. WEALTH (Investing, Crypto, Retirement)
     WEALTH: {
-        title: "WEALTH & INVEST",
+        title: "WEALTH",
         links: [
             [
+                { label: "Invest", href: "/wealth" }, // Header
+                { label: "Investment Advisory", href: "/wealth#advisor" },
                 { label: "Crypto Trading", href: "/crypto" },
-                { label: "Investment Advisory", href: "/wealth" },
-                { label: "Private Client Group", href: "/wealth" },
+                { label: "Retirement (IRAs)", href: "/wealth#retirement" },
             ],
             [
-                { label: "Retirement Planning", href: "/wealth" },
-                { label: "Estate & Trust Services", href: "/wealth" },
+                { label: "Private Client", href: "/wealth#pcg" }, // Header
+                { label: "Estate & Trust", href: "/wealth#estate" },
                 { label: "Wealth Simulator", href: "/wealth" },
+                { label: "Market Insights", href: "/learn#news" },
             ]
         ],
         promo: {
-            title: "Private Consultation",
-            desc: "Get a complimentary portfolio strategy review with a dedicated fiduciary advisor.",
+            title: "Private Client Group",
+            desc: "Concierge banking and tailored strategies for high-net-worth individuals.",
             btnText: "Meet an Advisor",
             href: "/wealth"
         }
     },
+
+    // 4. INSURANCE (Medicare, Auto, Life)
     INSURE: {
         title: "INSURANCE",
         links: [
             [
-                { label: "Medicare Insurance", href: "/insure" },
-                { label: "Auto Insurance", href: "/insure" },
-                { label: "Homeowners & Renters", href: "/insure" },
+                { label: "Personal Coverage", href: "/insure" }, // Header
+                { label: "Auto Insurance", href: "/insure#auto" },
+                { label: "Home & Renters", href: "/insure#home" },
+                { label: "Life Insurance", href: "/insure#life" },
             ],
             [
-                { label: "Life Insurance", href: "/insure" },
-                { label: "Accidental Death", href: "/insure" },
-                { label: "Hospital Accident", href: "/insure" },
+                { label: "Specialty", href: "/insure" }, // Header
+                { label: "Medicare Support", href: "/insure#medicare" },
+                { label: "Business Insurance", href: "/insure#business" },
+                { label: "Accidental Protection", href: "/insure#supplemental" },
             ]
         ],
         promo: {
-            title: "Let's Navigate Medicare",
-            desc: "Trust offers dedicated specialists to help you prepare and understand your options.",
-            btnText: "Learn More",
+            title: "Protect What Matters",
+            desc: "Get a quote in minutes for Home, Auto, or Life coverage.",
+            btnText: "Get a Quote",
             href: "/insure"
         }
     },
-    PAYMENTS: {
-        title: "PAYMENTS CENTER",
+
+    // 5. RESOURCES (Learn, Company, Support)
+    RESOURCES: {
+        title: "RESOURCES",
         links: [
             [
-                { label: "Pay Bills", href: "/payments" },
-                { label: "Send to Friends (P2P)", href: "/payments" },
-                { label: "Wire Transfers", href: "/payments" },
+                { label: "Support", href: "/help" }, // Header
+                { label: "Help Center (FAQs)", href: "/help" },
+                { label: "Contact Us", href: "/contact" },
+                { label: "Security Center", href: "/security" },
+                { label: "Find a Branch", href: "/locations" },
             ],
             [
-                { label: "Loan Payments", href: "/payments" },
-                { label: "Manage AutoPay", href: "/payments" },
-                { label: "Global Transfer Estimator", href: "/payments" },
+                { label: "Company", href: "/about" }, // Header
+                { label: "About TrustBank", href: "/about" },
+                { label: "Careers", href: "/careers" },
+                { label: "Investor Relations", href: "/investors" },
+                { label: "Press & Media", href: "/press" },
             ]
         ],
         promo: {
-            title: "Global Transfers",
-            desc: "Send money to 40+ countries instantly with zero hidden fees.",
-            btnText: "Start Transfer",
-            href: "/payments"
-        }
-    },
-    LEARN: {
-        title: "LEARNING CENTER",
-        links: [
-            [
-                { label: "Financial Basics 101", href: "/learn" },
-                { label: "Investing Guides", href: "/learn" },
-                { label: "Retirement Strategies", href: "/learn" },
-            ],
-            [
-                { label: "Market News & Analysis", href: "/learn" },
-                { label: "Business Insights", href: "/learn" },
-                { label: "Financial Wellness Pulse", href: "/learn" },
-            ]
-        ],
-        promo: {
-            title: "The Weekly Brief",
-            desc: "Subscribe to our curated newsletter for the latest market moves.",
-            btnText: "Read Latest Issue",
+            title: "Market Pulse",
+            desc: "Stay ahead of the curve with our weekly financial insights and news.",
+            btnText: "Read the Latest",
             href: "/learn"
         }
     },
-    COMPANY: {
-        title: "COMPANY & SUPPORT",
-        links: [
-            [
-                { label: "About Us", href: "/about" },
-                { label: "Careers", href: "/careers" },
-                { label: "Press & Media", href: "/press" },
-                { label: "Investor Relations", href: "/investors" },
-            ],
-            [
-                { label: "Help Center (FAQs)", href: "/help" },
-                { label: "Contact Support", href: "/contact" },
-                { label: "Legal & Privacy", href: "/terms" },
-                { label: "Security Center", href: "/security" },
-            ]
-        ],
-        promo: {
-            title: "Join the Team",
-            desc: "We are building the bank of the future. Come help us change the world.",
-            btnText: "View Open Roles",
-            href: "/careers"
-        }
-    }
 };

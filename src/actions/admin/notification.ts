@@ -13,12 +13,10 @@ export async function getNotifications() {
         const notifications = await db.notification.findMany({
             where: {
                 userId: session.user.id,
-                // Optional: You can remove this line to show ALL history,
-                // but usually the bell only shows unread or recent 10.
                 isRead: false
             },
             orderBy: { createdAt: 'desc' },
-            take: 10 // Limit to latest 10
+            take: 10
         });
         return notifications;
     } catch (error) {

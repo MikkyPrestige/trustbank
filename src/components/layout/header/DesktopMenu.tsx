@@ -9,6 +9,15 @@ interface DesktopMenuProps {
     menus: any;
 }
 
+// 👇 1. ADD THIS MAP HERE (Outside the component)
+const ROUTE_MAP: Record<string, string> = {
+    BANKING: '/bank',
+    LENDING: '/borrow',
+    WEALTH: '/wealth',
+    INSURE: '/insure',
+    RESOURCES: '/learn',
+};
+
 export default function DesktopMenu({ menus }: DesktopMenuProps) {
     const [activeMenu, setActiveMenu] = useState<string | null>(null);
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -29,15 +38,11 @@ export default function DesktopMenu({ menus }: DesktopMenuProps) {
         <div className={styles.bottomBar} onMouseLeave={handleMouseLeave}>
             <div className={styles.container}>
                 <nav className={styles.navLinks}>
-                    <Link href="/" className={styles.navItem} onMouseEnter={() => handleMouseEnter('HOME')}>
-                        HOME
-                    </Link>
-
                     {/* Iterate over props.menus */}
                     {Object.keys(menus).map((key) => (
                         <Link
                             key={key}
-                            href={key === 'COMPANY' ? '/about' : `/${key.toLowerCase()}`}
+                            href={ROUTE_MAP[key] || '#'}
                             className={`${styles.navItem} ${activeMenu === key ? styles.active : ''}`}
                             onMouseEnter={() => handleMouseEnter(key)}
                         >
@@ -56,7 +61,9 @@ export default function DesktopMenu({ menus }: DesktopMenuProps) {
                 >
                     <div className={styles.megaContainer}>
                         <div className={styles.megaHeader}>
-                            <h2>{menus[activeMenu].title}</h2>
+                            <Link href={ROUTE_MAP[activeMenu] || '#'} style={{ textDecoration: 'none', color: 'inherit' }}>
+                                <h2>{menus[activeMenu].title}</h2>
+                            </Link>
                         </div>
 
                         <div className={styles.megaGrid}>

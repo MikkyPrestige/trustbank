@@ -238,7 +238,7 @@
 /* SUBMIT BUTTON */
 .submitBtn {
   background: var(--primary);
-  color: white;
+  color: var(--text-invert);
   border: none;
   padding: 14px;
   border-radius: 12px;

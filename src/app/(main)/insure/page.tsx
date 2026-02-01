@@ -57,6 +57,7 @@ export default async function InsurePage() {
             icon: <Activity size={32} className={styles.iconRed} />
         },
         {
+            id: 'business',
             title: settings.insure_prod6_title,
             desc: settings.insure_prod6_desc,
             icon: <ShieldCheck size={32} className={styles.iconGold} />
@@ -133,7 +134,7 @@ export default async function InsurePage() {
                     </div>
                     <div className={styles.grid}>
                         {SUPPLEMENTAL.map((p, i) => (
-                            <div key={i} className={styles.card}>
+                            <div key={i} id={p.id} className={styles.card}>
                                 <div className={styles.cardHeader}>{p.icon}</div>
                                 <h3>{p.title}</h3>
                                 <p>{p.desc}</p>

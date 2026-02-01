@@ -2,7 +2,7 @@
 
 import { getAuthenticatedUser } from "@/lib/auth/user-guard";
 import { db } from "@/lib/db";
-import { checkPermissions, verifyPin, checkInboundLimit } from "@/lib/auth/security";
+import { checkMaintenanceMode, checkPermissions, verifyPin, checkInboundLimit } from "@/lib/security";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import {
@@ -32,6 +32,10 @@ export async function processTransfer(prevState: any, formData: FormData) {
         return { success: false, message };
     }
 
+    if (await checkMaintenanceMode()) {
+       return { success: false, message: "Transaction failed: System is in maintenance mode." };
+   }
+
     const rawData = Object.fromEntries(formData.entries());
     const validated = transferSchema.safeParse(rawData);
 
@@ -52,18 +56,18 @@ export async function processTransfer(prevState: any, formData: FormData) {
     }
 
     // 🔒 2. SECURITY: Role & Action Permissions (Sender Limits)
-    const permission = await checkPermissions(user.id, 'TRANSFER', amount);
+  const permission = await checkPermissions(user.id, 'TRANSFER_INTERNAL', amount);
     if (!permission.allowed) {
         return { message: `🚫 ${permission.error}` };
     }
 
     // 3. PRE-TRANSACTION CHECKS
-    // const isVerified = user.kycStatus === KycStatus.VERIFIED;
-    // const UNVERIFIED_LIMIT = 2000;
+    const isVerified = user.kycStatus === KycStatus.VERIFIED;
+    const UNVERIFIED_LIMIT = 2000;
 
-    // if (!isVerified && amount > UNVERIFIED_LIMIT) {
-    //     return { message: `🚫 Unverified Limit Exceeded. Max: $${UNVERIFIED_LIMIT}.` };
-    // }
+    if (!isVerified && amount > UNVERIFIED_LIMIT) {
+        return { message: `🚫 Unverified Limit Exceeded. Max: $${UNVERIFIED_LIMIT}.` };
+    }
 
     const sourceAccount = await db.account.findUnique({ where: { id: sourceAccountId } });
     if (!sourceAccount) return { message: "Account not found." };

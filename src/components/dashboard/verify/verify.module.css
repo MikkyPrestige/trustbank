@@ -20,8 +20,12 @@
 .iconBadge {
   width: 50px;
   height: 50px;
-  background: linear-gradient(135deg, var(--primary), #1e40af); /* Fallback or derive darker shade if needed */
-  color: white;
+  background: linear-gradient(
+    135deg,
+    var(--primary),
+    #1e40af
+  ); /* Fallback or derive darker shade if needed */
+  color: var(--text-invert);
   border-radius: 12px;
   display: flex;
   align-items: center;
@@ -223,7 +227,7 @@
 
 .checkBadge {
   background: #22c55e;
-  color: white;
+  color: var(--text-invert);
   border-radius: 50%;
   padding: 2px;
 }
@@ -251,7 +255,9 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  transition: opacity 0.2s, transform 0.2s;
+  transition:
+    opacity 0.2s,
+    transform 0.2s;
 }
 
 .submitBtn:hover {
@@ -277,8 +283,14 @@
 }
 
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Responsive */

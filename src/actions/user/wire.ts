@@ -2,11 +2,10 @@
 
 import { getAuthenticatedUser } from "@/lib/auth/user-guard";
 import { db } from "@/lib/db";
-import { checkPermissions, verifyPin } from "@/lib/auth/security";
+import { checkMaintenanceMode, checkPermissions, verifyPin } from "@/lib/security";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import {
-  UserStatus,
   KycStatus,
   TransactionStatus,
   TransactionType,
@@ -20,7 +19,6 @@ function calculateWireFee(amount: number): number {
     return 100.00;
 }
 
-// ... [Keep wireSchema exactly as it was] ...
 const wireSchema = z.object({
   accountId: z.string().min(1, "Account Selection is required"),
   amount: z.coerce.number().min(100, "Minimum wire amount is $100"),
@@ -40,6 +38,10 @@ export async function initiateWireTransfer(prevState: any, formData: FormData) {
    if (!success || !user) {
         return { success: false, message };
     }
+
+    if (await checkMaintenanceMode()) {
+       return { success: false, message: "Transaction failed: System is in maintenance mode." };
+   }
 
   const rawData = {
     accountId: formData.get("accountId")?.toString() || "",
@@ -88,8 +90,10 @@ export async function initiateWireTransfer(prevState: any, formData: FormData) {
   const pinValidation = await verifyPin(user.id, pin);
   if (!pinValidation.success) return { message: pinValidation.error };
 
-  const permission = await checkPermissions(user.id, 'TRANSFER', amount);
-  if (!permission.allowed) return { message: `🚫 ${permission.error}` };
+const permission = await checkPermissions(user.id, 'TRANSFER_WIRE', amount);
+    if (!permission.allowed) {
+        return { message: `🚫 ${permission.error}` };
+    }
 
   const isVerified = user.kycStatus === KycStatus.VERIFIED;
   const UNVERIFIED_LIMIT = 2000;

@@ -91,7 +91,7 @@
 .errorBanner {
   background: rgba(239, 68, 68, 0.1);
   border: 1px solid rgba(239, 68, 68, 0.2);
-  color: #ef4444;
+  color: var(--danger);
   padding: 1rem;
   border-radius: 12px;
   font-size: 0.9rem;
@@ -100,6 +100,11 @@
   gap: 12px;
   margin-bottom: 2rem;
   animation: fadeIn 0.3s ease-out;
+}
+
+.errorBannerDanger {
+  border-color: var(--danger);
+  color: var(--danger);
 }
 
 /* SPLIT LAYOUT (The Core Grid) */
@@ -162,6 +167,10 @@
   margin-bottom: 0.5rem;
   padding-bottom: 0.5rem;
   border-bottom: 1px solid var(--border);
+}
+
+.mt4 {
+  margin-top: 1rem;
 }
 
 /* INPUT GROUPS */
@@ -296,7 +305,7 @@
   color: var(--text-muted);
 }
 .successText {
-  color: #22c55e;
+  color: var(--success);
   font-weight: 500;
 }
 
@@ -389,7 +398,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #22c55e;
+  color: var(--success);
   font-size: 0.85rem;
   font-weight: 600;
   background: rgba(34, 197, 94, 0.1);
@@ -417,7 +426,7 @@
 
 .primaryBtn {
   background: var(--primary);
-  color: white;
+  color: var(--text-invert);
   border: none;
   height: 50px;
   border-radius: 10px;
@@ -475,7 +484,7 @@
 }
 
 .successIcon {
-  color: #22c55e;
+  color: var(--success);
   margin-bottom: 1.5rem;
   display: inline-block;
 }
@@ -493,6 +502,140 @@
   margin: 2rem 0;
   font-size: 0.95rem;
   color: var(--text-muted);
+}
+
+/* --- OTP VIEW STYLES --- */
+
+.otpIconWrapper {
+  background: var(--primary);
+  color: white;
+}
+
+.otpSubText {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+}
+
+.otpInput {
+  font-size: 2rem;
+  letter-spacing: 0.5rem;
+  text-align: center;
+  width: 100%;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg-app);
+  margin-bottom: 1rem;
+  transition: border-color 0.2s;
+}
+
+.otpInput:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.otpError {
+  color: var(--danger);
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: center;
+}
+
+.fullWidthBtn {
+  width: 100%;
+}
+
+.backBtn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-decoration: underline;
+  transition: color 0.2s;
+}
+
+.backBtn:hover {
+  color: var(--text-main);
+}
+
+/* --- SUCCESS MODAL --- */
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--bg-surface);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.modalCard {
+  background: white;
+  padding: 2.5rem;
+  border-radius: 16px;
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  animation: scaleUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.modalIcon {
+  width: 80px;
+  height: 80px;
+  background: #dcfce7;
+  color: var(--success);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem auto;
+}
+
+.modalTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 0.5rem;
+}
+
+.modalText {
+  color: var(--text-muted);
+  margin-bottom: 2rem;
+}
+
+.timerRing {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--primary);
+  margin-bottom: 1.5rem;
+  display: block;
+}
+
+@keyframes scaleUp {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 /* ANIMATIONS */

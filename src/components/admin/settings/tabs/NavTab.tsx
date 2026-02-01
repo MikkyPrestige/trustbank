@@ -11,7 +11,7 @@ interface NavTabProps {
 export function NavTab({ settings, jsonMenu, setJsonMenu }: NavTabProps) {
     const [error, setError] = useState<string | null>(null);
 
-    // Auto-format on mount (optional, nice for UX)
+    // Auto-format on mount
     useEffect(() => {
         try {
             if (jsonMenu) {
@@ -25,7 +25,7 @@ export function NavTab({ settings, jsonMenu, setJsonMenu }: NavTabProps) {
     const handleFormat = () => {
         try {
             const parsed = JSON.parse(jsonMenu);
-            setJsonMenu(JSON.stringify(parsed, null, 2)); // Indent with 2 spaces
+            setJsonMenu(JSON.stringify(parsed, null, 2));
             setError(null);
         } catch (e: any) {
             setError("Invalid JSON: " + e.message);
@@ -41,7 +41,7 @@ export function NavTab({ settings, jsonMenu, setJsonMenu }: NavTabProps) {
                     <div>
                         <strong>Advanced Configuration</strong>
                         <p style={{ margin: '5px 0 0', fontSize: '0.9rem' }}>
-                            This controls the menu structure. Click &quot;Prettify&quot; to format the text vertically.
+                            This controls the menu structure (Links & Columns). Click &quot;Prettify&quot; to format.
                         </p>
                     </div>
                 </div>
@@ -81,13 +81,14 @@ export function NavTab({ settings, jsonMenu, setJsonMenu }: NavTabProps) {
 
             <div className={styles.fullWidth}>
                 <hr className={styles.divider} />
-                <h3 className={styles.sectionTitle}>Promo Content Overrides</h3>
+                <h3 className={styles.sectionTitle}>Promo Card Content</h3>
                 <p className={styles.sectionSubtitle}>
-                    These texts appear in the highlighted box inside each mega menu.
+                    These texts appear in the highlighted &quot;Promo Box&quot; inside each dropdown menu.
                 </p>
             </div>
 
-            {/* --- SECTION 2: PROMO TEXTS (Keep existing inputs below) --- */}
+            {/* --- SECTION 2: PROMO TEXTS  --- */}
+
             {/* 1. BANKING */}
             <div className={styles.group}>
                 <label className={styles.label}>Banking Title</label>
@@ -98,17 +99,7 @@ export function NavTab({ settings, jsonMenu, setJsonMenu }: NavTabProps) {
                 <input name="nav_bank_desc" defaultValue={settings.nav_bank_desc} className={styles.input} />
             </div>
 
-            {/* 2. SAVINGS */}
-            <div className={styles.group}>
-                <label className={styles.label}>Savings Title</label>
-                <input name="nav_save_title" defaultValue={settings.nav_save_title} className={styles.input} />
-            </div>
-            <div className={styles.group}>
-                <label className={styles.label}>Savings Desc</label>
-                <input name="nav_save_desc" defaultValue={settings.nav_save_desc} className={styles.input} />
-            </div>
-
-            {/* 3. LENDING */}
+            {/* 2. LENDING  */}
             <div className={styles.group}>
                 <label className={styles.label}>Lending Title</label>
                 <input name="nav_borrow_title" defaultValue={settings.nav_borrow_title} className={styles.input} />
@@ -118,7 +109,7 @@ export function NavTab({ settings, jsonMenu, setJsonMenu }: NavTabProps) {
                 <input name="nav_borrow_desc" defaultValue={settings.nav_borrow_desc} className={styles.input} />
             </div>
 
-            {/* 4. WEALTH */}
+            {/* 3. WEALTH */}
             <div className={styles.group}>
                 <label className={styles.label}>Wealth Title</label>
                 <input name="nav_wealth_title" defaultValue={settings.nav_wealth_title} className={styles.input} />
@@ -128,7 +119,7 @@ export function NavTab({ settings, jsonMenu, setJsonMenu }: NavTabProps) {
                 <input name="nav_wealth_desc" defaultValue={settings.nav_wealth_desc} className={styles.input} />
             </div>
 
-            {/* 5. INSURANCE */}
+            {/* 4. INSURANCE */}
             <div className={styles.group}>
                 <label className={styles.label}>Insurance Title</label>
                 <input name="nav_insure_title" defaultValue={settings.nav_insure_title} className={styles.input} />
@@ -138,35 +129,16 @@ export function NavTab({ settings, jsonMenu, setJsonMenu }: NavTabProps) {
                 <input name="nav_insure_desc" defaultValue={settings.nav_insure_desc} className={styles.input} />
             </div>
 
-            {/* 6. PAYMENTS */}
+            {/* 5. RESOURCES */}
             <div className={styles.group}>
-                <label className={styles.label}>Payments Title</label>
-                <input name="nav_payments_title" defaultValue={settings.nav_payments_title} className={styles.input} />
-            </div>
-            <div className={styles.group}>
-                <label className={styles.label}>Payments Desc</label>
-                <input name="nav_payments_desc" defaultValue={settings.nav_payments_desc} className={styles.input} />
-            </div>
-
-            {/* 7. LEARN */}
-            <div className={styles.group}>
-                <label className={styles.label}>Learn Title</label>
+                <label className={styles.label}>Resources Title</label>
                 <input name="nav_learn_title" defaultValue={settings.nav_learn_title} className={styles.input} />
             </div>
             <div className={styles.group}>
-                <label className={styles.label}>Learn Desc</label>
+                <label className={styles.label}>Resources Desc</label>
                 <input name="nav_learn_desc" defaultValue={settings.nav_learn_desc} className={styles.input} />
             </div>
 
-            {/* 8. COMPANY */}
-            <div className={styles.group}>
-                <label className={styles.label}>Company Title</label>
-                <input name="nav_company_title" defaultValue={settings.nav_company_title} className={styles.input} />
-            </div>
-            <div className={styles.group}>
-                <label className={styles.label}>Company Desc</label>
-                <input name="nav_company_desc" defaultValue={settings.nav_company_desc} className={styles.input} />
-            </div>
         </div>
     );
 }

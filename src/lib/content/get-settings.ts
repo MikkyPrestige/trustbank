@@ -1,105 +1,115 @@
 import { db } from "@/lib/db";
-import { STATIC_MENUS } from "@/lib/utils/constants";
+import { SITE_NAME, SITE_DESCRIPTION, SITE_LOGO, MEGA_MENUS } from "@/lib/utils/constants";
 import { cache } from "react";
 
 export const getSiteSettings = cache(async () => {
-    try {
-        // 1. Fetch Dynamic Settings from DB
-        let settings = await db.siteSettings.findFirst();
 
-        // 2. If no settings exist (First run), create defaults
-        if (!settings) {
-            settings = await db.siteSettings.create({
+    try {
+        // 1. Fetch Main Settings WITH Content AND Features
+        let mainSettings = await db.siteSettings.findFirst({
+            include: {
+                content: true,
+                features: true
+             }
+        });
+
+        // 2. Initialize Defaults (Singleton Pattern)
+        if (!mainSettings) {
+            mainSettings = await db.siteSettings.create({
                 data: {
+                    id: "settings",
                     site_name: "TrustBank",
+                    auth_login_limit: 5,
+                    content: { create: { id: "content-settings" } },
+                    features: { create: { } }
+                },
+                // 👇 FIX: Return BOTH tables so the types match
+                include: {
+                    content: true,
+                    features: true
                 }
             });
         }
 
-        // 3. Navigation Logic: Determine Base Structure
-        // Default to the code constants (Safety Net)
-        let baseMenuStructure = STATIC_MENUS;
+        // 🛡️ SAFETY CHECK: Tell TS that mainSettings definitely exists
+        if (!mainSettings) throw new Error("Failed to initialize settings");
 
-        // If Admin has saved a custom JSON structure, try to use it
-        if (settings.nav_structure_json && settings.nav_structure_json.length > 20) {
-            try {
-                baseMenuStructure = JSON.parse(settings.nav_structure_json);
-            } catch (error) {
-                console.error("Failed to parse Nav JSON from DB. Reverting to static defaults.", error);
-            }
+        // Self-Healing: If Content is missing (e.g. manual DB edit)
+        if (!mainSettings.content) {
+            const newContent = await db.contentSettings.create({
+                data: { id: "content-settings", siteSettingsId: mainSettings.id }
+            });
+            mainSettings.content = newContent as any;
         }
 
-        // 4. Hydrate Navigation (Hybrid Merge)
+        // Self-Healing: If Features is missing
+        if (!mainSettings.features) {
+             await db.contentFeatures.create({
+                 data: { siteSettingsId: mainSettings.id }
+             });
+
+             // Re-fetch to get the join
+             mainSettings = await db.siteSettings.findUnique({
+                 where: { id: mainSettings.id },
+                 include: { content: true, features: true }
+             });
+        }
+
+        // 🛡️ RE-VERIFY after re-fetch
+        if (!mainSettings) throw new Error("Failed to reload settings");
+
+        // 3. Navigation Logic
+        let baseMenuStructure = MEGA_MENUS;
+
+        // 4. Hydrate Navigation
         const navigation = {
-            BANK: {
-                ...baseMenuStructure.BANK,
+            BANKING: {
+                ...baseMenuStructure.BANKING,
                 promo: {
-                    ...baseMenuStructure.BANK?.promo,
-                    title: settings.nav_bank_title,
-                    desc: settings.nav_bank_desc,
+                    ...baseMenuStructure.BANKING?.promo,
+                    title: mainSettings.nav_bank_title,
+                    desc: mainSettings.nav_bank_desc,
                 }
             },
-            SAVE: {
-                ...baseMenuStructure.SAVE,
+            LENDING: {
+                ...baseMenuStructure.LENDING,
                 promo: {
-                    ...baseMenuStructure.SAVE?.promo,
-                    title: settings.nav_save_title,
-                    desc: settings.nav_save_desc,
-                }
-            },
-            BORROW: {
-                ...baseMenuStructure.BORROW,
-                promo: {
-                    ...baseMenuStructure.BORROW?.promo,
-                    title: settings.nav_borrow_title,
-                    desc: settings.nav_borrow_desc,
+                    ...baseMenuStructure.LENDING?.promo,
+                    title: mainSettings.nav_borrow_title,
+                    desc: mainSettings.nav_borrow_desc,
                 }
             },
             WEALTH: {
                 ...baseMenuStructure.WEALTH,
                 promo: {
                     ...baseMenuStructure.WEALTH?.promo,
-                    title: settings.nav_wealth_title,
-                    desc: settings.nav_wealth_desc,
+                    title: mainSettings.nav_wealth_title,
+                    desc: mainSettings.nav_wealth_desc,
                 }
             },
             INSURE: {
                 ...baseMenuStructure.INSURE,
                 promo: {
                     ...baseMenuStructure.INSURE?.promo,
-                    title: settings.nav_insure_title,
-                    desc: settings.nav_insure_desc,
+                    title: mainSettings.nav_insure_title,
+                    desc: mainSettings.nav_insure_desc,
                 }
             },
-            PAYMENTS: {
-                ...baseMenuStructure.PAYMENTS,
+            RESOURCES: {
+                ...baseMenuStructure.RESOURCES,
                 promo: {
-                    ...baseMenuStructure.PAYMENTS?.promo,
-                    title: settings.nav_payments_title,
-                    desc: settings.nav_payments_desc,
-                }
-            },
-            LEARN: {
-                ...baseMenuStructure.LEARN,
-                promo: {
-                    ...baseMenuStructure.LEARN?.promo,
-                    title: settings.nav_learn_title,
-                    desc: settings.nav_learn_desc,
-                }
-            },
-            COMPANY: {
-                ...baseMenuStructure.COMPANY,
-                promo: {
-                    ...baseMenuStructure.COMPANY?.promo,
-                    title: settings.nav_company_title,
-                    desc: settings.nav_company_desc,
+                    ...baseMenuStructure.RESOURCES?.promo,
+                    title: mainSettings.nav_learn_title,
+                    desc: mainSettings.nav_learn_desc,
                 }
             }
         };
 
         // 5. Return Merged Settings
         return {
-            ...settings,
+            ...mainSettings,
+            ...mainSettings.content,
+            ...mainSettings.features,
             navigation
         };
 
@@ -107,9 +117,11 @@ export const getSiteSettings = cache(async () => {
         console.error("CRITICAL: Failed to fetch settings", error);
 
         return {
-            site_name: "TrustBank",
-            site_logo: "/logo.png",
-            navigation: STATIC_MENUS,
+            site_name: SITE_NAME,
+            site_description: SITE_DESCRIPTION,
+            site_logo: SITE_LOGO,
+            auth_login_limit: 5,
+            navigation: MEGA_MENUS,
         } as any;
     }
 });

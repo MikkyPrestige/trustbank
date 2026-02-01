@@ -6,13 +6,13 @@
 
 /* HERO SECTION */
 .hero {
-  position: relative; /* Essential for containing the absolute image */
-  height: 400px; /* Set a fixed height for the hero */
+  position: relative;
+  height: 400px;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
-  color: white;
+  color: var(--text-invert);
   overflow: hidden;
 }
 

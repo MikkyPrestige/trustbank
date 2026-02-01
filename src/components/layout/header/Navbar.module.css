@@ -126,18 +126,25 @@
   border-top: 1px solid rgba(0, 0, 0, 0.03);
 }
 
+.bottomBar .container {
+  justify-content: center;
+}
+
 .navLinks {
   display: flex;
-  gap: 2.5rem;
+  gap: 5rem;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10rem;
 }
 
 .navItem {
   position: relative;
   color: var(--text-muted);
   text-decoration: none;
-  font-size: 0.9rem;
+  font-size: 1.2rem;
   font-weight: 600;
-  padding: 20px 0;
+  padding: 10px 0;
   transition: color 0.2s;
 }
 
@@ -338,7 +345,7 @@
 }
 .closeBtn:hover {
   background: #ef4444;
-  color: white;
+  color: var(--text-invert);
   border-color: #ef4444;
 }
 
@@ -402,7 +409,7 @@
   text-align: center;
   cursor: pointer;
   background: #0f172a;
-  color: white;
+  color: var(--text-invert);
   border: none;
 }
 

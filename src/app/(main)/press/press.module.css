@@ -11,7 +11,7 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  color: white;
+  color: var(--text-invert);
   overflow: hidden;
 }
 
@@ -69,7 +69,7 @@
 }
 
 .contactLink {
-  color: white;
+  color: var(--text-invert);
   font-weight: 600;
   text-decoration: none;
 }
@@ -255,8 +255,8 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background: var(--text-main);
-  color: white;
+  background: var(--bg-surface);
+  color: var(--primary);
   padding: 12px;
   border-radius: 8px;
   font-weight: 600;

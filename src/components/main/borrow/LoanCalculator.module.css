@@ -164,7 +164,7 @@
 .applyBtn {
   width: 100%;
   background: var(--primary);
-  color: white;
+  color: var(--text-invert);
   border: none;
   padding: 16px;
   border-radius: 12px;

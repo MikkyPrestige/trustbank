@@ -38,12 +38,12 @@
 }
 .verifiedBadge {
   background: rgba(34, 197, 94, 0.1);
-  color: #22c55e;
+  color: var(--success);
   border: 1px solid rgba(34, 197, 94, 0.2);
 }
 .unverifiedBadge {
   background: rgba(234, 179, 8, 0.1);
-  color: #eab308;
+  color: var(--accent);
   border: 1px solid rgba(234, 179, 8, 0.2);
 }
 
@@ -142,7 +142,7 @@
   width: 100%;
   padding: 18px;
   background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-  color: white;
+  color: var(--text-invert);
   border-radius: 14px;
   font-size: 1.1rem;
   font-weight: 700;
@@ -197,7 +197,7 @@
   width: 80px;
   height: 80px;
   background: rgba(245, 158, 11, 0.1);
-  color: #f59e0b;
+  color: var(--accent);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -225,8 +225,8 @@
 }
 
 .primaryBtn {
-  background: #f59e0b;
-  color: white;
+  background: var(--accent);
+  color: var(--text-invert);
   padding: 14px;
   border-radius: 12px;
   font-weight: 700;
@@ -268,7 +268,7 @@
 }
 
 .complianceHeader {
-  color: #f59e0b;
+  color: var(--accent);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -290,7 +290,7 @@
 }
 
 .quickFillLabel {
-  color: #3b82f6;
+  color: var(--primary);
 }
 
 /* --- ICONS & HELPERS --- */
@@ -322,7 +322,7 @@
 .checkbox {
   width: 16px;
   height: 16px;
-  accent-color: #3b82f6;
+  accent-color: var(--primary);
   cursor: pointer;
 }
 
@@ -337,8 +337,8 @@
 
 /* PENDING WIRE  */
 .banner {
-  background-color: var(--bg-card);
-  border: 1px solid var(--warning);
+  background: var(--bg-surface);
+  border: 1px solid var(--accent);
   border-radius: 12px;
   padding: 1rem;
   display: flex;
@@ -363,7 +363,7 @@
 }
 
 .iconWrapper {
-  color: var(--warning);
+  color: var(--accent);
   margin-top: 2px;
 }
 
@@ -384,8 +384,8 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background-color: var(--warning);
-  color: #fff;
+  background-color: var(--accent);
+  color: var(--text-main);
   padding: 8px 16px;
   border-radius: 8px;
   font-size: 0.85rem;

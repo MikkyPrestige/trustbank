@@ -2,6 +2,7 @@
 
 import { getAuthenticatedUser } from "@/lib/auth/user-guard";
 import { db } from "@/lib/db";
+import { checkMaintenanceMode } from "@/lib/security";
 import { uploadFileToCloud } from "@/lib/utils/upload";
 import { revalidatePath } from "next/cache";
 
@@ -10,6 +11,10 @@ const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
 export async function updateAvatar(formData: FormData) {
    const { success, message, user } = await getAuthenticatedUser();
+
+   if (await checkMaintenanceMode()) {
+        return { success: false, message: "System is currently under maintenance. Please try again later." };
+    }
 
    if (!success || !user) {
         return { success: false, message };

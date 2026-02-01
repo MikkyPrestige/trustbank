@@ -18,6 +18,7 @@ export function BankingTab({
 }: BankingTabProps) {
     return (
         <div className={styles.grid}>
+
             {/* 1. BANK PAGE CONFIG (HERO) */}
             <div className={styles.fullWidth}><h3 className={styles.sectionTitle}>Bank Page Config</h3></div>
             <div className={styles.group}><ImageUploader label="Bank Hero Image" value={bankHeroUrl} onChange={setBankHeroUrl} /><input type="hidden" name="bank_hero_img" value={bankHeroUrl} /></div>
@@ -93,13 +94,6 @@ export function BankingTab({
             {/* Row 5 */}
             <div className={styles.fullWidth}><h4 className={styles.subsectionTitle}>Row 5: Direct Deposit</h4></div>
             <div className={styles.group}><label className={styles.label}>Label</label><input name="bank_tbl_row_5_label" defaultValue={settings.bank_tbl_row_5_label} className={styles.input} /></div>
-
-            {/* --- 5. RATES PAGE CONFIG --- */}
-            <div className={styles.fullWidth}><hr className={styles.divider} /><h3 className={styles.sectionTitle}>Global Rates Config</h3></div>
-            <div className={styles.group}><label className={styles.label}>HYSA APY (%)</label><input name="rate_hysa_apy" defaultValue={settings.rate_hysa_apy} className={styles.input} type="number" step="0.01" /></div>
-            <div className={styles.group}><label className={styles.label}>CD APY (%)</label><input name="rate_cd_apy" defaultValue={settings.rate_cd_apy} className={styles.input} type="number" step="0.01" /></div>
-            <div className={styles.group}><label className={styles.label}>Mortgage (%)</label><input name="rate_mortgage_30yr" defaultValue={settings.rate_mortgage_30yr} className={styles.input} type="number" step="0.01" /></div>
-            <div className={styles.group}><label className={styles.label}>Auto Loan (%)</label><input name="rate_auto_low" defaultValue={settings.rate_auto_low} className={styles.input} type="number" step="0.01" /></div>
         </div>
     );
 }

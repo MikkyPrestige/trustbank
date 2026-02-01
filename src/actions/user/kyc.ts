@@ -2,12 +2,17 @@
 
 import { getAuthenticatedUser } from "@/lib/auth/user-guard";
 import { db } from "@/lib/db";
+import { checkMaintenanceMode } from "@/lib/security";
 import { revalidatePath } from "next/cache";
 import { uploadFileToCloud } from "@/lib/utils/upload";
 import { KycStatus, UserRole } from "@prisma/client";
 
 export async function submitKyc(prevState: any, formData: FormData) {
     const { success, message, user } = await getAuthenticatedUser();
+
+    if (await checkMaintenanceMode()) {
+        return { success: false, message: "System is currently under maintenance. Please try again later." };
+    }
 
     if (!success || !user) {
         return { message };

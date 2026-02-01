@@ -12,7 +12,6 @@ export default function CookieBanner() {
         const consent = localStorage.getItem('trustbank_consent');
 
         if (consent === 'true') {
-            // ✅ ONLY Load Google Analytics / Pixels here
             // initGoogleAnalytics();
         }
 

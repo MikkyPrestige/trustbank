@@ -3,7 +3,10 @@
 import { db } from "@/lib/db";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
+import { checkMaintenanceMode, getBooleanSetting, hashPin } from "@/lib/security";
+import { getSiteSettings } from "@/lib/content/get-settings";
 import { uploadFileToCloud } from "@/lib/utils/upload";
+import { sendVerificationEmail } from "@/lib/mail";
 import {
   Prisma,
   UserRole,
@@ -32,6 +35,7 @@ const registerSchema = z.object({
   // Address
   country: z.string().optional(),
   city: z.string().optional(),
+  state: z.string().optional(),
   address: z.string().optional(),
   zipCode: z.string().optional(),
 
@@ -47,6 +51,9 @@ export type RegisterState = {
   message?: string;
   errors?: Record<string, string[]>;
   success?: boolean;
+  // 👇 NEW: Flag to tell frontend to show OTP screen
+  requireOtp?: boolean;
+  email?: string;
 };
 
 // --- HELPER GENERATORS ---
@@ -98,8 +105,23 @@ const MAX_TOTAL_SIZE = 21 * 1024 * 1024;      // 21MB
 
 export async function registerUser(prevState: RegisterState, formData: FormData): Promise<RegisterState> {
   const rawData = Object.fromEntries(formData.entries());
+  const settings = await getSiteSettings();
+  const siteName = settings.site_name || "Trust Capital";
 
-  // 1. Validation
+  // 1. Feature Flag & Maintenance Check
+  const isRegistrationEnabled = await getBooleanSetting('feature_register_enabled', true);
+  if (!isRegistrationEnabled) {
+        return {
+            success: false,
+            message: "Registration is currently closed. Please check back later."
+        };
+    }
+
+  if (await checkMaintenanceMode()) {
+        return { success: false, message: "System is currently under maintenance. Please try again later." };
+    }
+
+  // 2. Validation
   const validated = registerSchema.safeParse(rawData);
   if (!validated.success) {
     const fieldErrors: Record<string, string[]> = {};
@@ -113,7 +135,7 @@ export async function registerUser(prevState: RegisterState, formData: FormData)
 
   const data = validated.data;
 
-  // 2. File Upload Handling
+  // 3. File Upload Handling
   const idFile = formData.get("idDocument") as File;
   const passportFile = formData.get("passportPhoto") as File;
 
@@ -159,14 +181,20 @@ export async function registerUser(prevState: RegisterState, formData: FormData)
           }
       }
 
-    // 3. Generators & Hashing
+    // 4. Generators & Hashing
     const hashedPassword = await bcrypt.hash(data.password, 10);
+    const hashedPin = await hashPin(data.pin);
+
     const savingsNum = await generateAccountNumber("10");
     const checkingNum = await generateAccountNumber("20");
     const routingNum = generateRoutingNumber();
     const cardDetails = await generateCardDetails();
 
-    // 4. CRITICAL DB TRANSACTION
+    // NEW: OTP Generation
+    const otpCode = Math.floor(100000 + Math.random() * 900000).toString(); // 6 digits
+    const otpExpires = new Date(Date.now() + 15 * 60 * 1000); // 15 mins
+
+    // 5. CRITICAL DB TRANSACTION
     const newUserId = await db.$transaction(async (tx) => {
         // A. Create User
         const newUser = await tx.user.create({
@@ -174,9 +202,12 @@ export async function registerUser(prevState: RegisterState, formData: FormData)
                 email: data.email,
                 fullName: data.fullName,
                 passwordHash: hashedPassword,
-                transactionPin: data.pin,
+                transactionPin: hashedPin,
                 role: UserRole.CLIENT,
-                status: UserStatus.ACTIVE,
+                status: UserStatus.PENDING_VERIFICATION,
+                emailVerified: null,
+                otpCode: otpCode,
+                otpExpires: otpExpires,
                 image: userImageUrl,
                 kycStatus: kycStatus,
                 idCardUrl: idCardUrl,
@@ -187,6 +218,7 @@ export async function registerUser(prevState: RegisterState, formData: FormData)
                 taxId: data.taxId || null,
                 country: data.country || null,
                 city: data.city || null,
+                state: data.state || null,
                 address: data.address || null,
                 zipCode: data.zipCode || null,
                 nokName: data.nokName || null,
@@ -195,7 +227,7 @@ export async function registerUser(prevState: RegisterState, formData: FormData)
                 nokAddress: data.nokAddress || null,
                 nokRelationship: data.nokRelationship || null,
             },
-            select: { id: true } // Return only ID for efficiency
+            select: { id: true, email: true }
         });
 
         // B. Create Savings
@@ -238,28 +270,36 @@ export async function registerUser(prevState: RegisterState, formData: FormData)
             }
         });
 
-        return newUser.id;
+        return newUser;
     }, {
         maxWait: 5000,
         timeout: 10000
     });
 
-    // 5. NOTIFICATION (Outside Transaction)
-    // If we reach here, the user exists. Safe to notify.
+    // 6. NOTIFICATION & EMAIL (Outside Transaction)
     if (newUserId) {
+
+        // : Send OTP Email
+       await sendVerificationEmail(data.email, otpCode, siteName);
+
         await db.notification.create({
             data: {
-                userId: newUserId,
-                title: "Welcome to TrustBank",
-                message: "Your account has been successfully created. Please verify your identity to unlock full features.",
-                type: "SUCCESS",
-                link: "/dashboard/verify",
+                userId: newUserId.id,
+                title: "Welcome to Trust Capital",
+                message: "Please verify your email address to activate your account.",
+                type: "INFO",
+                link: "/verify-otp",
                 isRead: false
             }
         });
     }
 
-    return { success: true, message: "Account created successfully!" };
+    return {
+        success: true,
+        message: "Verification code sent to your email.",
+        requireOtp: true,
+        email: data.email
+    };
 
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {

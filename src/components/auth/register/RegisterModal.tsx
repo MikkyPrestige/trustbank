@@ -8,7 +8,7 @@ import styles from './styles/RegisterModal.module.css';
 interface RegisterModalProps {
     isOpen: boolean;
     onClose: () => void;
-    siteName?: string; // 👈 Added prop for CMS Name
+    siteName?: string;
 }
 
 export default function RegisterModal({ isOpen, onClose, siteName = "TrustBank" }: RegisterModalProps) {

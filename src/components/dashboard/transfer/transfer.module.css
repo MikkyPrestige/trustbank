@@ -79,13 +79,22 @@
   justify-content: space-between;
 }
 
-/* Flex Head for Section Title + Select */
-.flexHead {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
+.quickFillRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
 }
+
+.quickFillLabel {
+    color: #3b82f6;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
 .label {
   display: flex;
   align-items: center;
@@ -93,7 +102,7 @@
   font-weight: 600;
   color: var(--text-muted);
   margin-bottom: 0.5rem;
-  gap: 8px; /* Adds space between icon and text */
+  gap: 8px;
 }
 .miniSelect {
   padding: 6px 12px;
@@ -103,11 +112,15 @@
   border: 1px solid var(--border);
   color: var(--text-main);
   cursor: pointer;
-  transition: 0.2s;
+  transition: border-color 0.2s;
 }
 .miniSelect:focus {
   border-color: var(--primary);
   outline: none;
+}
+
+.miniSelectActive {
+  border-color: var(--primary) !important;
 }
 
 /* --- INPUT GROUPS --- */
@@ -127,12 +140,29 @@
   display: flex;
   align-items: center;
 }
+
+.pinGroup {
+    flex: 0.6;
+}
+
 .icon {
   position: absolute;
   left: 16px;
   color: var(--text-muted);
   pointer-events: none;
   z-index: 2;
+}
+
+.pinField {
+    height: 70px;
+    letter-spacing: 4px;
+    text-align: center;
+    font-size: 1.2rem;
+    padding-left: 14px;
+}
+
+.noteField {
+    padding-left: 14px;
 }
 
 .input,
@@ -196,7 +226,7 @@
 .submitBtn {
   margin-top: 16px;
   background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-  color: white;
+  color: var(--text-invert);
   padding: 18px;
   border-radius: 14px;
   font-size: 1.1rem;
@@ -322,6 +352,10 @@
   color: var(--text-main);
 }
 
+.receiptValue {
+  color: var(--success);
+}
+
 .modalActions {
   display: flex;
   flex-direction: column;
@@ -330,7 +364,7 @@
 }
 .primaryBtn {
   background: var(--primary);
-  color: white;
+  color: var(--text-invert);
   padding: 14px;
   border-radius: 12px;
   font-weight: 600;
@@ -354,9 +388,59 @@
   color: var(--text-main);
 }
 
-.spin { animation: spin 1s linear infinite; }
+/* .receiptValue {
+    color: #22c55e;
+} */
 
-@keyframes spin { 100% { transform: rotate(360deg); } }
+/* .quickFillRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.quickFillLabel {
+    color: #3b82f6;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+} */
+
+/* .miniSelect {
+    transition: border-color 0.2s;
+}
+
+.miniSelectActive {
+    border-color: #3b82f6 !important;
+} */
+
+/* .pinGroup {
+    flex: 0.6;
+}
+
+.pinField {
+    height: 70px;
+    letter-spacing: 4px;
+    text-align: center;
+    font-size: 1.2rem;
+    padding-left: 14px;
+}
+
+.noteField {
+    padding-left: 14px;
+} */
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
 
 @keyframes fadeIn {
   from {

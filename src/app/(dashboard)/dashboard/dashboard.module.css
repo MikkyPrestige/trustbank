@@ -3,15 +3,14 @@
   display: flex;
   min-height: 100vh;
   background-color: var(
-    --bg-subtle,
-    #f8fafc
-  ); /* Light Grey-Blue background for content */
+    var(--bg-surface)
+  );
 }
 
 /* Dark Mode adjustment for background */
 @media (prefers-color-scheme: dark) {
   .layoutShell {
-    background-color: #0f172a;
+    background-color: var(--bg-app);
   } /* Deep Navy */
 }
 
@@ -83,7 +82,7 @@
 /* ACTIVE STATE (The "Vibrant" Glow) */
 .active {
   background: rgba(59, 130, 246, 0.1); /* Primary Blue Tint */
-  color: #3b82f6; /* Primary Blue Text */
+  color: var(--primary);
 }
 
 /* The little blue line indicator */
@@ -95,7 +94,7 @@
   transform: translateY(-50%);
   width: 4px;
   height: 20px;
-  background: #3b82f6;
+  background: var(--primary);
   border-radius: 0 4px 4px 0;
 }
 
@@ -125,7 +124,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: var(--text-invert);
   font-weight: 700;
   font-size: 0.9rem;
 }

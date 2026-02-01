@@ -2,6 +2,7 @@
 
 import { getAuthenticatedUser } from "@/lib/auth/user-guard";
 import { db } from "@/lib/db";
+import { checkMaintenanceMode, hashPin } from "@/lib/security";
 import { revalidatePath } from "next/cache";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
@@ -18,6 +19,7 @@ const profileSchema = z.object({
     // Address
     address: z.string().optional(),
     city: z.string().optional(),
+    state: z.string().optional(),
     country: z.string().optional(),
     zipCode: z.string().optional(),
 
@@ -47,6 +49,10 @@ const pinSchema = z.object({
 // --- 1. UPDATE PROFILE ---
 export async function updateProfile(prevState: any, formData: FormData) {
       const { success, message, user } = await getAuthenticatedUser();
+
+      if (await checkMaintenanceMode()) {
+        return { success: false, message: "System is currently under maintenance. Please try again later." };
+    }
 
    if (!success || !user) {
         return { success: false, message };
@@ -109,6 +115,10 @@ export async function updateProfile(prevState: any, formData: FormData) {
 export async function changePassword(prevState: any, formData: FormData) {
      const { success, message, user } = await getAuthenticatedUser();
 
+     if (await checkMaintenanceMode()) {
+        return { success: false, message: "System is currently under maintenance. Please try again later." };
+    }
+
    if (!success || !user) {
         return { success: false, message };
     }
@@ -154,9 +164,14 @@ export async function changePassword(prevState: any, formData: FormData) {
 
 // --- 3. CHANGE PIN (With Reset Logic) ---
 export async function changePin(prevState: any, formData: FormData) {
-      const { success, message, user } = await getAuthenticatedUser();
+    const { success, message, user } = await getAuthenticatedUser();
 
-   if (!success || !user) {
+    // 1. Maintenance Check
+    if (await checkMaintenanceMode()) {
+        return { success: false, message: "System is currently under maintenance. Please try again later." };
+    }
+
+    if (!success || !user) {
         return { success: false, message };
     }
 
@@ -168,20 +183,27 @@ export async function changePin(prevState: any, formData: FormData) {
 
     try {
         if (!user.passwordHash) return { message: "User has no password set." };
-        // Verify Password (Master Key) before changing PIN
+
+        // 2. Verify Password (Master Key) before changing PIN
+        // We still check the user's login password to authorize this sensitive change
         const isMatch = await bcrypt.compare(currentPassword, user.passwordHash);
         if (!isMatch) return { message: "Incorrect Password. Cannot update PIN." };
-        // 1. Update PIN
+
+        // 3. 🔐 HASH THE NEW PIN
+        // Instead of saving 'newPin' directly, we encrypt it first
+        const securePin = await hashPin(newPin);
+
+        // 4. Update DB
         await db.user.update({
             where: { id: user.id },
             data: {
-                transactionPin: newPin,
-                failedPinAttempts: 0,
+                transactionPin: securePin, // 👈 Save the Hash, not the plain text
+                failedPinAttempts: 0,      // Reset security counters
                 pinLockedUntil: null
             }
         });
 
-        // 2. Security Notification
+        // 5. Security Notification
         await db.notification.create({
             data: {
                 userId: user.id,
@@ -194,13 +216,13 @@ export async function changePin(prevState: any, formData: FormData) {
         });
 
     } catch (err) {
+        console.error("Change PIN Error:", err);
         return { message: "Failed to update PIN." };
     }
 
     revalidatePath("/dashboard/settings");
     return { success: true, message: "Transaction PIN Updated!" };
 }
-
 
 
 

@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import styles from "./logs.module.css";
-import { ShieldAlert, User, ChevronLeft, ChevronRight } from "lucide-react";
+import { ShieldAlert, User, ChevronLeft, ChevronRight, Globe, AlertTriangle, CheckCircle, XCircle } from "lucide-react";
 import Link from "next/link";
 import { requireAdmin } from "@/lib/auth/admin-auth";
 
@@ -11,13 +11,11 @@ export default async function AdminAuditLogsPage({
 }) {
     await requireAdmin();
 
-    // 1. Pagination Config
     const { page } = await searchParams;
     const currentPage = Number(page) || 1;
-    const pageSize = 10;
+    const pageSize = 15;
     const skip = (currentPage - 1) * pageSize;
 
-    // 2. Fetch Logs and Total Count
     const [logs, totalLogs] = await Promise.all([
         db.adminLog.findMany({
             take: pageSize,
@@ -35,10 +33,10 @@ export default async function AdminAuditLogsPage({
             <div className={styles.header}>
                 <h1 className={styles.title}>
                     <ShieldAlert size={28} className={styles.icon} />
-                    Audit Trail
+                    Security & Audit Logs
                 </h1>
                 <p className={styles.subtitle}>
-                    Showing {logs.length} of {totalLogs} record(s) of administrative actions. This log cannot be deleted.
+                    Monitoring {totalLogs} events. Includes staff actions, security alerts, and system changes.
                 </p>
             </div>
 
@@ -46,51 +44,91 @@ export default async function AdminAuditLogsPage({
                 <table className={styles.table}>
                     <thead>
                         <tr>
-                            <th>Admin</th>
+                            <th>Risk</th>
+                            <th>Status</th>
+                            <th>Actor</th>
                             <th>Action</th>
-                            <th>Target ID</th>
-                            <th>Details (Metadata)</th>
-                            <th>Timestamp</th>
+                            <th>Details</th>
+                            <th>IP Address</th>
+                            <th>Time</th>
                         </tr>
                     </thead>
                     <tbody>
                         {logs.map((log) => (
-                            <tr key={log.id}>
+                            <tr key={log.id} className={log.level === 'CRITICAL' ? styles.rowCritical : ''}>
+                                {/* Risk Level */}
                                 <td>
-                                    <div className={styles.adminInfo}>
-                                        <User size={14} className={styles.userIcon} />
-                                        <span>{log.admin?.fullName || 'Unknown Admin'}</span>
-                                    </div>
-                                    <div className={styles.email}>{log.admin?.email || 'N/A'}</div>
+                                    <span className={`${styles.badge} ${getLevelStyle(log.level, styles)}`}>
+                                        {log.level}
+                                    </span>
                                 </td>
+
+                                {/* Status Icon */}
                                 <td>
-                                    <span className={getActionBadge(log.action, styles)}>
+                                    <div className={styles.statusCell}>
+                                        {log.status === 'SUCCESS' && <CheckCircle size={16} className={styles.iconSuccess} />}
+                                        {log.status === 'FAILED' && <AlertTriangle size={16} className={styles.iconWarning} />}
+                                        {log.status === 'BLOCKED' && <XCircle size={16} className={styles.iconError} />}
+                                    </div>
+                                </td>
+
+                                {/* Actor */}
+                                <td>
+                                    {log.admin ? (
+                                        <div className={styles.adminInfo}>
+                                            <User size={14} className={styles.userIcon} />
+                                            <div className={styles.userInfoCol}>
+                                                <span className={styles.userName}>{log.admin.fullName}</span>
+                                                <span className={styles.userEmail}>{log.admin.email}</span>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <span className={styles.anonymous}>System / Guest</span>
+                                    )}
+                                </td>
+
+                                {/* Action */}
+                                <td>
+                                    <span className={styles.actionName}>
                                         {log.action.replace(/_/g, ' ')}
                                     </span>
                                 </td>
-                                <td className={styles.mono}>{log.targetId || '-'}</td>
+
+                                {/* Details */}
                                 <td className={styles.mono}>
                                     {log.metadata ? (
-                                        <code className={styles.code}>
+                                        <code className={styles.code} title={log.metadata}>
                                             {formatMetadata(log.metadata)}
                                         </code>
                                     ) : '-'}
                                 </td>
+
+                                {/* IP Address */}
+                                <td>
+                                    <div className={styles.ipCell}>
+                                        <Globe size={12} className={styles.globeIcon} />
+                                        <span>{log.ipAddress || 'Unknown'}</span>
+                                    </div>
+                                </td>
+
+                                {/* Time */}
                                 <td className={styles.dateCell}>
-                                    {new Date(log.createdAt).toLocaleString()}
+                                    {new Date(log.createdAt).toLocaleString(undefined, {
+                                        month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                                    })}
                                 </td>
                             </tr>
                         ))}
                         {logs.length === 0 && (
                             <tr>
-                                <td colSpan={5} className={styles.empty}>No logs recorded yet.</td>
+                                <td colSpan={7} className={styles.empty}>No logs recorded yet.</td>
                             </tr>
                         )}
                     </tbody>
                 </table>
             </div>
 
-            {/* 3. PAGINATION UI */}
+            {/* Pagination */}
             {totalPages > 1 && (
                 <div className={styles.pagination}>
                     <p className={styles.pageInfo}>
@@ -118,20 +156,21 @@ export default async function AdminAuditLogsPage({
     );
 }
 
-// Helper to style badges based on action type
-function getActionBadge(action: string, styles: any) {
-    if (action.includes("DELETE") || action.includes("REMOVE")) return `${styles.badge} ${styles.badgeRed}`;
-    if (action.includes("REJECT") || action.includes("SUSPEND") || action.includes("FREEZE")) return `${styles.badge} ${styles.badgeOrange}`;
-    if (action.includes("APPROVE") || action.includes("CREDIT") || action.includes("CREATE") || action.includes("PROMOTE")) return `${styles.badge} ${styles.badgeGreen}`;
-    return `${styles.badge} ${styles.badgeGray}`;
+function getLevelStyle(level: string, styles: any) {
+    if (level === 'CRITICAL') return styles.badgeCritical;
+    if (level === 'WARNING') return styles.badgeWarning;
+    return styles.badgeInfo;
 }
 
-// Helper to clean up metadata display
 function formatMetadata(metadata: string) {
     try {
         const parsed = JSON.parse(metadata);
-        return JSON.stringify(parsed).slice(0, 60) + (metadata.length > 60 ? '...' : '');
+        const clean = Object.entries(parsed)
+            .filter(([_, v]) => v !== null && v !== undefined && v !== "")
+            .map(([k, v]) => `${k}: ${v}`)
+            .join(", ");
+        return clean.slice(0, 50) + (clean.length > 50 ? '...' : '');
     } catch (e) {
-        return metadata.slice(0, 60);
+        return metadata.slice(0, 50);
     }
 }

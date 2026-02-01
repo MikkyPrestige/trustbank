@@ -10,6 +10,11 @@ export default async function PrivacyPage() {
             type="privacy"
             content={data.content}
             lastUpdated={data.lastUpdated}
+            backText={data.backText}
+            footerText={data.footerText}
+            linkText={data.linkText}
+            linkUrl={data.linkUrl}
+            updatedLabel={data.updatedLabel}
         />
     );
 }

@@ -62,7 +62,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  color: white;
+  color: var(--text-invert);
   transform: translateZ(20px); /* 3D Depth */
 }
 
@@ -128,7 +128,7 @@
   font-family: "Courier New", monospace;
   font-size: 1.4rem;
   letter-spacing: 2px;
-  color: white;
+  color: var(--text-invert);
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   margin-bottom: 1.5rem;
   display: flex;
@@ -175,6 +175,12 @@
     width: 300px;
     height: 190px;
   }
-  .number { font-size: 1.1rem; gap: 0.5rem; }
-  .holder span, .expiry span { font-size: 0.8rem; }
+  .number {
+    font-size: 1.1rem;
+    gap: 0.5rem;
+  }
+  .holder span,
+  .expiry span {
+    font-size: 0.8rem;
+  }
 }

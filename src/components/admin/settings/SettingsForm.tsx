@@ -3,32 +3,48 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { updateSiteSettings } from '@/actions/admin/settings';
-import { STATIC_MENUS } from "@/lib/utils/constants";
+import { MEGA_MENUS } from "@/lib/utils/constants";
 import styles from './settings.module.css';
-import { Save, Loader2, Home, TrendingUp, Menu, Scale, FileText, PiggyBank, HandCoins, Gem, ShieldCheck, ArrowRightLeft, Users, BookOpen, Shield, Headset } from 'lucide-react';
+import {
+    Save, Loader2, Home, Menu, Scale, FileText, PiggyBank, HandCoins,
+    Gem, ShieldCheck, ArrowRightLeft, Users, BookOpen, Shield, Headset,
+    MapPin, Briefcase, HelpCircle, Landmark, Percent, LineChart, Bitcoin
+} from 'lucide-react';
 import toast from 'react-hot-toast';
-import { HomeTab } from "@/components/admin/settings/tabs/HomeTab";
-import { BankingTab } from "@/components/admin/settings/tabs/BankingTab";
-import { SaveTab } from "@/components/admin/settings/tabs/SaveTab";
-import { BorrowTab } from "@/components/admin/settings/tabs/BorrowTab";
-import { WealthTab } from "@/components/admin/settings/tabs/WealthTab";
-import { InsureTab } from "@/components/admin/settings/tabs/InsureTab";
-import { PaymentsTab } from "@/components/admin/settings/tabs/PaymentsTab";
-import { AboutTab } from "@/components/admin/settings/tabs/AboutTab";
-import { CryptoTab } from "@/components/admin/settings/tabs/CryptoTab";
-import { LearnTab } from "@/components/admin/settings/tabs/LearnTab";
-import { ContentTab } from "@/components/admin/settings/tabs/ContentTab";
-import { NavTab } from "@/components/admin/settings/tabs/NavTab";
-import { LegalTab } from "@/components/admin/settings/tabs/LegalTab";
-import { SecurityTab } from "@/components/admin/settings/tabs/SecurityTab";
-import { SupportTab } from "@/components/admin/settings/tabs/SupportTab";
 
-interface SettingsProps { settings: any; }
+// Tabs
+import { HomeTab } from "./tabs/HomeTab";
+import { BankingTab } from "./tabs/BankingTab";
+import { SaveTab } from "./tabs/SaveTab";
+import { BorrowTab } from "./tabs/BorrowTab";
+import { WealthTab } from "./tabs/WealthTab";
+import { CryptoTab } from "./tabs/CryptoTab";
+import { InsureTab } from "./tabs/InsureTab";
+import { PaymentsTab } from "./tabs/PaymentsTab";
+import { RatesTab } from "./tabs/RatesTab";
+import { LocationsTab } from './tabs/LocationsTab';
+import { LearnTab } from "./tabs/LearnTab";
+import { AboutTab } from "./tabs/AboutTab";
+import { JobsTab } from './tabs/JobsTab';
+import { InvestorsTab } from './tabs/InvestorsTab';
+import { PressTab } from "./tabs/PressTab";
+import { SupportTab } from "./tabs/SupportTab";
+import { FaqTab } from './tabs/FaqTab';
+import { SecurityTab } from "./tabs/SecurityTab";
+import { LegalTab } from "./tabs/LegalTab";
+import { NavTab } from "./tabs/NavTab";
+import { FooterTab } from './tabs/FooterTab';
 
-export default function SettingsForm({ settings }: SettingsProps) {
+interface SettingsProps { settings: any; footerLinks: any[]; }
+
+export default function SettingsForm({ settings, footerLinks }: SettingsProps) {
     const router = useRouter();
     const [isPending, setIsPending] = useState(false);
-    const [activeTab, setActiveTab] = useState<'home' | 'banking' | 'save' | 'borrow' | 'wealth' | 'insure' | 'payments' | 'about' | 'crypto' | 'learn' | 'content' | 'nav' | 'legal' | 'security' | 'support'>('home');
+
+    // Default to 'home'
+    const [activeTab, setActiveTab] = useState<string>('home');
+
+    // --- 1. HOME IMAGES ---
     const [heroUrl, setHeroUrl] = useState(settings.home_hero_img || "");
     const [homeCardUrl, setHomeCardUrl] = useState(settings.home_card_img || "");
     const [homeCtaUrl, setHomeCtaUrl] = useState(settings.home_cta_img || "");
@@ -39,30 +55,40 @@ export default function SettingsForm({ settings }: SettingsProps) {
     const [loan2Url, setLoan2Url] = useState(settings.home_loan_card2_img || "");
     const [investUrl, setInvestUrl] = useState(settings.home_invest_img || "");
     const [globalMapUrl, setGlobalMapUrl] = useState(settings.home_global_img || "");
+
+    // --- 2. PARTNERS ---
     const [partner1, setPartner1] = useState(settings.partner_img_1 || "");
     const [partner2, setPartner2] = useState(settings.partner_img_2 || "");
     const [partner3, setPartner3] = useState(settings.partner_img_3 || "");
     const [partner4, setPartner4] = useState(settings.partner_img_4 || "");
     const [partner5, setPartner5] = useState(settings.partner_img_5 || "");
     const [partner6, setPartner6] = useState(settings.partner_img_6 || "");
+
+    // --- 3. PRODUCTS ---
     const [bankHeroUrl, setBankHeroUrl] = useState(settings.bank_hero_img || "");
     const [bankCSUrl, setBankCSUrl] = useState(settings.bank_cs_img || "");
     const [bankBizUrl, setBankBizUrl] = useState(settings.bank_biz_img || "");
     const [bankStuUrl, setBankStuUrl] = useState(settings.bank_stu_img || "");
+
     const [saveHeroUrl, setSaveHeroUrl] = useState(settings.save_hero_img || "");
     const [saveCdsUrl, setSaveCdsUrl] = useState(settings.save_cds_img || "");
     const [saveMmaUrl, setSaveMmaUrl] = useState(settings.save_mma_img || "");
     const [saveKidsUrl, setSaveKidsUrl] = useState(settings.save_kids_img || "");
+
     const [borrowHeroUrl, setBorrowHeroUrl] = useState(settings.borrow_hero_img || "");
     const [borrowCCUrl, setBorrowCCUrl] = useState(settings.borrow_cc_img || "");
     const [borrowPLUrl, setBorrowPLUrl] = useState(settings.borrow_pl_img || "");
     const [borrowMTUrl, setBorrowMTUrl] = useState(settings.borrow_mt_img || "");
     const [borrowALUrl, setBorrowALUrl] = useState(settings.borrow_al_img || "");
     const [borrowSLUrl, setBorrowSLUrl] = useState(settings.borrow_sl_img || "");
+    const [borrowHEUrl, setBorrowHEUrl] = useState(settings.borrow_he_img || "");
+
     const [wealthHeroUrl, setWealthHeroUrl] = useState(settings.wealth_hero_img || "");
     const [wealthPcgUrl, setWealthPcgUrl] = useState(settings.wealth_pcg_img || "");
     const [wealthRetUrl, setWealthRetUrl] = useState(settings.wealth_retirement_img || "");
     const [wealthEstUrl, setWealthEstUrl] = useState(settings.wealth_estate_img || "");
+    const [cryptoHeroUrl, setCryptoHeroUrl] = useState(settings.crypto_hero_img || "");
+
     const [insureHeroUrl, setInsureHeroUrl] = useState(settings.insure_hero_img || "");
     const [insPartner1, setInsPartner1] = useState(settings.insure_partner1_img || "");
     const [insPartner2, setInsPartner2] = useState(settings.insure_partner2_img || "");
@@ -72,12 +98,14 @@ export default function SettingsForm({ settings }: SettingsProps) {
     const [insureP2Url, setInsureP2Url] = useState(settings.insure_partner2_img || "");
     const [insureP3Url, setInsureP3Url] = useState(settings.insure_partner3_img || "");
     const [insureP4Url, setInsureP4Url] = useState(settings.insure_partner4_img || "");
+
     const [paymentsHeroUrl, setPaymentsHeroUrl] = useState(settings.payments_hero_img || "");
     const [payBillsUrl, setPayBillsUrl] = useState(settings.support_paybills_img || "");
     const [payP2PUrl, setPayP2PUrl] = useState(settings.support_p2p_img || "");
     const [payWiresUrl, setPayWiresUrl] = useState(settings.support_wires_img || "");
+
+    // --- 4. COMPANY & RESOURCES ---
     const [aboutHeroUrl, setAboutHeroUrl] = useState(settings.about_hero_img || "");
-    const [cryptoHeroUrl, setCryptoHeroUrl] = useState(settings.crypto_hero_img || "");
     const [learnHeroUrl, setLearnHeroUrl] = useState(settings.learn_hero_img || "");
     const [art1Url, setArt1Url] = useState(settings.learn_art1_img || "");
     const [art2Url, setArt2Url] = useState(settings.learn_art2_img || "");
@@ -86,13 +114,15 @@ export default function SettingsForm({ settings }: SettingsProps) {
     const [supportHeroUrl, setSupportHeroUrl] = useState(settings.support_hero_img || "");
     const [careersHeroUrl, setCareersHeroUrl] = useState(settings.careers_hero_img || "");
     const [pressHeroUrl, setPressHeroUrl] = useState(settings.press_hero_img || "");
-    const [investHeroUrl, setInvestHeroUrl] = useState(settings.investors_hero_img || "");
+    const [investHeroUrl, setInvestHeroUrl] = useState(settings.invest_hero_img || "");
+    const [RatesHeroURL, setRatesHeroURL] = useState(settings.rates_hero_img || "");
 
+    // --- 5. SYSTEM ---
     const [logoUrl, setLogoUrl] = useState(settings.site_logo || "");
     const [jsonMenu, setJsonMenu] = useState(
         settings.nav_structure_json
             ? settings.nav_structure_json
-            : JSON.stringify(STATIC_MENUS, null, 2)
+            : JSON.stringify(MEGA_MENUS, null, 2)
     );
 
     async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -102,43 +132,65 @@ export default function SettingsForm({ settings }: SettingsProps) {
         const result = await updateSiteSettings(formData);
 
         if (result.success) {
-            toast.success("Saved!");
+            toast.success("Settings Saved Successfully");
             router.refresh();
         } else {
-            toast.error("Failed.");
+            toast.error("Failed to save settings.");
         }
         setIsPending(false);
     }
+
+    // Helper to render class for active tab
+    const getTabClass = (name: string) => `${styles.tabBtn} ${activeTab === name ? styles.activeTab : ''}`;
 
     return (
         <div className={styles.container}>
             <header className={styles.header}>
                 <h1 className={styles.title}>System Configuration</h1>
-                <p className={styles.subtitle}>Control content, rates, and alerts across the entire platform.</p>
+                <p className={styles.subtitle}>Manage website content, product details, and system settings.</p>
             </header>
 
+            {/* --- TABS NAVIGATION --- */}
             <div className={styles.tabs}>
-                <button type="button" onClick={() => setActiveTab('home')} className={`${styles.tabBtn} ${activeTab === 'home' ? styles.activeTab : ''}`}><Home size={16} /> Home</button>
-                <button type="button" onClick={() => setActiveTab('banking')} className={`${styles.tabBtn} ${activeTab === 'banking' ? styles.activeTab : ''}`}><TrendingUp size={16} /> Banking & Rates</button>
-                <button type="button" onClick={() => setActiveTab('save')} className={`${styles.tabBtn} ${activeTab === 'save' ? styles.activeTab : ''}`}><PiggyBank size={16} /> Save</button>
-                <button type="button" onClick={() => setActiveTab('borrow')} className={`${styles.tabBtn} ${activeTab === 'borrow' ? styles.activeTab : ''}`}><HandCoins size={16} /> Borrow</button>
-                <button type="button" onClick={() => setActiveTab('wealth')} className={`${styles.tabBtn} ${activeTab === 'wealth' ? styles.activeTab : ''}`}><Gem size={16} /> Wealth</button>
-                <button type="button" onClick={() => setActiveTab('insure')} className={`${styles.tabBtn} ${activeTab === 'insure' ? styles.activeTab : ''}`}><ShieldCheck size={16} /> Insurance</button>
-                <button type="button" onClick={() => setActiveTab('payments')} className={`${styles.tabBtn} ${activeTab === 'payments' ? styles.activeTab : ''}`}><ArrowRightLeft size={16} /> Payments</button>
-                <button type="button" onClick={() => setActiveTab('about')} className={`${styles.tabBtn} ${activeTab === 'about' ? styles.activeTab : ''}`}><Users size={16} /> About</button>
-                <button type="button" onClick={() => setActiveTab('crypto')} className={`${styles.tabBtn} ${activeTab === 'crypto' ? styles.activeTab : ''}`}><Users size={16} /> Crypto</button>
-                <button type="button" onClick={() => setActiveTab('learn')} className={`${styles.tabBtn} ${activeTab === 'learn' ? styles.activeTab : ''}`}><BookOpen size={16} /> Learn</button>
-                <button type="button" onClick={() => setActiveTab('content')} className={`${styles.tabBtn} ${activeTab === 'content' ? styles.activeTab : ''}`}><FileText size={16} /> Content</button>
-                <button type="button" onClick={() => setActiveTab('nav')} className={`${styles.tabBtn} ${activeTab === 'nav' ? styles.activeTab : ''}`}><Menu size={16} /> Menus</button>
-                <button type="button" onClick={() => setActiveTab('legal')} className={`${styles.tabBtn} ${activeTab === 'legal' ? styles.activeTab : ''}`}><Scale size={16} /> Legal</button>
-                <button type="button" onClick={() => setActiveTab('security')} className={`${styles.tabBtn} ${activeTab === 'security' ? styles.activeTab : ''}`}>
-                    <Shield size={16} /> Security
-                </button>
-                <button type="button" onClick={() => setActiveTab('support')} className={`${styles.tabBtn} ${activeTab === 'support' ? styles.activeTab : ''}`}><Headset size={16} /> Support</button>
+                {/* 1. MAIN */}
+                <button type="button" onClick={() => setActiveTab('home')} className={getTabClass('home')}><Home size={16} /> Home</button>
+
+                {/* 2. PRODUCTS (Matches Navbar Order) */}
+                <div className={styles.separator} /> {/* Optional CSS separator */}
+                <button type="button" onClick={() => setActiveTab('banking')} className={getTabClass('banking')}><Landmark size={16} /> Banking</button>
+                <button type="button" onClick={() => setActiveTab('save')} className={getTabClass('save')}><PiggyBank size={16} /> Save</button>
+                <button type="button" onClick={() => setActiveTab('borrow')} className={getTabClass('borrow')}><HandCoins size={16} /> Lending</button>
+                <button type="button" onClick={() => setActiveTab('wealth')} className={getTabClass('wealth')}><Gem size={16} /> Wealth</button>
+                <button type="button" onClick={() => setActiveTab('crypto')} className={getTabClass('crypto')}><Bitcoin size={16} /> Crypto</button>
+                <button type="button" onClick={() => setActiveTab('insure')} className={getTabClass('insure')}><ShieldCheck size={16} /> Insurance</button>
+                <button type="button" onClick={() => setActiveTab('payments')} className={getTabClass('payments')}><ArrowRightLeft size={16} /> Payments</button>
+
+                {/* 3. UTILITIES & RESOURCES */}
+                <div className={styles.separator} />
+                <button type="button" onClick={() => setActiveTab('rates')} className={getTabClass('rates')}><Percent size={16} /> Rates</button>
+                <button type="button" onClick={() => setActiveTab('locations')} className={getTabClass('locations')}><MapPin size={16} /> Locations</button>
+                <button type="button" onClick={() => setActiveTab('learn')} className={getTabClass('learn')}><BookOpen size={16} /> Learn</button>
+
+                {/* 4. COMPANY & SUPPORT */}
+                <div className={styles.separator} />
+                <button type="button" onClick={() => setActiveTab('about')} className={getTabClass('about')}><Users size={16} /> About</button>
+                <button type="button" onClick={() => setActiveTab('jobs')} className={getTabClass('jobs')}><Briefcase size={16} /> Careers</button>
+                <button type="button" onClick={() => setActiveTab('investors')} className={getTabClass('investors')}><LineChart size={16} /> Investors</button>
+                <button type="button" onClick={() => setActiveTab('press')} className={getTabClass('press')}><FileText size={16} /> Press</button>
+                <button type="button" onClick={() => setActiveTab('support')} className={getTabClass('support')}><Headset size={16} /> Support</button>
+                <button type="button" onClick={() => setActiveTab('faq')} className={getTabClass('faq')}><HelpCircle size={16} /> FAQ</button>
+                <button type="button" onClick={() => setActiveTab('security')} className={getTabClass('security')}><Shield size={16} /> Security</button>
+                <button type="button" onClick={() => setActiveTab('legal')} className={getTabClass('legal')}><Scale size={16} /> Legal</button>
+
+                {/* 5. SYSTEM */}
+                <div className={styles.separator} />
+                <button type="button" onClick={() => setActiveTab('nav')} className={getTabClass('nav')}><Menu size={16} /> Navigation</button>
+                <button type="button" onClick={() => setActiveTab('footer')} className={getTabClass('footer')}><FileText size={16} /> Footer</button>
             </div>
 
             <form onSubmit={handleSubmit} className={styles.card}>
 
+                {/* --- 1. HOME --- */}
                 {activeTab === 'home' && (
                     <HomeTab
                         settings={settings}
@@ -162,6 +214,7 @@ export default function SettingsForm({ settings }: SettingsProps) {
                     />
                 )}
 
+                {/* --- 2. PRODUCTS --- */}
                 {activeTab === 'banking' && (
                     <BankingTab
                         settings={settings}
@@ -191,6 +244,7 @@ export default function SettingsForm({ settings }: SettingsProps) {
                         borrowMTUrl={borrowMTUrl} setBorrowMTUrl={setBorrowMTUrl}
                         borrowALUrl={borrowALUrl} setBorrowALUrl={setBorrowALUrl}
                         borrowSLUrl={borrowSLUrl} setBorrowSLUrl={setBorrowSLUrl}
+                        borrowHeUrl={borrowHEUrl} setBorrowHeUrl={setBorrowHEUrl}
                     />
                 )}
 
@@ -201,6 +255,13 @@ export default function SettingsForm({ settings }: SettingsProps) {
                         wealthPcgUrl={wealthPcgUrl} setWealthPcgUrl={setWealthPcgUrl}
                         wealthRetUrl={wealthRetUrl} setWealthRetUrl={setWealthRetUrl}
                         wealthEstUrl={wealthEstUrl} setWealthEstUrl={setWealthEstUrl}
+                    />
+                )}
+
+                {activeTab === 'crypto' && (
+                    <CryptoTab
+                        settings={settings}
+                        cryptoHeroUrl={cryptoHeroUrl} setCryptoHeroUrl={setCryptoHeroUrl}
                     />
                 )}
 
@@ -229,19 +290,15 @@ export default function SettingsForm({ settings }: SettingsProps) {
                     />
                 )}
 
-                {activeTab === 'about' && (
-                    <AboutTab
+                {/* --- 3. UTILITIES --- */}
+                {activeTab === 'rates' && (
+                    <RatesTab
                         settings={settings}
-                        aboutHeroUrl={aboutHeroUrl} setAboutHeroUrl={setAboutHeroUrl}
+                        RatesHeroURL={RatesHeroURL} setRatesHeroURL={setRatesHeroURL}
                     />
                 )}
 
-                {activeTab === 'crypto' && (
-                    <CryptoTab
-                        settings={settings}
-                        cryptoHeroUrl={cryptoHeroUrl} setCryptoHeroUrl={setCryptoHeroUrl}
-                    />
-                )}
+                {activeTab === 'locations' && <LocationsTab settings={settings} />}
 
                 {activeTab === 'learn' && (
                     <LearnTab
@@ -253,28 +310,32 @@ export default function SettingsForm({ settings }: SettingsProps) {
                     />
                 )}
 
-                {activeTab === 'content' && (
-                    <ContentTab
+                {/* --- 4. COMPANY & SUPPORT --- */}
+                {activeTab === 'about' && (
+                    <AboutTab
+                        settings={settings}
+                        aboutHeroUrl={aboutHeroUrl} setAboutHeroUrl={setAboutHeroUrl}
+                    />
+                )}
+
+                {activeTab === 'jobs' && (
+                    <JobsTab
                         settings={settings}
                         careersHeroUrl={careersHeroUrl} setCareersHeroUrl={setCareersHeroUrl}
-                        pressHeroUrl={pressHeroUrl} setPressHeroUrl={setPressHeroUrl}
+                    />
+                )}
+
+                {activeTab === 'investors' && (
+                    <InvestorsTab
+                        settings={settings}
                         investHeroUrl={investHeroUrl} setInvestHeroUrl={setInvestHeroUrl}
                     />
                 )}
 
-                {activeTab === 'nav' && (
-                    <NavTab settings={settings} jsonMenu={jsonMenu} setJsonMenu={setJsonMenu} />
-                )}
-
-                {activeTab === 'legal' && (
-                    <LegalTab settings={settings} />
-                )}
-
-                {activeTab === 'security' && (
-                    <SecurityTab
+                {activeTab === 'press' && (
+                    <PressTab
                         settings={settings}
-                        securityHeroUrl={securityHeroUrl}
-                        setSecurityHeroUrl={setSecurityHeroUrl}
+                        pressHeroUrl={pressHeroUrl} setPressHeroUrl={setPressHeroUrl}
                     />
                 )}
 
@@ -286,6 +347,28 @@ export default function SettingsForm({ settings }: SettingsProps) {
                     />
                 )}
 
+                {activeTab === 'faq' && <FaqTab settings={settings} />}
+
+                {activeTab === 'security' && (
+                    <SecurityTab
+                        settings={settings}
+                        securityHeroUrl={securityHeroUrl}
+                        setSecurityHeroUrl={setSecurityHeroUrl}
+                    />
+                )}
+
+                {activeTab === 'legal' && <LegalTab settings={settings} />}
+
+                {/* --- 5. SYSTEM --- */}
+                {activeTab === 'nav' && (
+                    <NavTab settings={settings} jsonMenu={jsonMenu} setJsonMenu={setJsonMenu} />
+                )}
+
+                {activeTab === 'footer' && (
+                    <FooterTab settings={settings} footerLinks={footerLinks} />
+                )}
+
+                {/* --- ACTIONS --- */}
                 <div className={styles.actions}>
                     <button type="submit" disabled={isPending} className={styles.saveBtn}>
                         {isPending ? <Loader2 className={styles.spin} size={20} /> : <Save size={20} />} Save Changes

@@ -2,8 +2,9 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { createFaq, updateFaq, deleteFaq } from '@/actions/admin/faqs';
-import { Plus, Pencil, Trash2, X, Loader2 } from 'lucide-react';
+import { Plus, Pencil, Trash2, X, Loader2, ArrowLeft } from 'lucide-react';
 import toast from 'react-hot-toast';
 import styles from './faqs.module.css';
 import { FaqItem } from '@prisma/client';
@@ -101,7 +102,10 @@ export default function FaqClientManager({ initialFaqs }: Props) {
 
     return (
         <div className={styles.container}>
-            {/* HEADER */}
+            <Link href="/admin/settings" className={styles.backLink}>
+                <ArrowLeft size={18} />
+                Back to Settings
+            </Link>
             <div className={styles.header}>
                 <h1 className={styles.title}>FAQ Manager</h1>
                 <button onClick={openAddModal} className={styles.addBtn} disabled={loading}>

@@ -1,8 +1,8 @@
 import { auth } from "@/auth";
 import { requireAdmin } from "@/lib/auth/admin-auth";
-import { getSiteSettings } from "@/lib/content/get-settings"; // 👈 Import CMS
+import { getSiteSettings } from "@/lib/content/get-settings";
 import Link from "next/link";
-import Image from "next/image"; // 👈 Import Image
+import Image from "next/image";
 import styles from "./admin.module.css";
 import {
     LayoutDashboard,
@@ -15,7 +15,9 @@ import {
     LogOut,
     IdCard,
     MessageSquareText,
-    Settings // 👈 Import Settings Icon
+    Settings,
+    Lock,
+    Server
 } from "lucide-react";
 
 export default async function AdminLayout({
@@ -92,15 +94,28 @@ export default async function AdminLayout({
                         <Activity size={18} /> TXNs
                     </Link>
 
-                    {/* 👇 NEW LINK: Site Settings (CMS) */}
+                    {/* Site Settings (CMS) */}
                     <Link href="/admin/settings" className={styles.navLink}>
                         <Settings size={18} /> Site Settings
                     </Link>
 
+                    {/* 5. INFRASTRUCTURE (Super Admin Only) */}
                     {role === 'SUPER_ADMIN' && (
-                        <Link href="/admin/logs" className={styles.navLink}>
-                            <ShieldAlert size={18} /> Audit
-                        </Link>
+                        <>
+                            <div className={styles.separator}></div>
+
+                            <Link href="/admin/security" className={styles.navLink}>
+                                <Lock size={18} /> Security
+                            </Link>
+
+                            <Link href="/admin/system" className={styles.navLink}>
+                                <Server size={18} /> System Rules
+                            </Link>
+
+                            <Link href="/admin/logs" className={styles.navLink}>
+                                <ShieldAlert size={18} /> Audit Logs
+                            </Link>
+                        </>
                     )}
                 </div>
 

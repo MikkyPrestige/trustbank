@@ -10,6 +10,11 @@ export default async function TermsPage() {
             type="terms"
             content={data.content}
             lastUpdated={data.lastUpdated}
+            backText={data.backText}
+            footerText={data.footerText}
+            linkText={data.linkText}
+            linkUrl={data.linkUrl}
+            updatedLabel={data.updatedLabel}
         />
     );
 }

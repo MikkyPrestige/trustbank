@@ -51,7 +51,7 @@ export default function KycReviewSection({ user }: { user: any }) {
                     <div className={styles.imgBox}>
                         <a href={user.passportUrl} target="_blank" rel="noreferrer">
                             <Image
-                                src={user.passportUrl || '/placeholder.png'}
+                                src={user.passportUrl}
                                 alt="Passport"
                                 fill
                                 style={{ objectFit: 'contain' }}
@@ -90,7 +90,7 @@ export default function KycReviewSection({ user }: { user: any }) {
                     onClick={() => handleAction('APPROVE')}
                     disabled={loading}
                 >
-                    <Check size={16} /> Approve Identity
+                    <Check size={16} /> Approve
                 </button>
                 <button
                     className={`${styles.btnReject} ${loading ? styles.btnDisabled : ''}`}

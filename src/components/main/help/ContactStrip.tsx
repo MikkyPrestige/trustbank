@@ -16,7 +16,7 @@ export default function ContactStrip({ settings }: ContactStripProps) {
                     <Phone size={18} /> Call Support
                 </a>
 
-                <a href="/contact" className={styles.chatBtn}>
+                <a href="/help" className={styles.chatBtn}>
                     <MessageSquare size={18} /> Live Chat
                 </a>
             </div>

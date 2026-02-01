@@ -35,7 +35,7 @@
   top: -2px;
   right: -2px;
   background: var(--danger); /* Replaced #ef4444 */
-  color: white;
+  color: var(--text-invert);
   font-size: 0.65rem;
   font-weight: 700;
   min-width: 16px;
@@ -166,7 +166,7 @@
 
 .checkBtn:hover {
   background: var(--primary);
-  color: white;
+  color: var(--text-invert);
 }
 
 .empty {
@@ -180,11 +180,11 @@
 }
 
 .actionsRow {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-top: 8px;
-    margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+  margin-bottom: 4px;
 }
 
 .actionLink {
@@ -204,21 +204,21 @@
 }
 
 .dismissBtn {
-    background: none;
-    border: 1px solid var(--border);
-    color: var(--text-muted);
-    font-size: 0.75rem;
-    padding: 2px 8px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: all 0.2s;
-    height: 24px;
-    display: flex;
-    align-items: center;
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  height: 24px;
+  display: flex;
+  align-items: center;
 }
 
 .dismissBtn:hover {
-    background: var(--bg-secondary);
-    color: var(--danger);
-    border-color: var(--danger);
+  background: var(--bg-secondary);
+  color: var(--danger);
+  border-color: var(--danger);
 }

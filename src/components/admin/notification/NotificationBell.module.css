@@ -18,7 +18,8 @@
   justify-content: center;
 }
 
-.bellButton:hover, .active {
+.bellButton:hover,
+.active {
   background: var(--bg-secondary);
   color: var(--text-main);
   border-color: var(--border);
@@ -29,7 +30,7 @@
   top: -2px;
   right: -2px;
   background: var(--danger);
-  color: white;
+  color: var(--text-invert);
   font-size: 10px;
   font-weight: bold;
   height: 16px;
@@ -57,8 +58,14 @@
 }
 
 @keyframes slideDown {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .header {
@@ -101,8 +108,13 @@
 }
 
 /* SCROLLBAR */
-.list::-webkit-scrollbar { width: 4px; }
-.list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+.list::-webkit-scrollbar {
+  width: 4px;
+}
+.list::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
 
 /* ITEM LAYOUT */
 .item {

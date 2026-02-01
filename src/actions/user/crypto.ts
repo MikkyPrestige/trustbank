@@ -2,8 +2,8 @@
 
 import { getAuthenticatedUser } from "@/lib/auth/user-guard";
 import { db } from "@/lib/db";
+import { checkPermissions, checkInboundLimit, checkMaintenanceMode } from "@/lib/security";
 import { revalidatePath } from "next/cache";
-import { checkPermissions, checkInboundLimit } from "@/lib/auth/security";
 import { getLiveMarketData } from "@/lib/marketData";
 import {
   UserStatus,
@@ -13,19 +13,24 @@ import {
   TransactionDirection
 } from "@prisma/client";
 
-// --- ACTION 1: TRADE (BUY / SELL) ---
+// ==========================================
+// 📈 TRADE CRYPTO (BUY/SELL)
+// ==========================================
 export async function tradeCrypto(prevState: any, formData: FormData) {
     const { success, message, user } = await getAuthenticatedUser();
+
+    // 1. 🚧 Global Kill Switch
+    if (await checkMaintenanceMode()) {
+        return { success: false, message: "System is currently under maintenance. Please try again later." };
+    }
 
     if (!success || !user) {
         return { message };
     }
 
-    // 1. CHECKS
-    const permission = await checkPermissions(user.id, 'CRYPTO');
+    // 2. 🛡️ Permission Check (Features + KYC)
+    const permission = await checkPermissions(user.id, 'CRYPTO_TRADE');
     if (!permission.allowed) return { message: `🚫 ${permission.error}` };
-
-    // if (user.kycStatus !== KycStatus.VERIFIED) return { message: "Trading disabled. Verify Identity." };
 
     const type = formData.get("type") as "BUY" | "SELL";
     const symbol = formData.get("currency") as string;
@@ -33,7 +38,7 @@ export async function tradeCrypto(prevState: any, formData: FormData) {
 
     if (!inputAmount || inputAmount <= 0) return { message: "Invalid amount" };
 
-    // 2. FETCH MARKET DATA
+    // 3. Fetch Market Data
     const marketData = await getLiveMarketData();
     const targetCoin = marketData.find(coin => coin.symbol === symbol);
     let currentPrice = targetCoin?.price || 0;
@@ -41,7 +46,7 @@ export async function tradeCrypto(prevState: any, formData: FormData) {
 
     if (!currentPrice || currentPrice <= 0) return { message: "Price unavailable. Try again." };
 
-    // 🛑 4. BALANCE CAP CHECK
+    // 4. 🛑 Balance Cap Check (For SELLS only)
     if (type === "SELL") {
         const inboundCheck = await checkInboundLimit(user.id, inputAmount);
         if (!inboundCheck.allowed) {
@@ -83,7 +88,7 @@ export async function tradeCrypto(prevState: any, formData: FormData) {
         if (type === "BUY" && Number(account.availableBalance) < inputAmount) return { message: "Insufficient USD funds." };
         if (type === "SELL" && (!asset || Number(asset.quantity) < cryptoAmount)) return { message: "Insufficient Crypto balance." };
 
-        // 3. EXECUTE TRADE (Transaction)
+        // 5. Execute Trade
         const ledgerId = await db.$transaction(async (tx) => {
             // A. UPDATE USD
             await tx.account.update({
@@ -134,7 +139,7 @@ export async function tradeCrypto(prevState: any, formData: FormData) {
             return ledgerTx.id;
         });
 
-        // 4. NOTIFICATION (Outside Transaction)
+        // 6. Notification
         await db.notification.create({
             data: {
                 userId: user.id,
@@ -155,15 +160,23 @@ export async function tradeCrypto(prevState: any, formData: FormData) {
     return { success: true, message: `${type} Order Executed Successfully!` };
 }
 
-// --- ACTION 2: TRANSFER (SEND CRYPTO) ---
+// ==========================================
+// 📤 TRANSFER CRYPTO (SEND)
+// ==========================================
 export async function transferCrypto(prevState: any, formData: FormData) {
     const { success, message, user } = await getAuthenticatedUser();
+
+    // 1. 🚧 Global Kill Switch
+    if (await checkMaintenanceMode()) {
+        return { success: false, message: "System is currently under maintenance. Please try again later." };
+    }
 
     if (!success || !user) {
         return { message };
     }
 
-    const permission = await checkPermissions(user.id, 'CRYPTO');
+    // 2. 🛡️ Permission Check
+    const permission = await checkPermissions(user.id, 'CRYPTO_TRANSFER');
     if (!permission.allowed) return { message: `🚫 ${permission.error}` };
 
     const symbol = formData.get("symbol") as string;
@@ -184,7 +197,9 @@ export async function transferCrypto(prevState: any, formData: FormData) {
         if (!sender) return { message: "User not found." };
         if (sender.status === UserStatus.FROZEN) return { message: "🚫 Account Frozen." };
         if (sender.transactionPin !== pin) return { message: "Invalid Security PIN" };
-        if (sender.kycStatus !== KycStatus.VERIFIED) return { message: "Identity verification required." };
+
+        // Redundant check removed since checkPermissions handles KYC
+        // if (sender.kycStatus !== KycStatus.VERIFIED) ...
 
         let recipientUser = null;
         if (recipient.includes("@")) {
@@ -193,7 +208,7 @@ export async function transferCrypto(prevState: any, formData: FormData) {
             recipientUser = await db.user.findUnique({ where: { id: recipient } });
         }
 
-        // 1. EXECUTE TRANSFER (Transaction)
+        // 3. Execute Transfer
         type TransferResult = {
             senderLedgerId?: string;
             recipientLedgerId?: string;
@@ -271,9 +286,7 @@ export async function transferCrypto(prevState: any, formData: FormData) {
             return { senderLedgerId, recipientLedgerId, recipientUserId };
         });
 
-        // 2. NOTIFICATIONS (Outside Transaction)
-
-        // Notify Sender
+        // 4. Notifications
         await db.notification.create({
             data: {
                 userId: user.id,
@@ -285,7 +298,6 @@ export async function transferCrypto(prevState: any, formData: FormData) {
             }
         });
 
-        // Notify Recipient (if internal)
         if (result.recipientUserId) {
             await db.notification.create({
                 data: {
@@ -307,13 +319,23 @@ export async function transferCrypto(prevState: any, formData: FormData) {
     return { success: true, message: `Successfully sent ${amount} ${symbol}` };
 }
 
-// --- ACTION 3: GENERATE WALLET ---
+// ==========================================
+// 🆕 GENERATE WALLET
+// ==========================================
 export async function generateWallet(prevState: any, formData: FormData) {
    const { success, message, user } = await getAuthenticatedUser();
+
+   // 1. 🚧 Maintenance Check
+   if (await checkMaintenanceMode()) {
+        return { success: false, message: "System is currently under maintenance. Please try again later." };
+    }
 
     if (!success || !user) {
         return { message };
     }
+
+    const permission = await checkPermissions(user.id, 'WALLET_GEN');
+   if (!permission.allowed) return { message: `🚫 ${permission.error}` };
 
     const symbol = formData.get("symbol") as string;
     if (!symbol) return { success: false, message: "Currency required" };
@@ -336,7 +358,6 @@ export async function generateWallet(prevState: any, formData: FormData) {
     revalidatePath("/dashboard/crypto");
     return { success: true, message: `${symbol} wallet generated successfully!` };
 }
-
 
 
 // 'use server';

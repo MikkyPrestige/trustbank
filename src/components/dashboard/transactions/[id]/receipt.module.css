@@ -94,9 +94,9 @@
   text-transform: capitalize;
 }
 
-.success { background: var(--success-bg, #dcfce7); color: var(--success); }
-.pending { background: var(--info-bg, #eff6ff); color: var(--info, #2563eb); }
-.failed { background: var(--danger-bg, #fee2e2); color: var(--danger); }
+.success { background: var(--success, #dcfce7); color: var(--success); }
+.pending { background: var(--accent, #eff6ff); color: var(--accent, var(--primary)); }
+.failed { background: var(--danger, #fee2e2); color: var(--danger); }
 
 /* 3. THE MISSING DIVIDER */
 .divider {
