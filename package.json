@@ -16,7 +16,7 @@
     "cloudinary": "^2.8.0",
     "decimal.js": "^10.6.0",
     "framer-motion": "^12.26.2",
-    "jspdf": "^4.0.0",
+    "jspdf": "^4.1.0",
     "jspdf-autotable": "^5.0.7",
     "lucide-react": "^0.562.0",
     "next": "16.1.1",
