@@ -17,12 +17,10 @@ export default function BillsPage() {
     const [selected, setSelected] = useState(PROVIDERS[0]);
     const [state, action, isPending] = useActionState(payBill, undefined);
 
-    // Watch for server response
     useEffect(() => {
         if (state?.message) {
             if (state.success) {
                 toast.success(state.message);
-                // Optional: Clear form here if needed
             } else {
                 toast.error(state.message);
             }
@@ -58,7 +56,6 @@ export default function BillsPage() {
 
             {/* Payment Form */}
             <form action={action} className={styles.formCard}>
-                {/* Hidden input to pass the selected provider name to server */}
                 <input type="hidden" name="provider" value={selected.name} />
 
                 <h3 className={styles.formTitle}>Pay {selected.name}</h3>
@@ -66,7 +63,6 @@ export default function BillsPage() {
 
                 <div className={styles.group}>
                     <label className={styles.label}>Account / Meter Number</label>
-                    {/* Added name="accountNumber" so the backend gets the value */}
                     <input
                         name="accountNumber"
                         required

@@ -11,7 +11,7 @@
   background-color: var(--bg-app);
 }
 
-/* AMBIENT BACKGROUND ANIMATION */
+/* AMBIENT BACKGROUND */
 .ambientMesh {
   position: absolute;
   top: 0;
@@ -47,14 +47,10 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.5rem;
+  gap: 0.1rem;
   text-align: center;
-  margin-bottom: 2.5rem;
-}
-
-.logo {
-  object-fit: contain;
-  margin-bottom: 0.5rem;
+  margin-top: 3.5rem;
+  padding-bottom: 1rem;
 }
 
 .brandBadge {
@@ -75,7 +71,6 @@
   font-size: 2rem;
   font-weight: 800;
   color: var(--text-main);
-  margin-bottom: 0.5rem;
   letter-spacing: -0.5px;
 }
 
@@ -86,10 +81,7 @@
 
 /* GLASS FORM CARD */
 .glassForm {
-  background: var(--bg-card); /* Uses your global card background */
-  /* If you want it extra glassy, you can override locally:
-     background: rgba(17, 17, 17, 0.7);
-  */
+  background: var(--bg-card);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--border);
@@ -103,14 +95,9 @@
 
 /* ERROR BANNER */
 .errorBanner {
-  background: rgba(
-    239,
-    68,
-    68,
-    0.1
-  ); /* Keep hardcoded or use var(--danger-light) if exists */
+  background: rgba(239, 68, 68, 0.1);
   border: 1px solid rgba(239, 68, 68, 0.2);
-  color: #ef4444; /* var(--danger) */
+  color: var(--danger);
   padding: 12px;
   border-radius: 12px;
   font-size: 0.9rem;
@@ -179,7 +166,6 @@
 .inputWrapper input:focus {
   background: var(--bg-card);
   border-color: var(--primary);
-  /* Optional: Add a glow using shadow if your variables support it */
   box-shadow: 0 0 0 1px var(--primary);
 }
 
@@ -242,7 +228,7 @@
 .primaryBtn:disabled {
   opacity: 0.6;
   cursor: wait;
-  background: var(--text-muted); /* Fallback for disabled state */
+  background: var(--text-muted);
 }
 
 .loginLink {

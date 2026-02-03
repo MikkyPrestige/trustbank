@@ -1,14 +1,14 @@
 'use client';
 
-import { useState, useActionState } from 'react'; // Updated hook
-import { adminReplyTicket, closeTicket } from '@/actions/admin/support'; // Adjust path if needed
+import { useState, useActionState } from 'react';
+import { adminReplyTicket, closeTicket } from '@/actions/admin/support';
 import styles from './support.module.css';
 import { Send, Lock } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 interface Message {
     id: string;
-    sender: string; // 'USER' | 'ADMIN'
+    sender: string;
     message: string;
     createdAt: Date;
 }

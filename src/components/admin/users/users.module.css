@@ -432,16 +432,65 @@
   opacity: 0.5;
 }
 
+.flexGap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* ♻️ Restore (Green/Blue) */
+.restoreBtn {
+    background: #dbeafe;
+    color: var(--primary);
+    border: 1px solid #bfdbfe;
+    padding: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.restoreBtn:hover:not(:disabled) {
+    background: var(--primary);
+    color: white;
+    border-color: #var(--primary);
+}
+
+/* 💥 Delete (Red) */
+.deleteBtn {
+    background: #fee2e2;
+    color: var(--danger);
+    border: 1px solid #fecaca;
+    padding: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.deleteBtn:hover:not(:disabled) {
+    background: var(--danger);
+    color: var(--text-invert);
+    border-color: var(--danger);
+}
+
+.spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
   }
   to {
     opacity: 1;
-  }
-}
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
   }
 }

@@ -3,11 +3,18 @@ import GeneratorForm from "@/components/admin/generator/GeneratorForm";
 import styles from "../../../components/admin/generator/generator.module.css";
 import { requireAdmin } from "@/lib/auth/admin-auth";
 import { Bot } from "lucide-react";
+import { UserRole, UserStatus } from "@prisma/client";
 
 export default async function AdminGeneratorPage() {
     await requireAdmin();
 
     const accounts = await db.account.findMany({
+        where: {
+            user: {
+                role: UserRole.CLIENT,
+                status: { not: UserStatus.ARCHIVED }
+            }
+        },
         include: {
             user: { select: { fullName: true, email: true } }
         },

@@ -11,7 +11,7 @@ const initialState = { message: '', success: false };
 interface Props {
     userId: string;
     onClose: () => void;
-    siteName?: string; // 👈 CMS Integration
+    siteName?: string;
 }
 
 export default function ResetPasswordModal({ userId, onClose, siteName = "TrustBank" }: Props) {
@@ -29,7 +29,6 @@ export default function ResetPasswordModal({ userId, onClose, siteName = "TrustB
                 {/* Header */}
                 <div className={styles.modalHeader}>
                     <h3 className={styles.modalTitle}>
-                        {/* Extracted style to class */}
                         <KeyRound size={20} className={styles.headerIcon} />
                         Reset Password
                     </h3>
@@ -38,7 +37,6 @@ export default function ResetPasswordModal({ userId, onClose, siteName = "TrustB
                     </button>
                 </div>
 
-                {/* Description (Extracted style to class) */}
                 <p className={styles.description}>
                     Enter a new temporary password. The user should change this immediately after logging in.
                 </p>

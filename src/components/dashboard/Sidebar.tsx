@@ -191,7 +191,6 @@ function NavItem({
             href={href}
             className={`${styles.navItem} ${active ? styles.active : ''} ${variant === 'admin' ? styles.adminItem : ''}`}
         >
-            {/* Icons inherit color via CSS 'currentColor' or specific class */}
             <Icon size={20} className={styles.navIcon} />
             <span className={styles.navText}>{label}</span>
 

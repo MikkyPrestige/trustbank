@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { UserRole } from "@prisma/client";
 
 /**
- * 🔒 Page Protection: Redirects if not Admin
+ * Page Protection: Redirects if not Admin
  */
 export async function requireAdmin() {
     const session = await auth();
@@ -16,7 +16,7 @@ export async function requireAdmin() {
 }
 
 /**
- * 🔒 Action Protection: Returns status object (for Server Actions)
+ * Action Protection: Returns status object (for Server Actions)
  */
 export async function checkAdminAction() {
     const session = await auth();
@@ -35,7 +35,7 @@ export async function checkAdminAction() {
 }
 
 /**
- * 🔒 STRICT Protection: Super Admin Only (For Staff Management)
+ * STRICT Protection: Super Admin Only (For Staff Management)
  */
 export async function requireSuperAdmin() {
     const session = await auth();

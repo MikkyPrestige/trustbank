@@ -1,6 +1,7 @@
 'use server';
 
 import { db } from "@/lib/db";
+import { checkMaintenanceMode } from "@/lib/security";
 import { getSiteSettings } from "@/lib/content/get-settings";
 import { sendPasswordResetEmail } from "@/lib/mail";
 import crypto from "crypto";
@@ -8,7 +9,11 @@ import crypto from "crypto";
 export async function requestPasswordReset(prevState: any, formData: FormData) {
   const email = formData.get("email") as string;
   const settings = await getSiteSettings();
-  const siteName = settings.site_name || "Trust Capital";
+  const siteName = settings.site_name || "Trust Bank";
+
+     if (await checkMaintenanceMode()) {
+        return { success: false, message: "System is currently under maintenance. Please try again later." };
+    }
 
   if (!email || !email.includes("@")) {
     return { message: "Please enter a valid email address." };

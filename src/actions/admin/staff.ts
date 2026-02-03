@@ -57,7 +57,7 @@ export async function createStaffAccount(formData: FormData) {
                 title: "Welcome to the Team",
                 message: `Your account has been created with ${role} privileges.`,
                 type: "INFO",
-                link: "/admin/dashboard",
+                link: "/admin",
                 isRead: false
             }
         });
@@ -180,7 +180,7 @@ export async function promoteUserToStaff(formData: FormData) {
                 title: "Role Updated",
                 message: `You have been promoted to ${role}. Access the admin dashboard to continue.`,
                 type: "SUCCESS",
-                link: "/admin/dashboard",
+                link: "/admin",
                 isRead: false
             }
         });

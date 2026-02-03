@@ -15,7 +15,7 @@
 .headerIcon {
   width: 48px;
   height: 48px;
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  background: linear-gradient(135deg, #3b82f6 0%, var(--primary) 100%);
   border-radius: 12px;
   display: flex;
   align-items: center;
@@ -45,7 +45,7 @@
 
 @media (min-width: 1024px) {
   .grid {
-    grid-template-columns: 1fr 380px; /* Fixed width for form */
+    grid-template-columns: 1fr 380px;
     align-items: flex-start;
   }
 }
@@ -214,8 +214,8 @@
 
 .actionBtn:hover {
   background: rgba(239, 68, 68, 0.1);
-  color: #ef4444;
-  border-color: #ef4444;
+  color: var(--danger);
+  border-color: var(--danger);
 }
 
 .sendBtn {
@@ -324,7 +324,7 @@
 
 .submitBtn {
   margin-top: 1rem;
-  background: var(--text-main);
+  background: var(--primary);
   color: var(--text-invert);
   border: none;
   padding: 12px;
@@ -354,7 +354,7 @@
 }
 
 .successBox h3 {
-  color: #22c55e;
+  color: var(--success);
   margin-bottom: 0.5rem;
 }
 .btnSecondary {

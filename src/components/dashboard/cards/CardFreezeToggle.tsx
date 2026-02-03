@@ -8,7 +8,7 @@ import toast from 'react-hot-toast';
 
 interface Card {
     id: string;
-    status: string; // 'ACTIVE' | 'FROZEN'
+    status: string;
     type: string;
 }
 
@@ -18,11 +18,10 @@ export default function CardFreezeToggle({ card }: { card: Card }) {
 
     const handleFreezeToggle = () => {
         const newFrozenState = !isFrozen;
-        setIsFrozen(newFrozenState); // Optimistic UI Update
+        setIsFrozen(newFrozenState);
 
         startTransition(async () => {
             try {
-                // Assuming toggleCardFreeze accepts string enums 'FROZEN' | 'ACTIVE'
                 const result = await toggleCardFreeze(card.id, newFrozenState ? 'FROZEN' : 'ACTIVE');
 
                 if (result.success) {
@@ -31,7 +30,7 @@ export default function CardFreezeToggle({ card }: { card: Card }) {
                     throw new Error(result.message);
                 }
             } catch (error: any) {
-                setIsFrozen(!newFrozenState); // Revert on failure
+                setIsFrozen(!newFrozenState);
                 toast.error(error.message || "Failed to update status");
             }
         });

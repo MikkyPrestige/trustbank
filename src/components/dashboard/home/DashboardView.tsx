@@ -44,9 +44,9 @@ export default function DashboardView({ user, totalBalance, beneficiaries, trend
         return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
     };
 
-    // ✅ Handle Real Card Data
+    // Handle Real Card Data
     const activeCard = user.cards && user.cards.length > 0 ? user.cards[0] : null;
-    // ✅ Get Primary Account for Balance Card
+    // Get Primary Account for Balance Card
     const primaryAccount = user.accounts && user.accounts.length > 0 ? user.accounts[0] : null;
 
     const displayCardNumber = (num: string) => {
@@ -340,7 +340,6 @@ export default function DashboardView({ user, totalBalance, beneficiaries, trend
                             </div>
                         </Link>
                     )}
-
                 </div>
             </div>
         </div>

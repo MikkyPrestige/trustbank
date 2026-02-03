@@ -62,7 +62,7 @@
   align-items: center;
   gap: 6px;
   background: rgba(34, 197, 94, 0.1);
-  color: #22c55e;
+  color: var(--success);
   padding: 4px 12px;
   border-radius: 20px;
   font-size: 0.7rem;
@@ -101,7 +101,7 @@
 .errorAlert {
   background: rgba(239, 68, 68, 0.1);
   border: 1px solid rgba(239, 68, 68, 0.2);
-  color: #ef4444;
+  color: var(--danger);
   padding: 10px;
   border-radius: 8px;
   font-size: 0.9rem;
@@ -125,7 +125,6 @@
   border-color: var(--text-muted);
 }
 
-/* "Focused" state applied via React logic */
 .focused {
   border-color: var(--primary);
   box-shadow: 0 0 0 2px var(--primary-light, rgba(59, 130, 246, 0.2));
@@ -143,14 +142,12 @@
   transition: color 0.2s;
 }
 
-/* When focused, icon becomes primary */
 .focused .iconBox {
   color: var(--primary);
 }
 
-/* When password field is focused, lock icon stays gold/secure looking (optional) */
 .focused .iconLocked {
-  color: #f59e0b; /* Amber */
+  color: var(--accent);
 }
 
 .fieldWrapper {
@@ -162,14 +159,14 @@
   width: 100%;
   background: transparent;
   border: none;
-  padding: 1.5rem 1rem 0.5rem 3rem; /* Top padding pushes text down for label */
+  padding: 1.5rem 1rem 0.5rem 3rem;
   color: var(--text-main);
   font-size: 1rem;
   outline: none;
   height: 56px;
 }
 
-/* Floating Label Logic */
+/* Floating Label */
 .floatingLabel {
   position: absolute;
   left: 3rem;
@@ -181,10 +178,8 @@
   transition: all 0.2s;
 }
 
-/* Move label up when focused or has value (handled via React state or :valid CSS trick) */
 .focused .floatingLabel,
 .input:not(:placeholder-shown) + .floatingLabel {
-  /* This requires placeholder=" " on input */
   top: 14px;
   font-size: 0.75rem;
   color: var(--text-muted);

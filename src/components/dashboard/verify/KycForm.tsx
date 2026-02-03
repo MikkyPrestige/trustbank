@@ -1,8 +1,8 @@
 'use client';
 
-import { useActionState, useState, useEffect } from 'react';
+import { useActionState, useState, useEffect, startTransition } from 'react';
 import { submitKyc } from '@/actions/user/kyc';
-import { Check, Image as ImageIcon, UploadCloud, Loader2, AlertCircle } from 'lucide-react';
+import { Check, Image as ImageIcon, UploadCloud, Loader2, AlertCircle, FileText } from 'lucide-react';
 import styles from "./verify.module.css";
 import toast from 'react-hot-toast';
 
@@ -10,22 +10,23 @@ const initialState = { message: '', success: false };
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
 export default function KycForm() {
-    const [state, action, isPending] = useActionState(submitKyc, initialState);
+    const [state, dispatch, isPending] = useActionState(submitKyc, initialState);
 
-    // Local State for File Names
+    // Visual State
     const [passportName, setPassportName] = useState('');
-    const [idName, setIdName] = useState('');
+    const [idFrontName, setIdFrontName] = useState('');
+    const [idBackName, setIdBackName] = useState('');
     const [clientError, setClientError] = useState<string | null>(null);
 
     useEffect(() => {
         if (state?.message) {
             if (state.success) {
                 toast.success(state.message);
-            } else {
+            } else if (!clientError) {
                 toast.error(state.message);
             }
         }
-    }, [state]);
+    }, [state, clientError]);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, setter: (name: string) => void) => {
         const file = e.target.files?.[0];
@@ -34,7 +35,7 @@ export default function KycForm() {
         if (file) {
             if (file.size > MAX_FILE_SIZE) {
                 setClientError(`File too large: ${file.name}. Max limit is 10MB.`);
-                e.target.value = ""; // Reset input
+                e.target.value = "";
                 setter("");
                 return;
             }
@@ -44,12 +45,36 @@ export default function KycForm() {
         }
     };
 
-    const displayError = clientError || (!state.success ? state.message : null);
+    const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        const formData = new FormData(e.currentTarget);
+        const passport = formData.get("passport") as File;
+        const front = formData.get("idCardFront") as File;
+        const back = formData.get("idCardBack") as File;
+
+        const missingFields = [];
+        if (!passport || passport.size === 0) missingFields.push("Passport Photo");
+        if (!front || front.size === 0) missingFields.push("ID Front");
+        if (!back || back.size === 0) missingFields.push("ID Back");
+
+        if (missingFields.length > 0) {
+            setClientError(`Missing: ${missingFields.join(', ')}. Please upload all documents.`);
+            return;
+        }
+
+        setClientError(null);
+
+        startTransition(() => {
+            dispatch(formData);
+        });
+    };
+
+    const displayError = clientError || (!state.success && state.message ? state.message : null);
 
     return (
-        <form action={action} className={styles.formGrid}>
+        <form onSubmit={onSubmit} className={styles.formGrid}>
 
-            {/* Error Banner */}
             {displayError && (
                 <div className={styles.errorBanner}>
                     <AlertCircle size={20} />
@@ -57,7 +82,7 @@ export default function KycForm() {
                 </div>
             )}
 
-            {/* Passport Upload (Step 1) */}
+            {/* --- PASSPORT --- */}
             <div className={styles.uploadCard}>
                 <div className={styles.cardHeader}>
                     <span className={styles.stepNum}>1</span>
@@ -68,7 +93,6 @@ export default function KycForm() {
                         type="file"
                         name="passport"
                         accept="image/png, image/jpeg, image/webp"
-                        required
                         hidden
                         onChange={(e) => handleFileChange(e, setPassportName)}
                     />
@@ -81,7 +105,7 @@ export default function KycForm() {
                         ) : (
                             <>
                                 <div className={styles.iconCircle}><ImageIcon size={24} /></div>
-                                <p className={styles.dropText}>Click to upload Passport</p>
+                                <p className={styles.dropText}>Upload Passport Photo</p>
                                 <span className={styles.formatText}>Clear headshot (JPG/PNG)</span>
                             </>
                         )}
@@ -89,44 +113,76 @@ export default function KycForm() {
                 </label>
             </div>
 
-            {/* ID Card Upload (Step 2) */}
+            {/* --- ID CARDS --- */}
             <div className={styles.uploadCard}>
                 <div className={styles.cardHeader}>
                     <span className={styles.stepNum}>2</span>
                     <span className={styles.stepTitle}>Government Issued ID</span>
                 </div>
-                <label className={`${styles.dropzone} ${idName ? styles.active : ''}`}>
-                    <input
-                        type="file"
-                        name="idCard"
-                        accept="image/png, image/jpeg, application/pdf"
-                        required
-                        hidden
-                        onChange={(e) => handleFileChange(e, setIdName)}
-                    />
-                    <div className={styles.dropContent}>
-                        {idName ? (
-                            <div className={styles.fileSuccess}>
-                                <div className={styles.checkBadge}><Check size={18} /></div>
-                                <p className={styles.fileName}>{idName}</p>
+
+                <div className={styles.idGrid}>
+                    {/* Front */}
+                    <div className={styles.idUploadBox}>
+                        <p className={styles.subLabel}>Front Side</p>
+                        <label className={`${styles.dropzone} ${styles.smallDrop} ${idFrontName ? styles.active : ''}`}>
+                            <input
+                                type="file"
+                                name="idCardFront"
+                                accept="image/png, image/jpeg, application/pdf"
+                                hidden
+                                onChange={(e) => handleFileChange(e, setIdFrontName)}
+                            />
+                            <div className={styles.dropContent}>
+                                {idFrontName ? (
+                                    <div className={styles.fileSuccess}>
+                                        <div className={styles.checkBadge}><Check size={16} /></div>
+                                        <p className={styles.fileName}>{idFrontName}</p>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <div className={styles.iconCircle}><UploadCloud size={20} /></div>
+                                        <p className={styles.dropText}>Upload Front</p>
+                                    </>
+                                )}
                             </div>
-                        ) : (
-                            <>
-                                <div className={styles.iconCircle}><UploadCloud size={24} /></div>
-                                <p className={styles.dropText}>Click to upload ID Card</p>
-                                <span className={styles.formatText}>Passport or License (PDF/JPG)</span>
-                            </>
-                        )}
+                        </label>
                     </div>
-                </label>
+
+                    {/* Back */}
+                    <div className={styles.idUploadBox}>
+                        <p className={styles.subLabel}>Back Side</p>
+                        <label className={`${styles.dropzone} ${styles.smallDrop} ${idBackName ? styles.active : ''}`}>
+                            <input
+                                type="file"
+                                name="idCardBack"
+                                accept="image/png, image/jpeg, application/pdf"
+                                hidden
+                                onChange={(e) => handleFileChange(e, setIdBackName)}
+                            />
+                            <div className={styles.dropContent}>
+                                {idBackName ? (
+                                    <div className={styles.fileSuccess}>
+                                        <div className={styles.checkBadge}><Check size={16} /></div>
+                                        <p className={styles.fileName}>{idBackName}</p>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <div className={styles.iconCircle}><FileText size={20} /></div>
+                                        <p className={styles.dropText}>Upload Back</p>
+                                    </>
+                                )}
+                            </div>
+                        </label>
+                    </div>
+                </div>
             </div>
 
             <div className={styles.actionRow}>
                 <button type="submit" disabled={isPending} className={styles.submitBtn}>
                     {isPending ? (
-                        <> <Loader2 className={styles.spin} size={20} /> Securing Documents... </>
+                        <> <Loader2 className={styles.spin} size={20} /> Uploading Documents... </>
                     ) : (
-                        "Submit for Review"
+                        "Submit for Verification"
                     )}
                 </button>
             </div>

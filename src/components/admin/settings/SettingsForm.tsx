@@ -155,8 +155,8 @@ export default function SettingsForm({ settings, footerLinks }: SettingsProps) {
                 {/* 1. MAIN */}
                 <button type="button" onClick={() => setActiveTab('home')} className={getTabClass('home')}><Home size={16} /> Home</button>
 
-                {/* 2. PRODUCTS (Matches Navbar Order) */}
-                <div className={styles.separator} /> {/* Optional CSS separator */}
+                {/* 2. PRODUCTS  */}
+                <div className={styles.separator} />
                 <button type="button" onClick={() => setActiveTab('banking')} className={getTabClass('banking')}><Landmark size={16} /> Banking</button>
                 <button type="button" onClick={() => setActiveTab('save')} className={getTabClass('save')}><PiggyBank size={16} /> Save</button>
                 <button type="button" onClick={() => setActiveTab('borrow')} className={getTabClass('borrow')}><HandCoins size={16} /> Lending</button>

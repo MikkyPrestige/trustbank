@@ -1,6 +1,7 @@
 'use server';
 
 import { db } from "@/lib/db";
+import { checkMaintenanceMode } from "@/lib/security";
 import bcrypt from "bcryptjs";
 import { headers } from "next/headers";
 import { UAParser } from "ua-parser-js";
@@ -17,6 +18,10 @@ export async function resetPassword(
 ): Promise<ResetState> {
     const password = formData.get("password") as string;
     const confirm = formData.get("confirmPassword") as string;
+
+       if (await checkMaintenanceMode()) {
+        return { success: false, message: "System is currently under maintenance. Please try again later." };
+    }
 
     // 1. Validation
     if (!password || password.length < 6) {

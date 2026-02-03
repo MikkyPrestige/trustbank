@@ -157,7 +157,7 @@ export default function TransactionClient({ transactions }: { transactions: Tran
                     <p className={styles.subtitle}>{filtered.length} entries found</p>
                 </div>
 
-                {/* DYNAMIC SUMMARY CARDS */}
+                {/* SUMMARY CARDS */}
                 <div className={styles.summaryRow}>
                     <div className={styles.summaryCard}>
                         <span className={styles.summaryLabel}>Total In</span>
@@ -219,7 +219,7 @@ export default function TransactionClient({ transactions }: { transactions: Tran
                 </div>
             </div>
 
-            {/* GLASS TABLE */}
+            {/* TABLE */}
             <div className={styles.tableCard}>
                 <div className={styles.tableScroll}>
                     <table className={styles.table}>

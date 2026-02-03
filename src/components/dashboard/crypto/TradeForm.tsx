@@ -60,7 +60,7 @@ export default function TradeForm({ livePrices, assets }: TradeFormProps) {
     return (
         <div className={styles.tradeCard}>
             <div className={styles.tradeHeader}>
-                <h3><Activity size={18} style={{ marginRight: '8px', color: '#3b82f6' }} /> Quick Trade</h3>
+                <h3><Activity size={18} style={{ marginRight: '8px', color: 'var(--primary)' }} /> Quick Trade</h3>
                 <span className={styles.liveBadge}><div className={styles.pulse}></div> Live</span>
             </div>
 
@@ -87,7 +87,7 @@ export default function TradeForm({ livePrices, assets }: TradeFormProps) {
                         {type === 'SELL' && userBalance > 0 && (
                             <span
                                 onClick={handleMaxClick}
-                                style={{ fontSize: '0.75rem', color: '#3b82f6', cursor: 'pointer', fontWeight: 600 }}
+                                style={{ fontSize: '0.75rem', color: 'var(--primary)', cursor: 'pointer', fontWeight: 600 }}
                             >
                                 Max: ${maxSellValue.toLocaleString(undefined, { maximumFractionDigits: 2 })}
                             </span>

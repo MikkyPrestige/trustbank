@@ -1,25 +1,23 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { verifyOtp } from '@/actions/user/verify-otp';
 import { resendOtp } from '@/actions/user/resend-otp';
-import { Mail, AlertCircle, Loader2, CheckCircle } from 'lucide-react';
+import { Mail, AlertCircle, Loader2, CheckCircle, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import styles from './verifyEmail.module.css';
 
-export default function VerifyEmailForm() {
+function VerifyFormContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
-    const email = searchParams.get('email') || "";
 
+    const [email, setEmail] = useState(searchParams.get('email') || "");
     const [otp, setOtp] = useState("");
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
     const [isVerifying, setIsVerifying] = useState(false);
     const [isResending, setIsResending] = useState(false);
-
-    // Countdown for redirect
     const [isVerified, setIsVerified] = useState(false);
     const [countdown, setCountdown] = useState(3);
 
@@ -33,8 +31,12 @@ export default function VerifyEmailForm() {
     }, [isVerified, countdown, router]);
 
     const handleVerify = async () => {
+        if (!email) {
+            setError("Email address is required");
+            return;
+        }
         if (otp.length !== 6) {
-            setError("Enter 6-digit code");
+            setError("Please enter the 6-digit code");
             return;
         }
         setIsVerifying(true);
@@ -46,16 +48,17 @@ export default function VerifyEmailForm() {
                 setSuccess("Email verified successfully!");
                 setIsVerified(true);
             } else {
-                setError(res.error || "Verification failed");
+                setError(res.error || "Verification failed. Check code and try again.");
             }
         } catch (err) {
-            setError("System error");
+            setError("System error. Please try again.");
         } finally {
             setIsVerifying(false);
         }
     };
 
     const handleResend = async () => {
+        if (!email) return;
         setIsResending(true);
         setError("");
         setSuccess("");
@@ -65,10 +68,10 @@ export default function VerifyEmailForm() {
             if (res.success) {
                 setSuccess("New code sent to your inbox.");
             } else {
-                setError(res.error || "Failed to send code");
+                setError(res.error || "Failed to send code.");
             }
         } catch (err) {
-            setError("System error");
+            setError("System error.");
         } finally {
             setIsResending(false);
         }
@@ -80,10 +83,19 @@ export default function VerifyEmailForm() {
             <div className={styles.pageWrapper}>
                 <div className={styles.card}>
                     <div className={styles.successIcon}>
-                        <CheckCircle size={40} />
+                        <CheckCircle size={48} />
                     </div>
                     <h1 className={styles.title}>Verified!</h1>
-                    <p className={styles.subText}>Redirecting to login in {countdown}s...</p>
+                    <p className={styles.subText}>Your account is active.</p>
+                    <div className={styles.timerBox}>
+                        Redirecting to login in <strong>{countdown}s</strong>...
+                    </div>
+                    <button
+                        onClick={() => router.push('/login?verified=true')}
+                        className={styles.primaryBtn}
+                    >
+                        Go to Login Now
+                    </button>
                 </div>
             </div>
         );
@@ -100,17 +112,33 @@ export default function VerifyEmailForm() {
 
                 <h1 className={styles.title}>Verify Email</h1>
                 <p className={styles.subText}>
-                    Enter the code sent to <strong>{email || "your email"}</strong>
+                    Please enter the code sent to your inbox.
                 </p>
 
-                <input
-                    type="text"
-                    maxLength={6}
-                    placeholder="123456"
-                    value={otp}
-                    onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
-                    className={styles.input}
-                />
+                <div className={styles.formGroup}>
+                    <div className={styles.inputWrapper}>
+                        <label>Email Address</label>
+                        <input
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            className={styles.input}
+                            placeholder="name@example.com"
+                        />
+                    </div>
+
+                    <div className={styles.inputWrapper}>
+                        <label>6-Digit Code</label>
+                        <input
+                            type="text"
+                            maxLength={6}
+                            placeholder="123456"
+                            value={otp}
+                            onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
+                            className={`${styles.input} ${styles.otpInput}`}
+                        />
+                    </div>
+                </div>
 
                 {error && (
                     <div className={styles.errorBanner}>
@@ -126,7 +154,7 @@ export default function VerifyEmailForm() {
 
                 <button
                     onClick={handleVerify}
-                    disabled={isVerifying || !email}
+                    disabled={isVerifying || !email || otp.length !== 6}
                     className={styles.primaryBtn}
                 >
                     {isVerifying ? <Loader2 className={styles.spin} /> : 'Verify Account'}
@@ -141,13 +169,25 @@ export default function VerifyEmailForm() {
                         {isResending ? 'Sending...' : 'Resend Code'}
                     </button>
 
-                    <span className={styles.divider}>•</span>
-
-                    <Link href="/login" className={styles.link}>
-                        Back to Login
+                    <Link href="/login" className={styles.backLink}>
+                        <ArrowLeft size={14} /> Back to Login
                     </Link>
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function VerifyEmailForm() {
+    return (
+        <Suspense fallback={
+            <div className={styles.pageWrapper}>
+                <div className={styles.loadingState}>
+                    <Loader2 className={styles.spin} />
+                </div>
+            </div>
+        }>
+            <VerifyFormContent />
+        </Suspense>
     );
 }

@@ -7,9 +7,10 @@ import CryptoActionModal from "@/components/dashboard/crypto/CryptoActionModal";
 import DepositModal from "@/components/dashboard/crypto/DepositModal";
 import CryptoTransactions from "@/components/dashboard/crypto/CryptoTransactions";
 import styles from "../../../../components/dashboard/crypto/crypto.module.css";
-import { Lock, Wallet, TrendingUp, AlertTriangle } from "lucide-react";
+import { Lock, Wallet, TrendingUp, AlertTriangle, Ban } from "lucide-react";
 import { getLiveMarketData } from "@/lib/marketData";
-import { KycStatus } from "@prisma/client"; // ✅ Import Enum
+import { KycStatus } from "@prisma/client";
+import { getFeatureStatus } from "@/actions/admin/system-status";
 
 const COIN_IMAGES: Record<string, string> = {
     'BTC': 'https://assets.coingecko.com/coins/images/1/small/bitcoin.png',
@@ -24,6 +25,9 @@ const COIN_IMAGES: Record<string, string> = {
 
 export default async function CryptoPage() {
     const session = await auth();
+    // 1. Fetch Features
+    const features = await getFeatureStatus();
+
     if (!session) redirect("/login");
 
     const user = await db.user.findUnique({
@@ -32,7 +36,7 @@ export default async function CryptoPage() {
     });
 
     if (!user) return null;
-    const isVerified = user.kycStatus === KycStatus.VERIFIED; // ✅ Strict Enum
+    const isVerified = user.kycStatus === KycStatus.VERIFIED;
 
     const marketData = await getLiveMarketData();
 
@@ -41,7 +45,6 @@ export default async function CryptoPage() {
         return acc;
     }, {} as Record<string, { price: number, change: number }>);
 
-    // ✅ Clean Assets: Convert Prisma Decimals to Numbers
     const cleanAssets = user.cryptoAssets.map(asset => ({
         id: asset.id,
         userId: asset.userId,
@@ -64,13 +67,23 @@ export default async function CryptoPage() {
                     <p>To access the crypto markets, please complete your Identity Verification (KYC).</p>
                     <a href="/dashboard/verify" className={styles.verifyBtn}>Complete Verification</a>
                 </div>
+            ) : !features.crypto ? (
+                // FEATURE DISABLED STATE
+                <div className={styles.lockedState} style={{ borderColor: 'var(--border)' }}>
+                    <div className={styles.lockIconBox} style={{ background: 'var(--bg-surface)', color: 'var(--text-muted)' }}>
+                        <Ban size={32} />
+                    </div>
+                    <h2>Crypto Trading Paused</h2>
+                    <p>Cryptocurrency trading is currently disabled by administration. Please check back later.</p>
+                </div>
             ) : (
+                // NORMAL CONTENT
                 <div className={styles.grid}>
                     <div className={styles.mainColumn}>
 
                         <div className={styles.portfolioCard}>
                             <div className={styles.sectionHeader}>
-                                <div><Wallet size={20} color="#3b82f6" /> Your Assets</div>
+                                <div><Wallet size={20} color='var(--success)' /> Your Assets</div>
                                 <DepositModal />
                             </div>
 
@@ -106,7 +119,7 @@ export default async function CryptoPage() {
                                                         ${currentValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                                     </div>
                                                     {qty > 0 && (
-                                                        <div style={{ fontSize: '0.75rem', color: isProfit ? '#22c55e' : '#ef4444', fontWeight: 'bold', marginTop: '2px' }}>
+                                                        <div style={{ fontSize: '0.75rem', color: isProfit ? 'var(--success)' : 'var(--danger)', fontWeight: 'bold', marginTop: '2px' }}>
                                                             {isProfit ? '+' : ''}{profit.toFixed(2)} ({profitPercent.toFixed(1)}%)
                                                         </div>
                                                     )}
@@ -120,7 +133,7 @@ export default async function CryptoPage() {
 
                         <div className={styles.marketList}>
                             <div className={styles.sectionHeader}>
-                                <div><TrendingUp size={20} color="#22c55e" /> Live Market</div>
+                                <div><TrendingUp size={20} color='var(--success)' /> Live Market</div>
                             </div>
                             {marketData.filter(item => item.isCrypto).map((coin) => (
                                 <div key={coin.symbol} className={styles.tickerItem}>
@@ -140,7 +153,7 @@ export default async function CryptoPage() {
                                             ${coin.price.toLocaleString(undefined, { minimumFractionDigits: coin.price < 1 ? 4 : 2 })}
                                         </div>
                                         <div style={{ textAlign: 'right' }}>
-                                            <span className={styles.percentPill} style={{ color: coin.change >= 0 ? '#22c55e' : '#ef4444' }}>
+                                            <span className={styles.percentPill} style={{ color: coin.change >= 0 ? 'var(--success)' : 'var(--danger)' }}>
                                                 {coin.change >= 0 ? '+' : ''}{coin.change.toFixed(2)}%
                                             </span>
                                         </div>

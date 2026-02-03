@@ -12,7 +12,7 @@ export default async function PendingWireBanner() {
     const actionRequiredCount = await db.wireTransfer.count({
         where: {
             userId: session.user.id,
-            status: TransactionStatus.ON_HOLD // 👈 Changed from PENDING_AUTH
+            status: TransactionStatus.ON_HOLD
         }
     });
 

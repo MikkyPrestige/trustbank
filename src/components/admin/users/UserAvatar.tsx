@@ -14,7 +14,6 @@ export default function UserAvatar({ src, name }: { src?: string | null, name: s
                 alt={name}
                 className={styles.avatarImg}
                 onError={(e) => {
-                    // Fallback if image fails to load
                     e.currentTarget.style.display = 'none';
                     e.currentTarget.nextElementSibling?.classList.remove(styles.hidden);
                 }}

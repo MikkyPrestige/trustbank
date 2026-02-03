@@ -49,7 +49,7 @@ export default async function StaffManagementPage() {
                 {/* Right Column: Staff List */}
                 <div className={styles.listColumn}>
                     <h3 className={styles.sectionHeader}>Active Personnel ({staff.length})</h3>
-                    {/* @ts-ignore: Role type mismatch is expected due to Prisma Enum vs string */}
+                    {/* @ts-ignore */}
                     <StaffList staff={staff} />
                 </div>
             </div>

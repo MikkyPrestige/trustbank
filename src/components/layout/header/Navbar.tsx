@@ -74,11 +74,11 @@ export default function Navbar({ logoUrl, siteName, menus }: NavbarProps) {
                     </div>
                 </div>
 
-                {/* 2. DESKTOP MENU (Pass dynamic menus down) */}
+                {/* 2. DESKTOP MENU */}
                 <DesktopMenu menus={menus} />
             </header>
 
-            {/* 3. MOBILE DRAWER (Pass dynamic menus down) */}
+            {/* 3. MOBILE DRAWER */}
             <MobileDrawer
                 isOpen={isMobileOpen}
                 onClose={() => setIsMobileOpen(false)}

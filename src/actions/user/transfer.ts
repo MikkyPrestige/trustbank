@@ -49,13 +49,13 @@ export async function processTransfer(prevState: any, formData: FormData) {
         swiftCode, routingNumber
     } = validated.data;
 
-    // 🔒 1. SECURITY: Verify PIN
+    // 1. SECURITY: Verify PIN
     const pinValidation = await verifyPin(user.id, pin);
     if (!pinValidation.success) {
         return { message: pinValidation.error };
     }
 
-    // 🔒 2. SECURITY: Role & Action Permissions (Sender Limits)
+    // 2. SECURITY: Role & Action Permissions (Sender Limits)
   const permission = await checkPermissions(user.id, 'TRANSFER_INTERNAL', amount);
     if (!permission.allowed) {
         return { message: `🚫 ${permission.error}` };
@@ -81,8 +81,7 @@ export async function processTransfer(prevState: any, formData: FormData) {
         where: { accountNumber: accountNumber }
     });
 
-    // 🛑 4. INBOUND LIMIT CHECK (The New Feature)
-    // If we are sending to a TrustBank user, make sure they can receive this amount.
+    // 4. INBOUND LIMIT CHECK (The New Feature)
     if (destinationAccount) {
         const inboundCheck = await checkInboundLimit(destinationAccount.userId, amount);
         if (!inboundCheck.allowed) {
@@ -90,7 +89,7 @@ export async function processTransfer(prevState: any, formData: FormData) {
         }
     }
 
-    // 🚀 5. THE TRANSACTION
+    // 5. THE TRANSACTION
     try {
         type TxResult = {
             senderTxId: string;
@@ -177,7 +176,7 @@ export async function processTransfer(prevState: any, formData: FormData) {
                 }
             }
 
-            // Return IDs needed for notifications
+            // Return IDs
             return {
                 senderTxId: senderTx.id,
                 receiverTxId,
@@ -185,7 +184,7 @@ export async function processTransfer(prevState: any, formData: FormData) {
             };
         });
 
-        // 🔔 6. NOTIFICATIONS (OUTSIDE Transaction)
+        // 6. NOTIFICATIONS
 
         // A. Notify Sender (Always)
         await db.notification.create({
@@ -242,219 +241,3 @@ export async function processTransfer(prevState: any, formData: FormData) {
 
     return { success: true, message: "Transfer Successful!" };
 }
-
-// 'use server';
-
-// import { auth } from "@/auth";
-// import { db } from "@/lib/db";
-// import { checkPermissions, verifyPin } from "@/lib/security";
-// import { revalidatePath } from "next/cache";
-// import { z } from "zod";
-// import {
-//   UserStatus,
-//   KycStatus,
-//   TransactionStatus,
-//   TransactionType,
-//   TransactionDirection
-// } from "@prisma/client";
-
-// const transferSchema = z.object({
-//     sourceAccountId: z.string(),
-//     amount: z.coerce.number().min(1, "Minimum transfer is $1"),
-//     pin: z.string().length(4, "PIN must be 4 digits"),
-//     accountName: z.string().min(1, "Name is required"),
-//     accountNumber: z.string().min(6, "Invalid Account Number"),
-//     bankName: z.string().min(1, "Bank Name is required"),
-//     swiftCode: z.string().optional(),
-//     routingNumber: z.string().optional(),
-//     note: z.string().optional(),
-//     saveBeneficiary: z.string().optional(),
-// });
-
-// export async function processTransfer(prevState: any, formData: FormData) {
-//     const session = await auth();
-//     if (!session?.user?.id) return { message: "Unauthorized" };
-
-//     const rawData = Object.fromEntries(formData.entries());
-//     const validated = transferSchema.safeParse(rawData);
-
-//     if (!validated.success) {
-//        return { message: validated.error.issues[0].message };
-//     }
-
-//     const {
-//         sourceAccountId, amount, pin, accountName,
-//         accountNumber, bankName, saveBeneficiary, note,
-//         swiftCode, routingNumber
-//     } = validated.data;
-
-//     // 🔒 1. SECURITY: Verify PIN
-//     const pinValidation = await verifyPin(session.user.id, pin);
-//     if (!pinValidation.success) {
-//         return { message: pinValidation.error };
-//     }
-
-//     // 🔒 2. SECURITY: Role & Action Permissions
-//     const permission = await checkPermissions(session.user.id, 'TRANSFER', amount);
-//     if (!permission.allowed) {
-//         return { message: `🚫 ${permission.error}` };
-//     }
-
-//     // 3. PRE-TRANSACTION CHECKS
-//     const user = await db.user.findUnique({ where: { id: session.user.id } });
-//     if (!user) return { message: "User not found." };
-
-//     if (user.status === UserStatus.FROZEN) {
-//         return { message: "🚫 Account Frozen. Please contact support." };
-//     }
-
-//     const isVerified = user.kycStatus === KycStatus.VERIFIED;
-//     const UNVERIFIED_LIMIT = 2000;
-
-//     if (!isVerified && amount > UNVERIFIED_LIMIT) {
-//         return { message: `🚫 Unverified Limit Exceeded. Max: $${UNVERIFIED_LIMIT}.` };
-//     }
-
-//     const sourceAccount = await db.account.findUnique({ where: { id: sourceAccountId } });
-//     if (!sourceAccount) return { message: "Account not found." };
-//     if (sourceAccount.userId !== user.id) return { message: "Unauthorized account." };
-
-//     if (Number(sourceAccount.availableBalance) < amount) {
-//         return { message: "Insufficient Funds." };
-//     }
-
-//     const destinationAccount = await db.account.findUnique({
-//         where: { accountNumber: accountNumber }
-//     });
-
-//     // 🚀 4. THE TRANSACTION
-//     try {
-//         await db.$transaction(async (tx) => {
-
-//             // A. DEDUCT FROM SENDER
-//             await tx.account.update({
-//                 where: { id: sourceAccountId },
-//                 data: {
-//                     availableBalance: { decrement: amount },
-//                     currentBalance: { decrement: amount }
-//                 }
-//             });
-
-//             // 👇 Generate ID here so we can use it in the Link
-//             const senderRefId = "TRX-" + Math.floor(Math.random() * 100000000);
-//             const senderDesc = `Transfer to ${accountName}` + (note ? ` - ${note}` : ``);
-
-//            const senderTx = await tx.ledgerEntry.create({
-//                 data: {
-//                     accountId: sourceAccountId,
-//                     amount: amount,
-//                     direction: TransactionDirection.DEBIT,
-//                     status: TransactionStatus.COMPLETED,
-//                     type: TransactionType.TRANSFER,
-//                     description: senderDesc,
-//                     referenceId: senderRefId,
-//                 }
-//             });
-
-//             // 👇 NOTIFY SENDER (With Deep Link)
-//             await tx.notification.create({
-//                 data: {
-//                     userId: session.user.id,
-//                     title: "Transfer Sent",
-//                     message: `You successfully sent $${amount.toLocaleString()} to ${accountName}.`,
-//                     type: "SUCCESS",
-//                     link: `/dashboard/transactions/${senderTx.id}`,
-//                     isRead: false
-//                 }
-//             });
-
-
-//             // B. CREDIT RECEIVER (If Internal)
-//             if (destinationAccount) {
-//                 await tx.account.update({
-//                     where: { id: destinationAccount.id },
-//                     data: {
-//                         availableBalance: { increment: amount },
-//                         currentBalance: { increment: amount }
-//                     }
-//                 });
-
-//                 // 👇 Generate ID here for Receiver
-//                 const receiverRefId = "RCV-" + Math.floor(Math.random() * 100000000);
-//                 const receiverDesc = `Received from ${user.fullName}` + (note ? ` - ${note}` : ``);
-
-//                 const receiverTx = await tx.ledgerEntry.create({
-//                     data: {
-//                         accountId: destinationAccount.id,
-//                         amount: amount,
-//                         direction: TransactionDirection.CREDIT,
-//                         status: TransactionStatus.COMPLETED,
-//                         type: TransactionType.TRANSFER,
-//                         description: receiverDesc,
-//                         referenceId: receiverRefId,
-//                     }
-//                 });
-
-//                 // 👇 NOTIFY RECEIVER (With Deep Link)
-//                 await tx.notification.create({
-//                     data: {
-//                         userId: destinationAccount.userId,
-//                         title: "Money Received",
-//                         message: `You received $${amount.toLocaleString()} from ${user.fullName}.`,
-//                         type: "SUCCESS",
-//                         link: `/dashboard/transactions/${receiverTx.id}`,
-//                         isRead: false
-//                     }
-//                 });
-//             }
-
-//             // C. SAVE BENEFICIARY
-//             if (saveBeneficiary === "on") {
-//                 const existing = await tx.beneficiary.findFirst({
-//                     where: { userId: session.user.id, accountNumber: accountNumber }
-//                 });
-
-//                 if (!existing) {
-//                     await tx.beneficiary.create({
-//                         data: {
-//                             userId: session.user.id,
-//                             accountName: accountName,
-//                             accountNumber: accountNumber,
-//                             bankName: bankName,
-//                             swiftCode: swiftCode || null,
-//                             routingNumber: routingNumber || null,
-//                         }
-//                     });
-//                 }
-//             }
-
-//             // D. NOTIFY ADMINS
-//             const admins = await tx.user.findMany({
-//                 where: { role: { in: ["ADMIN", "SUPER_ADMIN"] } },
-//                 select: { id: true }
-//             });
-
-//             if (admins.length > 0) {
-//                 await tx.notification.createMany({
-//                     data: admins.map((admin) => ({
-//                         userId: admin.id,
-//                         title: "Local Transfer Alert",
-//                         message: `User ${user.fullName} transferred $${amount.toLocaleString()} to ${accountName} (${bankName}).`,
-//                         type: "INFO",
-//                         link: `/admin/users/${user.id}`,
-//                         isRead: false
-//                     }))
-//                 });
-//             }
-//         });
-
-//     } catch (err) {
-//         console.error("Database Transaction Failed:", err);
-//         return { message: "Transfer failed. Please try again." };
-//     }
-
-//     revalidatePath("/dashboard");
-//     revalidatePath("/dashboard/beneficiaries");
-
-//     return { success: true, message: "Transfer Successful!" };
-// }

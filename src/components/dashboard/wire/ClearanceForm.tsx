@@ -15,11 +15,9 @@ export default function ClearanceForm({ wire }: { wire: any }) {
     const [verifying, setVerifying] = useState(false);
     const [progress, setProgress] = useState(0);
 
-    // Unified Side Effect for Server Response
     useEffect(() => {
         if (state?.message) {
             if (state.success) {
-                // Start the visual verification loader
                 const timeoutId = setTimeout(() => {
                     setVerifying(true);
                     setProgress(0);
@@ -31,7 +29,7 @@ export default function ClearanceForm({ wire }: { wire: any }) {
         }
     }, [state]);
 
-    //  Handle visual progress bar
+    // progress bar
     useEffect(() => {
         if (!verifying) return;
 
@@ -59,7 +57,7 @@ export default function ClearanceForm({ wire }: { wire: any }) {
         switch (stage) {
             case 'TAA': return { label: 'Tax Authentication Code (TAA)', desc: 'Required by International Tax Authority for large transfers.' };
             case 'COT': return { label: 'Cost of Transfer (COT)', desc: 'Regional banking compliance code required for destination release.' };
-            case 'IMF': return { label: 'IMF Regulatory Code', desc: 'Final verification step.' };
+            case 'IMF': return { label: 'IMF Regulatory Code (IMF)', desc: 'Final verification step.' };
             case 'IJY': return { label: 'Anti-Terrorism Clearance (IJY)', desc: 'Final IMF Verification required for cross-border settlement.' };
             default: return { label: 'Clearance Code', desc: 'Please enter the code provided by your account manager.' };
         }

@@ -26,14 +26,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
           if (!user) return null;
 
-          // 🛑 1. Check Password
+          // 1. Check Password
           const passwordsMatch = await bcrypt.compare(password, user.passwordHash);
           if (!passwordsMatch) return null;
 
-          // 🛑 2. Check Status (Login Guard)
-          // We allow FROZEN users to login (so they can contact support), but NOT Suspended.
+          // 2. Check Status (Login Guard)
           if (user.status === UserStatus.SUSPENDED) {
-             throw new Error("Account Suspended. Contact Support.");
+              throw new Error("Account Suspended. Contact Support.");
           }
 
           return user;
@@ -44,7 +43,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
   ],
   callbacks: {
-    // 🔔 LOGIN TRACKING
+    // LOGIN TRACKING
     async signIn({ user }) {
       if (!user.id) return true;
 
@@ -63,8 +62,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 data: { lastIp: ip }
              });
 
-             // ⚠️ OPTIONAL: Notify the USER (Not Admins)
-             // Standard security practice is to alert the owner, not the bank staff.
+             // Notify the USER
              await db.notification.create({
                 data: {
                     userId: user.id,
@@ -79,19 +77,47 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
       } catch (error) {
         console.error("Login Tracking Error:", error);
-        // Don't block login if tracking fails
       }
 
       return true;
     },
 
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
+      // 1. Initial Sign In
       if (user) {
         token.id = user.id;
         token.role = user.role;
         token.status = user.status;
         token.kycStatus = user.kycStatus;
+
+        // Capture the version at login
+        token.version = (user as any).tokenVersion || 0;
       }
+
+      // 2. Subsequent Requests (The Gatekeeper)
+      if (token.sub) {
+         // Fetch the latest security data for this user
+         const dbUser = await db.user.findUnique({
+            where: { id: token.sub },
+            select: {
+                tokenVersion: true,
+                role: true,
+                status: true,
+                kycStatus: true
+            }
+         });
+
+         // SECURITY CHECK: Version Mismatch or User Deleted
+         if (!dbUser || (dbUser.tokenVersion ?? 0) !== (token.version as number)) {
+             return null;
+         }
+
+         // Sync latest status
+         token.role = dbUser.role;
+         token.status = dbUser.status;
+         token.kycStatus = dbUser.kycStatus;
+      }
+
       return token;
     },
 

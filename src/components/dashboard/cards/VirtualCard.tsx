@@ -22,8 +22,7 @@ export default function VirtualCard({ card, userName, overrideStatus, siteName }
     const [showDetails, setShowDetails] = useState(false);
     const [copied, setCopied] = useState(false);
 
-    // Use the override status if it exists, otherwise use the card's DB status
-    const currentStatus = overrideStatus || card.status; // 👈 USE THIS
+    const currentStatus = overrideStatus || card.status;
     const isFrozen = currentStatus === 'FROZEN';
 
     const bankLabel = siteName ? siteName.toUpperCase() : 'TRUSTBANK';
@@ -48,7 +47,6 @@ export default function VirtualCard({ card, userName, overrideStatus, siteName }
     };
 
     return (
-        // 👇 USE isFrozen logic here
         <div className={`${styles.visaCard} ${isFrozen ? styles.frozenCard : ''}`}>
             <div className={styles.cardShine}></div>
             <div className={styles.cardTexture}></div>

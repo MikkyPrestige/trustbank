@@ -6,6 +6,7 @@ import { checkMaintenanceMode, hashPin } from "@/lib/security";
 import { revalidatePath } from "next/cache";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
+import { UserStatus } from "@prisma/client";
 
 // --- SCHEMAS ---
 const profileSchema = z.object({
@@ -68,7 +69,7 @@ export async function updateProfile(prevState: any, formData: FormData) {
     const { dateOfBirth, ...otherData } = validated.data;
 
     try {
-        // 1. CRITICAL DB WRITE (Fast)
+        // 1. CRITICAL DB WRITE
         await db.user.update({
             where: { id: user.id },
             data: {
@@ -77,8 +78,7 @@ export async function updateProfile(prevState: any, formData: FormData) {
             }
         });
 
-        // 2. NOTIFY ADMINS (Moved Outside)
-        // We use a separate try/catch so a notification failure doesn't error the profile update
+        // 2. NOTIFY ADMINS
         try {
             const admins = await db.user.findMany({
                 where: { role: { in: ["ADMIN", "SUPER_ADMIN"] } },
@@ -142,7 +142,7 @@ export async function changePassword(prevState: any, formData: FormData) {
             data: { passwordHash: hashedPassword }
         });
 
-        // 2. Security Notification (Best Practice)
+        // 2. Security Notification
         await db.notification.create({
             data: {
                 userId: user.id,
@@ -162,7 +162,7 @@ export async function changePassword(prevState: any, formData: FormData) {
     return { success: true, message: "Password Changed Successfully!" };
 }
 
-// --- 3. CHANGE PIN (With Reset Logic) ---
+// --- 3. CHANGE PIN  ---
 export async function changePin(prevState: any, formData: FormData) {
     const { success, message, user } = await getAuthenticatedUser();
 
@@ -184,21 +184,19 @@ export async function changePin(prevState: any, formData: FormData) {
     try {
         if (!user.passwordHash) return { message: "User has no password set." };
 
-        // 2. Verify Password (Master Key) before changing PIN
-        // We still check the user's login password to authorize this sensitive change
+        // 2. Verify Password  before changing PIN
         const isMatch = await bcrypt.compare(currentPassword, user.passwordHash);
         if (!isMatch) return { message: "Incorrect Password. Cannot update PIN." };
 
-        // 3. 🔐 HASH THE NEW PIN
-        // Instead of saving 'newPin' directly, we encrypt it first
+        // 3. HASH THE NEW PIN
         const securePin = await hashPin(newPin);
 
         // 4. Update DB
         await db.user.update({
             where: { id: user.id },
             data: {
-                transactionPin: securePin, // 👈 Save the Hash, not the plain text
-                failedPinAttempts: 0,      // Reset security counters
+                transactionPin: securePin,
+                failedPinAttempts: 0,
                 pinLockedUntil: null
             }
         });
@@ -225,183 +223,74 @@ export async function changePin(prevState: any, formData: FormData) {
 }
 
 
+export async function closeAccount(password: string) {
+    const { success, message, user } = await getAuthenticatedUser();
 
-// 'use server';
+    // 1. Maintenance Check
+    if (await checkMaintenanceMode()) {
+        return { success: false, message: "System is currently under maintenance. Please try again later." };
+    }
 
-// import { auth } from "@/auth";
-// import { db } from "@/lib/db";
-// import { revalidatePath } from "next/cache";
-// import bcrypt from "bcryptjs";
-// import { z } from "zod";
+    if (!success || !user) {
+        return { success: false, message };
+    }
 
-// // --- SCHEMAS ---
-// const profileSchema = z.object({
-//     fullName: z.string().min(2, "Name is required").optional(),
-//     occupation: z.string().optional(),
-//     gender: z.string().optional(),
-//     dateOfBirth: z.string().optional(),
-//     phone: z.string().optional(),
-//     taxId: z.string().optional(),
+    if (!password) {
+        return { error: "Password is required to confirm this action." };
+    }
 
-//     // Address
-//     address: z.string().optional(),
-//     city: z.string().optional(),
-//     country: z.string().optional(),
-//     zipCode: z.string().optional(),
+    try {
+        const dbUser = await db.user.findUnique({
+            where: { id: user.id },
+            include: { accounts: true }
+        });
 
-//     // Next of Kin
-//     nokName: z.string().optional(),
-//     nokPhone: z.string().optional(),
-//     nokRelationship: z.string().optional(),
-//     nokEmail: z.string().email("Invalid email").optional().or(z.literal("")),
-//     nokAddress: z.string().optional(),
+        if (!dbUser) {
+            return { error: "User record not found." };
+        }
 
-//     // URLs
-//     image: z.string().optional(),
-//     passportUrl: z.string().optional(),
-//     idCardUrl: z.string().optional(),
-// });
+        // 3. Security Check: Verify Password
+        const passwordMatch = await bcrypt.compare(password, dbUser.passwordHash);
+        if (!passwordMatch) {
+            return { error: "Incorrect password. Cannot verify account ownership." };
+        }
 
-// const passwordSchema = z.object({
-//     currentPassword: z.string().min(1, "Current password required"),
-//     newPassword: z.string().min(6, "New password must be 6+ chars"),
-// });
+        // 4. Financial Logic: Validate Zero Balance
+        const totalBalance = dbUser.accounts.reduce((sum, acc) => sum + Number(acc.availableBalance), 0);
 
-// const pinSchema = z.object({
-//     currentPassword: z.string().min(1, "Password required for authorization"),
-//     newPin: z.string().length(4, "PIN must be exactly 4 digits"),
-// });
+        // Formatter for clear error messages
+        const formatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
 
-// // --- 1. UPDATE PROFILE ---
-// export async function updateProfile(prevState: any, formData: FormData) {
-//     const session = await auth();
-//     if (!session?.user?.id) return { message: "Unauthorized" };
+        if (totalBalance > 0) {
+            return {
+                error: `Cannot close account: You still have ${formatter.format(totalBalance)} remaining. Please withdraw all funds first.`
+            };
+        }
 
-//     const rawData = Object.fromEntries(formData.entries());
-//     const validated = profileSchema.safeParse(rawData);
+        if (totalBalance < 0) {
+            return {
+                error: `Cannot close account: You have an outstanding balance of ${formatter.format(totalBalance)}. Please settle your debt first.`
+            };
+        }
 
-//     if (!validated.success) {
-//         return { message: "Invalid inputs. Please check your data." };
-//     }
+        // 5. Execution: Archive User (Soft Delete)
+        const archivedEmail = `deleted-${Date.now()}_${dbUser.email}`;
 
-//     const { dateOfBirth, ...otherData } = validated.data;
+        await db.user.update({
+            where: { id: user.id },
+            data: {
+                status: UserStatus.ARCHIVED,
+                email: archivedEmail,
+                emailVerified: null,
+            }
+        });
 
-//     try {
-//         // 👇 CHANGED: Wrapped in transaction to notify Admins
-//         await db.$transaction(async (tx) => {
+        // 6. Cleanup
+        revalidatePath("/");
+        return { success: true };
 
-//             // A. Update User Data
-//             await tx.user.update({
-//                 where: { id: session.user.id },
-//                 data: {
-//                     ...otherData,
-//                     // ✅ SAFE DATE PARSING
-//                     dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : undefined
-//                 }
-//             });
-
-//             // 👇 NEW: NOTIFY ADMINS (Compliance Alert)
-//             // If a user changes address or name, admins should know.
-//             const admins = await tx.user.findMany({
-//                 where: { role: { in: ["ADMIN", "SUPER_ADMIN"] } },
-//                 select: { id: true }
-//             });
-
-//             if (admins.length > 0) {
-//                 await tx.notification.createMany({
-//                     data: admins.map((admin) => ({
-//                         userId: admin.id,
-//                         title: "User Profile Updated",
-//                         message: `User ${session.user.name || 'Client'} updated their profile details.`,
-//                         type: "INFO",
-//                         link: `/admin/users/${session.user.id}`, // Link to the user detail page
-//                         isRead: false
-//                     }))
-//                 });
-//             }
-//             // 👆 END NEW CODE
-//         });
-
-//     } catch (err) {
-//         console.error("Profile Update Error:", err);
-//         return { message: "Update failed." };
-//     }
-
-//     // ✅ REVALIDATE
-//     revalidatePath("/dashboard/settings");
-//     revalidatePath("/dashboard");
-//     return { success: true, message: "Profile Updated Successfully!" };
-// }
-
-// // --- 2. CHANGE PASSWORD ---
-// export async function changePassword(prevState: any, formData: FormData) {
-//     const session = await auth();
-//     if (!session?.user?.id) return { message: "Unauthorized" };
-
-//     const rawData = Object.fromEntries(formData.entries());
-//     const validated = passwordSchema.safeParse(rawData);
-
-//     if (!validated.success) return { message: validated.error.issues[0].message };
-//     const { currentPassword, newPassword } = validated.data;
-
-//     try {
-//         const user = await db.user.findUnique({ where: { id: session.user.id } });
-//         if (!user || !user.passwordHash) return { message: "User not found" };
-
-//         // A. Validate OLD Password
-//         const isMatch = await bcrypt.compare(currentPassword, user.passwordHash);
-//         if (!isMatch) return { message: "Incorrect Current Password" };
-
-//         // B. Hash NEW Password
-//         const hashedPassword = await bcrypt.hash(newPassword, 10);
-
-//         // C. Update
-//         await db.user.update({
-//             where: { id: session.user.id },
-//             data: { passwordHash: hashedPassword }
-//         });
-
-//     } catch (err) {
-//         return { message: "Failed to change password." };
-//     }
-
-//     revalidatePath("/dashboard/settings");
-//     return { success: true, message: "Password Changed Successfully!" };
-// }
-
-// // --- 3. CHANGE PIN (With Reset Logic) ---
-// export async function changePin(prevState: any, formData: FormData) {
-//     const session = await auth();
-//     if (!session?.user?.id) return { message: "Unauthorized" };
-
-//     const rawData = Object.fromEntries(formData.entries());
-//     const validated = pinSchema.safeParse(rawData);
-
-//     if (!validated.success) return { message: validated.error.issues[0].message };
-//     const { currentPassword, newPin } = validated.data;
-
-//     try {
-//         const user = await db.user.findUnique({ where: { id: session.user.id } });
-//         if (!user || !user.passwordHash) return { message: "User not found" };
-
-//         // A. Validate Password (Master Key Check)
-//         const isMatch = await bcrypt.compare(currentPassword, user.passwordHash);
-//         if (!isMatch) return { message: "Incorrect Password. Cannot update PIN." };
-
-//         // B. Update PIN AND Reset Lockout
-//         await db.user.update({
-//             where: { id: session.user.id },
-//             data: {
-//                 transactionPin: newPin,
-//                 failedPinAttempts: 0, // 👈 RESET FAILURES
-//                 pinLockedUntil: null  // 👈 UNLOCK ACCOUNT
-//             }
-//         });
-
-//     } catch (err) {
-//         return { message: "Failed to update PIN." };
-//     }
-
-//     revalidatePath("/dashboard/settings");
-//     return { success: true, message: "Transaction PIN Updated!" };
-// }
+    } catch (error) {
+        console.error("Close Account Error:", error);
+        return { error: "System error. Please contact support." };
+    }
+}

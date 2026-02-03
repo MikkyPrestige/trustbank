@@ -24,7 +24,7 @@ export default async function MaintenancePage() {
             <div className={styles.card}>
 
                 {/* Dynamic Logo */}
-                <div className="flex justify-center mb-6">
+                <div>
                     <Image
                         src={cms.site_logo || "/logo.png"}
                         alt="Bank Logo"

@@ -2,7 +2,7 @@ import { db } from "@/lib/db";
 import { auth } from "@/auth";
 import styles from "./crypto.module.css";
 import { ArrowUpRight, ArrowDownLeft, RefreshCw, Clock } from "lucide-react";
-import { TransactionType } from "@prisma/client"; // ✅ Import Enum
+import { TransactionType } from "@prisma/client";
 
 export default async function CryptoTransactions() {
     const session = await auth();
@@ -50,7 +50,7 @@ export default async function CryptoTransactions() {
                             <div className={styles.txLeft}>
                                 <div className={styles.txIcon} style={{
                                     background: isPositive ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)',
-                                    color: isPositive ? '#22c55e' : '#ef4444'
+                                    color: isPositive ? 'var(--success)' : 'var(--danger)'
                                 }}>
                                     <Icon size={12} />
                                 </div>
@@ -61,7 +61,7 @@ export default async function CryptoTransactions() {
                                     </span>
                                 </div>
                             </div>
-                            <div className={styles.txAmount} style={{ color: isPositive ? '#22c55e' : 'var(--text-main)' }}>
+                            <div className={styles.txAmount} style={{ color: isPositive ? 'var(--success)' : 'var(--text-main)' }}>
                                 {isPositive ? '+' : '-'}${Number(tx.amount).toFixed(2)}
                             </div>
                         </div>

@@ -23,18 +23,15 @@ export default function DepositModal() {
 
     const [state, action, isPending] = useActionState(generateWallet, undefined);
 
-    // ✅ FIX 1: Wrap setMounted in setTimeout to avoid sync render warning during hydration
     useEffect(() => {
         const timer = setTimeout(() => setMounted(true), 0);
         return () => clearTimeout(timer);
     }, []);
 
-    // ✅ FIX 2: Wrap setIsOpen in setTimeout to prevent cascading updates
     useEffect(() => {
         if (state?.message) {
             if (state.success) {
                 toast.success(state.message);
-                // Break the synchronous render cycle
                 const timer = setTimeout(() => {
                     setIsOpen(false);
                 }, 0);

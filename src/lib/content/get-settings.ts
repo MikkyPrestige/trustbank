@@ -23,7 +23,6 @@ export const getSiteSettings = cache(async () => {
                     content: { create: { id: "content-settings" } },
                     features: { create: { } }
                 },
-                // 👇 FIX: Return BOTH tables so the types match
                 include: {
                     content: true,
                     features: true
@@ -31,7 +30,6 @@ export const getSiteSettings = cache(async () => {
             });
         }
 
-        // 🛡️ SAFETY CHECK: Tell TS that mainSettings definitely exists
         if (!mainSettings) throw new Error("Failed to initialize settings");
 
         // Self-Healing: If Content is missing (e.g. manual DB edit)
@@ -55,7 +53,7 @@ export const getSiteSettings = cache(async () => {
              });
         }
 
-        // 🛡️ RE-VERIFY after re-fetch
+        // RE-VERIFY after re-fetch
         if (!mainSettings) throw new Error("Failed to reload settings");
 
         // 3. Navigation Logic

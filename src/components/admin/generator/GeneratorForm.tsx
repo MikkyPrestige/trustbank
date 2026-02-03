@@ -82,7 +82,7 @@ export default function GeneratorForm({ accounts }: { accounts: any[] }) {
                 </div>
             </div>
 
-            {/* 4. CUSTOM NOTE (NEW) */}
+            {/* 4. CUSTOM NOTE */}
             <div className={styles.group}>
                 <label className={styles.label}>Custom Tag / Note (Optional)</label>
                 <input

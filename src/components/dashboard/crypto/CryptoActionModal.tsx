@@ -21,7 +21,6 @@ export default function CryptoActionModal({ asset }: { asset: Asset }) {
 
     const [state, action, isPending] = useActionState(transferCrypto, undefined);
 
-    // Using User ID as internal wallet reference for this system
     const walletAddress = asset.userId;
     const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${walletAddress}`;
 
@@ -94,7 +93,7 @@ export default function CryptoActionModal({ asset }: { asset: Asset }) {
                         <div className={styles.addressBox}>
                             <span style={{ fontSize: '0.8rem', wordBreak: 'break-all' }}>{walletAddress}</span>
                             <button onClick={handleCopy} className={styles.copyBtn}>
-                                {copied ? <Check size={16} color="#22c55e" /> : <Copy size={16} />}
+                                {copied ? <Check size={16} color="var(--success)" /> : <Copy size={16} />}
                             </button>
                         </div>
                     </div>
@@ -112,7 +111,7 @@ export default function CryptoActionModal({ asset }: { asset: Asset }) {
                                 <label>Amount ({asset.symbol})</label>
                                 <span
                                     onClick={handleMaxSend}
-                                    style={{ fontSize: '0.75rem', color: '#3b82f6', cursor: 'pointer', fontWeight: 600 }}
+                                    style={{ fontSize: '0.75rem', color: 'var(--primary)', cursor: 'pointer', fontWeight: 600 }}
                                 >
                                     Max
                                 </span>

@@ -73,7 +73,6 @@ export default function NotificationBell() {
 
     // 4. Actions
 
-    // Dismiss: Removes from list view immediately
     const handleDismiss = async (id: string, link: string | null) => {
         setNotifications(prev => prev.filter(n => n.id !== id));
         await markAsRead(id);

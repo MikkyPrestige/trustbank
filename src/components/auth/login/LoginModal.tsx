@@ -10,7 +10,7 @@ import styles from './styles/LoginModal.module.css';
 interface LoginModalProps {
     isOpen: boolean;
     onClose: () => void;
-    siteName?: string; // 👈 CMS Prop
+    siteName?: string;
 }
 
 export default function LoginModal({ isOpen, onClose, siteName = "TrustBank" }: LoginModalProps) {
@@ -64,12 +64,11 @@ export default function LoginModal({ isOpen, onClose, siteName = "TrustBank" }: 
                     <div className={`${styles.inputGroup} ${focusedField === 'email' ? styles.focused : ''}`}>
                         <div className={styles.iconBox}><Mail size={18} /></div>
                         <div className={styles.fieldWrapper}>
-                            {/* Input comes BEFORE label if using CSS peer selectors, but here we use simple overlay */}
                             <input
                                 name="email"
                                 type="email"
                                 required
-                                placeholder=" " // Required for CSS :placeholder-shown trick
+                                placeholder=" "
                                 className={styles.input}
                                 onFocus={() => setFocusedField('email')}
                                 onBlur={(e) => !e.target.value && setFocusedField(null)}

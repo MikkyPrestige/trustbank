@@ -387,50 +387,46 @@
   background: var(--bg-surface);
   color: var(--text-main);
 }
+/* ... existing styles ... */
 
-/* .receiptValue {
-    color: #22c55e;
-} */
-
-/* .quickFillRow {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
+.lockedState {
+  margin-top: 2rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 3rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  color: var(--text-muted);
 }
 
-.quickFillLabel {
-    color: #3b82f6;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 0.9rem;
-    font-weight: 500;
-} */
-
-/* .miniSelect {
-    transition: border-color 0.2s;
+.lockIconBox {
+  width: 64px;
+  height: 64px;
+  background: var(--bg-surface);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.5rem;
+  color: var(--text-main);
 }
 
-.miniSelectActive {
-    border-color: #3b82f6 !important;
-} */
-
-/* .pinGroup {
-    flex: 0.6;
+.lockedState h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0;
 }
 
-.pinField {
-    height: 70px;
-    letter-spacing: 4px;
-    text-align: center;
-    font-size: 1.2rem;
-    padding-left: 14px;
+.lockedState p {
+  max-width: 400px;
+  margin: 0;
+  line-height: 1.5;
 }
-
-.noteField {
-    padding-left: 14px;
-} */
 
 .spin {
   animation: spin 1s linear infinite;

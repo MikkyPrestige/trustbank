@@ -3,14 +3,19 @@ import WireRow from "@/components/admin/wires/WireRow";
 import Link from "next/link";
 import { ArrowLeft, FolderOpen } from "lucide-react";
 import { requireAdmin } from "@/lib/auth/admin-auth";
-import styles from "../../../components/admin/wires/wires.module.css"
+import styles from "../../../components/admin/wires/wires.module.css";
+import { UserStatus } from "@prisma/client";
 
 export default async function AdminWiresPage() {
-    // 🔒 Gatekeeper
     await requireAdmin();
 
     // Fetch all wires (Newest first)
     const wires = await db.wireTransfer.findMany({
+        where: {
+            user: {
+                status: { not: UserStatus.ARCHIVED }
+            }
+        },
         include: { user: true },
         orderBy: { createdAt: 'desc' }
     });

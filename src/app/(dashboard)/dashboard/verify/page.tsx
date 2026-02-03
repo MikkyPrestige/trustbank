@@ -11,7 +11,11 @@ export default async function VerifyPage() {
     if (!session?.user?.email) redirect("/login");
 
     const user = await db.user.findUnique({
-        where: { email: session.user.email }
+        where: { email: session.user.email },
+        select: {
+            kycStatus: true,
+            kycRejectionReason: true
+        }
     });
 
     if (!user) redirect("/login");
@@ -59,13 +63,18 @@ export default async function VerifyPage() {
                         </div>
                     )}
 
-                    {/* 3. FAILED */}
+                    {/* 3. FAILED (Dynamic Reason) */}
                     {isFailed && (
                         <div className={`${styles.statusCard} ${styles.error}`}>
                             <div className={styles.statusIcon}><XCircle size={32} /></div>
                             <div>
-                                <h3>Verification Failed</h3>
-                                <p>Your documents were rejected. Please upload clear, government-issued IDs without glare.</p>
+                                <h3>Verification Rejected</h3>
+                                <p style={{ fontWeight: 500, color: '#b91c1c' }}>
+                                    Reason: {user.kycRejectionReason || "Documents were unclear or invalid."}
+                                </p>
+                                <p style={{ fontSize: '0.85rem', marginTop: '4px' }}>
+                                    Please correct the issue above and re-upload your documents.
+                                </p>
                             </div>
                         </div>
                     )}
@@ -82,7 +91,6 @@ export default async function VerifyPage() {
                     )}
                 </div>
 
-                {/* Show Form only if Action is needed (Not Submitted or Rejected) */}
                 {(isNotSubmitted || isFailed) && (
                     <div className={styles.formSection}>
                         <KycForm />

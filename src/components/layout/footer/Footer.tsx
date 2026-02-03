@@ -18,7 +18,7 @@ interface FooterProps {
 export default function Footer({ settings, links = [] }: FooterProps) {
     const currentYear = new Date().getFullYear();
     const siteName = settings.site_name || "TrustBank";
-    const content = settings.content || {}; // Safety check
+    const content = settings.content || {};
 
     // Filter dynamic links into their columns
     const col1Links = links.filter(l => l.column === 'col1');

@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
-import { getSiteSettings } from "@/lib/content/get-settings"; // 👈 Import Settings
+import { getSiteSettings } from "@/lib/content/get-settings";
 import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
 import { ChevronLeft, Clock, AlertTriangle, ArrowDownLeft, ArrowUpRight } from "lucide-react";
@@ -57,7 +57,6 @@ export default async function TransactionDetailsPage({ params }: PageProps) {
             </div>
 
             <div className={styles.receiptCard}>
-                {/* 1. DYNAMIC BRAND HEADER */}
                 <div className={styles.bankHeader}>
                     <span className={styles.bankName}>{bankName}</span>
                     <span className={styles.receiptLabel}>Transaction Receipt</span>

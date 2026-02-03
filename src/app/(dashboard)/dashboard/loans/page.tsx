@@ -112,14 +112,13 @@ export default async function LoansPage() {
                                 <TrendingUp size={20} color="#3b82f6" />
                                 Apply for a New Loan
                             </h2>
-                            {/* {!features.loans ? (
-                                <div className={styles.btn}>
-                                    ⚠️ Loan applications are temporarily paused by administration.
+                            {!features.loans ? (
+                                <div>
+                                    Loan applications are temporarily paused by administration.
                                 </div>
                             ) : (
                                 <LoanApplicationForm />
-                            )} */}
-                                <LoanApplicationForm />
+                            )}
                         </>
                     )}
                 </div>

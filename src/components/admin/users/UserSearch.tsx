@@ -34,7 +34,7 @@ export default function UserSearch() {
             timeout = setTimeout(() => handleSearch(term), 300);
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [pathname, searchParams]); // Re-create only if path params change
+    }, [pathname, searchParams]);
 
     return (
         <div className={styles.searchForm}>

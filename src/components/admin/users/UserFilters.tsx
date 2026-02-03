@@ -10,7 +10,7 @@ export default function UserFilters() {
 
     const handleFilter = (status: string) => {
         const params = new URLSearchParams(searchParams);
-        params.set('page', '1'); // Reset page
+        params.set('page', '1');
 
         if (status && status !== 'ALL') {
             params.set('status', status);

@@ -2,7 +2,6 @@
 
 import { Printer, Share2 } from "lucide-react";
 
-// We accept the styles object as a prop so we can keep using your CSS module
 export default function ReceiptActions({ styles }: { styles: any }) {
 
     const handlePrint = () => {

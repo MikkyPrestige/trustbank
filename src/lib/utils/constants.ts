@@ -20,19 +20,19 @@ export interface MegaMenuSection {
 }
 
 export const MEGA_MENUS: Record<string, MegaMenuSection> = {
-    // 1. BANKING (Consolidated: Checking, Savings, Payments)
+    // 1. BANKING
     BANKING: {
         title: "BANKING",
         links: [
             [
-                { label: "Everyday Banking", href: "/bank" }, // Header
+                { label: "Everyday Banking", href: "/bank" },
                 { label: "Checking Accounts", href: "/bank#cs" },
                 { label: "High Yield Savings", href: "/save" },
                 { label: "Certificates of Deposit (CDs)", href: "/save#cds" },
                 { label: "Business Banking", href: "/bank#business" },
             ],
             [
-                { label: "Payments & Services", href: "/payments" }, // Header
+                { label: "Payments & Services", href: "/payments" },
                 { label: "Global Transfers & Wires", href: "/payments#wires" },
                 { label: "Trust Kids Club", href: "/save#kids" },
                 { label: "Student Banking", href: "/bank#student" },
@@ -47,21 +47,21 @@ export const MEGA_MENUS: Record<string, MegaMenuSection> = {
         }
     },
 
-    // 2. LENDING (Loans, Mortgages, Credit Cards)
+    // 2. LENDING
     LENDING: {
         title: "LENDING",
         links: [
             [
-                { label: "Personal", href: "/borrow" }, // Header
+                { label: "Personal", href: "/borrow" },
                 { label: "Credit Cards", href: "/borrow#cc" },
                 { label: "Personal Loans", href: "/borrow#pl" },
                 { label: "Auto Loans", href: "/borrow#al" },
                 { label: "Student Loans", href: "/borrow#sl" },
             ],
             [
-                { label: "Home", href: "/borrow" }, // Header
+                { label: "Home", href: "/borrow" },
                 { label: "Mortgages", href: "/borrow#mt" },
-                { label: "Home Equity (HELOC)", href: "/borrow#he" }, // Links to the new Image Section
+                { label: "Home Equity (HELOC)", href: "/borrow#he" },
                 { label: "First-Time Homebuyer", href: "/borrow#mt" },
                 { label: "Loan Calculator", href: "/borrow" },
             ]
@@ -74,18 +74,18 @@ export const MEGA_MENUS: Record<string, MegaMenuSection> = {
         }
     },
 
-    // 3. WEALTH (Investing, Crypto, Retirement)
+    // 3. WEALTH
     WEALTH: {
         title: "WEALTH",
         links: [
             [
-                { label: "Invest", href: "/wealth" }, // Header
+                { label: "Invest", href: "/wealth" },
                 { label: "Investment Advisory", href: "/wealth#advisor" },
                 { label: "Crypto Trading", href: "/crypto" },
                 { label: "Retirement (IRAs)", href: "/wealth#retirement" },
             ],
             [
-                { label: "Private Client", href: "/wealth#pcg" }, // Header
+                { label: "Private Client", href: "/wealth#pcg" },
                 { label: "Estate & Trust", href: "/wealth#estate" },
                 { label: "Wealth Simulator", href: "/wealth" },
                 { label: "Market Insights", href: "/learn#news" },
@@ -99,18 +99,18 @@ export const MEGA_MENUS: Record<string, MegaMenuSection> = {
         }
     },
 
-    // 4. INSURANCE (Medicare, Auto, Life)
+    // 4. INSURANCE
     INSURE: {
         title: "INSURANCE",
         links: [
             [
-                { label: "Personal Coverage", href: "/insure" }, // Header
+                { label: "Personal Coverage", href: "/insure" },
                 { label: "Auto Insurance", href: "/insure#auto" },
                 { label: "Home & Renters", href: "/insure#home" },
                 { label: "Life Insurance", href: "/insure#life" },
             ],
             [
-                { label: "Specialty", href: "/insure" }, // Header
+                { label: "Specialty", href: "/insure" }
                 { label: "Medicare Support", href: "/insure#medicare" },
                 { label: "Business Insurance", href: "/insure#business" },
                 { label: "Accidental Protection", href: "/insure#supplemental" },
@@ -124,19 +124,19 @@ export const MEGA_MENUS: Record<string, MegaMenuSection> = {
         }
     },
 
-    // 5. RESOURCES (Learn, Company, Support)
+    // 5. RESOURCES
     RESOURCES: {
         title: "RESOURCES",
         links: [
             [
-                { label: "Support", href: "/help" }, // Header
+                { label: "Support", href: "/help" },
                 { label: "Help Center (FAQs)", href: "/help" },
                 { label: "Contact Us", href: "/contact" },
                 { label: "Security Center", href: "/security" },
                 { label: "Find a Branch", href: "/locations" },
             ],
             [
-                { label: "Company", href: "/about" }, // Header
+                { label: "Company", href: "/about" },
                 { label: "About TrustBank", href: "/about" },
                 { label: "Careers", href: "/careers" },
                 { label: "Investor Relations", href: "/investors" },

@@ -6,7 +6,6 @@ import {
     DEFAULT_ACCESSIBILITY
 } from "@/lib/content/legal-defaults";
 
-// 1. Define the return type so TypeScript knows what to expect
 export type LegalContentResult = {
     content: string;
     lastUpdated: Date;
@@ -19,7 +18,7 @@ export type LegalContentResult = {
 
 export const getLegalContent = cache(async (type: 'privacy' | 'terms' | 'accessibility'): Promise<LegalContentResult> => {
 
-    // 2. Define defaults at the top so they are available for the Catch block
+    // 2. Define defaults
     const defaultLayout = {
         backText: "Back to Home",
         footerText: "This document is legally binding. If you have questions, please contact our",
@@ -34,7 +33,6 @@ export const getLegalContent = cache(async (type: 'privacy' | 'terms' | 'accessi
         });
 
         // 3. Merge DB settings with defaults
-        // We use the DB value if it exists; otherwise, we fall back to defaultLayout
         const layoutConfig = {
             backText: settings?.content?.legal_back_text || defaultLayout.backText,
             footerText: settings?.content?.legal_footer_text || defaultLayout.footerText,
@@ -48,7 +46,7 @@ export const getLegalContent = cache(async (type: 'privacy' | 'terms' | 'accessi
             return {
                 content: getDefaultContent(type),
                 lastUpdated: new Date(),
-                ...layoutConfig // Returns the defaults defined above
+                ...layoutConfig
             };
         }
 
@@ -86,11 +84,10 @@ export const getLegalContent = cache(async (type: 'privacy' | 'terms' | 'accessi
     } catch (error) {
         console.error("Failed to fetch legal content:", error);
 
-        // 8. THE FIX: The catch block must return the layout config too!
         return {
             content: getDefaultContent(type),
             lastUpdated: new Date(),
-            ...defaultLayout // <--- This was missing before
+            ...defaultLayout
         };
     }
 });

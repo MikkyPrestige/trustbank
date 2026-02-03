@@ -4,6 +4,7 @@ import { requireAdmin } from "@/lib/auth/admin-auth";
 import Link from "next/link";
 import { ArrowLeft, AlertCircle, PieChart, Banknote } from "lucide-react";
 import styles from "../../../components/admin/loans/loans.module.css"
+import { UserStatus } from "@prisma/client";
 
 export default async function AdminLoansPage() {
     // 1. Security Check
@@ -11,14 +12,24 @@ export default async function AdminLoansPage() {
 
     // 2. Fetch Pending
     const pendingLoans = await db.loan.findMany({
-        where: { status: 'PENDING' },
+        where: {
+            status: 'PENDING',
+            user: {
+                status: { not: UserStatus.ARCHIVED }
+            }
+        },
         include: { user: true },
         orderBy: { createdAt: 'desc' }
     });
 
     // 3. Fetch Active/Paid
     const activeLoans = await db.loan.findMany({
-        where: { OR: [{ status: 'APPROVED' }, { status: 'PAID' }] },
+        where: {
+            OR: [{ status: 'APPROVED' }, { status: 'PAID' }],
+            user: {
+                status: { not: UserStatus.ARCHIVED }
+            }
+        },
         include: { user: true },
         orderBy: { updatedAt: 'desc' }
     });

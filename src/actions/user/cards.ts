@@ -20,7 +20,7 @@ export async function toggleCardFreeze(cardId: string, currentStatus: string) {
     let newStatus: CardStatus;
 
     try {
-        // 🔒 KYC GATEKEEPER
+        // KYC GATEKEEPER
         if (user.kycStatus !== KycStatus.VERIFIED) {
             return { success: false, message: "Action denied. Identity verification required." };
         }
@@ -29,7 +29,6 @@ export async function toggleCardFreeze(cardId: string, currentStatus: string) {
         const isActive = currentStatus === CardStatus.ACTIVE;
         newStatus = isActive ? CardStatus.BLOCKED : CardStatus.ACTIVE;
 
-        // 👇 CHANGED: Wrapped in transaction to notify Admins
         await db.$transaction(async (tx) => {
             // A. Update Card Status
             await tx.card.update({
@@ -40,9 +39,7 @@ export async function toggleCardFreeze(cardId: string, currentStatus: string) {
                 data: { status: newStatus }
             });
 
-            // 👇 NEW: NOTIFY ADMINS IF CARD IS FROZEN (BLOCKED)
-            // We only notify on freeze (BLOCKED), usually less critical if they unfreeze,
-            // but you can remove the "if" to notify on both.
+            // NOTIFY ADMINS IF CARD IS FROZEN (BLOCKED)
             if (newStatus === CardStatus.BLOCKED) {
                 const admins = await tx.user.findMany({
                     where: { role: { in: ["ADMIN", "SUPER_ADMIN"] } },
@@ -62,7 +59,6 @@ export async function toggleCardFreeze(cardId: string, currentStatus: string) {
                     });
                 }
             }
-            // 👆 END NEW CODE
         });
 
     } catch (error) {
@@ -70,8 +66,7 @@ export async function toggleCardFreeze(cardId: string, currentStatus: string) {
         return { success: false, message: "Failed to update card status" };
     }
 
-    // ✅ Revalidate outside try/catch
     revalidatePath("/dashboard/cards");
 
-    return { success: true, newStatus: newStatus! }; // Use ! assertion since it's definitely assigned inside try
+    return { success: true, newStatus: newStatus! };
 }

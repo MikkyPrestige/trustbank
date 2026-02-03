@@ -32,7 +32,7 @@ export default function ImageUploader({ value, onChange, label = "Upload Image" 
             if (res.error) {
                 alert(res.error);
             } else if (res.url) {
-                onChange(res.url); // Pass URL back to parent
+                onChange(res.url);
             }
         } catch (error) {
             console.error(error);
@@ -57,7 +57,7 @@ export default function ImageUploader({ value, onChange, label = "Upload Image" 
                     />
                     <button
                         type="button"
-                        onClick={() => onChange("")} // Clear value
+                        onClick={() => onChange("")}
                         className={styles.removeBtn}
                     >
                         <X size={14} />

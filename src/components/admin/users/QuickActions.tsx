@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { toggleUserStatus } from '@/actions/admin/users'; // Ensure this action exists
+import { toggleUserStatus } from '@/actions/admin/users';
 import { MoreHorizontal, Ban, CheckCircle, Lock } from 'lucide-react';
 import styles from './users.module.css';
 import toast from 'react-hot-toast';
@@ -18,7 +18,6 @@ export default function QuickActions({ userId, currentStatus }: { userId: string
         setLoading(true);
         setIsOpen(false);
         try {
-            // Assuming toggleUserStatus returns { success: boolean, message: string }
             const res = await toggleUserStatus(userId, newStatus);
             if (res.success) {
                 toast.success(`User marked as ${newStatus}`);

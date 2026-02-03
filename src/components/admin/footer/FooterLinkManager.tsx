@@ -17,7 +17,6 @@ export default function FooterLinkManager({ initialLinks }: { initialLinks: Link
     const router = useRouter();
     const [links, setLinks] = useState<LinkItem[]>(initialLinks);
 
-    // Sync state when server data changes
     useEffect(() => {
         setLinks(initialLinks);
     }, [initialLinks]);
@@ -98,7 +97,6 @@ export default function FooterLinkManager({ initialLinks }: { initialLinks: Link
                     className={styles.input}
                 />
 
-                {/* CHANGED: type="button" and onClick handler */}
                 <button
                     type="button"
                     onClick={handleAdd}

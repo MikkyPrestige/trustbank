@@ -7,7 +7,7 @@ import styles from './support.module.css';
 
 interface Message {
     id: string;
-    sender: string; // "USER" | "ADMIN"
+    sender: string;
     message: string;
     createdAt: Date;
 }

@@ -4,10 +4,12 @@
 import Link from "next/link";
 import { useState, useActionState, useRef, useEffect } from 'react';
 import { updateProfile, changePin, changePassword } from '@/actions/user/settings';
+import { closeAccount } from "@/actions/user/close-account";
 import { updateAvatar } from '@/actions/user/avatar';
-import { User, Lock, Shield, Save, Camera, KeyRound, Loader2, HeartHandshake } from 'lucide-react';
+import { User, Lock, Shield, Save, Camera, KeyRound, Loader2, HeartHandshake, AlertTriangle } from 'lucide-react';
 import styles from './settings.module.css';
 import toast from 'react-hot-toast';
+import { signOut } from "next-auth/react";
 
 interface SettingsUser {
     id: string;
@@ -35,15 +37,14 @@ const initialState = { message: '', success: false };
 
 export default function SettingsTabs({ user }: { user: SettingsUser }) {
     const [activeTab, setActiveTab] = useState<'profile' | 'security'>('profile');
-
     const [profileState, profileAction, profilePending] = useActionState(updateProfile, initialState);
     const [pinState, pinAction, pinPending] = useActionState(changePin, initialState);
     const [passState, passAction, passPending] = useActionState(changePassword, initialState);
-
-    // Image Upload State
     const [avatarUrl, setAvatarUrl] = useState(user.image || '');
     const [uploading, setUploading] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const [isClosing, setIsClosing] = useState(false);
+    const [closePassword, setClosePassword] = useState("");
 
     const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -70,6 +71,29 @@ export default function SettingsTabs({ user }: { user: SettingsUser }) {
             toast.error("Upload failed due to network error.");
         } finally {
             setUploading(false);
+        }
+    };
+
+    const handleCloseAccount = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        if (!closePassword) {
+            alert("Please enter your password to confirm.");
+            return;
+        }
+
+        const confirm = window.confirm("⚠️ FINAL WARNING: This action cannot be undone.\n\nAre you sure you want to permanently close your account?");
+        if (!confirm) return;
+
+        setIsClosing(true);
+
+        const res = await closeAccount(closePassword);
+
+        if (res.success) {
+            await signOut({ callbackUrl: '/login' });
+        } else {
+            alert(res.error || "Failed to close account.");
+            setIsClosing(false);
         }
     };
 
@@ -332,6 +356,45 @@ export default function SettingsTabs({ user }: { user: SettingsUser }) {
                                 {passPending ? <Loader2 className={styles.spin} /> : 'Change Password'}
                             </button>
                         </form>
+
+                        {/* 🛑 DANGER ZONE: CLOSE ACCOUNT */}
+                        <div className={styles.dangerCard}>
+                            <div className={styles.dangerHeader}>
+                                <div className={styles.dangerIconBadge}>
+                                    <AlertTriangle size={20} />
+                                </div>
+                                <h3 className={styles.dangerTitle}>Close Account</h3>
+                            </div>
+
+                            <p className={styles.dangerText}>
+                                Closing your account will permanently disable your access, freeze all cards,
+                                and cancel pending transactions. You must have a <strong>$0.00</strong> balance
+                                to proceed.
+                            </p>
+
+                            <div className={styles.dangerGroup}>
+                                <label className={styles.dangerLabel}>
+                                    Enter Password to Confirm
+                                </label>
+                                <input
+                                    type="password"
+                                    value={closePassword}
+                                    onChange={(e) => setClosePassword(e.target.value)}
+                                    className={styles.dangerInput}
+                                    placeholder="Your current password"
+                                    autoComplete="new-password"
+                                />
+
+                                <button
+                                    type="button"
+                                    onClick={handleCloseAccount}
+                                    disabled={isClosing || !closePassword}
+                                    className={styles.deleteBtn}
+                                >
+                                    {isClosing ? <Loader2 className={styles.spin} size={18} /> : 'Close My Account'}
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 )}
             </div>

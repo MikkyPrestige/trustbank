@@ -22,7 +22,6 @@ export default function RegisterModal({ isOpen, onClose, siteName = "TrustBank" 
         const handleEsc = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
         if (isOpen) {
             window.addEventListener('keydown', handleEsc);
-            // Lock body scroll
             document.body.style.overflow = 'hidden';
         }
         return () => {
@@ -35,7 +34,6 @@ export default function RegisterModal({ isOpen, onClose, siteName = "TrustBank" 
         e.preventDefault();
         setIsLoading(true);
 
-        // Simulate a small "processing" delay for effect, then redirect
         setTimeout(() => {
             const query = new URLSearchParams({
                 full_name: name,

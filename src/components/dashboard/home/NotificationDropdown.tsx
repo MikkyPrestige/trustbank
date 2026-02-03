@@ -79,7 +79,6 @@ export default function NotificationDropdown() {
     };
 
     const handleMarkAllRead = async () => {
-        // Optimistic update: Mark all isRead = true, but keep them in the list
         setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
         await markAllNotificationsRead();
     };

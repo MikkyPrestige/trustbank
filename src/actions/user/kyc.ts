@@ -28,31 +28,38 @@ export async function submitKyc(prevState: any, formData: FormData) {
         }
 
         // 2. Get Files
-        const passportFile = formData.get('passport') as File;
-        const idFile = formData.get('idCard') as File;
+       const passportFile = formData.get("passport") as File;
+        const idFrontFile = formData.get("idCardFront") as File;
+        const idBackFile = formData.get("idCardBack") as File;
 
-        if (!passportFile || !idFile) {
-            return { message: "Please upload both Passport and ID Card." };
+     if (!idFrontFile || !idBackFile || idFrontFile.size === 0 || idBackFile.size === 0) {
+            return { success: false, message: "Please upload both Front and Back of the ID Card." };
         }
 
-        // 3. Upload Files (This takes time, do it before DB write)
-        const [passportUrl, idCardUrl] = await Promise.all([
-            uploadFileToCloud(passportFile, 'passport'),
-            uploadFileToCloud(idFile, 'id_card')
+        if (!passportFile || passportFile.size === 0) {
+            return { success: false, message: "Passport photo is required." };
+        }
+
+        // 3. Upload Files
+     const [passportUrl, frontUrl, backUrl] = await Promise.all([
+            uploadFileToCloud(passportFile, "avatars"),
+            uploadFileToCloud(idFrontFile, "kyc"),
+            uploadFileToCloud(idBackFile, "kyc")
         ]);
 
-        // 4. CRITICAL DB UPDATE (Fast & Atomic)
-        await db.user.update({
+        // 4. CRITICAL DB UPDATE
+     await db.user.update({
             where: { id: user.id },
             data: {
-                passportUrl,
-                idCardUrl,
-                kycStatus: KycStatus.PENDING
+                passportUrl: passportUrl,
+                idCardUrl: frontUrl,
+                idCardBackUrl: backUrl,
+                kycStatus: "PENDING",
+                kycRejectionReason: null
             }
         });
 
-        // 5. NOTIFY ADMINS (Side Effect - Moved Outside)
-        // We run this independently so it doesn't block or revert the KYC submission
+        // 5. NOTIFY ADMINS
         try {
             const admins = await db.user.findMany({
                 where: { role: { in: [UserRole.ADMIN, UserRole.SUPER_ADMIN] } },
@@ -85,90 +92,3 @@ export async function submitKyc(prevState: any, formData: FormData) {
 
     return { success: true, message: "Documents submitted successfully. Awaiting Review." };
 }
-
-
-
-// 'use server';
-
-// import { auth } from "@/auth";
-// import { db } from "@/lib/db";
-// import { revalidatePath } from "next/cache";
-// import { uploadFileToCloud } from "@/lib/upload";
-// import { KycStatus, UserRole } from "@prisma/client";
-
-// export async function submitKyc(prevState: any, formData: FormData) {
-//     const session = await auth();
-//     if (!session) return { message: "Unauthorized" };
-
-//     try {
-//         // 1. Fetch User (Check if already verified)
-//         const user = await db.user.findUnique({ where: { id: session.user.id } });
-
-//         if (!user) return { message: "User not found" };
-
-//         if (user.kycStatus === KycStatus.VERIFIED) {
-//             return { message: "You are already verified." };
-//         }
-//         if (user.kycStatus === KycStatus.PENDING) {
-//             return { message: "Verification already in progress." };
-//         }
-
-//         // 2. Get Files
-//         const passportFile = formData.get('passport') as File;
-//         const idFile = formData.get('idCard') as File;
-
-//         if (!passportFile || !idFile) {
-//             return { message: "Please upload both Passport and ID Card." };
-//         }
-
-//         // 3. Upload Files
-//         const [passportUrl, idCardUrl] = await Promise.all([
-//             uploadFileToCloud(passportFile, 'passport'),
-//             uploadFileToCloud(idFile, 'id_card')
-//         ]);
-
-//         // 4. Update Database & Notify Admins
-//         // 👇 CHANGED: Wrapped in transaction
-//         await db.$transaction(async (tx) => {
-
-//             // A. Update User Record
-//             await tx.user.update({
-//                 where: { id: session.user.id },
-//                 data: {
-//                     passportUrl,
-//                     idCardUrl,
-//                     kycStatus: KycStatus.PENDING
-//                 }
-//             });
-
-//             // 👇 NEW: NOTIFY ADMINS & SUPER ADMINS
-//             const admins = await tx.user.findMany({
-//                 where: { role: { in: [UserRole.ADMIN, UserRole.SUPER_ADMIN] } },
-//                 select: { id: true }
-//             });
-
-//             if (admins.length > 0) {
-//                 await tx.notification.createMany({
-//                     data: admins.map((admin) => ({
-//                         userId: admin.id,
-//                         title: "KYC Submission Received",
-//                         message: `User ${user.fullName || 'User'} submitted documents for verification.`,
-//                         type: "INFO",
-//                         link: `/admin/users/${session.user.id}`,
-//                         isRead: false
-//                     }))
-//                 });
-//             }
-//             // 👆 END NEW CODE
-//         });
-
-//     } catch (err: any) {
-//         console.error("KYC Error:", err);
-//         return { success: false, message: err.message || "Submission failed." };
-//     }
-
-//     revalidatePath("/dashboard/verify");
-//     revalidatePath("/dashboard");
-
-//     return { success: true, message: "Documents submitted successfully. Awaiting Review." };
-// }

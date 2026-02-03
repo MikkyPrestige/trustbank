@@ -9,7 +9,7 @@ export default async function SupportPage() {
     const { authorized } = await checkAdminAction();
     if (!authorized) redirect("/dashboard");
 
-    // 2. Fetch ALL tickets (findMany, not findUnique)
+    // 2. Fetch ALL tickets
     const tickets = await db.ticket.findMany({
         orderBy: { updatedAt: 'desc' },
         include: {

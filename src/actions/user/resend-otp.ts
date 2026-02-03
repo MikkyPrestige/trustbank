@@ -1,10 +1,15 @@
 'use server';
 
 import { db } from "@/lib/db";
+import { checkMaintenanceMode } from "@/lib/security";
 import { sendVerificationEmail } from "@/lib/mail";
 import { getSiteSettings } from "@/lib/content/get-settings";
 
 export async function resendOtp(email: string) {
+       if (await checkMaintenanceMode()) {
+        return { success: false, message: "System is currently under maintenance. Please try again later." };
+    }
+
     if (!email) return { error: "Email is required" };
 
     try {

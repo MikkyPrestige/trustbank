@@ -1,8 +1,14 @@
 "use server";
 
 import { db } from "@/lib/db";
+import { checkMaintenanceMode } from "@/lib/security";
 
 export async function verifyOtp(email: string, code: string) {
+
+     if (await checkMaintenanceMode()) {
+        return { success: false, message: "System is currently under maintenance. Please try again later." };
+    }
+
   const user = await db.user.findUnique({ where: { email } });
 
   if (!user || !user.otpCode || !user.otpExpires) {
@@ -26,7 +32,7 @@ export async function verifyOtp(email: string, code: string) {
       emailVerified: new Date(),
       otpCode: null,
       otpExpires: null,
-      status: "ACTIVE" // Unlock the account
+      status: "ACTIVE"
     }
   });
 

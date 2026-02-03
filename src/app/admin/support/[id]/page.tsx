@@ -6,20 +6,18 @@ import styles from "../../../../components/admin/support/support.module.css";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
-// ✅ 1. Type 'params' as a Promise
 export default async function TicketDetailPage({
     params
 }: {
     params: Promise<{ id: string }>
 }) {
-    // ✅ 2. Await the params before using them
     const { id } = await params;
 
     const { authorized } = await checkAdminAction();
     if (!authorized) redirect("/dashboard");
 
     const ticket = await db.ticket.findUnique({
-        where: { id }, // ✅ Use the unwrapped 'id' variable here
+        where: { id },
         include: {
             messages: {
                 orderBy: { createdAt: 'asc' }

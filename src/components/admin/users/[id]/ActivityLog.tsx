@@ -9,7 +9,7 @@ import {
     Bell,
     CreditCard
 } from 'lucide-react';
-import styles from './users.module.css'; // We will reuse existing styles or add a few
+import styles from './users.module.css';
 
 interface ActivityLogProps {
     logs: any[];

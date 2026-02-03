@@ -23,8 +23,8 @@ export async function sendSecurityEmail(
 
   try {
     const subject = type === 'LOCKED'
-      ? `🚨 SECURITY ALERT: Account Locked - ${siteName}`
-      : `⚠️ Security Warning: Suspicious Activity - ${siteName}`;
+      ? `SECURITY ALERT: Account Locked - ${siteName}`
+      : `Security Warning: Suspicious Activity - ${siteName}`;
 
     // Define color/text based on type
     const color = type === 'LOCKED' ? '#d32f2f' : '#f57c00';
@@ -95,7 +95,7 @@ const logoUrl = `${baseUrl}/logo.png`;
     await transporter.sendMail({
       from: `"${siteName} Security" <${process.env.SMTP_USER}>`,
       to,
-      subject: "🔐 Verify Your Account",
+      subject: "Verify Your Account",
       html: `
         <div style="background-color: #f3f4f6; padding: 40px 20px; font-family: Arial, sans-serif;">
           <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
@@ -144,7 +144,7 @@ export async function sendPasswordResetEmail(to: string, token: string, siteName
     await transporter.sendMail({
       from: `"${siteName} Security" <${process.env.SMTP_USER}>`,
       to,
-      subject: "🔑 Reset Your Password",
+      subject: "Reset Your Password",
       html: `
         <div style="background-color: #f3f4f6; padding: 40px 20px; font-family: Arial, sans-serif;">
           <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">

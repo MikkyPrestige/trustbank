@@ -9,7 +9,6 @@ interface DesktopMenuProps {
     menus: any;
 }
 
-// 👇 1. ADD THIS MAP HERE (Outside the component)
 const ROUTE_MAP: Record<string, string> = {
     BANKING: '/bank',
     LENDING: '/borrow',

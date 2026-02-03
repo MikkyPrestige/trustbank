@@ -16,7 +16,7 @@ export default async function BeneficiariesPage() {
         orderBy: { createdAt: 'desc' }
     });
 
-    // 2. Fetch images for internal users (Smart Enrichment)
+    // 2. Fetch images for internal users
     const accountNumbers = rawBeneficiaries.map(b => b.accountNumber);
     const internalAccounts = await db.account.findMany({
         where: { accountNumber: { in: accountNumbers } },
@@ -44,7 +44,7 @@ export default async function BeneficiariesPage() {
         <div className={styles.container}>
             <header className={styles.header}>
                 <div className={styles.headerIcon}>
-                    <Users size={24} color="#fff" />
+                    <Users size={24} color="var(--text-invert)" />
                 </div>
                 <div>
                     <h1 className={styles.title}>Beneficiaries</h1>

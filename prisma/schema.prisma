@@ -116,6 +116,7 @@ model User {
   role                UserRole   @default(CLIENT)
   status              UserStatus @default(PENDING_VERIFICATION)
   kycStatus           KycStatus  @default(NOT_SUBMITTED)
+  kycRejectionReason  String?
   fullName            String
   image               String?
   dateOfBirth         DateTime?
@@ -135,6 +136,8 @@ model User {
   nokAddress          String?
   passportUrl         String?
   idCardUrl           String?
+  idCardBackUrl        String?
+  tokenVersion        Int       @default(0)
   lastLoginAt         DateTime?
   lastLoginIp         String?
   failedPinAttempts   Int      @default(0)

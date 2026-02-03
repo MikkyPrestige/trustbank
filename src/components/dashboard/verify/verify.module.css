@@ -164,7 +164,37 @@
   color: var(--text-main);
 }
 
+.idGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.idUploadBox {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.subLabel {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+@media (max-width: 600px) {
+  .idGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* Dropzone Styling */
+.smallDrop {
+  min-height: 140px;
+  padding: 1rem;
+}
+
 .dropzone {
   display: block;
   border: 2px dashed var(--border);
@@ -270,6 +300,10 @@
   cursor: not-allowed;
   transform: none;
 }
+
+.spin { animation: spin 0.6s linear infinite; }
+
+@keyframes spin { to { transform: rotate(360deg); } }
 
 @keyframes slideDown {
   from {

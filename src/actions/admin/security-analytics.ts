@@ -18,7 +18,6 @@ export async function getSecurityStats() {
             warnings,
             recentLogs
         ] = await Promise.all([
-            // Total volume
             db.adminLog.count(),
 
             // Critical Threats (Last 24h)
