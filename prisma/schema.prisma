@@ -103,58 +103,58 @@ model AdminLog {
 }
 
 model User {
-  id                  String @id @default(cuid())
-  email               String @unique
-  emailVerified       DateTime?
-  otpCode             String?
-  otpExpires          DateTime?
-  passwordHash        String
+  id                   String @id @default(cuid())
+  email                String @unique
+  emailVerified        DateTime?
+  otpCode              String?
+  otpExpires           DateTime?
+  passwordHash         String
   passwordResetToken   String?   @unique
   passwordResetExpires DateTime?
-  transactionPin      String?
-  lastIp              String?
-  role                UserRole   @default(CLIENT)
-  status              UserStatus @default(PENDING_VERIFICATION)
-  kycStatus           KycStatus  @default(NOT_SUBMITTED)
-  kycRejectionReason  String?
-  fullName            String
-  image               String?
-  dateOfBirth         DateTime?
-  gender              String?
-  phone               String?
-  occupation          String?
-  taxId               String?
-  address             String?
-  city                String?
-  state               String?
-  zipCode             String?
-  country             String?
-  nokName             String?
-  nokEmail            String?
-  nokPhone            String?
-  nokRelationship     String?
-  nokAddress          String?
-  passportUrl         String?
-  idCardUrl           String?
+  transactionPin       String?
+  lastIp               String?
+  role                 UserRole   @default(CLIENT)
+  status               UserStatus @default(PENDING_VERIFICATION)
+  kycStatus            KycStatus  @default(NOT_SUBMITTED)
+  kycRejectionReason   String?
+  fullName             String
+  image                String?
+  dateOfBirth          DateTime?
+  gender               String?
+  phone                String?
+  occupation           String?
+  taxId                String?
+  address              String?
+  city                 String?
+  state                String?
+  zipCode              String?
+  country              String?
+  nokName              String?
+  nokEmail             String?
+  nokPhone             String?
+  nokRelationship      String?
+  nokAddress           String?
+  passportUrl          String?
+  idCardUrl            String?
   idCardBackUrl        String?
-  tokenVersion        Int       @default(0)
-  lastLoginAt         DateTime?
-  lastLoginIp         String?
-  failedPinAttempts   Int      @default(0)
-  pinLockedUntil      DateTime?
-  failedLoginAttempts Int      @default(0)
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
-  adminLogs           AdminLog[]
-  accounts            Account[]
-  cards               Card[]
-  loans               Loan[]
-  wireTransfers       WireTransfer[]
-  cryptoAssets        CryptoAsset[]
-  beneficiaries       Beneficiary[]
-  cryptoTransactions  CryptoTransaction[]
-  Notification        Notification[]
-  Ticket              Ticket[]
+  tokenVersion         Int       @default(0)
+  lastLoginAt          DateTime?
+  lastLoginIp          String?
+  failedPinAttempts    Int      @default(0)
+  pinLockedUntil       DateTime?
+  failedLoginAttempts  Int      @default(0)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+  adminLogs            AdminLog[]
+  accounts             Account[]
+  cards                Card[]
+  loans                Loan[]
+  wireTransfers        WireTransfer[]
+  cryptoAssets         CryptoAsset[]
+  beneficiaries        Beneficiary[]
+  cryptoTransactions   CryptoTransaction[]
+  Notification         Notification[]
+  Ticket               Ticket[]
 }
 
 model Account {
