@@ -147,12 +147,15 @@
   border: 1px solid var(--border);
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 10px 40px -10px var(--shadow-card);
+}
+.colDesc {
+  width: 40%;
 }
 .tableScroll {
   overflow-x: auto;
   width: 100%;
-  -webkit-overflow-scrolling: touch; /* Smooth scroll on iOS */
+  -webkit-overflow-scrolling: touch;
 }
 
 .table {
@@ -202,13 +205,18 @@
   align-items: center;
   justify-content: center;
 }
+.failedIcon {
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
 .creditIcon {
   background: rgba(34, 197, 94, 0.1);
-  color: #22c55e;
+  color: var(--success);
 }
 .debitIcon {
   background: rgba(239, 68, 68, 0.1);
-  color: #ef4444;
+  color: var(--danger);
 }
 .cryptoIcon {
   background: rgba(168, 85, 247, 0.1);
@@ -222,6 +230,9 @@
 .merchant {
   font-weight: 600;
   color: var(--text-main);
+}
+.textFailed {
+  color: var(--text-muted) !important;
 }
 .subType {
   font-size: 0.75rem;
@@ -244,12 +255,29 @@
   text-align: right;
 }
 .greenText {
-  color: #22c55e;
+  color: var(--success);
   font-weight: 700;
 }
 .whiteText {
   color: var(--text-main);
   font-weight: 600;
+}
+
+/* --- REVERSED STATE (Security Block) --- */
+.reversedIcon {
+  background: #fff7ed;
+  color: #ea580c;
+  border: 1px solid #fed7aa;
+}
+
+.textReversed {
+  color: #ea580c !important;
+}
+
+.amountReversed {
+  text-decoration: line-through;
+  color: #ea580c !important;
+  font-weight: 500;
 }
 
 /* --- STATUS BADGES --- */
@@ -262,21 +290,26 @@
 }
 .COMPLETED {
   background: rgba(34, 197, 94, 0.1);
-  color: #22c55e;
+  color: var(--success);
 }
 .PENDING {
   background: rgba(234, 179, 8, 0.1);
-  color: #eab308;
+  color: var(--accent);
 }
 .FAILED {
   background: rgba(239, 68, 68, 0.1);
-  color: #ef4444;
+  color: var(--danger);
 }
 .amount {
   font-family: "Courier New", monospace;
   font-weight: 700;
   font-size: 0.95rem;
   white-space: nowrap;
+}
+.amountFailed {
+  text-decoration: line-through;
+  color: var(--text-muted) !important;
+  font-weight: 500;
 }
 /* --- PAGINATION --- */
 .pagination {

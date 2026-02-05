@@ -21,7 +21,6 @@ interface Beneficiary {
     bankName: string;
     accountNumber: string;
     swiftCode?: string | null;
-    routingNumber?: string | null;
     country?: string;
 }
 
@@ -32,7 +31,6 @@ const findBeneficiaryData = (list: Beneficiary[], id?: string) => {
         country: "US",
         accountNumber: "",
         swiftCode: "",
-        routingNumber: ""
     };
 
     if (!id) return emptyState;
@@ -44,7 +42,6 @@ const findBeneficiaryData = (list: Beneficiary[], id?: string) => {
             bankName: ben.bankName || "",
             accountNumber: ben.accountNumber || "",
             swiftCode: ben.swiftCode || "",
-            routingNumber: ben.routingNumber || "",
             country: ben.country || "US",
         };
     }
@@ -215,29 +212,17 @@ export default function WireForm({
                 <input name="accountNumber" value={formData.accountNumber} onChange={handleInputChange} required className={styles.input} placeholder="GB29 BARC 2020..." />
             </div>
 
-            {/* 6. ROUTING & SWIFT */}
-            <div className={styles.row}>
-                <div className={styles.group}>
-                    <label className={styles.label}>SWIFT / BIC Code</label>
-                    <input
-                        name="swiftCode"
-                        value={formData.swiftCode}
-                        onChange={handleInputChange}
-                        className={styles.input}
-                        placeholder="International (BARCGB22)"
-                    />
-                </div>
-                <div className={styles.group}>
-                    <label className={styles.label}>Routing Number (ABA)</label>
-                    <input
-                        name="routingNumber"
-                        value={formData.routingNumber}
-                        onChange={handleInputChange}
-                        className={styles.input}
-                        placeholder="US Domestic (021000021)"
-                        maxLength={9}
-                    />
-                </div>
+            {/* 6. SWIFT CODE  */}
+            <div className={styles.group}>
+                <label className={styles.label}>SWIFT / BIC Code</label>
+                <input
+                    name="swiftCode"
+                    value={formData.swiftCode}
+                    onChange={handleInputChange}
+                    className={styles.input}
+                    placeholder="International (BARCGB22)"
+                    required
+                />
             </div>
 
             {/* 7. AMOUNT */}

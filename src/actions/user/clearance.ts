@@ -30,7 +30,8 @@ export async function submitClearanceCode(prevState: any, formData: FormData) {
     const lockedStatuses: TransactionStatus[] = [
         TransactionStatus.FAILED,
         TransactionStatus.COMPLETED,
-        TransactionStatus.PENDING_AUTH
+        TransactionStatus.PENDING_AUTH,
+        TransactionStatus.REVERSED
     ];
 
     if (lockedStatuses.includes(wire.status)) {
@@ -64,13 +65,17 @@ export async function submitClearanceCode(prevState: any, formData: FormData) {
 
             if (attempts >= 5) {
                 await db.$transaction(async (tx) => {
+                    // 1. MARK AS REVERSED (System Block)
                     await tx.wireTransfer.update({
                         where: { id: wireId },
-                        data: { status: TransactionStatus.FAILED, failedAttempts: attempts }
+                        data: {
+                            status: TransactionStatus.REVERSED,
+                            failedAttempts: attempts
+                        }
                     });
 
-                    // Release the Funds (Principal + Fee) back to Available Balance
-                    const totalRelease = Number(wire.amount) + Number(wire.fee);
+                    // 2. REFUND MONEY
+                    const totalRelease = Number(wire.amount) + Number(wire.fee || 0);
 
                     if (wire.accountId) {
                         await tx.account.update({
@@ -78,17 +83,20 @@ export async function submitClearanceCode(prevState: any, formData: FormData) {
                             data: { availableBalance: { increment: totalRelease } }
                         });
 
-                        // Mark Ledger as Failed
+                        // 3. MARK LEDGER AS REVERSED
                         await tx.ledgerEntry.updateMany({
                             where: {
                                 referenceId: { contains: wire.id },
-                                status: TransactionStatus.ON_HOLD
+                                status: { in: [TransactionStatus.ON_HOLD, TransactionStatus.PENDING_AUTH] }
                             },
-                            data: { status: TransactionStatus.FAILED, description: `Wire Failed (Security Alert)` }
+                            data: {
+                                status: TransactionStatus.REVERSED,
+                                description: `Security Block: Excessive Failed Codes`
+                            }
                         });
                     }
 
-                    // Notify Admin of Block
+                    // 4. NOTIFY ADMIN
                     const admins = await tx.user.findMany({
                         where: { role: { in: ["ADMIN", "SUPER_ADMIN"] } },
                         select: { id: true }
@@ -98,20 +106,32 @@ export async function submitClearanceCode(prevState: any, formData: FormData) {
                         await tx.notification.createMany({
                             data: admins.map(admin => ({
                                 userId: admin.id,
-                                title: "Security Alert: Wire Blocked",
-                                message: `User ${wire.user.fullName} failed clearance 5 times. Transaction cancelled.`,
+                                title: "Security Alert: Wire Reversed",
+                                message: `User ${wire.user.fullName} failed clearance 5 times. System auto-reversed the transaction.`,
                                 type: "WARNING",
                                 link: `/admin/wires?id=${wireId}`,
                                 isRead: false
                             }))
                         });
                     }
+
+                    // 5. NOTIFY USER (Optional but good UX)
+                    await tx.notification.create({
+                        data: {
+                            userId: wire.userId,
+                            title: "Transaction Blocked",
+                            message: "Security Alert: Too many failed verification attempts. Your transaction has been reversed.",
+                            type: "ERROR",
+                            link: `/dashboard/wire/status?id=${wireId}`,
+                            isRead: false
+                        }
+                    });
                 });
 
-                return { success: false, message: "Security Limit Reached. Transaction Cancelled." };
+                revalidatePath("/dashboard");
+                return { success: false, message: "Security Limit Reached. Transaction Reversed." };
 
             } else {
-                // Just update attempts count
                 await db.wireTransfer.update({
                     where: { id: wireId },
                     data: { failedAttempts: attempts }
@@ -120,7 +140,7 @@ export async function submitClearanceCode(prevState: any, formData: FormData) {
             }
 
         } else {
-
+            // --- SUCCESS FLOW (Unchanged) ---
             if (isFinalStage) {
                 await db.wireTransfer.update({
                     where: { id: wireId },

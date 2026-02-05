@@ -81,7 +81,7 @@ export default async function WirePage({
                     </div>
                     <h2>Service Unavailable</h2>
                     <p>
-                        Wire transfers are currently paused by administration for scheduled maintenance or upgrades.
+                        Wire transfers are currently paused by administration. Please check back later.
                     </p>
                 </div>
             ) : (

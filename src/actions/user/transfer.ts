@@ -19,7 +19,6 @@ const transferSchema = z.object({
     accountName: z.string().min(1, "Name is required"),
     accountNumber: z.string().min(6, "Invalid Account Number"),
     bankName: z.string().min(1, "Bank Name is required"),
-    swiftCode: z.string().optional(),
     routingNumber: z.string().optional(),
     note: z.string().optional(),
     saveBeneficiary: z.string().optional(),
@@ -45,8 +44,7 @@ export async function processTransfer(prevState: any, formData: FormData) {
 
     const {
         sourceAccountId, amount, pin, accountName,
-        accountNumber, bankName, saveBeneficiary, note,
-        swiftCode, routingNumber
+        accountNumber, bankName, saveBeneficiary, note, routingNumber
     } = validated.data;
 
     // 1. SECURITY: Verify PIN
@@ -169,7 +167,6 @@ export async function processTransfer(prevState: any, formData: FormData) {
                             accountName: accountName,
                             accountNumber: accountNumber,
                             bankName: bankName,
-                            swiftCode: swiftCode || null,
                             routingNumber: routingNumber || null,
                         }
                     });

@@ -5,12 +5,13 @@ import { getFeatureStatus } from "@/actions/admin/system-status";
 import LoanApplicationForm from "@/components/dashboard/loans/LoanApplicationForm";
 import RepaymentModal from "@/components/dashboard/loans/RepaymentModal";
 import styles from "../../../../components/dashboard/loans/loans.module.css";
-import { TrendingUp, PieChart, CheckCircle, Lock, History } from "lucide-react";
+import { TrendingUp, PieChart, CheckCircle, Lock, History, Ban } from "lucide-react";
 import { KycStatus } from "@prisma/client";
 
 export default async function LoansPage() {
     const session = await auth();
     const features = await getFeatureStatus();
+
     if (!session?.user?.id) redirect("/login");
 
     const user = await db.user.findUnique({
@@ -113,8 +114,14 @@ export default async function LoansPage() {
                                 Apply for a New Loan
                             </h2>
                             {!features.loans ? (
-                                <div>
-                                    Loan applications are temporarily paused by administration.
+                                <div className={styles.lockedState}>
+                                    <div className={styles.lockIconBox}>
+                                        <Ban size={32} />
+                                    </div>
+                                    <h2>Loans Apply Paused</h2>
+                                    <p>
+                                        Loan applications are temporarily paused by administration. Please check back later.
+                                    </p>
                                 </div>
                             ) : (
                                 <LoanApplicationForm />
@@ -129,6 +136,19 @@ export default async function LoansPage() {
                         <History size={20} color="#888" />
                         Your History
                     </h2>
+
+                    {!features.repay && (
+                        <div className={styles.lockedStateRepay}>
+                            <div className={styles.lockIconBox}>
+                                <Ban size={32} />
+                            </div>
+                            <h2>Repayments Paused</h2>
+                            <p>
+                                Loan repayments are temporarily paused by administration. You cannot make payments at this time.
+                            </p>
+                        </div>
+                    )}
+
                     {loans.length === 0 ? (
                         <div className={styles.empty}>
                             <p>You have no loan history.</p>
@@ -167,9 +187,15 @@ export default async function LoansPage() {
 
                                         <div className={styles.loanFooter}>
                                             <span className={styles.loanDetails}>{loan.termMonths} Months • {loan.reason}</span>
-
+                                            {/*  2. BUTTON */}
                                             {loan.status === 'APPROVED' && (
-                                                <RepaymentModal loan={loan} maxPayable={maxPayable} />
+                                                features.repay ? (
+                                                    <RepaymentModal loan={loan} maxPayable={maxPayable} />
+                                                ) : (
+                                                    <button disabled className={styles.repayPaused}>
+                                                        <Ban size={12} style={{ marginRight: '4px' }} /> Paused
+                                                    </button>
+                                                )
                                             )}
                                         </div>
                                     </div>

@@ -1,12 +1,12 @@
 'use client';
 
-import { useActionState, useEffect, useState } from 'react';
+import { useActionState, useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { submitClearanceCode } from '@/actions/user/clearance';
 import styles from './styles/status.module.css';
 import toast from 'react-hot-toast';
 
-const VERIFICATION_DELAY = 8000; // 8 seconds
+const VERIFICATION_DELAY = 10000; // 10 seconds
 
 export default function ClearanceForm({ wire }: { wire: any }) {
     const router = useRouter();
@@ -14,22 +14,31 @@ export default function ClearanceForm({ wire }: { wire: any }) {
 
     const [verifying, setVerifying] = useState(false);
     const [progress, setProgress] = useState(0);
+    const [submittedStage, setSubmittedStage] = useState(wire.currentStage);
 
+    const lastProcessedState = useRef<any>(null);
+    const toastFiredRef = useRef(false);
+
+    // 1. SERVER RESPONSE
     useEffect(() => {
-        if (state?.message) {
+        if (!state || state === lastProcessedState.current) return;
+        lastProcessedState.current = state;
+
+        if (state.message) {
             if (state.success) {
-                const timeoutId = setTimeout(() => {
+                toastFiredRef.current = false;
+
+                setTimeout(() => {
                     setVerifying(true);
                     setProgress(0);
                 }, 0);
-                return () => clearTimeout(timeoutId);
             } else {
-                toast.error(state.message);
+                toast.error(state.message, { id: 'auth-error' });
             }
         }
     }, [state]);
 
-    // progress bar
+    // 2. PROGRESS BAR LOGIC
     useEffect(() => {
         if (!verifying) return;
 
@@ -39,14 +48,20 @@ export default function ClearanceForm({ wire }: { wire: any }) {
 
         const timer = setInterval(() => {
             setProgress((prev) => {
-                if (prev >= 100) {
+                const nextVal = prev + increment;
+                if (nextVal >= 100) {
                     clearInterval(timer);
-                    toast.success("Verification Complete");
-                    router.refresh();
-                    setVerifying(false);
-                    return 0;
+                    if (!toastFiredRef.current) {
+                        toastFiredRef.current = true;
+                        toast.success("Verification Complete", { id: 'auth-success' });
+                        setTimeout(() => {
+                            setVerifying(false);
+                            router.refresh();
+                        }, 500);
+                    }
+                    return 100;
                 }
-                return prev + increment;
+                return nextVal;
             });
         }, intervalTime);
 
@@ -65,12 +80,18 @@ export default function ClearanceForm({ wire }: { wire: any }) {
 
     const info = getStageInfo(wire.currentStage);
 
+    // lock stage name before submitting
+    const handleSubmit = (formData: FormData) => {
+        setSubmittedStage(wire.currentStage);
+        action(formData);
+    };
+
     // 3. RENDER: Loading State
     if (verifying) {
         return (
             <div className={styles.loaderBox}>
                 <div className={styles.spinner}></div>
-                <h3>Verifying {wire.currentStage} Code...</h3>
+                <h3>Verifying {submittedStage} Code...</h3>
                 <p>Connecting to Secure Banking Gateway</p>
                 <div className={styles.progressBarBg}>
                     <div className={styles.progressBarFill} style={{ width: `${progress}%` }}></div>
@@ -88,7 +109,7 @@ export default function ClearanceForm({ wire }: { wire: any }) {
                 <p>{info.desc}</p>
             </div>
 
-            <form action={action} className={styles.form}>
+            <form action={handleSubmit} className={styles.form}>
                 <input type="hidden" name="wireId" value={wire.id} />
 
                 <div className={styles.fieldWrapper}>

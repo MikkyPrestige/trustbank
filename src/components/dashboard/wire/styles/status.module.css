@@ -1,99 +1,111 @@
 .container {
   max-width: 700px;
-  margin: 0 auto;
-  padding: 40px 20px;
+  width: 60%;
+  padding: 1rem;
+}
+
+@media (max-width: 991px) {
+  .container {
+    width: 80%;
+  }
+}
+
+@media (max-width: 600px) {
+  .container {
+    width: 100%;
+  }
 }
 
 /* --- HEADER --- */
 .header {
-  margin-bottom: 30px;
+  margin-bottom: 1rem;
   text-align: center;
 }
 .title {
   font-size: 1.8rem;
   font-weight: 800;
   color: var(--text-main);
-  margin: 0;
+  /* margin-bottom: 0.5rem; */
 }
 .subtitle {
   color: var(--text-muted);
-  margin-top: 8px;
+  margin-top: 0.1rem;
   font-size: 0.95rem;
 }
 .ref {
   font-family: monospace;
   background: var(--bg-surface);
-  padding: 4px 8px;
-  border-radius: 4px;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
   color: var(--primary);
 }
 
 .backLink {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.5rem;
   color: var(--text-muted);
   text-decoration: none;
   font-size: 0.85rem;
   font-weight: 600;
   transition: 0.2s;
 }
+
 .backLink:hover {
   color: var(--primary);
   transform: translateX(-4px);
 }
 
-/* --- SUCCESS STATE (Completed) --- */
+/* --- SUCCESS STATE --- */
 .successCard {
   background: var(--bg-card);
   border: 1px solid var(--border);
-  border-radius: 24px;
-  padding: 40px;
+  border-radius: 2rem;
+  padding: 1rem;
   text-align: center;
-  box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2rem 5rem -1rem var(--shadow-card);
 }
 
 .successIcon {
-  width: 80px;
-  height: 80px;
+  width: 3rem;
+  height: 3rem;
   background: rgba(34, 197, 94, 0.1);
   color: var(--success);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 24px auto;
-  box-shadow: 0 0 0 8px rgba(34, 197, 94, 0.05);
+  margin: 0 auto 1rem auto;
+  box-shadow: 0 0 0 1rem rgba(34, 197, 94, 0.05);
 }
 
 .successTitle {
   font-size: 1.8rem;
   font-weight: 800;
   color: var(--text-main);
-  margin-bottom: 8px;
+  margin-bottom: 0.5rem;
 }
 .successSubtitle {
   color: var(--text-muted);
-  margin-bottom: 30px;
+  margin-bottom: 1rem;
 }
 
 .receiptDetails {
   background: var(--bg-surface);
-  border-radius: 16px;
-  padding: 24px;
+  padding: 1rem;
   border: 1px dashed var(--border);
-  margin-bottom: 30px;
+  margin-bottom: 1rem;
 }
 .receiptRow {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 12px;
+  margin-bottom: 1rem;
   font-size: 0.9rem;
   color: var(--text-muted);
 }
 .receiptRow:last-child {
   margin-bottom: 0;
-  padding-top: 12px;
+  padding-top: 1rem;
   border-top: 1px solid var(--border);
 }
 .receiptRow span:last-child {
@@ -105,10 +117,10 @@
 .dashboardBtn {
   display: block;
   width: 100%;
-  padding: 16px;
+  padding: 1rem;
   background: var(--bg-surface);
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: 1rem;
   color: var(--text-main);
   font-weight: 600;
   text-decoration: none;
@@ -119,13 +131,117 @@
   border-color: var(--primary);
 }
 
+/* --- REVERSED / SECURITY STATE--- */
+.reversedCard {
+  background-color: #fff7ed;
+  border: 1px solid #fed7aa;
+}
+
+.textWarning {
+  color: #ea580c;
+}
+
+.reversedTitle {
+  color: #c2410c;
+}
+
+.reversedSubtitle {
+  color: #9a3412;
+  margin-bottom: 0.5rem;
+}
+
+.reversedIconWrapper {
+  color: #ea580c;
+  background: rgba(255, 255, 255, 0.5);
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem auto;
+}
+
+.reversedNoteBox {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: rgba(234, 88, 12, 0.1);
+  border-radius: 1rem;
+  color: #9a3412;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  text-align: center;
+  border: 1px solid rgba(234, 88, 12, 0.2);
+}
+
+/* REJECTED STATE STYLES */
+.rejectedCard {
+  background: var(--bg-card);
+  border: 1px solid var(--danger);
+  border-radius: 1rem;
+  padding: 1rem 1.5rem;
+  text-align: center;
+  box-shadow: var(--shadow-card);
+  animation: fadeIn 0.4s ease-out;
+}
+
+.rejectedIcon {
+  background: var(--danger);
+  color: var(--text-invert);
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem auto;
+  box-shadow: 0 0.2rem 1rem rgba(239, 68, 68, 0.2);
+}
+
+.rejectedTitle {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--danger);
+  letter-spacing: -0.5px;
+}
+
+.textDanger {
+  color: var(--danger);
+  font-weight: 700;
+}
+
+.reversedNote {
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.supportBtn {
+  display: inline-block;
+  margin-top: 1rem;
+  background: var(--text-main);
+  color: var(--primary);
+  padding: 0.5rem 1rem;
+  border-radius: 0.7rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.supportBtn:hover {
+  opacity: 0.9;
+}
+
 /* --- PENDING / CLEARANCE CARD --- */
 .statusCard {
   background: var(--bg-card);
   border: 1px solid var(--border);
-  border-radius: 24px;
+  border-radius: 1rem;
   overflow: hidden;
-  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2rem 4rem -1rem var(--shadow-card);
 }
 
 /* Progress Stepper */
@@ -137,8 +253,8 @@
 .step {
   flex: 1;
   text-align: center;
-  padding: 16px;
-  font-size: 0.75rem;
+  padding: 1rem;
+  font-size: 0.9rem;
   font-weight: 700;
   text-transform: uppercase;
   color: var(--text-muted);
@@ -158,27 +274,6 @@
   background: var(--primary);
 }
 
-.details {
-  padding: 30px;
-}
-.row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 0;
-  border-bottom: 1px solid var(--border);
-}
-.row:last-child {
-  border-bottom: none;
-}
-.row span {
-  color: var(--text-muted);
-  font-size: 0.9rem;
-}
-.row strong {
-  color: var(--text-main);
-  font-size: 1rem;
-}
 .warning {
   color: var(--accent) !important;
 }
@@ -186,7 +281,7 @@
 /* Action Area */
 .actionArea {
   background: linear-gradient(to bottom, var(--bg-surface), var(--bg-card));
-  padding: 30px;
+  padding: 2rem;
   border-top: 1px solid var(--border);
 }
 
@@ -194,15 +289,14 @@
 .stageAlert {
   background: rgba(245, 158, 11, 0.1);
   border: 1px solid rgba(245, 158, 11, 0.2);
-  border-radius: 12px;
-  padding: 16px;
-  margin-bottom: 24px;
+  border-radius: 1rem;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
 }
 .stageAlert h3 {
   color: var(--accent);
   font-size: 0.95rem;
   font-weight: 800;
-  margin: 0 0 4px 0;
   text-transform: uppercase;
 }
 .stageAlert p {
@@ -213,18 +307,18 @@
 
 .input {
   width: 100%;
-  padding: 18px;
+  padding: 1rem;
   text-align: center;
   background: var(--bg-card);
   border: 2px solid var(--border);
-  border-radius: 12px;
+  border-radius: 1rem;
   font-size: 1.4rem;
   font-family: monospace;
   letter-spacing: 4px;
   text-transform: uppercase;
   color: var(--text-main);
   transition: 0.2s;
-  margin-bottom: 20px;
+  margin-bottom: 2rem;
 }
 .input:focus {
   border-color: var(--primary);
@@ -234,20 +328,16 @@
 
 .button {
   width: 100%;
-  padding: 16px;
-  background: linear-gradient(
-    135deg,
-    var(--accent) 0%,
-    #d97706 100%
-  ); /* Amber for Clearance */
+  padding: 1rem;
+  background: linear-gradient(135deg, var(--accent) 0%, #d97706 100%);
   color: var(--text-invert);
   border: none;
-  border-radius: 12px;
+  border-radius: 0.8rem;
   font-weight: 700;
-  font-size: 1rem;
+  font-size: 1.2rem;
   cursor: pointer;
   transition: 0.2s;
-  box-shadow: 0 10px 20px -5px rgba(217, 119, 6, 0.3);
+  box-shadow: 0 1rem 2rem -5px rgba(217, 119, 6, 0.3);
 }
 .button:hover:not(:disabled) {
   transform: translateY(-2px);
@@ -262,70 +352,70 @@
   text-align: center;
   font-size: 0.8rem;
   color: var(--text-muted);
-  margin-top: 16px;
+  margin-top: 1rem;
 }
 
 /* --- LOADER SCREEN --- */
 .loaderBox {
   text-align: center;
-  padding: 40px 0;
+  padding: 1rem 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 }
 .spinner {
-  width: 50px;
-  height: 50px;
-  border: 4px solid var(--bg-surface);
-  border-top: 4px solid var(--primary);
+  width: 3rem;
+  height: 3rem;
+  border: 3px solid var(--bg-surface);
+  border-top: 3px solid var(--primary);
   border-radius: 50%;
   animation: spin 1s linear infinite;
-  margin-bottom: 24px;
+  margin-bottom: 1rem;
 }
 .loaderBox h3 {
   font-size: 1.2rem;
   color: var(--text-main);
-  margin: 0 0 8px 0;
+  margin: 0 0 1px 0;
 }
 .loaderBox p {
   color: var(--text-muted);
   font-size: 0.9rem;
-  margin-bottom: 24px;
+  margin-bottom: 0.3rem;
 }
 .percent {
   font-family: monospace;
   font-size: 1.5rem;
   font-weight: 700;
   color: var(--primary);
-  margin-top: 12px;
+  margin-top: 1rem;
 }
 
 .progressBarBg {
   width: 100%;
-  height: 8px;
+  height: 10px;
   background: var(--bg-surface);
-  border-radius: 10px;
+  border-radius: 1rem;
   overflow: hidden;
   position: relative;
 }
 .progressBarFill {
   height: 100%;
   background: var(--primary);
-  border-radius: 10px;
-  transition: width 0.1s linear; /* Smooth fill */
+  border-radius: 1rem;
+  transition: width 0.1s linear;
 }
 
 /* --- LIST VIEW --- */
 .listGrid {
   display: grid;
-  gap: 16px;
+  gap: 1rem;
 }
 .wireCard {
   background: var(--bg-card);
   border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 20px;
+  border-radius: 1rem;
+  padding: 1rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -380,14 +470,14 @@
 /* Empty State */
 .emptyState {
   text-align: center;
-  padding: 60px;
+  padding: 6rem;
   background: var(--bg-card);
   border: 1px dashed var(--border);
-  border-radius: 24px;
+  border-radius: 2rem;
 }
 .emptyState h2 {
   color: var(--text-main);
-  margin-bottom: 8px;
+  margin-bottom: 0.5rem;
 }
 .emptyState p {
   color: var(--text-muted);
@@ -406,7 +496,7 @@
 
 .label {
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: 0.5rem;
   color: var(--text-muted);
   font-size: 0.8rem;
   font-weight: 700;
@@ -423,12 +513,12 @@
 /* --- Waiting / Pending Auth State --- */
 .waitingCard {
   text-align: center;
-  padding: 3rem 2rem;
+  padding: 2rem;
 }
 
 .waitingIconWrapper {
-  width: 64px;
-  height: 64px;
+  width: 5rem;
+  height: 5rem;
   border-radius: 50%;
   background: var(--bg-surface);
   color: var(--primary);
@@ -459,15 +549,9 @@
   font-weight: 500;
 }
 
-.waitingNote {
-  font-size: 0.85rem;
-  color: var(--text-muted);
-  margin-top: 2rem;
-}
-
 /* --- Wire Info (List View) --- */
 .wireInfo {
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.5rem;
 }
 
 /* --- Badges --- */
@@ -483,11 +567,64 @@
   border: 1px solid #bfdbfe;
 }
 
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
+.badgeDanger {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--danger);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.badgeWarning {
+  background: #fff7ed;
+  color: #c2410c;
+  border: 1px solid #fed7aa;
+}
+
+/* PAGINATION CONTROLS */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.pageBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.1rem;
+  padding: 0.3rem 0.5rem;
+  background: var(--text-invert);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+}
+
+.pageBtn:hover:not(.disabled) {
+  background: var(--bg-surface);
+  border-color: var(--border-hover);
+}
+
+.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+.pageInfo {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
 }

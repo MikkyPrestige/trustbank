@@ -3,7 +3,8 @@ import { db } from "@/lib/db";
 import { getSiteSettings } from "@/lib/content/get-settings";
 import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
-import { ChevronLeft, Clock, AlertTriangle, ArrowDownLeft, ArrowUpRight } from "lucide-react";
+import Image from "next/image";
+import { ChevronLeft, Clock, AlertTriangle, ArrowDownLeft, ArrowUpRight, XCircle } from "lucide-react";
 import styles from "../../../../../components/dashboard/transactions/[id]/receipt.module.css";
 import ReceiptActions from "@/components/dashboard/transactions/[id]/ReceiptActions";
 
@@ -16,7 +17,6 @@ export default async function TransactionDetailsPage({ params }: PageProps) {
     const session = await auth();
     if (!session?.user?.id) redirect("/login");
 
-    // 1. Fetch Transaction AND Settings in Parallel
     const [transaction, settings] = await Promise.all([
         db.ledgerEntry.findUnique({
             where: { id: id },
@@ -25,24 +25,22 @@ export default async function TransactionDetailsPage({ params }: PageProps) {
         getSiteSettings()
     ]);
 
-    if (!transaction) return notFound();
+    if (!transaction || transaction.account.userId !== session.user.id) return notFound();
 
-    if (transaction.account.userId !== session.user.id) {
-        return notFound();
-    }
-
+    // Logic for Status and Styles
     const isDebit = transaction.direction === "DEBIT";
-    const isPending = transaction.status === "PENDING";
+    const isPending = transaction.status === "PENDING" || transaction.status === "ON_HOLD";
     const isSuccess = transaction.status === "COMPLETED";
+    const isFailed = transaction.status === 'FAILED' || transaction.status === 'REVERSED';
 
     const dateObj = new Date(transaction.createdAt);
     const dateStr = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
     const timeStr = dateObj.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
 
-    // Fallback for Site Name
     const bankName = settings.site_name || "TrustBank";
 
     const getStatusStyle = () => {
+        if (isFailed) return styles.failed;
         if (isSuccess) return styles.success;
         if (isPending) return styles.pending;
         return styles.failed;
@@ -58,30 +56,58 @@ export default async function TransactionDetailsPage({ params }: PageProps) {
 
             <div className={styles.receiptCard}>
                 <div className={styles.bankHeader}>
-                    <span className={styles.bankName}>{bankName}</span>
-                    <span className={styles.receiptLabel}>Transaction Receipt</span>
-                </div>
-
-                {/* 2. AMOUNT HERO */}
-                <div className={styles.receiptHeader}>
-                    <div className={`${styles.iconBox} ${getStatusStyle()}`}>
-                        {isSuccess ? (isDebit ? <ArrowUpRight size={28} /> : <ArrowDownLeft size={28} />) :
-                            isPending ? <Clock size={28} /> :
-                                <AlertTriangle size={28} />}
+                    {/* Left: Brand Identity */}
+                    <div className={styles.brandColumn}>
+                        {settings.site_logo ? (
+                            <div className={styles.logoContainer}>
+                                <Image
+                                    src={settings.site_logo}
+                                    alt={bankName}
+                                    fill
+                                    className={styles.logoImage}
+                                    priority
+                                    sizes="200px"
+                                />
+                            </div>
+                        ) : (
+                            <h2 className={styles.bankName}>{bankName}</h2>
+                        )}
                     </div>
 
-                    <h1 className={`${styles.amount} ${isDebit ? '' : styles.creditText}`}>
+                    {/* Right: Receipt Label & ID */}
+                    <div className={styles.headerRight}>
+                        <span className={styles.receiptLabel}>Transaction Receipt</span>
+                        <span className={styles.receiptId}>#{transaction.id.slice(-8).toUpperCase()}</span>
+                    </div>
+                </div>
+
+
+                {/* --- 2. AMOUNT HERO --- */}
+                <div className={styles.receiptHeader}>
+                    <div className={`${styles.iconBox} ${getStatusStyle()}`}>
+                        {isFailed ? <XCircle size={28} /> :
+                            isSuccess ? (isDebit ? <ArrowUpRight size={28} /> : <ArrowDownLeft size={28} />) :
+                                isPending ? <Clock size={28} /> :
+                                    <AlertTriangle size={28} />}
+                    </div>
+
+                    <h1
+                        className={`${styles.amount} ${isDebit ? '' : styles.creditText}`}
+                        style={isFailed ? { textDecoration: 'line-through', color: '#a1a1aa' } : {}}
+                    >
                         {isDebit ? "-" : "+"}{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(transaction.amount))}
                     </h1>
 
                     <span className={`${styles.statusBadge} ${getStatusStyle()}`}>
-                        {transaction.status === 'COMPLETED' ? 'Successful' : transaction.status}
+                        {transaction.status === 'COMPLETED' ? 'Successful' :
+                            isFailed ? 'Declined / Voided' :
+                                transaction.status.replace(/_/g, ' ')}
                     </span>
                 </div>
 
                 <div className={styles.divider}></div>
 
-                {/* 3. DETAILS */}
+                {/* --- 3. DETAILS LIST --- */}
                 <div className={styles.detailsList}>
                     <div className={styles.detailRow}>
                         <span className={styles.label}>Beneficiary / Source</span>
@@ -102,13 +128,6 @@ export default async function TransactionDetailsPage({ params }: PageProps) {
                     </div>
 
                     <div className={styles.detailRow}>
-                        <span className={styles.label}>Reference</span>
-                        <span className={styles.monoValue}>
-                            {transaction.referenceId || `REF-${transaction.id.slice(-8).toUpperCase()}`}
-                        </span>
-                    </div>
-
-                    <div className={styles.detailRow}>
                         <span className={styles.label}>Payment Method</span>
                         <span className={styles.value}>
                             {transaction.account.type} •• {transaction.account.accountNumber.slice(-4)}
@@ -116,12 +135,10 @@ export default async function TransactionDetailsPage({ params }: PageProps) {
                     </div>
                 </div>
 
-                {/* 4. ACTIONS */}
                 <ReceiptActions styles={styles} />
 
                 <div className={styles.disclaimer}>
-                    This receipt is generated automatically and is valid without a signature.
-                    <br />{bankName} Inc.
+                    This receipt is generated automatically by {bankName} Systems.
                 </div>
             </div>
         </div>

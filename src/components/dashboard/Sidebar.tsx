@@ -66,7 +66,6 @@ export default function Sidebar({ data }: SidebarProps) {
 
             {/* SIDEBAR */}
             <aside className={`${styles.sidebar} ${isMobileOpen ? styles.open : ''}`}>
-
                 {/* 1. LOGO */}
                 <div className={styles.logoArea}>
                     <Link href="/dashboard" onClick={() => setIsMobileOpen(false)}>
@@ -76,20 +75,15 @@ export default function Sidebar({ data }: SidebarProps) {
 
                 {/* 2. NAVIGATION */}
                 <nav className={styles.navMenu}>
-
                     {/* SECTION: PERSONAL */}
                     <p className={styles.navLabel}>Personal Banking</p>
-
                     <NavItem href="/dashboard" icon={LayoutDashboard} label="Overview" active={pathname === '/dashboard'} />
                     <NavItem href="/dashboard/transactions" icon={History} label="Transactions" active={pathname.includes('/transactions')} />
 
                     <div className={styles.divider}></div>
-
                     {/* SECTION: MONEY MOVEMENT */}
                     <p className={styles.navLabel}>Money & Assets</p>
-
                     <NavItem href="/dashboard/transfer" icon={ArrowRightLeft} label="Transfer" active={pathname.includes('/transfer')} />
-
                     <NavItem
                         href="/dashboard/wire"
                         icon={Globe}
@@ -108,7 +102,6 @@ export default function Sidebar({ data }: SidebarProps) {
 
                     {/* SECTION: PREFERENCES */}
                     <p className={styles.navLabel}>Preferences</p>
-
                     <NavItem href="/dashboard/settings" icon={Settings} label="Settings" active={pathname.includes('/settings')} />
                     <NavItem href="/dashboard/support" icon={HelpCircle} label="Help Center" active={pathname.includes('/help')} />
 
@@ -116,7 +109,6 @@ export default function Sidebar({ data }: SidebarProps) {
                     {data.isAdmin && (
                         <>
                             <div className={styles.divider}></div>
-                            {/* Admin specific label class */}
                             <p className={`${styles.navLabel} ${styles.adminLabel}`}>Admin Panel</p>
 
                             <NavItem href="/admin" icon={ShieldCheck} label="Overview" active={pathname === '/admin'} variant="admin" />
@@ -132,7 +124,7 @@ export default function Sidebar({ data }: SidebarProps) {
 
                 {/* 3. USER FOOTER */}
                 <div className={styles.userProfile}>
-                    <div className={styles.avatarWrapper}>
+                    <Link href="/dashboard/profile" className={styles.avatarWrapper}>
                         <div className={styles.avatar}>
                             {data.user.image ? (
                                 <Image
@@ -152,10 +144,12 @@ export default function Sidebar({ data }: SidebarProps) {
                             isVerified ? styles.dotVerified :
                                 styles.dotPending
                             }`} />
-                    </div>
+                    </Link>
 
                     <div className={styles.userInfo}>
-                        <span className={styles.userName}>{data.user.name}</span>
+                        <Link href="/dashboard/profile" className={styles.userName}>
+                            {data.user.name}
+                        </Link>
 
                         {(data.user.isFrozen || actionRequired) && (
                             <span className={styles.userRole}>

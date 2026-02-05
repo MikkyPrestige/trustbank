@@ -28,7 +28,6 @@ const wireSchema = z.object({
   accountNumber: z.string().min(6, "Invalid Account Number"),
   country: z.string().min(2, "Country is required"),
   swiftCode: z.string().optional(),
-  routingNumber: z.string().optional(),
   saveBeneficiary: z.string().optional(),
 });
 
@@ -52,7 +51,6 @@ export async function initiateWireTransfer(prevState: any, formData: FormData) {
     accountNumber: formData.get("accountNumber")?.toString() || "",
     country: formData.get("country")?.toString() || "",
     swiftCode: formData.get("swiftCode")?.toString() || undefined,
-    routingNumber: formData.get("routingNumber")?.toString() || undefined,
     saveBeneficiary: formData.get("saveBeneficiary")?.toString() || undefined,
   };
 
@@ -64,14 +62,14 @@ export async function initiateWireTransfer(prevState: any, formData: FormData) {
 
   const {
     accountId, amount, pin, bankName, accountNumber, accountName,
-    swiftCode, country, routingNumber, saveBeneficiary
+    swiftCode, country, saveBeneficiary
   } = validated.data;
 
   // 2. LOGIC & COMPLIANCE
 
   // A. Routing/SWIFT Check
-  if (!swiftCode && !routingNumber) {
-      return { message: "Please provide either a SWIFT Code (Intl) or Routing Number (US)." };
+  if (!swiftCode) {
+      return { message: "Please provide SWIFT Code of the destination bank" };
   }
 
   // B. Internal Transfer Check
@@ -129,7 +127,6 @@ const permission = await checkPermissions(user.id, 'TRANSFER_WIRE', amount);
           status: TransactionStatus.ON_HOLD,
           currentStage: "TAA",
           swiftCode: swiftCode || undefined,
-          routingNumber: routingNumber || undefined,
         }
       });
 
@@ -166,7 +163,6 @@ const permission = await checkPermissions(user.id, 'TRANSFER_WIRE', amount);
               bankName: bankName,
               accountNumber: accountNumber,
               swiftCode: swiftCode || null,
-              routingNumber: routingNumber || null,
             }
           });
         }

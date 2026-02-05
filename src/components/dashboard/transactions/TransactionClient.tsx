@@ -7,7 +7,7 @@ import autoTable from 'jspdf-autotable';
 import {
     Download, Search, ArrowUpRight, ArrowDownLeft,
     RefreshCcw, ChevronLeft, ChevronRight,
-    TrendingUp, TrendingDown, Filter, FileText
+    TrendingUp, TrendingDown, Filter, FileText, XCircle, AlertTriangle
 } from 'lucide-react';
 import styles from "./transactions.module.css";
 
@@ -36,7 +36,6 @@ export default function TransactionClient({ transactions }: { transactions: Tran
             const query = search.toLowerCase();
             const type = t.type || "";
 
-            // Search Logic
             const matchesSearch =
                 (t.description?.toLowerCase() || "").includes(query) ||
                 (t.accountName?.toLowerCase() || "").includes(query) ||
@@ -44,48 +43,26 @@ export default function TransactionClient({ transactions }: { transactions: Tran
                 t.amount?.toString().includes(query) ||
                 new Date(t.createdAt).toLocaleDateString().toLowerCase().includes(query);
 
-            // Filter Logic
             const isCrypto = type.startsWith("CRYPTO");
             let matchesType = true;
 
             switch (filterType) {
-                // --- BANK FILTERS ---
-                case "BANK":
-                    matchesType = !isCrypto;
-                    break;
-                case "BANK_IN":
-                    matchesType = t.direction === "CREDIT" && !isCrypto;
-                    break;
-                case "BANK_OUT":
-                    matchesType = t.direction === "DEBIT" && !isCrypto;
-                    break;
-
-                // --- CRYPTO FILTERS ---
-                case "CRYPTO":
-                    matchesType = isCrypto;
-                    break;
-                case "CRYPTO_BUY":
-                    matchesType = type === "CRYPTO_BUY";
-                    break;
-                case "CRYPTO_SELL":
-                    matchesType = type === "CRYPTO_SELL";
-                    break;
-                case "CRYPTO_SEND":
-                    matchesType = type === "CRYPTO_SEND";
-                    break;
-                case "CRYPTO_RECEIVE":
-                    matchesType = type === "CRYPTO_RECEIVE";
-                    break;
-
-                default:
-                    matchesType = true;
+                case "BANK": matchesType = !isCrypto; break;
+                case "BANK_IN": matchesType = t.direction === "CREDIT" && !isCrypto; break;
+                case "BANK_OUT": matchesType = t.direction === "DEBIT" && !isCrypto; break;
+                case "CRYPTO": matchesType = isCrypto; break;
+                case "CRYPTO_BUY": matchesType = type === "CRYPTO_BUY"; break;
+                case "CRYPTO_SELL": matchesType = type === "CRYPTO_SELL"; break;
+                case "CRYPTO_SEND": matchesType = type === "CRYPTO_SEND"; break;
+                case "CRYPTO_RECEIVE": matchesType = type === "CRYPTO_RECEIVE"; break;
+                default: matchesType = true;
             }
 
             return matchesSearch && matchesType;
         });
     }, [search, filterType, transactions]);
 
-    // 2. DYNAMIC SUMMARY STATS
+    // 2. STATS
     const stats = useMemo(() => {
         let income = 0;
         let expense = 0;
@@ -106,7 +83,7 @@ export default function TransactionClient({ transactions }: { transactions: Tran
 
     if (currentPage > totalPages && totalPages > 0) setCurrentPage(1);
 
-    // 4. EXPORT PDF
+    // 4. EXPORT
     const handleExport = () => {
         const doc = new jsPDF();
         doc.setFillColor(5, 5, 5);
@@ -117,13 +94,28 @@ export default function TransactionClient({ transactions }: { transactions: Tran
         doc.setFontSize(10);
         doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 35);
 
-        const tableData = filtered.map(t => [
-            new Date(t.createdAt).toLocaleDateString(),
-            t.description,
-            t.accountName || 'N/A',
-            t.status,
-            (t.direction === 'CREDIT' ? '+' : '-') + `$${Number(t.amount).toFixed(2)}`
-        ]);
+        const tableData = filtered.map(t => {
+            const isReversed = t.status === 'REVERSED';
+            const isFailed = t.status === 'FAILED' || t.status === 'REJECTED';
+
+            let amountStr = `$${Number(t.amount).toFixed(2)}`;
+
+            if (isReversed) {
+                amountStr = `(SECURITY) ${amountStr}`;
+            } else if (isFailed) {
+                amountStr = `(VOID) ${amountStr}`;
+            } else {
+                amountStr = (t.direction === 'CREDIT' ? '+' : '-') + amountStr;
+            }
+
+            return [
+                new Date(t.createdAt).toLocaleDateString(),
+                t.description,
+                t.accountName || 'N/A',
+                t.status,
+                amountStr
+            ];
+        });
 
         autoTable(doc, {
             startY: 45,
@@ -137,8 +129,11 @@ export default function TransactionClient({ transactions }: { transactions: Tran
         doc.save("TrustBank_Statement.pdf");
     };
 
-    // Helper to render icon
-    const renderIcon = (t: Transaction) => {
+    // Helper: Returns Icon based on specific state
+    const renderIcon = (t: Transaction, statusType: 'REVERSED' | 'FAILED' | 'NORMAL') => {
+        if (statusType === 'REVERSED') return <AlertTriangle size={18} />;
+        if (statusType === 'FAILED') return <XCircle size={18} />;
+
         const type = t.type || "";
         if (type === 'CRYPTO_BUY') return <TrendingUp size={18} />;
         if (type === 'CRYPTO_SELL') return <TrendingDown size={18} />;
@@ -157,7 +152,6 @@ export default function TransactionClient({ transactions }: { transactions: Tran
                     <p className={styles.subtitle}>{filtered.length} entries found</p>
                 </div>
 
-                {/* SUMMARY CARDS */}
                 <div className={styles.summaryRow}>
                     <div className={styles.summaryCard}>
                         <span className={styles.summaryLabel}>Total In</span>
@@ -175,7 +169,6 @@ export default function TransactionClient({ transactions }: { transactions: Tran
                 </div>
             </header>
 
-            {/* CONTROLS BAR */}
             <div className={styles.controlsBar}>
                 <div className={styles.searchWrapper}>
                     <Search size={18} className={styles.searchIcon} />
@@ -196,13 +189,11 @@ export default function TransactionClient({ transactions }: { transactions: Tran
                             onChange={(e) => { setFilterType(e.target.value); setCurrentPage(1); }}
                         >
                             <option value="ALL">All Transactions</option>
-
                             <optgroup label="Bank / Fiat">
                                 <option value="BANK">All Bank</option>
                                 <option value="BANK_IN">Deposits (In)</option>
                                 <option value="BANK_OUT">Withdrawals (Out)</option>
                             </optgroup>
-
                             <optgroup label="Crypto">
                                 <option value="CRYPTO">All Crypto</option>
                                 <option value="CRYPTO_BUY">Crypto Buys</option>
@@ -219,13 +210,12 @@ export default function TransactionClient({ transactions }: { transactions: Tran
                 </div>
             </div>
 
-            {/* TABLE */}
             <div className={styles.tableCard}>
                 <div className={styles.tableScroll}>
                     <table className={styles.table}>
                         <thead>
                             <tr>
-                                <th style={{ width: '40%' }}>Description</th>
+                                <th className={styles.colDesc}>Description</th>
                                 <th>Account</th>
                                 <th>Date</th>
                                 <th>Status</th>
@@ -243,47 +233,65 @@ export default function TransactionClient({ transactions }: { transactions: Tran
                                     </td>
                                 </tr>
                             ) : (
-                                paginatedData.map(t => (
-                                    <tr
-                                        key={t.id}
-                                        onClick={() => router.push(`/dashboard/transactions/${t.id}`)}
-                                        className={styles.clickableRow}
-                                    >
-                                        <td data-label="Description">
-                                            <div className={styles.descCell}>
-                                                <div className={`${styles.iconBox} ${t.type.startsWith('CRYPTO') ? styles.cryptoIcon :
-                                                        t.direction === 'CREDIT' ? styles.creditIcon : styles.debitIcon
-                                                    }`}>
-                                                    {renderIcon(t)}
-                                                </div>
-                                                <div className={styles.descText}>
-                                                    <span className={styles.merchant}>{t.description}</span>
-                                                    <span className={styles.subType}>
-                                                        {t.type.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, (l: string) => l.toUpperCase())}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td data-label="Account" className={styles.accInfo}>{t.accountName || 'Primary'}</td>
-                                        <td data-label="Date" className={styles.dateInfo}>{new Date(t.createdAt).toLocaleDateString()}</td>
-                                        <td data-label="Status">
-                                            <span className={`${styles.badge} ${styles[t.status]}`}>{t.status}</span>
-                                        </td>
+                                paginatedData.map(t => {
+                                    // 1. DETERMINE STATUS TYPE
+                                    let statusType: 'REVERSED' | 'FAILED' | 'NORMAL' = 'NORMAL';
+                                    if (t.status === 'REVERSED') statusType = 'REVERSED';
+                                    else if (t.status === 'FAILED') statusType = 'FAILED';
 
-                                        <td data-label="Amount" className={`${styles.right} ${styles.amount}`}>
-                                            <span className={t.direction === 'CREDIT' ? styles.greenText : styles.whiteText}>
-                                                {t.direction === 'CREDIT' ? '+' : '-'}
-                                                {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(t.amount))}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                ))
+                                    return (
+                                        <tr
+                                            key={t.id}
+                                            onClick={() => router.push(`/dashboard/transactions/${t.id}`)}
+                                            className={styles.clickableRow}
+                                        >
+                                            <td data-label="Description">
+                                                <div className={styles.descCell}>
+                                                    <div className={`${styles.iconBox} ${statusType === 'REVERSED' ? styles.reversedIcon :
+                                                            statusType === 'FAILED' ? styles.failedIcon :
+                                                                t.type.startsWith('CRYPTO') ? styles.cryptoIcon :
+                                                                    t.direction === 'CREDIT' ? styles.creditIcon : styles.debitIcon
+                                                        }`}>
+                                                        {renderIcon(t, statusType)}
+                                                    </div>
+                                                    <div className={styles.descText}>
+                                                        <span className={`${styles.merchant} ${statusType === 'REVERSED' ? styles.textReversed :
+                                                                statusType === 'FAILED' ? styles.textFailed : ''
+                                                            }`}>
+                                                            {t.description}
+                                                        </span>
+                                                        <span className={styles.subType}>
+                                                            {t.type.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, (l: string) => l.toUpperCase())}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td data-label="Account" className={styles.accInfo}>{t.accountName || 'Primary'}</td>
+                                            <td data-label="Date" className={styles.dateInfo}>{new Date(t.createdAt).toLocaleDateString()}</td>
+                                            <td data-label="Status">
+                                                <span className={`${styles.badge} ${styles[t.status]}`}>
+                                                    {t.status === 'FAILED' ? 'DECLINED' : t.status}
+                                                </span>
+                                            </td>
+
+                                            <td data-label="Amount" className={`${styles.right} ${styles.amount}`}>
+                                                <span className={
+                                                    statusType === 'REVERSED' ? styles.amountReversed :
+                                                        statusType === 'FAILED' ? styles.amountFailed :
+                                                            (t.direction === 'CREDIT' ? styles.greenText : styles.whiteText)
+                                                }>
+                                                    {t.direction === 'CREDIT' ? '+' : '-'}
+                                                    {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(t.amount))}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    )
+                                })
                             )}
                         </tbody>
                     </table>
                 </div>
 
-                {/* PAGINATION */}
                 {totalPages > 1 && (
                     <div className={styles.pagination}>
                         <button

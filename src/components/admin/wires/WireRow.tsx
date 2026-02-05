@@ -16,9 +16,14 @@ export default function WireRow({ wire }: { wire: WireWithUser }) {
     const [loading, setLoading] = useState(false);
     const router = useRouter();
 
-    // 1. REJECT LOGIC (Releases Hold)
-    const handleReject = async () => {
-        if (!confirm("⚠️ REJECT & REFUND?\n\nThis will release the held funds back to the user. Are you sure?")) return;
+    const stopProp = (e: React.MouseEvent) => {
+        e.stopPropagation();
+    };
+
+    // 1. REJECT LOGIC
+    const handleReject = async (e: React.MouseEvent) => {
+        stopProp(e);
+        if (!confirm("REJECT & REFUND?\n\nThis will release the held funds back to the user. Are you sure?")) return;
 
         setLoading(true);
         try {
@@ -37,7 +42,8 @@ export default function WireRow({ wire }: { wire: WireWithUser }) {
     };
 
     // 2. APPROVE LOGIC (Settles Funds)
-    const handleApprove = async () => {
+    const handleApprove = async (e: React.MouseEvent) => {
+        stopProp(e);
         const msg = wire.status === 'PENDING_AUTH'
             ? "FINAL APPROVAL\n\nUser has passed clearance. This will settle the funds now."
             : "MANUAL OVERRIDE\n\nAre you sure you want to force-approve this pending wire?";
@@ -63,11 +69,14 @@ export default function WireRow({ wire }: { wire: WireWithUser }) {
     // Determine State Helpers
     const isHold = wire.status === 'ON_HOLD';
     const isReadyForApproval = wire.status === 'PENDING_AUTH';
-    const isActive = isHold || isReadyForApproval;
+    const isFailed = wire.status === 'FAILED';
+    const isReversed = wire.status === 'REVERSED';
+    const isCompleted = wire.status === 'COMPLETED';
+    const isActive = (isHold || isReadyForApproval) && !isFailed && !isReversed && !isCompleted;
 
     return (
         <>
-            <tr className={styles.row}>
+            <tr className={styles.row} onClick={() => router.push(`/admin/wires/${wire.id}`)} style={{ cursor: 'pointer' }}>
                 {/* 1. DATE */}
                 <td className={styles.dateCell}>
                     <div>{new Date(wire.createdAt).toLocaleDateString()}</div>
@@ -92,7 +101,7 @@ export default function WireRow({ wire }: { wire: WireWithUser }) {
                 <td className={styles.amountCell}>
                     {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(wire.amount))}
                     {Number(wire.fee) > 0 && (
-                        <div style={{ fontSize: '0.7rem', color: '#666', marginTop: '2px' }}>
+                        <div className={styles.feeText}>
                             + {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(wire.fee))} Fee
                         </div>
                     )}
@@ -102,15 +111,17 @@ export default function WireRow({ wire }: { wire: WireWithUser }) {
                 <td>
                     {isReadyForApproval ? (
                         <span className={`${styles.badge} ${styles.badgeWarning}`}>
-                            <Clock size={12} style={{ marginRight: 4 }} />
-                            WAITING APPROVAL
+                            <Clock size={12} /> WAITING APPROVAL
                         </span>
                     ) : (
-                        <span className={`${styles.badge} ${wire.status === 'COMPLETED' ? styles.badgeSuccess :
-                            wire.status === 'FAILED' ? styles.badgeFailed :
-                                styles.badgePending
+                        <span className={`${styles.badge} ${isCompleted ? styles.badgeSuccess :
+                            isFailed ? styles.badgeFailed :
+                                isReversed ? styles.badgeReversed :
+                                    styles.badgePending
                             }`}>
-                            {wire.status === 'ON_HOLD' ? `CLEARANCE: ${wire.currentStage}` : wire.status}
+                            {wire.status === 'ON_HOLD' ? `CLEARANCE: ${wire.currentStage}` :
+                                isReversed ? 'SECURITY BLOCK' :
+                                    wire.status}
                         </span>
                     )}
                 </td>
@@ -122,7 +133,7 @@ export default function WireRow({ wire }: { wire: WireWithUser }) {
                             <>
                                 {/* A. Generate Codes Button (Visible during HOLD) */}
                                 <button
-                                    onClick={() => setShowModal(true)}
+                                    onClick={(e) => { stopProp(e); setShowModal(true); }}
                                     className={styles.btnCode}
                                     title="Manage Clearance Codes"
                                     disabled={loading}
@@ -134,13 +145,7 @@ export default function WireRow({ wire }: { wire: WireWithUser }) {
                                 <button
                                     onClick={handleApprove}
                                     disabled={loading}
-                                    className={styles.btnApprove}
-                                    style={isReadyForApproval ? {
-                                        backgroundColor: '#10b981',
-                                        color: 'white',
-                                        borderColor: '#10b981',
-                                        boxShadow: '0 0 0 2px rgba(16, 185, 129, 0.2)'
-                                    } : {}}
+                                    className={`${styles.btnApprove} ${isReadyForApproval ? styles.btnApproveReady : ''}`}
                                     title="Approve & Finalize"
                                 >
                                     {loading ? <Loader2 className={styles.spin} size={16} /> : <CheckCircle size={16} />}

@@ -1,18 +1,30 @@
 /* Container centers the receipt */
 .container {
   max-width: 600px;
-  margin: 0 auto;
-  padding: 2rem 1rem;
+  width: 60%;
+  padding: 1rem;
+}
+
+@media (max-width: 991px) {
+  .container {
+    width: 80%;
+  }
+}
+
+@media (max-width: 600px) {
+  .container {
+    width: 100%;
+  }
 }
 
 .headerNav {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .backLink {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 0.5rem;
   color: var(--text-muted);
   text-decoration: none;
   font-weight: 500;
@@ -25,36 +37,72 @@
 
 .receiptCard {
   background: var(--bg-card);
-  border-radius: 20px;
-  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.08);
+  border-radius: 2rem;
+  box-shadow: 0 1rem 4rem -1rem var(--shadow-card);
   border: 1px solid var(--border);
+  max-width: 600px;
+  position: relative;
+  padding: 2rem;
   overflow: hidden;
-  padding: 2.5rem;
 }
 
 /* 1. Header */
 .bankHeader {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-  padding-bottom: 1rem;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
   border-bottom: 2px dashed var(--border);
+}
+
+.brandColumn {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 2rem;
+}
+
+.logoContainer {
+  position: relative;
+  width: 8rem;
+  height: 2.5rem;
+}
+
+.logoImage {
+  object-fit: contain;
+  object-position: left center;
 }
 
 .bankName {
   font-weight: 800;
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   letter-spacing: -0.5px;
   color: var(--text-main);
+  line-height: 1;
+}
+
+.headerRight {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  justify-content: center;
+  height: 2.5rem;
 }
 
 .receiptLabel {
-  font-size: 0.75rem;
+  font-size: 0.5rem;
   text-transform: uppercase;
   letter-spacing: 1px;
   color: var(--text-muted);
-  font-weight: 600;
+  font-weight: 700;
+}
+
+.receiptId {
+  font-family: monospace;
+  font-size: 0.8rem;
+  color: var(--text-muted);
 }
 
 .receiptHeader {
@@ -62,24 +110,23 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 .iconBox {
-  width: 56px;
-  height: 56px;
+  width: 2.5rem;
+  height: 2.5rem;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 1rem;
 }
 
 .amount {
   font-size: 2.5rem;
   font-weight: 800;
   color: var(--text-main);
-  margin-bottom: 0.5rem;
+  margin-bottom: 1rem;
   letter-spacing: -1px;
 }
 
@@ -89,8 +136,8 @@
 
 /* Status Badges */
 .statusBadge {
-  padding: 6px 12px;
-  border-radius: 20px;
+  padding: .5rem;
+  border-radius: 2rem;
   font-size: 0.8rem;
   font-weight: 600;
   text-transform: capitalize;
@@ -113,7 +160,7 @@
 .divider {
   height: 1px;
   background: var(--border);
-  margin: 1.5rem 0;
+  margin: 1rem 0;
   width: 100%;
 }
 
@@ -121,14 +168,15 @@
 .detailsList {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  justify-content: space-between;
+  gap: 1rem;
 }
 
 .detailRow {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
 }
 
 .label {
@@ -162,16 +210,16 @@
 .monoValue {
   font-family: monospace;
   background: var(--bg-surface);
-  padding: 4px 8px;
-  border-radius: 6px;
+  padding: 0.3rem 0.5rem;
+  border-radius: 0.5rem;
   font-size: 0.85rem;
   color: var(--text-muted);
 }
 
 /* Actions Footer */
 .footer {
-  margin-top: 2.5rem;
-  padding-top: 2rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
   border-top: 1px solid var(--border);
   display: flex;
   gap: 1rem;
@@ -181,9 +229,9 @@
 .actionBtn {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
-  border-radius: 8px;
+  gap: 0.5rem;
+  padding: 1rem 2rem;
+  border-radius: 0.5rem;
   border: 1px solid var(--border);
   background: var(--bg-card);
   color: var(--text-muted);
@@ -200,7 +248,7 @@
 }
 
 .disclaimer {
-  margin-top: 2rem;
+  margin-top: 1rem;
   text-align: center;
   font-size: 0.75rem;
   color: var(--text-muted);

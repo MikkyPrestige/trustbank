@@ -81,7 +81,7 @@ export default async function TransferPage({
                     </div>
                     <h2>Transfers Paused</h2>
                     <p>
-                        Domestic transfers are currently disabled by administration for system maintenance.
+                        Domestic transfers are currently disabled by administration. Please check back later.
                     </p>
                 </div>
             ) : (

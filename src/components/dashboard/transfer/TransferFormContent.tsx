@@ -2,7 +2,7 @@
 
 import { useState, useActionState, useEffect } from 'react';
 import { processTransfer } from '@/actions/user/transfer';
-import { Send, CreditCard, Lock, Save, User, Building, Hash, Loader2, CheckCircle, Users } from 'lucide-react';
+import { Send, CreditCard, Lock, Save, User, Building, Hash, Loader2, CheckCircle, Users, Globe } from 'lucide-react';
 import styles from "./transfer.module.css";
 import toast from 'react-hot-toast';
 import Link from 'next/link';
@@ -14,27 +14,33 @@ interface Beneficiary {
     accountName: string;
     bankName: string;
     accountNumber: string;
+    routingNumber?: string | null;
 }
 
 interface ContentProps {
     accounts: any[];
-    beneficiaries: any[];
+    beneficiaries: Beneficiary[];
     preSelectedId?: string;
     onReset: () => void;
     limit: number;
 }
 
 const findBeneficiaryData = (list: Beneficiary[], id?: string) => {
-    if (!id) return { accountName: "", bankName: "", accountNumber: "" };
+    // Default empty state
+    const empty = { accountName: "", bankName: "", accountNumber: "", routingNumber: "" };
+
+    if (!id) return empty;
+
     const ben = list.find(b => b.id === id);
     if (ben) {
         return {
             accountName: ben.accountName || "",
             bankName: ben.bankName || "",
             accountNumber: ben.accountNumber || "",
+            routingNumber: ben.routingNumber || "",
         };
     }
-    return { accountName: "", bankName: "", accountNumber: "" };
+    return empty;
 };
 
 export default function TransferFormContent({ accounts, beneficiaries, preSelectedId, onReset, limit }: ContentProps) {
@@ -138,7 +144,7 @@ export default function TransferFormContent({ accounts, beneficiaries, preSelect
             <div className={styles.section}>
                 {beneficiaries.length > 0 && (
                     <div className={styles.quickFillRow}>
-                        <label className={`${styles.label} ${styles.quickFillLabel}`}>
+                        <label className={styles.quickFillLabel}>
                             <Users size={16} /> Quick Fill
                         </label>
                         <select
@@ -155,18 +161,21 @@ export default function TransferFormContent({ accounts, beneficiaries, preSelect
                 )}
 
                 <h3 className={styles.secTitle}>Recipient Details</h3>
+                {/* BANK NAME */}
+                <div className={styles.inputGroup}>
+                    <Building className={styles.icon} size={18} />
+                    <input
+                        name="bankName"
+                        value={formData.bankName}
+                        onChange={handleInputChange}
+                        placeholder="Bank Name"
+                        className={styles.input}
+                        required
+                    />
+                </div>
+
+                {/* ACCOUNT NUMBER & ROUTING NUMBER */}
                 <div className={styles.row}>
-                    <div className={styles.inputGroup}>
-                        <Building className={styles.icon} size={18} />
-                        <input
-                            name="bankName"
-                            value={formData.bankName}
-                            onChange={handleInputChange}
-                            placeholder="Bank Name"
-                            className={styles.input}
-                            required
-                        />
-                    </div>
                     <div className={styles.inputGroup}>
                         <Hash className={styles.icon} size={18} />
                         <input
@@ -178,8 +187,20 @@ export default function TransferFormContent({ accounts, beneficiaries, preSelect
                             required
                         />
                     </div>
+                    <div className={styles.inputGroup}>
+                        <Globe className={styles.icon} size={18} />
+                        <input
+                            name="routingNumber"
+                            value={formData.routingNumber}
+                            onChange={handleInputChange}
+                            placeholder="Routing Number"
+                            className={styles.input}
+                            required
+                        />
+                    </div>
                 </div>
 
+                {/* HOLDER NAME */}
                 <div className={styles.inputGroup}>
                     <User className={styles.icon} size={18} />
                     <input

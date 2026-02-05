@@ -2,12 +2,13 @@ import { db } from "@/lib/db";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import WireRow from "@/components/admin/wires/WireRow";
+import DashboardUserRow from "@/components/admin/dashboard/DashboardUserRow";
 import NotificationBell from "@/components/admin/notification/NotificationBell";
 import RevenueCard from "@/components/admin/stats/RevenueCard";
 import LiquidityCard from "@/components/admin/stats/LiquidityCard";
 import WiresCard from "@/components/admin/stats/WiresCard";
 import KycCard from "@/components/admin/stats/KycCard";
-import { TransactionDirection, TransactionStatus } from "@prisma/client";
+import { TransactionDirection } from "@prisma/client";
 import styles from "./admin.module.css";
 import { ShieldCheck, AlertTriangle } from "lucide-react";
 
@@ -37,7 +38,6 @@ export default async function AdminDashboard() {
             orderBy: { createdAt: 'desc' },
             take: 5
         }),
-        // 👇 Fetch ONLY wires waiting for Final Approval
         db.wireTransfer.findMany({
             where: {
                 status: { in: ['PENDING_AUTH', 'ON_HOLD'] }
@@ -121,9 +121,9 @@ export default async function AdminDashboard() {
                 )}
             </div>
 
-            {/* --- SECTION 2: RECENT SIGNUPS --- */}
+            {/* --- SECTION 2: RECENT SIGN UPS --- */}
             <div className={styles.section}>
-                <h2 className={styles.subTitle}>Recent Signups</h2>
+                <h2 className={styles.subTitle}>Recent Sign Ups</h2>
                 <div className={styles.tableWrapper}>
                     <table className={styles.table}>
                         <thead>
@@ -136,33 +136,13 @@ export default async function AdminDashboard() {
                             </tr>
                         </thead>
                         <tbody>
-                            {users.map(u => {
-                                const totalBal = u.accounts.reduce((sum, acc) => sum + Number(acc.availableBalance), 0);
-                                return (
-                                    <tr key={u.id}>
-                                        <td>
-                                            <div className={styles.userInfo}>
-                                                <span style={{ fontWeight: 600 }}>{u.fullName}</span>
-                                                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                                                    {new Date(u.createdAt).toLocaleDateString()}
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td className={styles.userEmail}>{u.email}</td>
-                                        <td>
-                                            <span className={`${styles.statusBadge} ${u.status === 'ACTIVE' ? styles.active : styles.inactive}`}>
-                                                {u.status}
-                                            </span>
-                                        </td>
-                                        <td>{u.kycStatus === 'VERIFIED' ? '✅' : u.kycStatus === 'PENDING' ? '⏳' : '❌'}</td>
-                                        <td>
-                                            <div className={styles.balancePrimary}>
-                                                {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(totalBal)}
-                                            </div>
-                                        </td>
-                                    </tr>
-                                )
-                            })}
+                            {users.map(u => (
+                                <DashboardUserRow
+                                    key={u.id}
+                                    user={u}
+                                    styles={styles}
+                                />
+                            ))}
                         </tbody>
                     </table>
                 </div>

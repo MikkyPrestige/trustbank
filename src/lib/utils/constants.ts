@@ -110,7 +110,7 @@ export const MEGA_MENUS: Record<string, MegaMenuSection> = {
                 { label: "Life Insurance", href: "/insure#life" },
             ],
             [
-                { label: "Specialty", href: "/insure" }
+                { label: "Specialty", href: "/insure" },
                 { label: "Medicare Support", href: "/insure#medicare" },
                 { label: "Business Insurance", href: "/insure#business" },
                 { label: "Accidental Protection", href: "/insure#supplemental" },

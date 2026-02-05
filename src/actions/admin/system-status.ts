@@ -9,6 +9,7 @@ export async function getFeatureStatus() {
             key: {
                 in: [
                     'feature_loan_apply_enabled',
+                    'feature_loan_repay_enabled',
                     'feature_crypto_enabled',
                     'feature_transfer_enabled',
                     'feature_wire_enabled'
@@ -17,9 +18,10 @@ export async function getFeatureStatus() {
         }
     });
 
-    // 2. Default State (Default to TRUE so features work if DB is empty)
+    // 2. Default State
     const flags = {
         loans: true,
+        repay: true,
         crypto: true,
         transfers: true,
         wire: true
@@ -30,6 +32,10 @@ export async function getFeatureStatus() {
         // Loans
         if (s.key === 'feature_loan_apply_enabled') {
             flags.loans = s.value === 'true';
+        }
+
+        if (s.key === 'feature_loan_repay_enabled') {
+            flags.repay = s.value === 'true';
         }
 
         // Crypto
