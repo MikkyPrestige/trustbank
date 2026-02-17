@@ -1,27 +1,39 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import styles from './TransferEstimator.module.css';
 import { ArrowRightLeft, Clock, ShieldCheck, Globe } from 'lucide-react';
 
-const RATES: Record<string, number> = { 'EUR': 0.92, 'GBP': 0.79, 'NGN': 1600.50, 'CAD': 1.35 };
-const FLAGS: Record<string, string> = { 'EUR': '🇪🇺', 'GBP': '🇬🇧', 'NGN': '🇳🇬', 'CAD': '🇨🇦', 'USD': '🇺🇸' };
+interface CurrencyItem {
+    code: string;
+    flag: string;
+    rate: number;
+}
 
 interface EstimatorProps {
     settings: any;
+    currencies: CurrencyItem[];
 }
 
-export default function TransferEstimator({ settings }: EstimatorProps) {
-    const [amount, setAmount] = useState(1000);
-    const [currency, setCurrency] = useState('EUR');
+export default function TransferEstimator({ settings, currencies = [] }: EstimatorProps) {
+    const [amount, setAmount] = useState('1000');
+    const [selectedCode, setSelectedCode] = useState(currencies[0]?.code || 'EUR');
     const [converting, setConverting] = useState(false);
+
+    // Find the current currency data from the list
+    const currentCurrency = currencies.find(c => c.code === selectedCode) || { rate: 1, flag: '🌐' };
+
+    const numericAmount = parseFloat(amount) || 0;
 
     useEffect(() => {
         const timer = setTimeout(() => setConverting(false), 400);
         return () => clearTimeout(timer);
-    }, [amount, currency]);
+    }, [amount, selectedCode]);
 
-    const convertedAmount = (amount * RATES[currency]).toLocaleString(undefined, { maximumFractionDigits: 2 });
+    const convertedAmount = (numericAmount * currentCurrency.rate).toLocaleString(undefined, {
+        maximumFractionDigits: 2
+    });
 
     return (
         <div className={styles.estimatorCard}>
@@ -34,35 +46,49 @@ export default function TransferEstimator({ settings }: EstimatorProps) {
             </div>
 
             <div className={styles.converterBox}>
-                {/* SEND ROW */}
                 <div className={styles.row}>
                     <div className={styles.labelCol}>
                         <label>{settings.payments_est_input_label}</label>
-                        <div className={styles.currencyBadge}>{FLAGS['USD']} USD</div>
+                        <div className={styles.currencyBadge}>🇺🇸 USD</div>
                     </div>
-                    <input type="number" value={amount} onChange={(e) => { setConverting(true); setAmount(Number(e.target.value)); }} className={styles.input} />
+                    <input
+                        type="number"
+                        value={amount}
+                        onChange={(e) => { setConverting(true); setAmount(e.target.value); }}
+                        onBlur={() => {
+                            if (amount === '') setAmount('0');
+                        }}
+                        className={styles.input}
+                    />
                 </div>
 
-                {/* CONNECTOR LINE */}
                 <div className={styles.connector}>
                     <div className={styles.line}></div>
-                    <div className={styles.exchangeRate}><ArrowRightLeft size={14} /> 1 USD = {RATES[currency]} {currency}</div>
+                    <div className={styles.exchangeRate}>
+                        <ArrowRightLeft size={14} /> 1 USD = {currentCurrency.rate} {selectedCode}
+                    </div>
                     <div className={styles.line}></div>
                 </div>
 
-                {/* RECEIVE ROW */}
                 <div className={styles.row}>
                     <div className={styles.labelCol}>
                         <label>{settings.payments_est_output_label}</label>
-                        <select value={currency} onChange={(e) => { setConverting(true); setCurrency(e.target.value); }} className={styles.select}>
-                            {Object.keys(RATES).map(c => <option key={c} value={c}>{FLAGS[c]} {c}</option>)}
+                        <select
+                            value={selectedCode}
+                            onChange={(e) => { setConverting(true); setSelectedCode(e.target.value); }}
+                            className={styles.select}
+                        >
+                            {currencies.map(c => (
+                                <option key={c.code} value={c.code}>{c.flag} {c.code}</option>
+                            ))}
                         </select>
                     </div>
-                    <div className={`${styles.displayAmount} ${converting ? styles.pulse : ''}`}>{convertedAmount}</div>
+                    <div className={`${styles.displayAmount} ${converting ? styles.pulse : ''}`}>
+                        {convertedAmount}
+                    </div>
                 </div>
             </div>
 
-            {/* INFO GRID */}
             <div className={styles.infoGrid}>
                 <div className={styles.infoItem}>
                     <span className={styles.infoLabel}>{settings.payments_widget_fee_label}</span>
@@ -78,7 +104,9 @@ export default function TransferEstimator({ settings }: EstimatorProps) {
                 </div>
             </div>
 
-            <button className={styles.sendBtn}>{settings.payments_est_btn}</button>
+            <Link href={settings.payments_est_link || '/dashboard'} className={styles.sendBtn}>
+                {settings.payments_est_btn}
+            </Link>
         </div>
     );
 }

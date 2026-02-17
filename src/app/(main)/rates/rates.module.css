@@ -1,12 +1,13 @@
 .main {
   min-height: 100vh;
   background: var(--bg-app);
+  color: var(--text-main);
 }
 
 /* --- HERO SECTION  --- */
 .header {
   position: relative;
-  min-height: 450px;
+  min-height: 300px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -14,7 +15,6 @@
   overflow: hidden;
 }
 
-/* 1. The Image Container */
 .bgImageWrapper {
   position: absolute;
   top: 0;
@@ -24,29 +24,26 @@
   z-index: 1;
 }
 
-/* 2. The Next.js Image itself */
 .bgImage {
   object-fit: cover;
   object-position: center;
 }
 
-/* 3. The Dark Overlay (Makes text readable) */
 .overlay {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(15, 23, 42, 0.75); /* Slate-900 at 75% opacity */
+  background: rgba(15, 23, 42, 0.75);
   z-index: 2;
 }
 
-/* 4. The Text Content (Sits on top) */
 .headerContent {
   position: relative;
   z-index: 3;
   width: 100%;
-  padding: 4rem 2rem;
+  padding: 2rem;
   text-align: center;
   color: var(--text-invert);
 }
@@ -54,7 +51,6 @@
 .headerContent h1 {
   font-size: 3.5rem;
   font-weight: 800;
-  margin-bottom: 1rem;
   letter-spacing: -1px;
   color: var(--text-invert);
   line-height: 1.1;
@@ -67,15 +63,15 @@
 .headerContent p {
   font-size: 1.25rem;
   opacity: 0.9;
-  max-width: 600px;
+  /* max-width: 600px; */
   margin: 0 auto;
-  color: var(--text-muted); /* Slate-300 */
+  color: var(--text-muted);
   line-height: 1.6;
 }
 
 /* --- MAIN CONTENT --- */
 .content {
-  padding: 4rem 0;
+  padding: 2.5rem 0;
 }
 
 .container {
@@ -85,13 +81,13 @@
 }
 
 .rateGroup {
-  margin-bottom: 5rem;
+  margin-bottom: 2.5rem;
 }
 
 .rateGroup h2 {
   font-size: 1.8rem;
   font-weight: 700;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   color: var(--text-main);
   border-left: 5px solid var(--primary);
   padding-left: 1rem;
@@ -100,10 +96,10 @@
 /* --- TABLES --- */
 .tableWrapper {
   background: var(--bg-card);
-  border-radius: 12px;
+  border-radius: 1rem;
   border: 1px solid var(--border);
   overflow: hidden;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1rem 1.5rem -0.3rem rgba(0, 0, 0, 0.1);
 }
 
 .rateTable {
@@ -119,7 +115,7 @@
   font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 1px;
-  padding: 1.25rem 2rem;
+  padding: 1.5rem 2rem;
   border-bottom: 1px solid var(--border);
 }
 
@@ -139,7 +135,6 @@
   background: rgba(0, 0, 0, 0.02);
 }
 
-/* Specific Columns */
 .apy {
   font-weight: 800;
   color: var(--success);
@@ -148,11 +143,10 @@
 
 .apr {
   font-weight: 800;
-  color: var(--primary); /* Brand Blue */
+  color: var(--primary);
   font-size: 1.25rem;
 }
 
-/* "Popular" Tag */
 .tag {
   display: inline-flex;
   align-items: center;
@@ -163,7 +157,7 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
   padding: 3px 8px;
-  border-radius: 99px; /* Pill shape */
+  border-radius: 99px;
   margin-left: 0.75rem;
   vertical-align: middle;
   transform: translateY(-1px);
@@ -175,8 +169,8 @@
   font-weight: 600;
   text-decoration: none;
   font-size: 0.95rem;
-  padding: 6px 16px;
-  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
   background: rgba(0, 0, 0, 0.04);
   transition: all 0.2s;
 }
@@ -193,13 +187,13 @@
   border-left: 4px solid var(--accent);
   border-radius: 8px;
   padding: 2rem;
-  margin-top: 4rem;
+  margin-top: 2rem;
 }
 
 .disclaimerBox h4 {
   font-size: 1rem;
   font-weight: 700;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.5rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -229,17 +223,16 @@
     min-height: 350px;
   }
 
-  /* Make table scrollable on mobile without breaking layout */
   .tableWrapper {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
 
   .rateTable {
-    min-width: 600px; /* Forces horizontal scroll */
+    min-width: 600px;
   }
 
   .tag {
-    display: none; /* Hide tag on tiny screens if needed */
+    display: none;
   }
 }

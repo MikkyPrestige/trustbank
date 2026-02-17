@@ -22,7 +22,13 @@ interface Transaction {
     createdAt: Date | string;
 }
 
-export default function TransactionClient({ transactions }: { transactions: Transaction[] }) {
+interface TransactionClientProps {
+    transactions: Transaction[];
+    currency: string;
+    rate: number;
+}
+
+export default function TransactionClient({ transactions, currency, rate }: TransactionClientProps) {
     const router = useRouter();
     const [search, setSearch] = useState("");
     const [filterType, setFilterType] = useState("ALL");
@@ -36,11 +42,14 @@ export default function TransactionClient({ transactions }: { transactions: Tran
             const query = search.toLowerCase();
             const type = t.type || "";
 
+            // Calculate display amount for search
+            const displayAmount = (Number(t.amount) * rate).toFixed(2);
+
             const matchesSearch =
                 (t.description?.toLowerCase() || "").includes(query) ||
                 (t.accountName?.toLowerCase() || "").includes(query) ||
                 (t.status?.toLowerCase() || "").includes(query) ||
-                t.amount?.toString().includes(query) ||
+                displayAmount.includes(query) ||
                 new Date(t.createdAt).toLocaleDateString().toLowerCase().includes(query);
 
             const isCrypto = type.startsWith("CRYPTO");
@@ -60,21 +69,22 @@ export default function TransactionClient({ transactions }: { transactions: Tran
 
             return matchesSearch && matchesType;
         });
-    }, [search, filterType, transactions]);
+    }, [search, filterType, transactions, rate]);
 
-    // 2. STATS
+    // 2. STATS (Converted)
     const stats = useMemo(() => {
         let income = 0;
         let expense = 0;
         filtered.forEach(t => {
             if (t.status === 'COMPLETED') {
-                const val = Number(t.amount);
+                // Convert USD -> User Currency
+                const val = Number(t.amount) * rate;
                 if (t.direction === 'CREDIT') income += val;
                 else expense += val;
             }
         });
         return { income, expense };
-    }, [filtered]);
+    }, [filtered, rate]);
 
     // 3. PAGINATION
     const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
@@ -83,7 +93,7 @@ export default function TransactionClient({ transactions }: { transactions: Tran
 
     if (currentPage > totalPages && totalPages > 0) setCurrentPage(1);
 
-    // 4. EXPORT
+    // 4. EXPORT (Smart PDF)
     const handleExport = () => {
         const doc = new jsPDF();
         doc.setFillColor(5, 5, 5);
@@ -92,13 +102,15 @@ export default function TransactionClient({ transactions }: { transactions: Tran
         doc.setFontSize(22);
         doc.text("Account Statement", 14, 25);
         doc.setFontSize(10);
-        doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 35);
+        doc.text(`Generated on: ${new Date().toLocaleDateString()} | Currency: ${currency}`, 14, 35);
 
         const tableData = filtered.map(t => {
             const isReversed = t.status === 'REVERSED';
             const isFailed = t.status === 'FAILED' || t.status === 'REJECTED';
 
-            let amountStr = `$${Number(t.amount).toFixed(2)}`;
+            // Convert Amount for PDF
+            const val = Number(t.amount) * rate;
+            let amountStr = `${currency} ${val.toFixed(2)}`;
 
             if (isReversed) {
                 amountStr = `(SECURITY) ${amountStr}`;
@@ -126,7 +138,7 @@ export default function TransactionClient({ transactions }: { transactions: Tran
             alternateRowStyles: { fillColor: [245, 245, 245] },
         });
 
-        doc.save("TrustBank_Statement.pdf");
+        doc.save(`Transaction_History_${currency}.pdf`);
     };
 
     // Helper: Returns Icon based on specific state
@@ -156,20 +168,21 @@ export default function TransactionClient({ transactions }: { transactions: Tran
                     <div className={styles.summaryCard}>
                         <span className={styles.summaryLabel}>Total In</span>
                         <span className={styles.summaryValueIncome}>
-                            +{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(stats.income)}
+                            +{new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(stats.income)}
                         </span>
                     </div>
                     <div className={styles.summarySeparator}></div>
                     <div className={styles.summaryCard}>
                         <span className={styles.summaryLabel}>Total Out</span>
                         <span className={styles.summaryValueExpense}>
-                            -{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(stats.expense)}
+                            -{new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(stats.expense)}
                         </span>
                     </div>
                 </div>
             </header>
 
             <div className={styles.controlsBar}>
+                {/* ... (Search and Filter controls remain same) ... */}
                 <div className={styles.searchWrapper}>
                     <Search size={18} className={styles.searchIcon} />
                     <input
@@ -234,10 +247,12 @@ export default function TransactionClient({ transactions }: { transactions: Tran
                                 </tr>
                             ) : (
                                 paginatedData.map(t => {
-                                    // 1. DETERMINE STATUS TYPE
                                     let statusType: 'REVERSED' | 'FAILED' | 'NORMAL' = 'NORMAL';
                                     if (t.status === 'REVERSED') statusType = 'REVERSED';
                                     else if (t.status === 'FAILED') statusType = 'FAILED';
+
+                                    // Display Value Conversion
+                                    const displayVal = Number(t.amount) * rate;
 
                                     return (
                                         <tr
@@ -248,15 +263,15 @@ export default function TransactionClient({ transactions }: { transactions: Tran
                                             <td data-label="Description">
                                                 <div className={styles.descCell}>
                                                     <div className={`${styles.iconBox} ${statusType === 'REVERSED' ? styles.reversedIcon :
-                                                            statusType === 'FAILED' ? styles.failedIcon :
-                                                                t.type.startsWith('CRYPTO') ? styles.cryptoIcon :
-                                                                    t.direction === 'CREDIT' ? styles.creditIcon : styles.debitIcon
+                                                        statusType === 'FAILED' ? styles.failedIcon :
+                                                            t.type.startsWith('CRYPTO') ? styles.cryptoIcon :
+                                                                t.direction === 'CREDIT' ? styles.creditIcon : styles.debitIcon
                                                         }`}>
                                                         {renderIcon(t, statusType)}
                                                     </div>
                                                     <div className={styles.descText}>
                                                         <span className={`${styles.merchant} ${statusType === 'REVERSED' ? styles.textReversed :
-                                                                statusType === 'FAILED' ? styles.textFailed : ''
+                                                            statusType === 'FAILED' ? styles.textFailed : ''
                                                             }`}>
                                                             {t.description}
                                                         </span>
@@ -281,7 +296,7 @@ export default function TransactionClient({ transactions }: { transactions: Tran
                                                             (t.direction === 'CREDIT' ? styles.greenText : styles.whiteText)
                                                 }>
                                                     {t.direction === 'CREDIT' ? '+' : '-'}
-                                                    {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(t.amount))}
+                                                    {new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(displayVal)}
                                                 </span>
                                             </td>
                                         </tr>

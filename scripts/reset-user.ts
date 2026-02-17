@@ -46,7 +46,7 @@ async function main() {
     });
 
     if (!user) {
-        console.error("❌ User not found!");
+        console.error("User not found!");
         process.exit(1);
     }
 

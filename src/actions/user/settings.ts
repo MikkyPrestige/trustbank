@@ -222,7 +222,34 @@ export async function changePin(prevState: any, formData: FormData) {
     return { success: true, message: "Transaction PIN Updated!" };
 }
 
+// --- 4. CHANGE CURRENCY ---
+export async function updateUserCurrency(currencyCode: string) {
+    const { success, message, user } = await getAuthenticatedUser();
 
+    // 1. Maintenance Check
+    if (await checkMaintenanceMode()) {
+        return { success: false, message: "System is currently under maintenance. Please try again later." };
+    }
+
+    if (!success || !user) {
+        return { success: false, message };
+    }
+
+    try {
+        await db.user.update({
+            where: { id: user.id },
+            data: { currency: currencyCode }
+        });
+
+        revalidatePath("/dashboard");
+        return { success: true, message: `Currency changed to ${currencyCode}` };
+    } catch (error) {
+        return { success: false, message: "Failed to update settings" };
+    }
+}
+
+
+// --- 5. CLOSE ACCOUNT  ---
 export async function closeAccount(password: string) {
     const { success, message, user } = await getAuthenticatedUser();
 

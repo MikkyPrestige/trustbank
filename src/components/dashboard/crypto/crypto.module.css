@@ -1,7 +1,7 @@
 /* CONTAINER */
 .container {
   max-width: 1200px;
-  margin: 0 auto;
+  width: 100%;
   padding: 2rem;
   color: var(--text-main);
   animation: fadeIn 0.4s ease-out;
@@ -129,6 +129,12 @@
   gap: 10px;
 }
 
+.headerRow {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0px;
+}
+
 /* Empty State */
 .empty {
   text-align: center;
@@ -183,6 +189,18 @@
   letter-spacing: 0.5px;
 }
 
+.profitText {
+  font-size: 0.75rem;
+  font-weight: bold;
+  margin-top: 2px;
+}
+
+.textSuccess {
+  color: var(--success);
+}
+.textDanger {
+  color: var(--danger);
+}
 /* MARKET TICKER LIST */
 .tickerItem {
   display: flex;
@@ -204,7 +222,7 @@
 
 .tickerIcon {
   border-radius: 50%;
-  background: white; /* Ensures transparent PNGs pop on dark mode */
+  background: var(--text-invert);
   padding: 2px;
 }
 
@@ -233,8 +251,8 @@
 .percentPill {
   font-size: 0.75rem;
   font-weight: 700;
-  padding: 2px 8px;
-  border-radius: 12px;
+  padding: 2px 6px;
+  border-radius: 10px;
   background: var(--bg-surface);
   display: inline-block;
 }
@@ -255,7 +273,7 @@
 .liveBadge {
   font-size: 0.7rem;
   background: rgba(34, 197, 94, 0.1);
-  color: #22c55e;
+  color: var(--success);
   padding: 4px 8px;
   border-radius: 12px;
   display: flex;
@@ -268,7 +286,7 @@
 .pulse {
   width: 6px;
   height: 6px;
-  background: #22c55e;
+  background: var(--success);
   border-radius: 50%;
   animation: pulse 1.5s infinite;
 }
@@ -295,12 +313,12 @@
 }
 
 .buyActive {
-  background: #22c55e;
+  background: var(--success);
   color: var(--text-invert);
   box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
 }
 .sellActive {
-  background: #ef4444;
+  background: var(--danger);
   color: var(--text-invert);
   box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
 }
@@ -318,6 +336,18 @@
   margin-bottom: 6px;
 }
 
+.maxBtnContainer {
+  display: flex;
+  justify-contents: space-between;
+}
+
+.maxBtn {
+  font-size: 0.75rem;
+  color: var(--primary);
+  cursor: pointer;
+  font-weight: 600;
+}
+
 .input,
 .select {
   width: 100%;
@@ -333,6 +363,12 @@
 .input:focus,
 .select:focus {
   border-color: var(--primary);
+}
+
+.inputLarge {
+  font-size: 1.4rem;
+  font-weight: bold;
+  font-family: monospace;
 }
 
 .estimateBox {
@@ -375,15 +411,16 @@
 }
 
 .riskNote {
-  margin-top: 1.5rem;
-  display: flex;
-  gap: 10px;
-  font-size: 0.8rem;
-  color: #ef4444;
-  background: rgba(239, 68, 68, 0.05);
-  padding: 1rem;
-  border-radius: 12px;
-  line-height: 1.4;
+  margin-top: 1rem;
+    padding: 0.75rem;
+    background: rgba(234, 179, 8, 0.1);
+    border: 1px solid rgba(234, 179, 8, 0.2);
+    border-radius: 8px;
+    display: flex;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--accent);
+    line-height: 1.4;
 }
 
 /* --- ACTION MODAL --- */
@@ -411,26 +448,26 @@
 
 .sendBtn {
   background: rgba(59, 130, 246, 0.1);
-  color: #3b82f6;
+  color: var(--primary);
 }
 .sendBtn:hover {
-  background: #3b82f6;
+  background: var(--primary);
   color: var(--text-invert);
 }
 
 .receiveBtn {
   background: rgba(34, 197, 94, 0.1);
-  color: #22c55e;
+  color: var(--success);
 }
 .receiveBtn:hover {
-  background: #22c55e;
+  background: var(--success);
   color: var(--text-invert);
 }
 
 .modalOverlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.8);
+  background: var(--bg-surface);
   backdrop-filter: blur(8px);
   display: flex;
   justify-content: center;
@@ -447,7 +484,7 @@
   max-width: 420px;
   padding: 2rem;
   border-radius: 20px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 20px 50px var(--shadow-card);
 }
 
 .modalHeader {
@@ -455,6 +492,11 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 2rem;
+}
+
+.modalTitle {
+    margin: 0;
+    font-size: 1.25rem;
 }
 
 .closeBtn {
@@ -483,6 +525,12 @@
   word-break: break-all;
 }
 
+.addressText {
+  font-size: 0.8rem;
+  word-break: break-all;
+  font-family: monospace;
+}
+
 .copyBtn {
   background: none;
   border: none;
@@ -501,12 +549,22 @@
 }
 
 .qrImage {
-  width: 180px;
-  height: 180px;
   object-fit: contain;
-  background: white;
+  background: var(--text-invert);
   padding: 8px;
   border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  width: 150px;
+  height: 150px;
+}
+
+.qrText {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+  margin-top: 1rem;
+  text-align: center;
+  line-height: 1.5;
 }
 
 .pinInput {
@@ -564,12 +622,23 @@
 }
 
 .txIcon {
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-right: 1rem;
+}
+
+.txIconSuccess {
+  background: rgba(34, 197, 94, 0.1);
+  color: var(--success);
+}
+
+.txIconDanger {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--danger);
 }
 
 .txDetails {

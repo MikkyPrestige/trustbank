@@ -17,15 +17,29 @@ export default async function TransactionDetailsPage({ params }: PageProps) {
     const session = await auth();
     if (!session?.user?.id) redirect("/login");
 
-    const [transaction, settings] = await Promise.all([
+    const [transaction, user, settings] = await Promise.all([
         db.ledgerEntry.findUnique({
             where: { id: id },
             include: { account: true },
+        }),
+        db.user.findUnique({
+            where: { id: session.user.id },
+            select: { currency: true }
         }),
         getSiteSettings()
     ]);
 
     if (!transaction || transaction.account.userId !== session.user.id) return notFound();
+
+    // Exchange Rate Logic
+    const currency = user?.currency || "USD";
+    let exchangeRate = 1;
+    if (currency !== "USD") {
+        const rateData = await db.exchangeRate.findUnique({ where: { currency } });
+        if (rateData) exchangeRate = Number(rateData.rate);
+    }
+
+    const convertedAmount = Number(transaction.amount) * exchangeRate;
 
     // Logic for Status and Styles
     const isDebit = transaction.direction === "DEBIT";
@@ -93,9 +107,9 @@ export default async function TransactionDetailsPage({ params }: PageProps) {
 
                     <h1
                         className={`${styles.amount} ${isDebit ? '' : styles.creditText}`}
-                        style={isFailed ? { textDecoration: 'line-through', color: '#a1a1aa' } : {}}
+                        style={isFailed ? { textDecoration: 'line-through', color: 'var(--text-muted)' } : {}}
                     >
-                        {isDebit ? "-" : "+"}{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(transaction.amount))}
+                        {isDebit ? "-" : "+"}{new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(convertedAmount)}
                     </h1>
 
                     <span className={`${styles.statusBadge} ${getStatusStyle()}`}>
@@ -121,6 +135,13 @@ export default async function TransactionDetailsPage({ params }: PageProps) {
                             <span className={styles.subValue}>{timeStr}</span>
                         </div>
                     </div>
+
+                    {currency !== "USD" && (
+                        <div className={styles.detailRow}>
+                            <span className={styles.label}>Exchange Rate Applied</span>
+                            <span className={styles.value}>1 USD = {exchangeRate} {currency}</span>
+                        </div>
+                    )}
 
                     <div className={styles.detailRow}>
                         <span className={styles.label}>Type</span>

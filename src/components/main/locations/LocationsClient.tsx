@@ -1,9 +1,15 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import { useState, useMemo } from 'react';
 import { Search, MapPin, Navigation, Clock, Phone, CheckCircle2 } from "lucide-react";
-import BranchMap from "./BranchMap";
+// import BranchMap from "./BranchMap";
 import styles from "./locations.module.css";
+
+const BranchMap = dynamic(() => import("./BranchMap"), {
+    ssr: false,
+    loading: () => <div className={styles.mapLoader}>Loading Map...</div>
+});
 
 interface Branch {
     id: string;
@@ -15,6 +21,7 @@ interface Branch {
     hours: string | null;
     hasAtm: boolean;
     hasDriveThru: boolean;
+    hasNotary: boolean;
     lat: number;
     lng: number;
 }
@@ -58,13 +65,11 @@ export default function LocationsClient({ initialBranches, settings }: Props) {
 
             <div className={styles.container}>
                 <div className={styles.contentGrid}>
-
                     {/* LEFT: LIST */}
                     <div className={styles.listCol}>
                         <div className={styles.resultsCount}>
                             {filteredBranches.length} {settings.locations_results_label}
                         </div>
-
                         <div className={styles.list}>
                             {filteredBranches.length === 0 ? (
                                 <div className={styles.noResults}>
@@ -98,7 +103,7 @@ export default function LocationsClient({ initialBranches, settings }: Props) {
                                                 <div className={styles.detailRow}>
                                                     <Clock size={16} className={styles.icon} />
                                                     <span className={styles.openStatus}>{settings.locations_open_label}</span>
-                                                    <span className={styles.hours}>• {branch.hours || "9AM - 5PM"}</span>
+                                                    <span className={styles.hours}>• {branch.hours}</span>
                                                 </div>
                                             </div>
 
@@ -109,7 +114,9 @@ export default function LocationsClient({ initialBranches, settings }: Props) {
                                                 {branch.hasDriveThru && (
                                                     <span className={styles.serviceTag}><CheckCircle2 size={12} /> {settings.locations_tag_drive_thru}</span>
                                                 )}
-                                                <span className={styles.serviceTag}><CheckCircle2 size={12} /> {settings.locations_tag_notary}</span>
+                                                {branch.hasNotary && (
+                                                    <span className={styles.serviceTag}><CheckCircle2 size={12} /> {settings.locations_tag_notary}</span>
+                                                )}
                                             </div>
                                             <div className={styles.actions}>
                                                 <a
@@ -132,7 +139,6 @@ export default function LocationsClient({ initialBranches, settings }: Props) {
                     <div className={styles.mapCol}>
                         <BranchMap branches={filteredBranches} />
                     </div>
-
                 </div>
             </div>
         </div>

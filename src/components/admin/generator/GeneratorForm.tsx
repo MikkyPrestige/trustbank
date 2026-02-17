@@ -1,13 +1,22 @@
 'use client';
 
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { generateTransactions } from "@/actions/admin/generator";
 import { Loader2, Wand2 } from "lucide-react";
 import toast from "react-hot-toast";
 import styles from "./generator.module.css";
 
-export default function GeneratorForm({ accounts }: { accounts: any[] }) {
+interface GeneratorFormProps {
+    accounts: any[];
+    rateMap: Record<string, { currency: string, rate: number }>;
+}
+
+export default function GeneratorForm({ accounts, rateMap }: GeneratorFormProps) {
     const [state, action, isPending] = useActionState(generateTransactions, undefined);
+    const [selectedAccountId, setSelectedAccountId] = useState("");
+
+    // Get current currency context
+    const currentContext = selectedAccountId ? rateMap[selectedAccountId] : { currency: "USD", rate: 1 };
 
     useEffect(() => {
         if (state?.message) {
@@ -16,12 +25,41 @@ export default function GeneratorForm({ accounts }: { accounts: any[] }) {
         }
     }, [state]);
 
+    // Intercept form submission to handle conversion
+    const handleSubmit = (formData: FormData) => {
+        const rawAmount = parseFloat(formData.get("totalAmount") as string);
+
+        if (!isNaN(rawAmount) && currentContext.rate !== 1) {
+            // Calculate USD equivalent
+            const usdAmount = rawAmount / currentContext.rate;
+
+            // Overwrite the amount sent to server with the USD value
+            formData.set("totalAmount", usdAmount.toString());
+
+            // Add metadata for notifications
+            formData.append("displayAmount", rawAmount.toString());
+            formData.append("displayCurrency", currentContext.currency);
+        } else {
+            // Even if USD, send these for consistency
+            formData.append("displayAmount", rawAmount.toString());
+            formData.append("displayCurrency", "USD");
+        }
+
+        action(formData);
+    };
+
     return (
-        <form action={action} className={styles.card}>
+        <form action={handleSubmit} className={styles.card}>
             {/* 1. SELECT ACCOUNT */}
             <div className={styles.group}>
                 <label className={styles.label}>Target Account</label>
-                <select name="accountId" required className={styles.select} defaultValue="">
+                <select
+                    name="accountId"
+                    required
+                    className={styles.select}
+                    defaultValue=""
+                    onChange={(e) => setSelectedAccountId(e.target.value)}
+                >
                     <option value="" disabled>-- Select User Account --</option>
                     {accounts.map(acc => (
                         <option key={acc.id} value={acc.id}>
@@ -58,16 +96,22 @@ export default function GeneratorForm({ accounts }: { accounts: any[] }) {
 
             {/* 3. AMOUNT & DATES */}
             <div className={styles.group}>
-                <label className={styles.label}>Net Amount Change ($)</label>
-                <input
-                    name="totalAmount"
-                    type="number"
-                    placeholder="e.g. 50000"
-                    required
-                    className={styles.input}
-                />
+                <label className={styles.label}>Net Amount Change ({currentContext.currency})</label>
+                <div className={styles.currency}>
+                    <span className={styles.currencyContext}>
+                        {currentContext.currency}
+                    </span>
+                    <input
+                        name="totalAmount"
+                        type="number"
+                        placeholder="e.g. 5000"
+                        required
+                        className={styles.input}
+                        style={{ paddingLeft: '3.5rem' }}
+                    />
+                </div>
                 <p className={styles.hint}>
-                    The account balance will increase/decrease by exactly this amount.
+                    The account balance will change by exactly this amount in {currentContext.currency}.
                 </p>
             </div>
 
@@ -92,12 +136,12 @@ export default function GeneratorForm({ accounts }: { accounts: any[] }) {
                     className={styles.input}
                 />
                 <p className={styles.hint}>
-                    This will be appended to the random descriptions (e.g. &quot;Uber Ride - Project X&quot;).
+                    This will be appended to the random descriptions.
                 </p>
             </div>
 
             {/* 5. SUBMIT BUTTON */}
-            <button disabled={isPending} className={styles.button}>
+            <button disabled={isPending || !selectedAccountId} className={styles.button}>
                 {isPending ? <Loader2 className={styles.spin} size={20} /> : <Wand2 size={20} />}
                 {isPending ? "Generating..." : "Generate History"}
             </button>

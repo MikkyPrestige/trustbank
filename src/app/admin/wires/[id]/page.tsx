@@ -12,12 +12,28 @@ interface PageProps {
 export default async function WireDetailsPage({ params }: PageProps) {
     const { id } = await params;
 
-    const wire = await db.wireTransfer.findUnique({
-        where: { id },
-        include: { user: true }
-    });
+    const [wire, rates] = await Promise.all([
+        db.wireTransfer.findUnique({
+            where: { id },
+            include: {
+                user: {
+                    select: { fullName: true, email: true, currency: true }
+                }
+            }
+        }),
+        db.exchangeRate.findMany()
+    ]);
 
     if (!wire) return notFound();
+
+    // Determine Currency & Rate
+    // @ts-ignore
+    const currency = wire.user.currency || "USD";
+    const exchangeRate = currency === "USD"
+        ? 1
+        : Number(rates.find(r => r.currency === currency)?.rate || 1);
+
+    const amountNative = Number(wire.amount) * exchangeRate;
 
     return (
         <div className={styles.container}>
@@ -44,8 +60,13 @@ export default async function WireDetailsPage({ params }: PageProps) {
                         <div>
                             <label>Amount</label>
                             <div className={styles.valueLarge}>
-                                {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(wire.amount))}
+                                {new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(amountNative)}
                             </div>
+                            {currency !== "USD" && (
+                                <div className={styles.subValue}>
+                                    System Value: {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(wire.amount))}
+                                </div>
+                            )}
                         </div>
                     </div>
 
@@ -84,9 +105,9 @@ export default async function WireDetailsPage({ params }: PageProps) {
                     <div className={styles.statusBox}>
                         <label>Current Status</label>
                         <div className={`${styles.statusBadgeLarge} ${wire.status === 'COMPLETED' ? styles.bgSuccess :
-                                wire.status === 'FAILED' ? styles.bgFailed :
-                                    wire.status === 'REVERSED' ? styles.bgReversed :
-                                        styles.bgPending
+                            wire.status === 'FAILED' ? styles.bgFailed :
+                                wire.status === 'REVERSED' ? styles.bgReversed :
+                                    styles.bgPending
                             }`}>
                             <Activity size={18} />
                             {wire.status}
@@ -97,6 +118,7 @@ export default async function WireDetailsPage({ params }: PageProps) {
                     </div>
 
                     <div className={styles.actionsWrapper}>
+                        {/* @ts-ignore */}
                         <WireActions wire={wire} />
                     </div>
                 </div>

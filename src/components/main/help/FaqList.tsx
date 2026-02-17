@@ -11,11 +11,7 @@ interface FaqItem {
     category: string;
 }
 
-interface FaqListProps {
-    faqs: FaqItem[];
-}
-
-// Optional: Helper to get icons based on category
+// get icons based on category
 const getCategoryIcon = (category: string) => {
     switch (category.toLowerCase()) {
         case 'security': return <Shield size={18} className={styles.catIcon} />;
@@ -25,7 +21,7 @@ const getCategoryIcon = (category: string) => {
     }
 };
 
-export default function FaqList({ faqs }: FaqListProps) {
+export default function FaqList({ faqs, settings }: { faqs: FaqItem[], settings: any }) {
     const [openId, setOpenId] = useState<string | null>(null);
 
     const toggleFAQ = (id: string) => {
@@ -44,7 +40,7 @@ export default function FaqList({ faqs }: FaqListProps) {
 
     const sortOrder = ['Transfers', 'Security', 'Account & Cards', 'General'];
 
-    // Sort the keys based on our preferred order
+    // Sort the keys based on preferred order
     const sortedCategories = Object.keys(groupedFaqs).sort((a, b) => {
         const indexA = sortOrder.indexOf(a);
         const indexB = sortOrder.indexOf(b);
@@ -56,7 +52,7 @@ export default function FaqList({ faqs }: FaqListProps) {
 
     return (
         <div className={styles.faqSection}>
-            <h2 className={styles.sectionTitle}>Frequently Asked</h2>
+            <h2 className={styles.sectionTitle}>{settings.help_faq_title}</h2>
 
             {sortedCategories.map((category) => (
                 <div key={category} className={styles.categoryGroup}>

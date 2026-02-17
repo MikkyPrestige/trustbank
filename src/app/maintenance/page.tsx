@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { AlertTriangle, ArrowLeft, Clock } from "lucide-react";
 
-// Helper to fetch string settings easily
+// fetch string settings easily
 async function getTextSetting(key: string, fallback: string) {
     const setting = await db.systemSettings.findUnique({ where: { key } });
     return setting?.value || fallback;

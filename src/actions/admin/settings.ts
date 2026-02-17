@@ -4,28 +4,27 @@ import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { checkAdminAction } from "@/lib/auth/admin-auth";
 import { logAdminAction } from "@/lib/utils/admin-logger";
-import { UserRole } from "@prisma/client";
-import { canPerform } from "@/lib/auth/permissions";
 
 /**
  * METADATA MAPPING
  */
 const SETTING_METADATA: Record<string, { group: string, type: string }> = {
+    // Security
+    auth_login_limit: { group: 'AUTH', type: 'INT' },
+
+    // Banking Identity
+    routingNumber:    { group: 'ACCOUNT', type: 'STRING'},
+    swiftCode:        { group: 'ACCOUNT', type: 'STRING'},
+
     // --- 1. BRAND & CONTACT ---
-    site_name:     { group: 'BRANDING', type: 'STRING' },
-    site_logo:     { group: 'BRANDING', type: 'IMAGE' },
-    contact_email: { group: 'CONTACT', type: 'STRING' },
-    contact_phone: { group: 'CONTACT', type: 'STRING' },
-    address_main:  { group: 'CONTACT', type: 'STRING' },
+    site_name:          { group: 'BRAND', type: 'STRING' },
+    site_logo:          { group: 'BRAND', type: 'IMAGE' },
+    site_logo_alt:      { group: 'BRAND', type: 'STRING' },
+    contact_email:      { group: 'CONTACT', type: 'STRING' },
+    contact_phone:      { group: 'CONTACT', type: 'STRING' },
+    address_main:       { group: 'CONTACT', type: 'STRING' },
 
-    auth_login_limit: { group: 'SECURITY', type: 'NUMBER' },
-
-    // --- 2. GLOBAL SETTINGS ---
-    announcement_active:        { group: 'GLOBAL', type: 'BOOLEAN' },
-    announcement_text:          { group: 'GLOBAL', type: 'STRING' },
-    announcement_contact_phone: { group: 'GLOBAL', type: 'STRING' },
-
-    // --- 3. NAV BAR ---
+       // --- 2. NAV BAR ---
     nav_structure_json: { group: 'NAV', type: 'JSON' },
     // Nav Promos
     nav_bank_title:     { group: 'NAV', type: 'STRING' },
@@ -39,18 +38,128 @@ const SETTING_METADATA: Record<string, { group: string, type: string }> = {
     nav_learn_title:    { group: 'NAV', type: 'STRING' },
     nav_learn_desc:     { group: 'NAV', type: 'STRING' },
 
-    // --- 4. HOME PAGE HERO ---
-    hero_badge:    { group: 'HOME', type: 'STRING' },
-    home_hero_img: { group: 'HOME', type: 'IMAGE' },
-    home_hero_alt: { group: 'HOME', type: 'STRING' },
-    hero_title:    { group: 'HOME', type: 'STRING' },
-    hero_subtitle: { group: 'HOME', type: 'STRING' },
-    hero_cta_text: { group: 'HOME', type: 'STRING' },
+    // --- 3. ANNOUNCEMENT SETTINGS ---
+    announcement_active:        { group: 'ANNOUNCEMENT', type: 'BOOLEAN' },
+    announcement_text:          { group: 'ANNOUNCEMENT', type: 'STRING' },
+    announcement_contact_phone: { group: 'ANNOUNCEMENT', type: 'STRING' },
 
-    // --- 5. HOME SECTIONS ---
-    // Rates Section on Home
-    home_rates_title: { group: 'HOME', type: 'STRING' },
-    home_rates_desc:  { group: 'HOME', type: 'STRING' },
+      // --- 4. GLOBAL RATES  ---
+    rate_hysa_apy:          { group: 'RATES', type: 'STRING' },
+    rate_cd_apy:            { group: 'RATES', type: 'STRING' },
+    rate_cd_apy_percent:    { group: 'RATES', type: 'STRING' },
+    rate_mma_apy:           { group: 'RATES', type: 'STRING' },
+    rate_mortgage_30yr:     { group: 'RATES', type: 'STRING' },
+    rate_kids_apy:          { group: 'RATES', type: 'STRING' },
+    rate_business_apy:      { group: 'RATES', type: 'STRING' },
+    rate_ira_apy:           { group: 'RATES', type: 'STRING' },
+    rate_auto_low:          { group: 'RATES', type: 'STRING' },
+    rate_checking_bonus:    { group: 'RATES', type: 'STRING' },
+    rate_hysa_name:         { group: 'RATES', type: 'STRING' },
+    rate_hysa_rate:         { group: 'RATES', type: 'STRING' },
+    rate_hysa_min:          { group: 'RATES', type: 'STRING' },
+    rate_mma_name:          { group: 'RATES', type: 'STRING' },
+    rate_mma_rate:          { group: 'RATES', type: 'STRING' },
+    rate_mma_min:           { group: 'RATES', type: 'STRING' },
+    rate_cd_name:           { group: 'RATES', type: 'STRING' },
+    rate_cd_rate:           { group: 'RATES', type: 'STRING' },
+    rate_cd_min:            { group: 'RATES', type: 'STRING' },
+    rate_kids_name:         { group: 'RATES', type: 'STRING' },
+    rate_kids_rate:         { group: 'RATES', type: 'STRING' },
+    rate_kids_min:          { group: 'RATES', type: 'STRING' },
+    rate_auto_name:         { group: 'RATES', type: 'STRING' },
+    rate_auto_term:         { group: 'RATES', type: 'STRING' },
+    rate_auto_apr_link:     { group: 'RATES', type: 'STRING' },
+    rate_personal_name:     { group: 'RATES', type: 'STRING' },
+    rate_personal_term:     { group: 'RATES', type: 'STRING' },
+    rate_personal_link:     { group: 'RATES', type: 'STRING' },
+    rate_mortgage_name:     { group: 'RATES', type: 'STRING' },
+    rate_mortgage_term:     { group: 'RATES', type: 'STRING' },
+    rate_mortgage_link:     { group: 'RATES', type: 'STRING' },
+    rate_cc_name:           { group: 'RATES', type: 'STRING' },
+    rate_cc_term:           { group: 'RATES', type: 'STRING' },
+    rate_cc_intro:          { group: 'RATES', type: 'STRING' },
+    rate_cc_link:           { group: 'RATES', type: 'STRING' },
+    rate_personal_apr:      { group: 'RATES', type: 'STRING' },
+    rate_auto_apr:          { group: 'RATES', type: 'STRING' },
+    rate_mortgage_label:    { group: 'RATES', type: 'STRING' },
+    rate_student_label:     { group: 'RATES', type: 'STRING' },
+    rate_credit_intro_apr:  { group: 'RATES', type: 'STRING' },
+    rate_home_equity_label: { group: 'RATES', type: 'STRING' },
+
+    // --- 5. HOME PAGE HERO ---
+    hero_badge:              { group: 'HOME', type: 'STRING' },
+    hero_title:              { group: 'HOME', type: 'STRING' },
+    hero_subtitle:           { group: 'HOME', type: 'STRING' },
+    hero_cta_text:           { group: 'HOME', type: 'STRING' },
+    hero_cta_link:           { group: 'HOME', type: 'STRING' },
+    hero_cta1_text:          { group: 'HOME', type: 'STRING' },
+    hero_cta1_link:          { group: 'HOME', type: 'STRING' },
+    home_hero_img:           { group: 'HOME', type: 'IMAGE' },
+    home_hero_alt:           { group: 'HOME', type: 'STRING' },
+    // Info Section
+    home_support_label:      { group: 'HOME', type: 'STRING' },
+    home_hours_label:        { group: 'HOME', type: 'STRING' },
+    home_routing_label:      { group: 'HOME', type: 'STRING' },
+    home_swift_label:        { group: 'HOME', type: 'STRING' },
+    home_location_link_text: { group: 'HOME', type: 'STRING' },
+    home_location_link_url:  { group: 'HOME', type: 'STRING' },
+
+    // --- 6. HOME SECTIONS ---
+    // Rates Section
+    home_rates_title:           { group: 'HOME', type: 'STRING' },
+    home_rates_desc:            { group: 'HOME', type: 'STRING' },
+    home_rates_tab1_label:      { group: 'HOME', type: 'STRING' },
+    home_rates_tab2_label:      { group: 'HOME', type: 'STRING' },
+    home_rates_disclaimer:      { group: 'HOME', type: 'STRING' },
+    home_rates_unit_apy:        { group: 'HOME', type: 'STRING' },
+    home_rates_unit_apr:        { group: 'HOME', type: 'STRING' },
+    home_rates_unit_bonus:      { group: 'HOME', type: 'STRING' },
+    home_rates_c1_badge:        { group: 'HOME', type: 'STRING' },
+    home_rates_c1_title:        { group: 'HOME', type: 'STRING' },
+    home_rates_c1_sub:          { group: 'HOME', type: 'STRING' },
+    home_rates_c1_row1_label:   { group: 'HOME', type: 'STRING' },
+    home_rates_c1_row1_value:   { group: 'HOME', type: 'STRING' },
+    home_rates_c1_row2_label:   { group: 'HOME', type: 'STRING' },
+    home_rates_c1_row2_value:   { group: 'HOME', type: 'STRING' },
+    home_rates_c1_btn_text:     { group: 'HOME', type: 'STRING' },
+    home_rates_c1_btn_link:     { group: 'HOME', type: 'STRING' },
+    home_rates_c2_title:        { group: 'HOME', type: 'STRING' },
+    home_rates_c2_sub:          { group: 'HOME', type: 'STRING' },
+    home_rates_c2_row1_label:   { group: 'HOME', type: 'STRING' },
+    home_rates_c2_row1_value:   { group: 'HOME', type: 'STRING' },
+    home_rates_c2_row2_label:   { group: 'HOME', type: 'STRING' },
+    home_rates_c2_row2_value:   { group: 'HOME', type: 'STRING' },
+    home_rates_c2_btn_text:     { group: 'HOME', type: 'STRING' },
+    home_rates_c2_btn_link:     { group: 'HOME', type: 'STRING' },
+    home_rates_c3_title:        { group: 'HOME', type: 'STRING' },
+    home_rates_c3_sub:          { group: 'HOME', type: 'STRING' },
+    home_rates_c3_row1_label:   { group: 'HOME', type: 'STRING' },
+    home_rates_c3_row1_value:   { group: 'HOME', type: 'STRING' },
+    home_rates_c3_row2_label:   { group: 'HOME', type: 'STRING' },
+    home_rates_c3_row2_value:   { group: 'HOME', type: 'STRING' },
+    home_rates_c3_btn_text:     { group: 'HOME', type: 'STRING' },
+    home_rates_c3_btn_link:     { group: 'HOME', type: 'STRING' },
+    home_rates_c4_title:        { group: 'HOME', type: 'STRING' },
+    home_rates_c4_sub:          { group: 'HOME', type: 'STRING' },
+    home_rates_c4_row1_label:   { group: 'HOME', type: 'STRING' },
+    home_rates_c4_row1_value:   { group: 'HOME', type: 'STRING' },
+    home_rates_c4_btn_text:     { group: 'HOME', type: 'STRING' },
+    home_rates_c4_btn_link:     { group: 'HOME', type: 'STRING' },
+    home_rates_c5_badge:        { group: 'HOME', type: 'STRING' },
+    home_rates_c5_title:        { group: 'HOME', type: 'STRING' },
+    home_rates_c5_sub:          { group: 'HOME', type: 'STRING' },
+    home_rates_c5_row1_label:   { group: 'HOME', type: 'STRING' },
+    home_rates_c5_row1_value:   { group: 'HOME', type: 'STRING' },
+    home_rates_c5_btn_text:     { group: 'HOME', type: 'STRING' },
+    home_rates_c5_btn_link:     { group: 'HOME', type: 'STRING' },
+    home_rates_c6_title:        { group: 'HOME', type: 'STRING' },
+    home_rates_c6_sub:          { group: 'HOME', type: 'STRING' },
+    home_rates_c6_row1_label:   { group: 'HOME', type: 'STRING' },
+    home_rates_c6_row1_value:   { group: 'HOME', type: 'STRING' },
+    home_rates_c6_btn_text:     { group: 'HOME', type: 'STRING' },
+    home_rates_c6_btn_link:     { group: 'HOME', type: 'STRING' },
+    home_rates_currency_symbol: { group: 'HOME', type: 'STRING' },
+    home_rates_percent_symbol:  { group: 'HOME', type: 'STRING' },
 
     // Card
     home_card_img:         { group: 'HOME', type: 'IMAGE' },
@@ -65,187 +174,273 @@ const SETTING_METADATA: Record<string, { group: string, type: string }> = {
     home_card_feat_2_desc: { group: 'HOME', type: 'STRING' },
     home_card_feat_3:      { group: 'HOME', type: 'STRING' },
     home_card_feat_3_desc: { group: 'HOME', type: 'STRING' },
+    home_card_btn1_text:   { group: 'HOME', type: 'STRING' },
+    home_card_btn1_link:   { group: 'HOME', type: 'STRING' },
+    home_card_btn2_text:   { group: 'HOME', type: 'STRING' },
+    home_card_btn2_link:   { group: 'HOME', type: 'STRING' },
 
     // Guide
-    home_guide_title:      { group: 'HOME', type: 'STRING' },
-    home_guide_desc:       { group: 'HOME', type: 'STRING' },
-    guide_article_1_title: { group: 'HOME', type: 'STRING' },
-    guide_article_1_img:   { group: 'HOME', type: 'IMAGE' },
-    guide_article_1_alt:   { group: 'HOME', type: 'STRING' },
-    guide_article_2_title: { group: 'HOME', type: 'STRING' },
-    guide_article_3_title: { group: 'HOME', type: 'STRING' },
-    guide_article_3_img:   { group: 'HOME', type: 'IMAGE' },
-    guide_article_3_alt:   { group: 'HOME', type: 'STRING' },
-    guide_article_4_title: { group: 'HOME', type: 'STRING' },
-    guide_article_4_img:   { group: 'HOME', type: 'IMAGE' },
-    guide_article_4_alt:   { group: 'HOME', type: 'STRING' },
+    home_guide_title:          { group: 'HOME', type: 'STRING' },
+    home_guide_desc:           { group: 'HOME', type: 'STRING' },
+    home_guide_link:           { group: 'HOME', type: 'STRING' },
+    home_guide_link_text:      { group: 'HOME', type: 'STRING' },
+    home_guide_head:           { group: 'HOME', type: 'STRING' },
+    guide_article_1_head:      { group: 'HOME', type: 'STRING' },
+    guide_article_1_title:     { group: 'HOME', type: 'STRING' },
+    guide_article_1_subtitle:  { group: 'HOME', type: 'STRING' },
+    guide_article_1_img:       { group: 'HOME', type: 'IMAGE' },
+    guide_article_1_alt:       { group: 'HOME', type: 'STRING' },
+    guide_article_1_link:      { group: 'HOME', type: 'STRING' },
+    guide_article_1_link_text: { group: 'HOME', type: 'STRING' },
+    guide_article_2_head:      { group: 'HOME', type: 'STRING' },
+    guide_article_2_title:     { group: 'HOME', type: 'STRING' },
+    guide_article_2_subtitle:  { group: 'HOME', type: 'STRING' },
+    guide_article_2_link:      { group: 'HOME', type: 'STRING' },
+    guide_article_2_link_text: { group: 'HOME', type: 'STRING' },
+    guide_article_3_head:      { group: 'HOME', type: 'STRING' },
+    guide_article_3_title:     { group: 'HOME', type: 'STRING' },
+    guide_article_3_subtitle:  { group: 'HOME', type: 'STRING' },
+    guide_article_3_img:       { group: 'HOME', type: 'IMAGE' },
+    guide_article_3_alt:       { group: 'HOME', type: 'STRING' },
+    guide_article_3_link:      { group: 'HOME', type: 'STRING' },
+    guide_article_3_link_text: { group: 'HOME', type: 'STRING' },
+    guide_article_4_head:      { group: 'HOME', type: 'STRING' },
+    guide_article_4_title:     { group: 'HOME', type: 'STRING' },
+    guide_article_4_subtitle:  { group: 'HOME', type: 'STRING' },
+    guide_article_4_img:       { group: 'HOME', type: 'IMAGE' },
+    guide_article_4_alt:       { group: 'HOME', type: 'STRING' },
+    guide_article_4_link:      { group: 'HOME', type: 'STRING' },
+    guide_article_4_link_text: { group: 'HOME', type: 'STRING' },
 
     // Investment
-    home_invest_title:      { group: 'HOME', type: 'STRING' },
-    home_invest_highlight:  { group: 'HOME', type: 'STRING' },
-    home_invest_desc:       { group: 'HOME', type: 'STRING' },
-    home_invest_img:        { group: 'HOME', type: 'IMAGE' },
-    home_invest_alt:        { group: 'HOME', type: 'STRING' },
-    home_invest_feat1:      { group: 'HOME', type: 'STRING' },
-    home_invest_feat1_desc: { group: 'HOME', type: 'STRING' },
-    home_invest_feat2:      { group: 'HOME', type: 'STRING' },
-    home_invest_feat2_desc: { group: 'HOME', type: 'STRING' },
-    home_invest_feat3:      { group: 'HOME', type: 'STRING' },
-    home_invest_feat3_desc: { group: 'HOME', type: 'STRING' },
+    home_invest_title:        { group: 'HOME', type: 'STRING' },
+    home_invest_highlight:    { group: 'HOME', type: 'STRING' },
+    home_invest_desc:         { group: 'HOME', type: 'STRING' },
+    home_invest_img:          { group: 'HOME', type: 'IMAGE' },
+    home_invest_alt:          { group: 'HOME', type: 'STRING' },
+    home_invest_feat1:        { group: 'HOME', type: 'STRING' },
+    home_invest_feat1_desc:   { group: 'HOME', type: 'STRING' },
+    home_invest_feat2:        { group: 'HOME', type: 'STRING' },
+    home_invest_feat2_desc:   { group: 'HOME', type: 'STRING' },
+    home_invest_feat3:        { group: 'HOME', type: 'STRING' },
+    home_invest_feat3_desc:   { group: 'HOME', type: 'STRING' },
+    home_invest_btn1_text:    { group: 'HOME', type: 'STRING' },
+    home_invest_btn1_link:    { group: 'HOME', type: 'STRING' },
+    home_invest_btn2_text:    { group: 'HOME', type: 'STRING' },
+    home_invest_btn2_link:    { group: 'HOME', type: 'STRING' },
+    home_invest_float1_label: { group: 'HOME', type: 'STRING' },
+    home_invest_float2_label: { group: 'HOME', type: 'STRING' },
+    home_invest_float2_value: { group: 'HOME', type: 'STRING' },
 
     // Loan
-    home_loan_title:       { group: 'HOME', type: 'STRING' },
-    home_loan_desc:        { group: 'HOME', type: 'STRING' },
-    home_loan_card1_title: { group: 'HOME', type: 'STRING' },
-    home_loan_card1_desc:  { group: 'HOME', type: 'STRING' },
-    home_loan_card1_img:   { group: 'HOME', type: 'IMAGE' },
-    home_loan_card1_alt:   { group: 'HOME', type: 'STRING' },
-    home_loan_card2_title: { group: 'HOME', type: 'STRING' },
-    home_loan_card2_desc:  { group: 'HOME', type: 'STRING' },
-    home_loan_card2_img:   { group: 'HOME', type: 'IMAGE' },
-    home_loan_card2_alt:   { group: 'HOME', type: 'STRING' },
+    home_loan_cat1_label:        { group: 'HOME', type: 'STRING' },
+    home_loan_cat2_label:        { group: 'HOME', type: 'STRING' },
+    home_loan_cat3_label:        { group: 'HOME', type: 'STRING' },
+    home_loan_cat4_label:        { group: 'HOME', type: 'STRING' },
+    home_loan_title:             { group: 'HOME', type: 'STRING' },
+    home_loan_desc:              { group: 'HOME', type: 'STRING' },
+    home_loan_card1_title:       { group: 'HOME', type: 'STRING' },
+    home_loan_card1_desc:        { group: 'HOME', type: 'STRING' },
+    home_loan_card1_img:         { group: 'HOME', type: 'IMAGE' },
+    home_loan_card1_alt:         { group: 'HOME', type: 'STRING' },
+    home_loan_card1_stat1_label: { group: 'HOME', type: 'STRING' },
+    home_loan_card1_stat2_label: { group: 'HOME', type: 'STRING' },
+    home_loan_card1_stat2_value: { group: 'HOME', type: 'STRING' },
+    home_loan_card1_btn1_text:   { group: 'HOME', type: 'STRING' },
+    home_loan_card1_btn1_link:   { group: 'HOME', type: 'STRING' },
+    home_loan_card1_btn2_text:   { group: 'HOME', type: 'STRING' },
+    home_loan_card1_btn2_link:   { group: 'HOME', type: 'STRING' },
+    home_loan_card2_title:       { group: 'HOME', type: 'STRING' },
+    home_loan_card2_desc:        { group: 'HOME', type: 'STRING' },
+    home_loan_card2_img:         { group: 'HOME', type: 'IMAGE' },
+    home_loan_card2_alt:         { group: 'HOME', type: 'STRING' },
+    home_loan_card2_note_text:   { group: 'HOME', type: 'STRING' },
+    home_loan_card2_list1:       { group: 'HOME', type: 'STRING' },
+    home_loan_card2_list2:       { group: 'HOME', type: 'STRING' },
+    home_loan_card2_list3:       { group: 'HOME', type: 'STRING' },
+    home_loan_card2_btn1_text:   { group: 'HOME', type: 'STRING' },
+    home_loan_card2_btn1_link:   { group: 'HOME', type: 'STRING' },
+    home_loan_card2_btn2_text:   { group: 'HOME', type: 'STRING' },
+    home_loan_card2_btn2_link:   { group: 'HOME', type: 'STRING' },
+    home_loan_tool1_title:       { group: 'HOME', type: 'STRING' },
+    home_loan_tool1_text:        { group: 'HOME', type: 'STRING' },
+    home_loan_tool1_link:        { group: 'HOME', type: 'STRING' },
+    home_loan_tool2_title:       { group: 'HOME', type: 'STRING' },
+    home_loan_tool2_text:        { group: 'HOME', type: 'STRING' },
+    home_loan_tool2_link:        { group: 'HOME', type: 'STRING' },
+    home_loan_tool3_title:       { group: 'HOME', type: 'STRING' },
+    home_loan_tool3_text:        { group: 'HOME', type: 'STRING' },
+    home_loan_tool3_link:        { group: 'HOME', type: 'STRING' },
+    home_loan_percent_symbol:    { group: 'HOME', type: 'STRING' },
+    home_loan_apr_text:          { group: 'HOME', type: 'STRING' },
+    home_loan_arrow_symbol:      { group: 'HOME', type: 'STRING' },
 
     // Globe
-    home_global_title:     { group: 'HOME', type: 'STRING' },
-    home_global_highlight: { group: 'HOME', type: 'STRING' },
-    home_global_desc:      { group: 'HOME', type: 'STRING' },
-    home_global_img:       { group: 'HOME', type: 'IMAGE' },
-    home_global_alt:       { group: 'HOME', type: 'STRING' },
-    global_stat_countries: { group: 'HOME', type: 'STRING' },
-    global_stat_digital:   { group: 'HOME', type: 'STRING' },
-    global_stat_fraud:     { group: 'HOME', type: 'STRING' },
+    home_global_title:             { group: 'HOME', type: 'STRING' },
+    home_global_highlight:         { group: 'HOME', type: 'STRING' },
+    home_global_desc:              { group: 'HOME', type: 'STRING' },
+    home_global_img:               { group: 'HOME', type: 'IMAGE' },
+    home_global_alt:               { group: 'HOME', type: 'STRING' },
+    home_global_hotspot :          { group: 'HOME', type: 'STRING' },
+    global_stat_countries:         { group: 'HOME', type: 'STRING' },
+    global_stat_countries_text:    { group: 'HOME', type: 'STRING' },
+    global_stat_countries_subtext: { group: 'HOME', type: 'STRING' },
+    global_stat_digital:           { group: 'HOME', type: 'STRING' },
+    global_stat_digital_text:      { group: 'HOME', type: 'STRING' },
+    global_stat_digital_subtext:   { group: 'HOME', type: 'STRING' },
+    global_stat_title:             { group: 'HOME', type: 'STRING' },
+    global_stat_fraud:             { group: 'HOME', type: 'STRING' },
+    global_stat_fraud_text:        { group: 'HOME', type: 'STRING' },
 
     // Partners
     home_partner_label: { group: 'HOME', type: 'STRING' },
     partner_img_1:      { group: 'HOME', type: 'IMAGE' },
+    partner_img_1_alt:  { group: 'HOME', type: 'STRING' },
     partner_img_2:      { group: 'HOME', type: 'IMAGE' },
+    partner_img_2_alt:  { group: 'HOME', type: 'STRING' },
     partner_img_3:      { group: 'HOME', type: 'IMAGE' },
+    partner_img_3_alt:  { group: 'HOME', type: 'STRING' },
     partner_img_4:      { group: 'HOME', type: 'IMAGE' },
+    partner_img_4_alt:  { group: 'HOME', type: 'STRING' },
     partner_img_5:      { group: 'HOME', type: 'IMAGE' },
+    partner_img_5_alt:  { group: 'HOME', type: 'STRING' },
     partner_img_6:      { group: 'HOME', type: 'IMAGE' },
+    partner_img_6_alt:  { group: 'HOME', type: 'STRING' },
 
     // Final CTA
-    home_cta_img:       { group: 'HOME', type: 'IMAGE' },
-    home_cta_alt:       { group: 'HOME', type: 'STRING' },
-    home_cta_title:     { group: 'HOME', type: 'STRING' },
-    home_cta_desc:      { group: 'HOME', type: 'STRING' },
-    home_cta_benefit_1: { group: 'HOME', type: 'STRING' },
-    home_cta_benefit_2: { group: 'HOME', type: 'STRING' },
-    home_cta_benefit_3: { group: 'HOME', type: 'STRING' },
+    home_cta_badge:         { group: 'HOME', type: 'STRING' },
+    home_cta_img:           { group: 'HOME', type: 'IMAGE' },
+    home_cta_alt:           { group: 'HOME', type: 'STRING' },
+    home_cta_title:         { group: 'HOME', type: 'STRING' },
+    home_cta_desc:          { group: 'HOME', type: 'STRING' },
+    home_cta_benefit_1:     { group: 'HOME', type: 'STRING' },
+    home_cta_benefit_2:     { group: 'HOME', type: 'STRING' },
+    home_cta_benefit_3:     { group: 'HOME', type: 'STRING' },
+    home_cta_apple_small:   { group: 'HOME', type: 'STRING' },
+    home_cta_apple_large:   { group: 'HOME', type: 'STRING' },
+    home_cta_apple_link:    { group: 'HOME', type: 'STRING' },
+    home_cta_google_small:  { group: 'HOME', type: 'STRING' },
+    home_cta_google_large:  { group: 'HOME', type: 'STRING' },
+    home_cta_google_link:   { group: 'HOME', type: 'STRING' },
+    home_cta_web_text:      { group: 'HOME', type: 'STRING' },
+    home_cta_web_link:      { group: 'HOME', type: 'STRING' },
 
-      // --- 6. GLOBAL RATES & PRODUCT SPECS ---
-    rate_hysa_apy:         { group: 'RATES', type: 'STRING' },
-    rate_cd_apy:           { group: 'RATES', type: 'STRING' },
-    rate_mma_apy:          { group: 'RATES', type: 'STRING' },
-    rate_kids_apy:         { group: 'RATES', type: 'STRING' },
-    rate_business_apy:     { group: 'RATES', type: 'STRING' },
-    rate_ira_apy:          { group: 'RATES', type: 'STRING' },
-    rate_auto_low:         { group: 'RATES', type: 'STRING' },
-    rate_credit_intro_apr: { group: 'RATES', type: 'STRING' },
-    rate_checking_bonus:   { group: 'RATES', type: 'STRING' },
-
-    // --- 6. PRODUCT PAGES ---
+    // --- 7. PRODUCT PAGES ---
     // BANK
-    bank_hero_img:           { group: 'BANKING', type: 'IMAGE' },
-    bank_hero_alt:           { group: 'BANKING', type: 'STRING' },
-    bank_hero_title_1:       { group: 'BANKING', type: 'STRING' },
-    bank_hero_highlight:     { group: 'BANKING', type: 'STRING' },
-    bank_hero_desc:          { group: 'BANKING', type: 'STRING' },
-    bank_card_badge:         { group: 'BANKING', type: 'STRING' },
-    bank_card_title:         { group: 'BANKING', type: 'STRING' },
-    bank_card_desc:          { group: 'BANKING', type: 'STRING' },
-    bank_feat_1_title:       { group: 'BANKING', type: 'STRING' },
-    bank_feat_1_desc:        { group: 'BANKING', type: 'STRING' },
-    bank_feat_2_title:       { group: 'BANKING', type: 'STRING' },
-    bank_feat_2_desc:        { group: 'BANKING', type: 'STRING' },
-    bank_feat_3_title:       { group: 'BANKING', type: 'STRING' },
-    bank_feat_3_desc:        { group: 'BANKING', type: 'STRING' },
-    bank_compare_title:      { group: 'BANKING', type: 'STRING' },
-    bank_compare_desc:       { group: 'BANKING', type: 'STRING' },
-    bank_fee_monthly:        { group: 'BANKING', type: 'STRING' },
-    bank_fee_overdraft:      { group: 'BANKING', type: 'STRING' },
-    bank_fee_foreign:        { group: 'BANKING', type: 'STRING' },
-    bank_min_balance:        { group: 'BANKING', type: 'STRING' },
-    competitor_fee_monthly:  { group: 'BANKING', type: 'STRING' },
-    competitor_fee_overdraft:{ group: 'BANKING', type: 'STRING' },
-    competitor_fee_foreign:  { group: 'BANKING', type: 'STRING' },
-    competitor_min_balance:  { group: 'BANKING', type: 'STRING' },
-    bank_card_feat_1:        { group: 'BANKING', type: 'STRING' },
-    bank_card_feat_2:        { group: 'BANKING', type: 'STRING' },
-    bank_card_feat_3:        { group: 'BANKING', type: 'STRING' },
-    bank_tbl_row_1_label:    { group: 'BANKING', type: 'STRING' },
-    bank_tbl_row_2_label:    { group: 'BANKING', type: 'STRING' },
-    bank_tbl_row_3_label:    { group: 'BANKING', type: 'STRING' },
-    bank_tbl_row_4_label:    { group: 'BANKING', type: 'STRING' },
-    bank_tbl_row_5_label:    { group: 'BANKING', type: 'STRING' },
-    bank_cs_title:           { group: 'BANKING', type: 'STRING' },
-    bank_cs_desc:            { group: 'BANKING', type: 'STRING' },
-    bank_cs_btn:             { group: 'BANKING', type: 'STRING' },
-    bank_cs_img:             { group: 'BANKING', type: 'IMAGE' },
-    bank_cs_img_alt:         { group: 'BANKING', type: 'STRING' },
-    bank_biz_title:          { group: 'BANKING', type: 'STRING' },
-    bank_biz_desc:           { group: 'BANKING', type: 'STRING' },
-    bank_biz_btn:            { group: 'BANKING', type: 'STRING' },
-    bank_biz_img:            { group: 'BANKING', type: 'IMAGE' },
-    bank_biz_img_alt:        { group: 'BANKING', type: 'STRING' },
-    bank_stu_title:          { group: 'BANKING', type: 'STRING' },
-    bank_stu_desc:           { group: 'BANKING', type: 'STRING' },
-    bank_stu_btn:            { group: 'BANKING', type: 'STRING' },
-    bank_stu_img:            { group: 'BANKING', type: 'IMAGE' },
-    bank_stu_img_alt:        { group: 'BANKING', type: 'STRING' },
-    bank_hero_btn_primary:   { group: 'BANKING', type: 'STRING' },
-    bank_hero_btn_secondary: { group: 'BANKING', type: 'STRING' },
-    bank_compare_col_1:      { group: 'BANKING', type: 'STRING' },
-    bank_compare_col_2:      { group: 'BANKING', type: 'STRING' },
+    bank_hero_img:                { group: 'BANKING', type: 'IMAGE' },
+    bank_hero_alt:                { group: 'BANKING', type: 'STRING' },
+    bank_hero_title_1:            { group: 'BANKING', type: 'STRING' },
+    bank_hero_highlight:          { group: 'BANKING', type: 'STRING' },
+    bank_hero_desc:               { group: 'BANKING', type: 'STRING' },
+    bank_card_badge:              { group: 'BANKING', type: 'STRING' },
+    bank_card_title:              { group: 'BANKING', type: 'STRING' },
+    bank_card_desc:               { group: 'BANKING', type: 'STRING' },
+    bank_card_feat_1:             { group: 'BANKING', type: 'STRING' },
+    bank_card_feat_2:             { group: 'BANKING', type: 'STRING' },
+    bank_card_feat_3:             { group: 'BANKING', type: 'STRING' },
+    bank_card_holder_name:        { group: 'BANKING', type: 'STRING' },
+    bank_card_last_four:          { group: 'BANKING', type: 'STRING' },
+    bank_card_expiry:             { group: 'BANKING', type: 'STRING' },
+    bank_feat_1_title:            { group: 'BANKING', type: 'STRING' },
+    bank_feat_1_desc:             { group: 'BANKING', type: 'STRING' },
+    bank_feat_2_title:            { group: 'BANKING', type: 'STRING' },
+    bank_feat_2_desc:             { group: 'BANKING', type: 'STRING' },
+    bank_feat_3_title:            { group: 'BANKING', type: 'STRING' },
+    bank_feat_3_desc:             { group: 'BANKING', type: 'STRING' },
+    bank_compare_title:           { group: 'BANKING', type: 'STRING' },
+    bank_compare_desc:            { group: 'BANKING', type: 'STRING' },
+    bank_fee_monthly:             { group: 'BANKING', type: 'STRING' },
+    bank_fee_overdraft:           { group: 'BANKING', type: 'STRING' },
+    bank_fee_foreign:             { group: 'BANKING', type: 'STRING' },
+    bank_min_balance:             { group: 'BANKING', type: 'STRING' },
+    bank_competitor_fee_monthly:  { group: 'BANKING', type: 'STRING' },
+    bank_competitor_fee_overdraft:{ group: 'BANKING', type: 'STRING' },
+    bank_competitor_fee_foreign:  { group: 'BANKING', type: 'STRING' },
+    bank_competitor_min_balance:  { group: 'BANKING', type: 'STRING' },
+    bank_tbl_row_1_label:         { group: 'BANKING', type: 'STRING' },
+    bank_tbl_row_2_label:         { group: 'BANKING', type: 'STRING' },
+    bank_tbl_row_3_label:         { group: 'BANKING', type: 'STRING' },
+    bank_tbl_row_4_label:         { group: 'BANKING', type: 'STRING' },
+    bank_tbl_row_5_label:         { group: 'BANKING', type: 'STRING' },
+    bank_cs_title:                { group: 'BANKING', type: 'STRING' },
+    bank_cs_desc:                 { group: 'BANKING', type: 'STRING' },
+    bank_cs_btn:                  { group: 'BANKING', type: 'STRING' },
+    bank_cs_link:                 { group: 'BANKING', type: 'STRING' },
+    bank_cs_img:                  { group: 'BANKING', type: 'IMAGE' },
+    bank_cs_img_alt:              { group: 'BANKING', type: 'STRING' },
+    bank_biz_title:               { group: 'BANKING', type: 'STRING' },
+    bank_biz_desc:                { group: 'BANKING', type: 'STRING' },
+    bank_biz_btn:                 { group: 'BANKING', type: 'STRING' },
+    bank_biz_link:                { group: 'BANKING', type: 'STRING' },
+    bank_biz_img:                 { group: 'BANKING', type: 'IMAGE' },
+    bank_biz_img_alt:             { group: 'BANKING', type: 'STRING' },
+    bank_stu_title:               { group: 'BANKING', type: 'STRING' },
+    bank_stu_desc:                { group: 'BANKING', type: 'STRING' },
+    bank_stu_btn:                 { group: 'BANKING', type: 'STRING' },
+    bank_stu_link:                { group: 'BANKING', type: 'STRING' },
+    bank_stu_img:                 { group: 'BANKING', type: 'IMAGE' },
+    bank_stu_img_alt:             { group: 'BANKING', type: 'STRING' },
+    bank_hero_btn_primary:        { group: 'BANKING', type: 'STRING' },
+    bank_hero_btn_secondary:      { group: 'BANKING', type: 'STRING' },
+    bank_compare_col_1:           { group: 'BANKING', type: 'STRING' },
+    bank_compare_col_2:           { group: 'BANKING', type: 'STRING' },
 
     // SAVE
-    save_hero_title:       { group: 'SAVE', type: 'STRING' },
-    save_hero_highlight:   { group: 'SAVE', type: 'STRING' },
-    save_hero_desc:        { group: 'SAVE', type: 'STRING' },
-    save_hero_img:         { group: 'SAVE', type: 'IMAGE' },
-    save_hero_alt:         { group: 'SAVE', type: 'STRING' },
-    save_trust_title:      { group: 'SAVE', type: 'STRING' },
-    save_trust_desc:       { group: 'SAVE', type: 'STRING' },
-    save_prod_title:       { group: 'SAVE', type: 'STRING' },
-    save_prod_subtitle:    { group: 'SAVE', type: 'STRING' },
-    save_prod1_title:      { group: 'SAVE', type: 'STRING' },
-    save_prod1_desc:       { group: 'SAVE', type: 'STRING' },
-    save_prod1_link:       { group: 'SAVE', type: 'STRING' },
-    save_prod2_title:      { group: 'SAVE', type: 'STRING' },
-    save_prod2_desc:       { group: 'SAVE', type: 'STRING' },
-    save_prod2_link:       { group: 'SAVE', type: 'STRING' },
-    save_prod3_title:      { group: 'SAVE', type: 'STRING' },
-    save_prod3_desc:       { group: 'SAVE', type: 'STRING' },
-    save_prod3_link:       { group: 'SAVE', type: 'STRING' },
-    save_prod4_title:      { group: 'SAVE', type: 'STRING' },
-    save_prod4_desc:       { group: 'SAVE', type: 'STRING' },
-    save_prod4_link:       { group: 'SAVE', type: 'STRING' },
-    save_prod5_title:      { group: 'SAVE', type: 'STRING' },
-    save_prod5_desc:       { group: 'SAVE', type: 'STRING' },
-    save_prod5_link:       { group: 'SAVE', type: 'STRING' },
-    save_prod6_title:      { group: 'SAVE', type: 'STRING' },
-    save_prod6_desc:       { group: 'SAVE', type: 'STRING' },
-    save_prod6_link:       { group: 'SAVE', type: 'STRING' },
-    save_fdic_badge:       { group: 'SAVE', type: 'STRING' },
-    save_calc_title:       { group: 'SAVE', type: 'STRING' },
-    save_calc_desc_prefix: { group: 'SAVE', type: 'STRING' },
-    save_calc_cta:         { group: 'SAVE', type: 'STRING' },
-    save_trust_badge_1:    { group: 'SAVE', type: 'STRING' },
-    save_trust_badge_2:    { group: 'SAVE', type: 'STRING' },
-    save_cds_title:        { group: 'SAVE', type: 'STRING' },
-    save_cds_desc:         { group: 'SAVE', type: 'STRING' },
-    save_cds_img:          { group: 'SAVE', type: 'IMAGE' },
-    save_cds_img_alt:      { group: 'SAVE', type: 'STRING' },
-    save_mma_title:        { group: 'SAVE', type: 'STRING' },
-    save_mma_desc:         { group: 'SAVE', type: 'STRING' },
-    save_mma_btn:          { group: 'SAVE', type: 'STRING' },
-    save_mma_img:          { group: 'SAVE', type: 'IMAGE' },
-    save_mma_img_alt:      { group: 'SAVE', type: 'STRING' },
-    save_kids_title:       { group: 'SAVE', type: 'STRING' },
-    save_kids_desc:        { group: 'SAVE', type: 'STRING' },
-    save_kids_btn:         { group: 'SAVE', type: 'STRING' },
-    save_kids_img:         { group: 'SAVE', type: 'IMAGE' },
-    save_kids_img_alt:     { group: 'SAVE', type: 'STRING' },
+    save_fdic_badge:          { group: 'SAVE', type: 'STRING' },
+    save_hero_title:          { group: 'SAVE', type: 'STRING' },
+    save_hero_highlight:      { group: 'SAVE', type: 'STRING' },
+    save_hero_desc:           { group: 'SAVE', type: 'STRING' },
+    save_hero_img:            { group: 'SAVE', type: 'IMAGE' },
+    save_hero_alt:            { group: 'SAVE', type: 'STRING' },
+    save_calc_title:          { group: 'SAVE', type: 'STRING' },
+    save_calc_desc_prefix:    { group: 'SAVE', type: 'STRING' },
+    save_calc_cta:            { group: 'SAVE', type: 'STRING' },
+    save_calc_label_initial:  { group: 'SAVE', type: 'STRING' },
+    save_calc_label_monthly:  { group: 'SAVE', type: 'STRING' },
+    save_calc_label_years:    { group: 'SAVE', type: 'STRING' },
+    save_calc_label_apy:      { group: 'SAVE', type: 'STRING' },
+    save_calc_label_res:      { group: 'SAVE', type: 'STRING' },
+    save_calc_label_deposits: { group: 'SAVE', type: 'STRING' },
+    save_calc_label_interest: { group: 'SAVE', type: 'STRING' },
+    save_calc_max_deposit:    { group: 'SAVE', type: 'INT' },
+    save_calc_max_monthly:    { group: 'SAVE', type: 'INT' },
+    save_calc_default_apy:    { group: 'SAVE', type: 'FLOAT' },
+    save_trust_title:         { group: 'SAVE', type: 'STRING' },
+    save_cds_title:           { group: 'SAVE', type: 'STRING' },
+    save_cds_desc:            { group: 'SAVE', type: 'STRING' },
+    save_cds_btn:             { group: 'SAVE', type: 'STRING' },
+    save_cds_link:            { group: 'SAVE', type: 'STRING' },
+    save_cds_img:             { group: 'SAVE', type: 'IMAGE' },
+    save_cds_img_alt:         { group: 'SAVE', type: 'STRING' },
+    save_mma_title:           { group: 'SAVE', type: 'STRING' },
+    save_mma_desc:            { group: 'SAVE', type: 'STRING' },
+    save_mma_btn:             { group: 'SAVE', type: 'STRING' },
+    save_mma_link:            { group: 'SAVE', type: 'STRING' },
+    save_mma_img:             { group: 'SAVE', type: 'IMAGE' },
+    save_mma_img_alt:         { group: 'SAVE', type: 'STRING' },
+    save_kids_title:          { group: 'SAVE', type: 'STRING' },
+    save_kids_desc:           { group: 'SAVE', type: 'STRING' },
+    save_kids_btn:            { group: 'SAVE', type: 'STRING' },
+    save_kids_link:           { group: 'SAVE', type: 'STRING' },
+    save_kids_img:            { group: 'SAVE', type: 'IMAGE' },
+    save_kids_img_alt:        { group: 'SAVE', type: 'STRING' },
+    save_prod_title:          { group: 'SAVE', type: 'STRING' },
+    save_prod_subtitle:       { group: 'SAVE', type: 'STRING' },
+    save_prod1_title:         { group: 'SAVE', type: 'STRING' },
+    save_prod1_desc:          { group: 'SAVE', type: 'STRING' },
+    save_prod1_link:          { group: 'SAVE', type: 'STRING' },
+    save_prod1_anchorLink:    { group: 'SAVE', type: 'STRING' },
+    save_prod2_title:         { group: 'SAVE', type: 'STRING' },
+    save_prod2_desc:          { group: 'SAVE', type: 'STRING' },
+    save_prod2_link:          { group: 'SAVE', type: 'STRING' },
+    save_prod2_anchorLink:    { group: 'SAVE', type: 'STRING' },
+    save_prod3_title:         { group: 'SAVE', type: 'STRING' },
+    save_prod3_desc:          { group: 'SAVE', type: 'STRING' },
+    save_prod3_link:          { group: 'SAVE', type: 'STRING' },
+    save_prod3_anchorLink:    { group: 'SAVE', type: 'STRING' },
+    save_trust_desc:          { group: 'SAVE', type: 'STRING' },
+    save_trust_badge_1:       { group: 'SAVE', type: 'STRING' },
+    save_trust_badge_2:       { group: 'SAVE', type: 'STRING' },
 
     // BORROW
     borrow_hero_title:       { group: 'BORROW', type: 'STRING' },
@@ -254,171 +449,232 @@ const SETTING_METADATA: Record<string, { group: string, type: string }> = {
     borrow_hero_img:         { group: 'BORROW', type: 'IMAGE' },
     borrow_hero_alt:         { group: 'BORROW', type: 'STRING' },
     borrow_stat_funded:      { group: 'BORROW', type: 'STRING' },
+    borrow_stat_funded_text: { group: 'BORROW', type: 'STRING' },
     borrow_stat_speed:       { group: 'BORROW', type: 'STRING' },
+    borrow_stat_speed_text:  { group: 'BORROW', type: 'STRING' },
     borrow_stat_approval:    { group: 'BORROW', type: 'STRING' },
-    borrow_trust1_title:     { group: 'BORROW', type: 'STRING' },
-    borrow_trust1_desc:      { group: 'BORROW', type: 'STRING' },
-    borrow_trust2_title:     { group: 'BORROW', type: 'STRING' },
-    borrow_trust2_desc:      { group: 'BORROW', type: 'STRING' },
-    borrow_prod1_title:      { group: 'BORROW', type: 'STRING' },
-    borrow_prod1_desc:       { group: 'BORROW', type: 'STRING' },
-    borrow_prod2_title:      { group: 'BORROW', type: 'STRING' },
-    borrow_prod2_desc:       { group: 'BORROW', type: 'STRING' },
-    borrow_prod3_title:      { group: 'BORROW', type: 'STRING' },
-    borrow_prod3_desc:       { group: 'BORROW', type: 'STRING' },
-    borrow_prod4_title:      { group: 'BORROW', type: 'STRING' },
-    borrow_prod4_desc:       { group: 'BORROW', type: 'STRING' },
-    borrow_prod5_title:      { group: 'BORROW', type: 'STRING' },
-    borrow_prod5_desc:       { group: 'BORROW', type: 'STRING' },
-    borrow_prod6_title:      { group: 'BORROW', type: 'STRING' },
-    borrow_prod6_desc:       { group: 'BORROW', type: 'STRING' },
-    rate_personal_apr:       { group: 'BORROW', type: 'STRING' },
-    rate_auto_apr:           { group: 'BORROW', type: 'STRING' },
-    rate_mortgage_label:     { group: 'BORROW', type: 'STRING' },
-    rate_student_label:      { group: 'BORROW', type: 'STRING' },
-    rate_home_equity_label:  { group: 'BORROW', type: 'STRING' },
+    borrow_stat_approval_text:{ group: 'BORROW', type: 'STRING' },
     borrow_calc_title:       { group: 'BORROW', type: 'STRING' },
     borrow_calc_desc:        { group: 'BORROW', type: 'STRING' },
+    borrow_calc_currency:    { group: 'BORROW', type: 'STRING' },
+    borrow_calc_percent:     { group: 'BORROW', type: 'STRING' },
     borrow_calc_label_amt:   { group: 'BORROW', type: 'STRING' },
     borrow_calc_label_term:  { group: 'BORROW', type: 'STRING' },
     borrow_calc_label_rate:  { group: 'BORROW', type: 'STRING' },
+    borrow_calc_label_princ: { group: 'BORROW', type: 'STRING' },
+    borrow_calc_label_int:   { group: 'BORROW', type: 'STRING' },
     borrow_calc_res_monthly: { group: 'BORROW', type: 'STRING' },
     borrow_calc_res_total:   { group: 'BORROW', type: 'STRING' },
     borrow_calc_cta:         { group: 'BORROW', type: 'STRING' },
+    borrow_calc_unit_mo:     { group: 'BORROW', type: 'STRING' },
+    borrow_calc_min_amt:     { group: 'BORROW', type: 'INT' },
+    borrow_calc_max_amt:     { group: 'BORROW', type: 'INT' },
+    borrow_calc_min_term:    { group: 'BORROW', type: 'INT' },
+    borrow_calc_max_term:    { group: 'BORROW', type: 'INT' },
     borrow_cc_title:         { group: 'BORROW', type: 'STRING' },
     borrow_cc_desc:          { group: 'BORROW', type: 'STRING' },
     borrow_cc_btn:           { group: 'BORROW', type: 'STRING' },
     borrow_cc_img:           { group: 'BORROW', type: 'IMAGE' },
     borrow_cc_img_alt:       { group: 'BORROW', type: 'STRING' },
-    borrow_calc_label_princ: { group: 'BORROW', type: 'STRING' },
-    borrow_calc_label_int:   { group: 'BORROW', type: 'STRING' },
-    borrow_prod_btn_text:    { group: 'BORROW', type: 'STRING' },
+    borrow_cc_link:          { group: 'BORROW', type: 'STRING' },
     borrow_pl_title:         { group: 'BORROW', type: 'STRING' },
     borrow_pl_desc:          { group: 'BORROW', type: 'STRING' },
     borrow_pl_btn:           { group: 'BORROW', type: 'STRING' },
     borrow_pl_img:           { group: 'BORROW', type: 'IMAGE' },
     borrow_pl_img_alt:       { group: 'BORROW', type: 'STRING' },
+    borrow_pl_link:          { group: 'BORROW', type: 'STRING' },
     borrow_mt_title:         { group: 'BORROW', type: 'STRING' },
     borrow_mt_desc:          { group: 'BORROW', type: 'STRING' },
     borrow_mt_btn:           { group: 'BORROW', type: 'STRING' },
     borrow_mt_img:           { group: 'BORROW', type: 'IMAGE' },
     borrow_mt_img_alt:       { group: 'BORROW', type: 'STRING' },
+    borrow_mt_link:          { group: 'BORROW', type: 'STRING' },
     borrow_al_title:         { group: 'BORROW', type: 'STRING' },
     borrow_al_desc:          { group: 'BORROW', type: 'STRING' },
     borrow_al_btn:           { group: 'BORROW', type: 'STRING' },
     borrow_al_img:           { group: 'BORROW', type: 'IMAGE' },
     borrow_al_img_alt:       { group: 'BORROW', type: 'STRING' },
+    borrow_al_link:          { group: 'BORROW', type: 'STRING' },
     borrow_sl_title:         { group: 'BORROW', type: 'STRING' },
     borrow_sl_desc:          { group: 'BORROW', type: 'STRING' },
     borrow_sl_btn:           { group: 'BORROW', type: 'STRING' },
     borrow_sl_img:           { group: 'BORROW', type: 'IMAGE' },
     borrow_sl_img_alt:       { group: 'BORROW', type: 'STRING' },
+    borrow_sl_link:          { group: 'BORROW', type: 'STRING' },
     borrow_he_title:         { group: 'BORROW', type: 'STRING' },
     borrow_he_desc:          { group: 'BORROW', type: 'STRING' },
     borrow_he_btn:           { group: 'BORROW', type: 'STRING' },
     borrow_he_img:           { group: 'BORROW', type: 'IMAGE' },
     borrow_he_alt:           { group: 'BORROW', type: 'STRING' },
+    borrow_he_link:          { group: 'BORROW', type: 'STRING' },
+    borrow_grid_title:       { group: 'BORROW', type: 'STRING' },
+    borrow_grid_desc:        { group: 'BORROW', type: 'STRING' },
+    borrow_prod_btn_text:    { group: 'BORROW', type: 'STRING' },
+    borrow_prod1_title:      { group: 'BORROW', type: 'STRING' },
+    borrow_prod1_desc:       { group: 'BORROW', type: 'STRING' },
+    borrow_prod1_link:       { group: 'BORROW', type: 'STRING' },
+    borrow_prod2_title:      { group: 'BORROW', type: 'STRING' },
+    borrow_prod2_desc:       { group: 'BORROW', type: 'STRING' },
+    borrow_prod2_link:       { group: 'BORROW', type: 'STRING' },
+    borrow_prod3_title:      { group: 'BORROW', type: 'STRING' },
+    borrow_prod3_desc:       { group: 'BORROW', type: 'STRING' },
+    borrow_prod3_link:       { group: 'BORROW', type: 'STRING' },
+    borrow_prod4_title:      { group: 'BORROW', type: 'STRING' },
+    borrow_prod4_desc:       { group: 'BORROW', type: 'STRING' },
+    borrow_prod4_link:       { group: 'BORROW', type: 'STRING' },
+    borrow_prod5_title:      { group: 'BORROW', type: 'STRING' },
+    borrow_prod5_desc:       { group: 'BORROW', type: 'STRING' },
+    borrow_prod5_link:       { group: 'BORROW', type: 'STRING' },
+    borrow_prod6_title:      { group: 'BORROW', type: 'STRING' },
+    borrow_prod6_desc:       { group: 'BORROW', type: 'STRING' },
+    borrow_prod6_link:       { group: 'BORROW', type: 'STRING' },
+    borrow_trust1_title:     { group: 'BORROW', type: 'STRING' },
+    borrow_trust1_desc:      { group: 'BORROW', type: 'STRING' },
+    borrow_trust2_title:     { group: 'BORROW', type: 'STRING' },
+    borrow_trust2_desc:      { group: 'BORROW', type: 'STRING' },
 
     // WEALTH
+    wealth_hero_badge:           { group: 'WEALTH', type: 'STRING' },
     wealth_hero_title:           { group: 'WEALTH', type: 'STRING' },
     wealth_hero_highlight:       { group: 'WEALTH', type: 'STRING' },
     wealth_hero_desc:            { group: 'WEALTH', type: 'STRING' },
     wealth_hero_img:             { group: 'WEALTH', type: 'IMAGE' },
     wealth_hero_alt:             { group: 'WEALTH', type: 'STRING' },
-    wealth_service1_title:       { group: 'WEALTH', type: 'STRING' },
-    wealth_service1_desc:        { group: 'WEALTH', type: 'STRING' },
-    wealth_service2_title:       { group: 'WEALTH', type: 'STRING' },
-    wealth_service2_desc:        { group: 'WEALTH', type: 'STRING' },
-    wealth_service3_title:       { group: 'WEALTH', type: 'STRING' },
-    wealth_service3_desc:        { group: 'WEALTH', type: 'STRING' },
-    wealth_advisor_title:        { group: 'WEALTH', type: 'STRING' },
-    wealth_advisor_desc:         { group: 'WEALTH', type: 'STRING' },
-    wealth_hero_badge:           { group: 'WEALTH', type: 'STRING' },
-    wealth_grid_title:           { group: 'WEALTH', type: 'STRING' },
-    wealth_grid_desc:            { group: 'WEALTH', type: 'STRING' },
-    wealth_service1_btn:         { group: 'WEALTH', type: 'STRING' },
-    wealth_service2_btn:         { group: 'WEALTH', type: 'STRING' },
-    wealth_service3_btn:         { group: 'WEALTH', type: 'STRING' },
-    wealth_adv_item1:            { group: 'WEALTH', type: 'STRING' },
-    wealth_adv_item2:            { group: 'WEALTH', type: 'STRING' },
-    wealth_adv_item3:            { group: 'WEALTH', type: 'STRING' },
-    wealth_adv_btn:              { group: 'WEALTH', type: 'STRING' },
     wealth_sim_title:            { group: 'WEALTH', type: 'STRING' },
     wealth_sim_desc:             { group: 'WEALTH', type: 'STRING' },
     wealth_sim_risk_label:       { group: 'WEALTH', type: 'STRING' },
     wealth_sim_return_label:     { group: 'WEALTH', type: 'STRING' },
     wealth_sim_note:             { group: 'WEALTH', type: 'STRING' },
+    wealth_sim_status_low:       { group: 'WEALTH', type: 'STRING' },
+    wealth_sim_status_mid:       { group: 'WEALTH', type: 'STRING' },
+    wealth_sim_status_high:      { group: 'WEALTH', type: 'STRING' },
     wealth_sim_label_volatility: { group: 'WEALTH', type: 'STRING' },
     wealth_sim_label_allocation: { group: 'WEALTH', type: 'STRING' },
     wealth_sim_legend_stocks:    { group: 'WEALTH', type: 'STRING' },
     wealth_sim_legend_crypto:    { group: 'WEALTH', type: 'STRING' },
     wealth_sim_legend_real:      { group: 'WEALTH', type: 'STRING' },
     wealth_sim_legend_bonds:     { group: 'WEALTH', type: 'STRING' },
+    wealth_sim_vol_low:          { group: 'WEALTH', type: 'STRING' },
+    wealth_sim_vol_mid:          { group: 'WEALTH', type: 'STRING' },
+    wealth_sim_vol_high:         { group: 'WEALTH', type: 'STRING' },
+    wealth_grid_title:           { group: 'WEALTH', type: 'STRING' },
+    wealth_grid_desc:            { group: 'WEALTH', type: 'STRING' },
+    wealth_service1_title:       { group: 'WEALTH', type: 'STRING' },
+    wealth_service1_desc:        { group: 'WEALTH', type: 'STRING' },
+    wealth_service1_btn:         { group: 'WEALTH', type: 'STRING' },
+    wealth_service1_id:          { group: 'WEALTH', type: 'STRING' },
+    wealth_service2_title:       { group: 'WEALTH', type: 'STRING' },
+    wealth_service2_desc:        { group: 'WEALTH', type: 'STRING' },
+    wealth_service2_btn:         { group: 'WEALTH', type: 'STRING' },
+    wealth_service2_id:          { group: 'WEALTH', type: 'STRING' },
+    wealth_service3_title:       { group: 'WEALTH', type: 'STRING' },
+    wealth_service3_desc:        { group: 'WEALTH', type: 'STRING' },
+    wealth_service3_btn:         { group: 'WEALTH', type: 'STRING' },
+    wealth_service3_id:          { group: 'WEALTH', type: 'STRING' },
+    wealth_advisor_title:        { group: 'WEALTH', type: 'STRING' },
+    wealth_advisor_desc:         { group: 'WEALTH', type: 'STRING' },
+    wealth_adv_item1:            { group: 'WEALTH', type: 'STRING' },
+    wealth_adv_item2:            { group: 'WEALTH', type: 'STRING' },
+    wealth_adv_item3:            { group: 'WEALTH', type: 'STRING' },
+    wealth_adv_btn:              { group: 'WEALTH', type: 'STRING' },
     wealth_pcg_title:            { group: 'WEALTH', type: 'STRING' },
     wealth_pcg_desc:             { group: 'WEALTH', type: 'STRING' },
+    wealth_pcg_anchor:           { group: 'WEALTH', type: 'STRING' },
     wealth_pcg_btn:              { group: 'WEALTH', type: 'STRING' },
     wealth_pcg_img:              { group: 'WEALTH', type: 'IMAGE' },
     wealth_pcg_img_alt:          { group: 'WEALTH', type: 'STRING' },
     wealth_ret_title:            { group: 'WEALTH', type: 'STRING' },
     wealth_ret_desc:             { group: 'WEALTH', type: 'STRING' },
+    wealth_ret_anchor:           { group: 'WEALTH', type: 'STRING' },
     wealth_ret_btn:              { group: 'WEALTH', type: 'STRING' },
     wealth_ret_img:              { group: 'WEALTH', type: 'IMAGE' },
     wealth_ret_img_alt:          { group: 'WEALTH', type: 'STRING' },
     wealth_est_title:            { group: 'WEALTH', type: 'STRING' },
     wealth_est_desc:             { group: 'WEALTH', type: 'STRING' },
+    wealth_est_anchor:           { group: 'WEALTH', type: 'STRING' },
     wealth_est_btn:              { group: 'WEALTH', type: 'STRING' },
     wealth_est_img:              { group: 'WEALTH', type: 'IMAGE' },
     wealth_est_img_alt:          { group: 'WEALTH', type: 'STRING' },
 
     // INSURE
-    insure_hero_badge:     { group: 'INSURE', type: 'STRING' },
-    insure_hero_title:     { group: 'INSURE', type: 'STRING' },
-    insure_hero_highlight: { group: 'INSURE', type: 'STRING' },
-    insure_hero_desc:      { group: 'INSURE', type: 'STRING' },
-    insure_hero_img:       { group: 'INSURE', type: 'IMAGE' },
-    insure_hero_alt:       { group: 'INSURE', type: 'STRING' },
-    insure_products_title: { group: 'INSURE', type: 'STRING' },
-    insure_products_desc:  { group: 'INSURE', type: 'STRING' },
-    insure_prod1_title:    { group: 'INSURE', type: 'STRING' },
-    insure_prod1_desc:     { group: 'INSURE', type: 'STRING' },
-    insure_prod2_title:    { group: 'INSURE', type: 'STRING' },
-    insure_prod2_desc:     { group: 'INSURE', type: 'STRING' },
-    insure_prod3_title:    { group: 'INSURE', type: 'STRING' },
-    insure_prod3_desc:     { group: 'INSURE', type: 'STRING' },
-    insure_prod4_title:    { group: 'INSURE', type: 'STRING' },
-    insure_prod4_desc:     { group: 'INSURE', type: 'STRING' },
-    insure_prod5_title:    { group: 'INSURE', type: 'STRING' },
-    insure_prod5_desc:     { group: 'INSURE', type: 'STRING' },
-    insure_prod6_title:    { group: 'INSURE', type: 'STRING' },
-    insure_prod6_desc:     { group: 'INSURE', type: 'STRING' },
-    insure_partners_title: { group: 'INSURE', type: 'STRING' },
-    insure_partner1_img:   { group: 'INSURE', type: 'IMAGE' },
-    insure_partner2_img:   { group: 'INSURE', type: 'IMAGE' },
-    insure_partner3_img:   { group: 'INSURE', type: 'IMAGE' },
-    insure_partner4_img:   { group: 'INSURE', type: 'IMAGE' },
-    insure_prod1_img:      { group: 'INSURE', type: 'IMAGE' },
-    insure_prod1_img_alt:  { group: 'INSURE', type: 'STRING' },
-    insure_prod1_btn:      { group: 'INSURE', type: 'STRING' },
-    insure_prod2_img:      { group: 'INSURE', type: 'IMAGE' },
-    insure_prod2_img_alt:  { group: 'INSURE', type: 'STRING' },
-    insure_prod2_btn:      { group: 'INSURE', type: 'STRING' },
-    insure_prod3_img:      { group: 'INSURE', type: 'IMAGE' },
-    insure_prod3_img_alt:  { group: 'INSURE', type: 'STRING' },
-    insure_prod3_btn:      { group: 'INSURE', type: 'STRING' },
-    insure_prod4_img:      { group: 'INSURE', type: 'IMAGE' },
-    insure_prod4_img_alt:  { group: 'INSURE', type: 'STRING' },
-    insure_prod4_btn:      { group: 'INSURE', type: 'STRING' },
-    insure_wiz_title:      { group: 'INSURE', type: 'STRING' },
-    insure_wiz_desc:       { group: 'INSURE', type: 'STRING' },
-    insure_wiz_step1:      { group: 'INSURE', type: 'STRING' },
-    insure_wiz_step2:      { group: 'INSURE', type: 'STRING' },
-    insure_wiz_match:      { group: 'INSURE', type: 'STRING' },
-    insure_wiz_btn_view:   { group: 'INSURE', type: 'STRING' },
-    insure_wiz_btn_reset:  { group: 'INSURE', type: 'STRING' },
-    insure_supp_title:     { group: 'INSURE', type: 'STRING' },
-    insure_supp_desc:      { group: 'INSURE', type: 'STRING' },
+    insure_hero_badge:              { group: 'INSURE', type: 'STRING' },
+    insure_hero_title:              { group: 'INSURE', type: 'STRING' },
+    insure_hero_highlight:          { group: 'INSURE', type: 'STRING' },
+    insure_hero_desc:               { group: 'INSURE', type: 'STRING' },
+    insure_hero_img:                { group: 'INSURE', type: 'IMAGE' },
+    insure_hero_alt:                { group: 'INSURE', type: 'STRING' },
+    insure_wiz_title:               { group: 'INSURE', type: 'STRING' },
+    insure_wiz_desc:                { group: 'INSURE', type: 'STRING' },
+    insure_wiz_step1:               { group: 'INSURE', type: 'STRING' },
+    insure_wiz_step1_option1:       { group: 'INSURE', type: 'STRING' },
+    insure_wiz_step1_option1Val:    { group: 'INSURE', type: 'STRING' },
+    insure_wiz_step1_option2:       { group: 'INSURE', type: 'STRING' },
+    insure_wiz_step1_option2Val:    { group: 'INSURE', type: 'STRING' },
+    insure_wiz_step1_option3:       { group: 'INSURE', type: 'STRING' },
+    insure_wiz_step1_option3Val:    { group: 'INSURE', type: 'STRING' },
+    insure_wiz_step2:               { group: 'INSURE', type: 'STRING' },
+    insure_wiz_step2_option1:       { group: 'INSURE', type: 'STRING' },
+    insure_wiz_step2_option1Val:    { group: 'INSURE', type: 'STRING' },
+    insure_wiz_step2_option2:       { group: 'INSURE', type: 'STRING' },
+    insure_wiz_step2_option2Val:    { group: 'INSURE', type: 'STRING' },
+    insure_wiz_step2_option3:       { group: 'INSURE', type: 'STRING' },
+    insure_wiz_step2_option3Val:    { group: 'INSURE', type: 'STRING' },
+    insure_wiz_match:               { group: 'INSURE', type: 'STRING' },
+    insure_wiz_btn_view:            { group: 'INSURE', type: 'STRING' },
+    insure_wiz_btn_reset:           { group: 'INSURE', type: 'STRING' },
+    insure_products_title:          { group: 'INSURE', type: 'STRING' },
+    insure_products_desc:           { group: 'INSURE', type: 'STRING' },
+    insure_prod1_title:             { group: 'INSURE', type: 'STRING' },
+    insure_prod1_id:                { group: 'INSURE', type: 'STRING' },
+    insure_prod1_desc:              { group: 'INSURE', type: 'STRING' },
+    insure_prod1_img:               { group: 'INSURE', type: 'IMAGE' },
+    insure_prod1_img_alt:           { group: 'INSURE', type: 'STRING' },
+    insure_prod1_btn:               { group: 'INSURE', type: 'STRING' },
+    insure_prod1_link:              { group: 'INSURE', type: 'STRING' },
+    insure_prod2_title:             { group: 'INSURE', type: 'STRING' },
+    insure_prod2_id:                { group: 'INSURE', type: 'STRING' },
+    insure_prod2_desc:              { group: 'INSURE', type: 'STRING' },
+    insure_prod2_img:               { group: 'INSURE', type: 'IMAGE' },
+    insure_prod2_img_alt:           { group: 'INSURE', type: 'STRING' },
+    insure_prod2_btn:               { group: 'INSURE', type: 'STRING' },
+    insure_prod2_link:              { group: 'INSURE', type: 'STRING' },
+    insure_prod3_title:             { group: 'INSURE', type: 'STRING' },
+    insure_prod3_id:                { group: 'INSURE', type: 'STRING' },
+    insure_prod3_desc:              { group: 'INSURE', type: 'STRING' },
+    insure_prod3_img:               { group: 'INSURE', type: 'IMAGE' },
+    insure_prod3_img_alt:           { group: 'INSURE', type: 'STRING' },
+    insure_prod3_btn:               { group: 'INSURE', type: 'STRING' },
+    insure_prod3_link:              { group: 'INSURE', type: 'STRING' },
+    insure_prod4_title:             { group: 'INSURE', type: 'STRING' },
+    insure_prod4_id:                { group: 'INSURE', type: 'STRING' },
+    insure_prod4_desc:              { group: 'INSURE', type: 'STRING' },
+    insure_prod4_img:               { group: 'INSURE', type: 'IMAGE' },
+    insure_prod4_img_alt:           { group: 'INSURE', type: 'STRING' },
+    insure_prod4_btn:               { group: 'INSURE', type: 'STRING' },
+    insure_prod4_link:              { group: 'INSURE', type: 'STRING' },
+    insure_supp_title:              { group: 'INSURE', type: 'STRING' },
+    insure_supp_desc:               { group: 'INSURE', type: 'STRING' },
+    insure_supp_link_text:          { group: 'INSURE', type: 'STRING' },
+    insure_prod5_title:             { group: 'INSURE', type: 'STRING' },
+    insure_prod5_id:                { group: 'INSURE', type: 'STRING' },
+    insure_prod5_desc:              { group: 'INSURE', type: 'STRING' },
+    insure_prod5_link:              { group: 'INSURE', type: 'STRING' },
+    insure_prod6_title:             { group: 'INSURE', type: 'STRING' },
+    insure_prod6_id:                { group: 'INSURE', type: 'STRING' },
+    insure_prod6_desc:              { group: 'INSURE', type: 'STRING' },
+    insure_prod6_link:              { group: 'INSURE', type: 'STRING' },
+    insure_partners_title:          { group: 'INSURE', type: 'STRING' },
+    insure_partner1_img:            { group: 'INSURE', type: 'IMAGE' },
+    insure_partner1_img_alt:        { group: 'INSURE', type: 'STRING' },
+    insure_partner2_img:            { group: 'INSURE', type: 'IMAGE' },
+    insure_partner2_img_alt:        { group: 'INSURE', type: 'STRING' },
+    insure_partner3_img:            { group: 'INSURE', type: 'IMAGE' },
+    insure_partner3_img_alt:        { group: 'INSURE', type: 'STRING' },
+    insure_partner4_img:            { group: 'INSURE', type: 'IMAGE' },
+    insure_partner4_img_alt:        { group: 'INSURE', type: 'STRING' },
 
     // PAYMENTS
+    payments_hero_badge:       { group: 'PAYMENTS', type: 'STRING' },
     payments_hero_title:       { group: 'PAYMENTS', type: 'STRING' },
     payments_hero_highlight:   { group: 'PAYMENTS', type: 'STRING' },
     payments_hero_desc:        { group: 'PAYMENTS', type: 'STRING' },
@@ -437,6 +693,7 @@ const SETTING_METADATA: Record<string, { group: string, type: string }> = {
     payments_method3_title:    { group: 'PAYMENTS', type: 'STRING' },
     payments_method3_desc:     { group: 'PAYMENTS', type: 'STRING' },
     payments_est_btn:          { group: 'PAYMENTS', type: 'STRING' },
+    payments_est_link:         { group: 'PAYMENTS', type: 'STRING' },
     payments_est_time_label:   { group: 'PAYMENTS', type: 'STRING' },
     payments_est_time_val:     { group: 'PAYMENTS', type: 'STRING' },
     payments_est_sec_label:    { group: 'PAYMENTS', type: 'STRING' },
@@ -448,22 +705,28 @@ const SETTING_METADATA: Record<string, { group: string, type: string }> = {
     payments_bills_btn:        { group: 'PAYMENTS', type: 'STRING' },
     payments_bills_img:        { group: 'PAYMENTS', type: 'IMAGE' },
     payments_bills_alt:        { group: 'PAYMENTS', type: 'STRING' },
+    payments_bills_link:       { group: 'PAYMENTS', type: 'STRING' },
     payments_p2p_title:        { group: 'PAYMENTS', type: 'STRING' },
     payments_p2p_desc:         { group: 'PAYMENTS', type: 'STRING' },
     payments_p2p_btn:          { group: 'PAYMENTS', type: 'STRING' },
     payments_p2p_img:          { group: 'PAYMENTS', type: 'IMAGE' },
     payments_p2p_alt:          { group: 'PAYMENTS', type: 'STRING' },
+    payments_p2p_link:         { group: 'PAYMENTS', type: 'STRING' },
     payments_wires_title:      { group: 'PAYMENTS', type: 'STRING' },
     payments_wires_desc:       { group: 'PAYMENTS', type: 'STRING' },
     payments_wires_btn:        { group: 'PAYMENTS', type: 'STRING' },
     payments_wires_img:        { group: 'PAYMENTS', type: 'IMAGE' },
     payments_wires_alt:        { group: 'PAYMENTS', type: 'STRING' },
+    payments_wires_link:       { group: 'PAYMENTS', type: 'STRING' },
     payments_supp_title:       { group: 'PAYMENTS', type: 'STRING' },
     payments_supp_desc:        { group: 'PAYMENTS', type: 'STRING' },
     payments_supp1_title:      { group: 'PAYMENTS', type: 'STRING' },
     payments_supp1_desc:       { group: 'PAYMENTS', type: 'STRING' },
+    payments_supp1_link:       { group: 'PAYMENTS', type: 'STRING' },
     payments_supp2_title:      { group: 'PAYMENTS', type: 'STRING' },
     payments_supp2_desc:       { group: 'PAYMENTS', type: 'STRING' },
+    payments_supp2_link:       { group: 'PAYMENTS', type: 'STRING' },
+    payments_supp_linkText:    { group: 'PAYMENTS', type: 'STRING' },
     payments_util1_title:      { group: 'PAYMENTS', type: 'STRING' },
     payments_util1_desc:       { group: 'PAYMENTS', type: 'STRING' },
     payments_util2_title:      { group: 'PAYMENTS', type: 'STRING' },
@@ -471,7 +734,38 @@ const SETTING_METADATA: Record<string, { group: string, type: string }> = {
     payments_util3_title:      { group: 'PAYMENTS', type: 'STRING' },
     payments_util3_desc:       { group: 'PAYMENTS', type: 'STRING' },
 
+    // CRYPTO
+    crypto_hero_badge:              { group: 'CRYPTO', type: 'STRING' },
+    crypto_hero_title:              { group: 'CRYPTO', type: 'STRING' },
+    crypto_hero_highlight:          { group: 'CRYPTO', type: 'STRING' },
+    crypto_hero_desc:               { group: 'CRYPTO', type: 'STRING' },
+    crypto_hero_img:                { group: 'CRYPTO', type: 'IMAGE' },
+    crypto_hero_alt:                { group: 'CRYPTO', type: 'STRING' },
+    crypto_hero_btn_primary:        { group: 'CRYPTO', type: 'STRING' },
+    crypto_hero_btn_primary_link:   { group: 'CRYPTO', type: 'STRING' },
+    crypto_hero_btn_secondary:      { group: 'CRYPTO', type: 'STRING' },
+    crypto_hero_btn_secondary_link: { group: 'CRYPTO', type: 'STRING' },
+    crypto_table_title:             { group: 'CRYPTO', type: 'STRING' },
+    crypto_table_subtitle:          { group: 'CRYPTO', type: 'STRING' },
+    crypto_th1:                     { group: 'CRYPTO', type: 'STRING' },
+    crypto_th2:                     { group: 'CRYPTO', type: 'STRING' },
+    crypto_th3:                     { group: 'CRYPTO', type: 'STRING' },
+    crypto_th4:                     { group: 'CRYPTO', type: 'STRING' },
+    crypto_th5:                     { group: 'CRYPTO', type: 'STRING' },
+    crypto_tb_symbol:               { group: 'CRYPTO', type: 'STRING' },
+    crypto_tb_link:                 { group: 'CRYPTO', type: 'STRING' },
+    crypto_tb_link_text:            { group: 'CRYPTO', type: 'STRING' },
+    crypto_sec_title:               { group: 'CRYPTO', type: 'STRING' },
+    crypto_sec_desc:                { group: 'CRYPTO', type: 'STRING' },
+    crypto_feat1_title:             { group: 'CRYPTO', type: 'STRING' },
+    crypto_feat1_desc:              { group: 'CRYPTO', type: 'STRING' },
+    crypto_feat2_title:             { group: 'CRYPTO', type: 'STRING' },
+    crypto_feat2_desc:              { group: 'CRYPTO', type: 'STRING' },
+    crypto_feat3_title:             { group: 'CRYPTO', type: 'STRING' },
+    crypto_feat3_desc:              { group: 'CRYPTO', type: 'STRING' },
+
     // LEARN
+    learn_hero_badge:         { group: 'LEARN', type: 'STRING' },
     learn_hero_title:         { group: 'LEARN', type: 'STRING' },
     learn_hero_highlight:     { group: 'LEARN', type: 'STRING' },
     learn_hero_desc:          { group: 'LEARN', type: 'STRING' },
@@ -479,6 +773,17 @@ const SETTING_METADATA: Record<string, { group: string, type: string }> = {
     learn_hero_alt:           { group: 'LEARN', type: 'STRING' },
     learn_pulse_title:        { group: 'LEARN', type: 'STRING' },
     learn_pulse_desc:         { group: 'LEARN', type: 'STRING' },
+    learn_pulse_btn:          { group: 'LEARN', type: 'STRING' },
+    learn_pulse_q1:           { group: 'LEARN', type: 'STRING' },
+    learn_pulse_q2:           { group: 'LEARN', type: 'STRING' },
+    learn_pulse_q3:           { group: 'LEARN', type: 'STRING' },
+    learn_pulse_res_high:     { group: 'LEARN', type: 'STRING' },
+    learn_pulse_res_high_msg: { group: 'LEARN', type: 'STRING' },
+    learn_pulse_res_mid:      { group: 'LEARN', type: 'STRING' },
+    learn_pulse_res_mid_msg:  { group: 'LEARN', type: 'STRING' },
+    learn_pulse_res_low:      { group: 'LEARN', type: 'STRING' },
+    learn_pulse_res_low_msg:  { group: 'LEARN', type: 'STRING' },
+    learn_pulse_reset_btn:    { group: 'LEARN', type: 'STRING' },
     learn_insights_title:     { group: 'LEARN', type: 'STRING' },
     learn_insights_desc:      { group: 'LEARN', type: 'STRING' },
     learn_art1_tag:           { group: 'LEARN', type: 'STRING' },
@@ -487,28 +792,21 @@ const SETTING_METADATA: Record<string, { group: string, type: string }> = {
     learn_art1_img:           { group: 'LEARN', type: 'IMAGE' },
     learn_art1_alt:           { group: 'LEARN', type: 'STRING' },
     learn_art1_link:          { group: 'LEARN', type: 'STRING' },
+    learn_art1_linkText:      { group: 'LEARN', type: 'STRING' },
     learn_art2_tag:           { group: 'LEARN', type: 'STRING' },
     learn_art2_title:         { group: 'LEARN', type: 'STRING' },
     learn_art2_desc:          { group: 'LEARN', type: 'STRING' },
     learn_art2_img:           { group: 'LEARN', type: 'IMAGE' },
     learn_art2_alt:           { group: 'LEARN', type: 'STRING' },
     learn_art2_link:          { group: 'LEARN', type: 'STRING' },
+    learn_art2_linkText:      { group: 'LEARN', type: 'STRING' },
     learn_art3_tag:           { group: 'LEARN', type: 'STRING' },
     learn_art3_title:         { group: 'LEARN', type: 'STRING' },
     learn_art3_desc:          { group: 'LEARN', type: 'STRING' },
     learn_art3_img:           { group: 'LEARN', type: 'IMAGE' },
     learn_art3_alt:           { group: 'LEARN', type: 'STRING' },
     learn_art3_link:          { group: 'LEARN', type: 'STRING' },
-    learn_pulse_btn:          { group: 'LEARN', type: 'STRING' },
-    learn_pulse_q1:           { group: 'LEARN', type: 'STRING' },
-    learn_pulse_q2:           { group: 'LEARN', type: 'STRING' },
-    learn_pulse_q3:           { group: 'LEARN', type: 'STRING' },
-    learn_pulse_res_high:     { group: 'LEARN', type: 'STRING' },
-    learn_pulse_res_mid:      { group: 'LEARN', type: 'STRING' },
-    learn_pulse_res_low:      { group: 'LEARN', type: 'STRING' },
-    learn_pulse_res_high_msg: { group: 'LEARN', type: 'STRING' },
-    learn_pulse_res_mid_msg:  { group: 'LEARN', type: 'STRING' },
-    learn_pulse_res_low_msg:  { group: 'LEARN', type: 'STRING' },
+    learn_art3_linkText:      { group: 'LEARN', type: 'STRING' },
     learn_cat1_title:         { group: 'LEARN', type: 'STRING' },
     learn_cat1_desc:          { group: 'LEARN', type: 'STRING' },
     learn_cat2_title:         { group: 'LEARN', type: 'STRING' },
@@ -518,39 +816,26 @@ const SETTING_METADATA: Record<string, { group: string, type: string }> = {
     learn_cat4_title:         { group: 'LEARN', type: 'STRING' },
     learn_cat4_desc:          { group: 'LEARN', type: 'STRING' },
 
-    // CRYPTO
-    crypto_hero_title:         { group: 'CRYPTO', type: 'STRING' },
-    crypto_hero_highlight:     { group: 'CRYPTO', type: 'STRING' },
-    crypto_hero_desc:          { group: 'CRYPTO', type: 'STRING' },
-    crypto_hero_img:           { group: 'CRYPTO', type: 'IMAGE' },
-    crypto_hero_alt:           { group: 'CRYPTO', type: 'STRING' },
-    crypto_feat1_title:        { group: 'CRYPTO', type: 'STRING' },
-    crypto_feat1_desc:         { group: 'CRYPTO', type: 'STRING' },
-    crypto_feat2_title:        { group: 'CRYPTO', type: 'STRING' },
-    crypto_feat2_desc:         { group: 'CRYPTO', type: 'STRING' },
-    crypto_feat3_title:        { group: 'CRYPTO', type: 'STRING' },
-    crypto_feat3_desc:         { group: 'CRYPTO', type: 'STRING' },
-    crypto_hero_btn_primary:   { group: 'CRYPTO', type: 'STRING' },
-    crypto_hero_btn_secondary: { group: 'CRYPTO', type: 'STRING' },
-    crypto_table_title :       { group: 'CRYPTO', type: 'STRING' },
-    crypto_sec_title:          { group: 'CRYPTO', type: 'STRING' },
-    crypto_sec_desc:           { group: 'CRYPTO', type: 'STRING' },
-
     // ABOUT
-    about_hero_title:     { group: 'ABOUT', type: 'STRING' },
-    about_hero_desc:      { group: 'ABOUT', type: 'STRING' },
-    about_hero_img:       { group: 'ABOUT', type: 'IMAGE' },
-    about_hero_alt:       { group: 'ABOUT', type: 'STRING' },
-    about_stat_users:     { group: 'ABOUT', type: 'STRING' },
-    about_stat_assets:    { group: 'ABOUT', type: 'STRING' },
-    about_stat_countries: { group: 'ABOUT', type: 'STRING' },
-    about_stat_support:   { group: 'ABOUT', type: 'STRING' },
-    about_mission1_title: { group: 'ABOUT', type: 'STRING' },
-    about_mission1_desc:  { group: 'ABOUT', type: 'STRING' },
-    about_mission2_title: { group: 'ABOUT', type: 'STRING' },
-    about_mission2_desc:  { group: 'ABOUT', type: 'STRING' },
-    about_mission3_title: { group: 'ABOUT', type: 'STRING' },
-    about_mission3_desc:  { group: 'ABOUT', type: 'STRING' },
+    about_hero_title:          { group: 'ABOUT', type: 'STRING' },
+    about_hero_desc:           { group: 'ABOUT', type: 'STRING' },
+    about_hero_img:            { group: 'ABOUT', type: 'IMAGE' },
+    about_hero_alt:            { group: 'ABOUT', type: 'STRING' },
+    about_stat_users:          { group: 'ABOUT', type: 'STRING' },
+    about_stat_users_text:     { group: 'ABOUT', type: 'STRING' },
+    about_stat_assets:         { group: 'ABOUT', type: 'STRING' },
+    about_stat_assets_text:    { group: 'ABOUT', type: 'STRING' },
+    about_stat_countries:      { group: 'ABOUT', type: 'STRING' },
+    about_stat_countries_text: { group: 'ABOUT', type: 'STRING' },
+    about_stat_support:        { group: 'ABOUT', type: 'STRING' },
+    about_stat_support_text:   { group: 'ABOUT', type: 'STRING' },
+    about_mission_title:       { group: 'ABOUT', type: 'STRING' },
+    about_mission1_title:      { group: 'ABOUT', type: 'STRING' },
+    about_mission1_desc:       { group: 'ABOUT', type: 'STRING' },
+    about_mission2_title:      { group: 'ABOUT', type: 'STRING' },
+    about_mission2_desc:       { group: 'ABOUT', type: 'STRING' },
+    about_mission3_title:      { group: 'ABOUT', type: 'STRING' },
+    about_mission3_desc:       { group: 'ABOUT', type: 'STRING' },
 
     // SUPPORT
     support_hero_title:    { group: 'SUPPORT', type: 'STRING' },
@@ -570,91 +855,72 @@ const SETTING_METADATA: Record<string, { group: string, type: string }> = {
     support_faq_desc:      { group: 'SUPPORT', type: 'STRING' },
     support_faq_link:      { group: 'SUPPORT', type: 'STRING' },
     support_faq_linkText:  { group: 'SUPPORT', type: 'STRING' },
+    support_faq_linkArrow: { group: 'SUPPORT', type: 'STRING' },
 
-    // --- RATES PAGE  ---
+    // --- RATES  ---
     rates_hero_title:       { group: 'RATES', type: 'STRING' },
     rates_hero_highlight:   { group: 'RATES', type: 'STRING' },
     rates_hero_desc:        { group: 'RATES', type: 'STRING' },
     rates_hero_img:         { group: 'RATES', type: 'IMAGE' },
     rates_hero_alt:         { group: 'RATES', type: 'STRING' },
-    rate_mortgage_30yr:     { group: 'RATES', type: 'STRING' },
     rates_title_deposit:    { group: 'RATES', type: 'STRING' },
-    rates_title_borrow:     { group: 'RATES', type: 'STRING' },
-    rates_disclaimer_title: { group: 'RATES', type: 'STRING' },
     rates_dep_head_prod:    { group: 'RATES', type: 'STRING' },
+    rates_tag_popular:      { group: 'RATES', type: 'STRING' },
     rates_dep_head_rate:    { group: 'RATES', type: 'STRING' },
     rates_dep_head_apy:     { group: 'RATES', type: 'STRING' },
     rates_dep_head_min:     { group: 'RATES', type: 'STRING' },
+    rates_title_borrow:     { group: 'RATES', type: 'STRING' },
     rates_loan_head_type:   { group: 'RATES', type: 'STRING' },
     rates_loan_head_term:   { group: 'RATES', type: 'STRING' },
     rates_loan_head_apr:    { group: 'RATES', type: 'STRING' },
     rates_loan_head_detail: { group: 'RATES', type: 'STRING' },
-    rates_tag_popular:      { group: 'RATES', type: 'STRING' },
     rates_btn_view:         { group: 'RATES', type: 'STRING' },
+    rates_percent:          { group: 'RATES', type: 'STRING' },
+    rates_disclaimer_title: { group: 'RATES', type: 'STRING' },
     rates_disclaimer:       { group: 'RATES', type: 'STRING' },
-    rate_hysa_name:         { group: 'RATES', type: 'STRING' },
-    rate_hysa_rate:         { group: 'RATES', type: 'STRING' },
-    rate_hysa_min:          { group: 'RATES', type: 'STRING' },
-    rate_mma_name:          { group: 'RATES', type: 'STRING' },
-    rate_mma_rate:          { group: 'RATES', type: 'STRING' },
-    rate_mma_min:           { group: 'RATES', type: 'STRING' },
-    rate_cd_name:           { group: 'RATES', type: 'STRING' },
-    rate_cd_rate:           { group: 'RATES', type: 'STRING' },
-    rate_cd_min:            { group: 'RATES', type: 'STRING' },
-    rate_kids_name:         { group: 'RATES', type: 'STRING' },
-    rate_kids_rate:         { group: 'RATES', type: 'STRING' },
-    rate_kids_min:          { group: 'RATES', type: 'STRING' },
-    rate_auto_name:         { group: 'RATES', type: 'STRING' },
-    rate_auto_term:         { group: 'RATES', type: 'STRING' },
-    rate_personal_name:     { group: 'RATES', type: 'STRING' },
-    rate_personal_term:     { group: 'RATES', type: 'STRING' },
-    rate_mortgage_name:     { group: 'RATES', type: 'STRING' },
-    rate_mortgage_term:     { group: 'RATES', type: 'STRING' },
-    rate_cc_name:           { group: 'RATES', type: 'STRING' },
-    rate_cc_term:           { group: 'RATES', type: 'STRING' },
-    rate_cc_intro:          { group: 'RATES', type: 'STRING' },
 
-    // --- DASHBOARD SETTINGS ---
-    dashboard_alert_show:    { group: 'DASHBOARD', type: 'BOOLEAN' },
-    dashboard_alert_type:    { group: 'DASHBOARD', type: 'STRING' },
-    dashboard_alert_msg:     { group: 'DASHBOARD', type: 'STRING' },
-    dashboard_promo_title:   { group: 'DASHBOARD', type: 'STRING' },
-    dashboard_promo_desc:    { group: 'DASHBOARD', type: 'STRING' },
-    dashboard_promo_btn:     { group: 'DASHBOARD', type: 'STRING' },
-    dashboard_promo_link:    { group: 'DASHBOARD', type: 'STRING' },
-    dashboard_support_phone: { group: 'DASHBOARD', type: 'STRING' },
-    dashboard_support_email: { group: 'DASHBOARD', type: 'STRING' },
+  // --- SECURITY ---
+    security_hero_title:         { group: 'SECURITY', type: 'STRING' },
+    security_hero_desc:          { group: 'SECURITY', type: 'STRING' },
+    security_hero_img:           { group: 'SECURITY', type: 'IMAGE' },
+    security_hero_alt:           { group: 'SECURITY', type: 'STRING' },
+    security_feat1_title:        { group: 'SECURITY', type: 'STRING' },
+    security_feat1_desc:         { group: 'SECURITY', type: 'STRING' },
+    security_feat2_title:        { group: 'SECURITY', type: 'STRING' },
+    security_feat2_desc:         { group: 'SECURITY', type: 'STRING' },
+    security_feat3_title:        { group: 'SECURITY', type: 'STRING' },
+    security_feat3_desc:         { group: 'SECURITY', type: 'STRING' },
+    security_fraud_title:        { group: 'SECURITY', type: 'STRING' },
+    security_fraud_card_title:   { group: 'SECURITY', type: 'STRING' },
+    security_fraud_card_desc:    { group: 'SECURITY', type: 'STRING' },
+    security_fraud_card_action:  { group: 'SECURITY', type: 'STRING' },
+    security_help:               { group: 'SECURITY', type: 'STRING' },
+    security_help_linkText:      { group: 'SECURITY', type: 'STRING' },
 
-  // --- SECURITY PAGE ---
-    security_hero_title:       { group: 'SECURITY', type: 'STRING' },
-    security_hero_desc:        { group: 'SECURITY', type: 'STRING' },
-    security_hero_img:         { group: 'SECURITY', type: 'IMAGE' },
-    security_hero_alt:         { group: 'SECURITY', type: 'STRING' },
-    security_feat1_title:      { group: 'SECURITY', type: 'STRING' },
-    security_feat1_desc:       { group: 'SECURITY', type: 'STRING' },
-    security_feat2_title:      { group: 'SECURITY', type: 'STRING' },
-    security_feat2_desc:       { group: 'SECURITY', type: 'STRING' },
-    security_feat3_title:      { group: 'SECURITY', type: 'STRING' },
-    security_feat3_desc:       { group: 'SECURITY', type: 'STRING' },
-    security_fraud_title:      { group: 'SECURITY', type: 'STRING' },
-    security_fraud_card_title: { group: 'SECURITY', type: 'STRING' },
-    security_fraud_card_desc:  { group: 'SECURITY', type: 'STRING' },
+    // ---  HELP ---
+    help_hero_title:        { group: 'HELP', type: 'STRING' },
+    help_hero_desc:         { group: 'HELP', type: 'STRING' },
+    help_contact_title:     { group: 'HELP', type: 'STRING' },
+    help_contact_desc:      { group: 'HELP', type: 'STRING' },
+    help_contact_btn1_text: { group: 'HELP', type: 'STRING' },
+    help_contact_btn2_text: { group: 'HELP', type: 'STRING' },
+    help_contact_btn2_link: { group: 'HELP', type: 'STRING' },
+    help_quick_title:       { group: 'HELP', type: 'STRING' },
+    help_action1_title:     { group: 'HELP', type: 'STRING' },
+    help_action1_desc:      { group: 'HELP', type: 'STRING' },
+    help_action1_link:      { group: 'HELP', type: 'STRING' },
+    help_action2_title:     { group: 'HELP', type: 'STRING' },
+    help_action2_desc:      { group: 'HELP', type: 'STRING' },
+    help_action2_link:      { group: 'HELP', type: 'STRING' },
+    help_action3_title:     { group: 'HELP', type: 'STRING' },
+    help_action3_desc:      { group: 'HELP', type: 'STRING' },
+    help_action3_link:      { group: 'HELP', type: 'STRING' },
+    help_action4_title:     { group: 'HELP', type: 'STRING' },
+    help_action4_desc:      { group: 'HELP', type: 'STRING' },
+    help_action4_link:      { group: 'HELP', type: 'STRING' },
+    help_faq_title:         { group: 'HELP', type: 'STRING' },
 
-    // ---  HELP PAGE ---
-    help_hero_title:    { group: 'HELP', type: 'STRING' },
-    help_hero_desc:     { group: 'HELP', type: 'STRING' },
-    help_cta_title:     { group: 'HELP', type: 'STRING' },
-    help_cta_desc:      { group: 'HELP', type: 'STRING' },
-    help_action1_title: { group: 'HELP', type: 'STRING' },
-    help_action1_desc:  { group: 'HELP', type: 'STRING' },
-    help_action2_title: { group: 'HELP', type: 'STRING' },
-    help_action2_desc:  { group: 'HELP', type: 'STRING' },
-    help_action3_title: { group: 'HELP', type: 'STRING' },
-    help_action3_desc:  { group: 'HELP', type: 'STRING' },
-    help_action4_title: { group: 'HELP', type: 'STRING' },
-    help_action4_desc:  { group: 'HELP', type: 'STRING' },
-
-    // --- CAREERS PAGE ---
+    // --- CAREERS ---
     careers_hero_title:      { group: 'CAREERS', type: 'STRING' },
     careers_hero_desc:       { group: 'CAREERS', type: 'STRING' },
     careers_hero_img:        { group: 'CAREERS', type: 'IMAGE' },
@@ -667,12 +933,15 @@ const SETTING_METADATA: Record<string, { group: string, type: string }> = {
     careers_val3_desc:       { group: 'CAREERS', type: 'STRING' },
     careers_hero_btn_text:   { group: 'CAREERS', type: 'STRING' },
     careers_hero_btn_link:   { group: 'CAREERS', type: 'STRING' },
+    careers_values_title:    { group: 'CAREERS', type: 'STRING' },
+    careers_values_mark:     { group: 'CAREERS', type: 'STRING' },
     careers_values_subtitle: { group: 'CAREERS', type: 'STRING' },
     careers_jobs_title:      { group: 'CAREERS', type: 'STRING' },
     careers_jobs_no_roles:   { group: 'CAREERS', type: 'STRING' },
+    careers_jobs_btn_text:   { group: 'CAREERS', type: 'STRING' },
     careers_jobs_email_text: { group: 'CAREERS', type: 'STRING' },
 
-    // --- LOCATIONS PAGE ---
+    // --- LOCATIONS ---
     locations_hero_title:          { group: 'LOCATIONS', type: 'STRING' },
     locations_search_placeholder:  { group: 'LOCATIONS', type: 'STRING' },
     locations_search_btn_text:     { group: 'LOCATIONS', type: 'STRING' },
@@ -685,26 +954,27 @@ const SETTING_METADATA: Record<string, { group: string, type: string }> = {
     locations_tag_notary:          { group: 'LOCATIONS', type: 'STRING' },
     locations_directions_btn_text: { group: 'LOCATIONS', type: 'STRING' },
 
-    // --- PRESS PAGE ---
+    // --- PRESS ---
     press_hero_title:        { group: 'PRESS', type: 'STRING' },
     press_hero_desc:         { group: 'PRESS', type: 'STRING' },
+    press_contact:           { group: 'PRESS', type: 'STRING' },
+    press_contact_email:     { group: 'PRESS', type: 'STRING' },
     press_hero_img:          { group: 'PRESS', type: 'IMAGE' },
     press_hero_img_alt:      { group: 'PRESS', type: 'STRING' },
-    press_kit_title:         { group: 'PRESS', type: 'STRING' },
-    press_kit_desc:          { group: 'PRESS', type: 'STRING' },
-    press_kit_link:          { group: 'PRESS', type: 'STRING' },
-    press_contact_email:     { group: 'PRESS', type: 'STRING' },
     press_release_title:     { group: 'PRESS', type: 'STRING' },
     press_empty_state:       { group: 'PRESS', type: 'STRING' },
     press_read_more_text:    { group: 'PRESS', type: 'STRING' },
-    press_download_btn_text: { group: 'PRESS', type: 'STRING' },
+    press_kit_title:         { group: 'PRESS', type: 'STRING' },
+    press_kit_desc:          { group: 'PRESS', type: 'STRING' },
     press_file_icon:         { group: 'PRESS', type: 'IMAGE' },
+    press_kit_link:          { group: 'PRESS', type: 'STRING' },
     press_file_name:         { group: 'PRESS', type: 'STRING' },
     press_file_size:         { group: 'PRESS', type: 'STRING' },
+    press_download_btn_text: { group: 'PRESS', type: 'STRING' },
     press_about_title:       { group: 'PRESS', type: 'STRING' },
     press_about_desc:        { group: 'PRESS', type: 'STRING' },
 
-    // --- INVESTORS PAGE ---
+    // --- INVESTORS ---
     invest_hero_title:        { group: 'INVESTORS', type: 'STRING' },
     invest_hero_desc:         { group: 'INVESTORS', type: 'STRING' },
     invest_hero_img:          { group: 'INVESTORS', type: 'IMAGE' },
@@ -716,208 +986,306 @@ const SETTING_METADATA: Record<string, { group: string, type: string }> = {
     invest_ticker_symbol:     { group: 'INVESTORS', type: 'STRING' },
     invest_market_cap:        { group: 'INVESTORS', type: 'STRING' },
     invest_reports_title:     { group: 'INVESTORS', type: 'STRING' },
+    invest_reports_empty:     { group: 'INVESTORS', type: 'STRING' },
 
-    // --- LEGAL PAGE ---
+    // --- DASHBOARD SETTINGS ---
+    dashboard_alert_show:    { group: 'DASHBOARD', type: 'BOOLEAN' },
+    dashboard_alert_type:    { group: 'DASHBOARD', type: 'STRING' },
+    dashboard_alert_msg:     { group: 'DASHBOARD', type: 'STRING' },
+    dashboard_promo_title:   { group: 'DASHBOARD', type: 'STRING' },
+    dashboard_promo_desc:    { group: 'DASHBOARD', type: 'STRING' },
+    dashboard_promo_btn:     { group: 'DASHBOARD', type: 'STRING' },
+    dashboard_promo_link:    { group: 'DASHBOARD', type: 'STRING' },
+    dashboard_support_phone: { group: 'DASHBOARD', type: 'STRING' },
+    dashboard_support_email: { group: 'DASHBOARD', type: 'STRING' },
+
+    // --- LEGAL ---
     legal_privacy_policy:          { group: 'LEGAL', type: 'RICH_TEXT' },
+    legal_privacy_content:         { group: 'LEGAL', type: 'RICH_TEXT' },
+    legal_privacy_updated:         { group: 'LEGAL', type: 'RICH_TEXT' },
     legal_terms_service:           { group: 'LEGAL', type: 'RICH_TEXT' },
+    legal_terms_content:           { group: 'LEGAL', type: 'RICH_TEXT' },
+    legal_terms_updated:           { group: 'LEGAL', type: 'RICH_TEXT' },
     legal_accessibility_statement: { group: 'LEGAL', type: 'RICH_TEXT' },
+    legal_accessibility_content:   { group: 'LEGAL', type: 'RICH_TEXT' },
+    legal_accessibility_updated:   { group: 'LEGAL', type: 'RICH_TEXT' },
     legal_back_text:               { group: 'LEGAL', type: 'STRING' },
-    legal_footer_text :            { group: 'LEGAL', type: 'STRING' },
-    legal_link_text:               { group: 'LEGAL', type: 'STRING' },
-    legal_link_url :               { group: 'LEGAL', type: 'STRING' },
+    legal_back_url:                { group: 'LEGAL', type: 'STRING' },
     legal_updated_label:           { group: 'LEGAL', type: 'STRING' },
+    legal_footer_text:             { group: 'LEGAL', type: 'STRING' },
+    legal_contact_text:            { group: 'LEGAL', type: 'STRING' },
+    legal_contact_url:             { group: 'LEGAL', type: 'STRING' },
+    legal_nav_privacy_label:       { group: 'LEGAL', type: 'STRING' },
+    legal_privacy_slug:            { group: 'LEGAL', type: 'STRING' },
+    legal_nav_privacy_id:          { group: 'LEGAL', type: 'STRING' },
+    legal_nav_terms_label:         { group: 'LEGAL', type: 'STRING' },
+    legal_terms_slug:              { group: 'LEGAL', type: 'STRING' },
+    legal_nav_terms_id:            { group: 'LEGAL', type: 'STRING' },
+    legal_nav_accessibility_label: { group: 'LEGAL', type: 'STRING' },
+    legal_accessibility_slug:      { group: 'LEGAL', type: 'STRING' },
+    legal_nav_accessibility_id:    { group: 'LEGAL', type: 'STRING' },
 
-    // --- FOOTER PAGE ---
+    // --- FOOTER ---
     footer_mission_title:    { group: 'FOOTER', type: 'STRING' },
     footer_mission_text:     { group: 'FOOTER', type: 'STRING' },
     footer_lbl_support:      { group: 'FOOTER', type: 'STRING' },
     footer_lbl_hours:        { group: 'FOOTER', type: 'STRING' },
     footer_val_hours:        { group: 'FOOTER', type: 'STRING' },
     footer_lbl_email:        { group: 'FOOTER', type: 'STRING' },
-    footer_lbl_video:       { group: 'FOOTER', type: 'STRING' },
+    footer_lbl_video:        { group: 'FOOTER', type: 'STRING' },
     footer_val_video:        { group: 'FOOTER', type: 'STRING' },
-    footer_col1_title:       { group: 'FOOTER', type: 'STRING' },
-    footer_col2_title:       { group: 'FOOTER', type: 'STRING' },
-    footer_badge1:           { group: 'FOOTER', type: 'STRING' },
-    footer_badge2:           { group: 'FOOTER', type: 'STRING' },
-    footer_badge3:           { group: 'FOOTER', type: 'STRING' },
-    footer_lbl_headquarters: { group: 'FOOTER', type: 'STRING' },
-    footer_lbl_locate:       { group: 'FOOTER', type: 'STRING' },
-    footer_lbl_copyright:    { group: 'FOOTER', type: 'STRING' },
     social_facebook:         { group: 'SOCIAL', type: 'STRING' },
     social_twitter:          { group: 'SOCIAL', type: 'STRING' },
     social_linkedin:         { group: 'SOCIAL', type: 'STRING' },
     social_instagram:        { group: 'SOCIAL', type: 'STRING' },
+    footer_col1_title:       { group: 'FOOTER', type: 'STRING' },
+    footer_col2_title:       { group: 'FOOTER', type: 'STRING' },
+    footer_noLink:           { group: 'FOOTER', type: 'STRING' },
+    footer_lbl_headquarters: { group: 'FOOTER', type: 'STRING' },
+    footer_lbl_locate:       { group: 'FOOTER', type: 'STRING' },
+    footer_lbl_locate_link:  { group: 'FOOTER', type: 'STRING' },
+    footer_noAddress:        { group: 'FOOTER', type: 'STRING' },
+    footer_badge1:           { group: 'FOOTER', type: 'STRING' },
+    footer_badge2:           { group: 'FOOTER', type: 'STRING' },
+    footer_badge3:           { group: 'FOOTER', type: 'STRING' },
+    footer_badge4:           { group: 'FOOTER', type: 'STRING' },
+    footer_lbl_copyright:    { group: 'FOOTER', type: 'STRING' },
 };
 
-
 export async function updateSiteSettings(formData: FormData) {
-    // 1. Security & Auth Check
     const { authorized, session } = await checkAdminAction();
-
-    if (!authorized || !session || !session.user) {
-        return { success: false, message: "Unauthorized" };
-    }
+    if (!authorized || !session?.user) return { success: false, message: "Unauthorized" };
 
     const existing = await db.siteSettings.findFirst();
-
-    if (!existing) {
-        return { success: false, message: "Settings initialization error. Run seed." };
-    }
+    if (!existing) return { success: false, message: "Settings not found." };
 
     const mainUpdates: any = {};
     const contentUpdates: any = {};
     const featureUpdates: any = {};
+    const assetEntries: Record<number, any> = {};
 
-    // 1. Define Prefixes for Content Table
-    const contentPrefixes = [
-        'hero_', 'global_stat_', 'home_', 'guide_', 'partner_',
-        'learn_', 'about_', 'locations_', 'rates_', 'security_',
-        'legal_', 'help_', 'careers_', 'press_', 'investors_',
-        'dashboard_', 'footer_', 'social_'
-    ];
+    // 1. Process FormData
+    for (const [key, value] of formData.entries()) {
+        const stringValue = value as string;
 
-    // 2. Define Prefixes for Features Table
-    const featurePrefixes = [
-        'bank_', 'save_', 'borrow_', 'wealth_', 'crypto_', 'insure_', 'payments_'
-    ];
+        // --- ASSET PROCESSING ---
+        if (key.startsWith('asset_')) {
+            const parts = key.split('_');
+            const index = parseInt(parts.pop() || "0", 10);
+            let field = parts.join('_').replace('asset_', '');
 
-    for (const [key, meta] of Object.entries(SETTING_METADATA)) {
-        const rawValue = formData.get(key);
-        let finalValue: string | null = null;
+            if (field === 'icon_url') {
+                   field = 'iconUrl';
+                 }
+            // if (field === 'api_id') field = 'api_id';
 
-        // Handle Boolean Logic
-        if (meta.type === 'BOOLEAN') {
-            const isChecked = rawValue === 'on' || rawValue === 'true' || rawValue === '1';
-            finalValue = isChecked ? "true" : "false";
-        } else {
-            // Handle Strings/Text
-            if (rawValue !== null) {
-                finalValue = rawValue as string;
-            }
-        }
-
-        // Sort into the correct bucket if value exists
-        if (finalValue !== null) {
-            if (key === 'security_login_limit') {
-                mainUpdates[key] = parseInt(finalValue, 10);
-                continue;
-            }
-            const isFeatureField = featurePrefixes.some(prefix => key.startsWith(prefix));
-            const isContentField = contentPrefixes.some(prefix => key.startsWith(prefix));
-
-            if (isFeatureField) {
-                featureUpdates[key] = finalValue;
-            } else if (isContentField) {
-                contentUpdates[key] = finalValue;
+            if (!assetEntries[index]) assetEntries[index] = {};
+            if (field === 'active') {
+                assetEntries[index].isActive = stringValue === 'on' || stringValue === 'true';
             } else {
-                mainUpdates[key] = finalValue;
+                assetEntries[index][field] = stringValue;
             }
+            continue;
+        }
+
+        // --- SETTINGS BUCKETS ---
+        const meta = SETTING_METADATA[key];
+        if (!meta) continue;
+
+        let finalValue: any;
+        switch (meta.type) {
+            case 'BOOLEAN': finalValue = (stringValue === 'on' || stringValue === 'true') ? "true" : "false"; break;
+            case 'INT': finalValue = parseInt(stringValue, 10) || 0; break;
+            case 'FLOAT': finalValue = parseFloat(stringValue) || 0.0; break;
+            default: finalValue = stringValue;
+        }
+
+        const mainPrefixes = ['site_', 'contact_', 'address_', 'announcement_', 'nav_', 'auth_', 'routing', 'swift'];
+        const contentPrefixes = ['hero_', 'home_', 'guide_', 'global_stat_', 'partner_', 'rate_', 'learn_', 'about_', 'support_', 'rates_', 'dashboard_', 'security_', 'help_', 'careers_', 'locations_', 'press_', 'invest_', 'legal_', 'footer_', 'social_'];
+         const featurePrefixes = ['bank_', 'save_', 'borrow_', 'wealth_', 'crypto_', 'insure_', 'payments_'];
+
+      const isMain = mainPrefixes.some(p => key.startsWith(p));
+        const isContent = contentPrefixes.some(p => key.startsWith(p));
+        const isFeature = featurePrefixes.some(p => key.startsWith(p));
+
+        if (isMain) {
+            mainUpdates[key] = finalValue;
+        } else if (isContent) {
+            contentUpdates[key] = finalValue;
+        } else if (isFeature) {
+            featureUpdates[key] = finalValue;
+        } else {
+            console.warn(`⚠️ Field "${key}" skipped: No matching prefix found.`);
         }
     }
 
-    const rawLoginLimit = formData.get('security_login_limit');
-    if (rawLoginLimit) {
-        mainUpdates['security_login_limit'] = parseInt(rawLoginLimit.toString(), 10);
-    }
+    // 2. Database Operations
+    const assetsToSync = Object.values(assetEntries).filter(a => a.symbol && a.api_id);
+    const deletedIdsString = formData.get('deleted_asset_ids') as string;
+    const deletedIds = deletedIdsString ? deletedIdsString.split(',').filter(Boolean) : [];
 
     try {
-        // 1. Update Main Settings Table
-        if (Object.keys(mainUpdates).length > 0) {
-            await db.siteSettings.update({
-                where: { id: existing.id },
-                data: mainUpdates,
-            });
-        }
-
-        // 2. Upsert Content Settings
-        if (Object.keys(contentUpdates).length > 0) {
-            await db.contentSettings.upsert({
+        await db.$transaction(async (tx) => {
+            // A. Update Site/Content/Feature Settings
+            if (Object.keys(mainUpdates).length > 0) {
+                await tx.siteSettings.update({ where: { id: existing.id }, data: mainUpdates });
+            }
+            await tx.contentSettings.upsert({
                 where: { siteSettingsId: existing.id },
                 update: contentUpdates,
-                create: {
-                    siteSettingsId: existing.id,
-                    ...contentUpdates
-                }
+                create: { siteSettingsId: existing.id, ...contentUpdates }
             });
-        }
-
-        // 3. Upsert Content Features
-        if (Object.keys(featureUpdates).length > 0) {
-            await db.contentFeatures.upsert({
+            await tx.contentFeatures.upsert({
                 where: { siteSettingsId: existing.id },
                 update: featureUpdates,
-                create: {
-                    siteSettingsId: existing.id,
-                    ...featureUpdates
-                }
+                create: { siteSettingsId: existing.id, ...featureUpdates }
             });
-        }
 
-        // 4. LOG THE ACTION
-        await logAdminAction(
-            "SYSTEM_SETTINGS_UPDATE",
-            existing.id,
-            {
-                action: "CMS Content Update",
-                updatedFields: Object.keys({ ...mainUpdates, ...contentUpdates, ...featureUpdates }).length,
-                admin: session.user.email
-            },
-            "INFO",
-            "SUCCESS"
-        );
+            // B. Handle Managed Asset Deletions
+            if (deletedIds.length > 0) {
+                await tx.managedAsset.deleteMany({ where: { id: { in: deletedIds } } });
+            }
+
+            // C. Handle Managed Asset Upserts
+for (const asset of assetsToSync) {
+    if (!asset.symbol) continue;
+
+    // MUST use the existing ID if it exists
+   const symbolUpper = asset.symbol.toUpperCase();
+
+    await tx.managedAsset.upsert({
+        where: { symbol: symbolUpper },
+        update: {
+            name: asset.name,
+            api_id: asset.api_id,
+            type: asset.type,
+            iconUrl: asset.iconUrl,
+            isActive: asset.isActive !== false,
+        },
+        create: {
+            name: asset.name,
+            symbol: asset.symbol.toUpperCase(),
+            api_id: asset.api_id,
+            type: asset.type,
+            iconUrl: asset.iconUrl,
+            isActive: asset.isActive !== false,
+        }
+    });
+}},
+       {
+    maxWait: 5000,
+    timeout: 60000
+}
+    );
+
+        // 3. Log and Revalidate
+        await logAdminAction("SYSTEM_SETTINGS_UPDATE", existing.id, {
+            action: "Full Settings & Asset Sync",
+            admin: session.user.email
+        }, "INFO", "SUCCESS");
 
         revalidatePath('/', 'layout');
+        return { success: true, message: "All settings and assets saved successfully" };
 
-        return { success: true, message: "Settings updated successfully" };
     } catch (error) {
-        console.error("Settings Update Error:", error);
+        console.error("Settings Update Error", error);
         return { success: false, message: "Failed to save settings" };
     }
 }
 
+
 // export async function updateSiteSettings(formData: FormData) {
+//     // 1. Security & Auth Check
+//     const { authorized, session } = await checkAdminAction();
+
+//     if (!authorized || !session || !session.user) {
+//         return { success: false, message: "Unauthorized" };
+//     }
+
 //     const existing = await db.siteSettings.findFirst();
 
 //     if (!existing) {
 //         return { success: false, message: "Settings initialization error. Run seed." };
 //     }
 
+//     // Initialize Update Objects
 //     const mainUpdates: any = {};
 //     const contentUpdates: any = {};
 //     const featureUpdates: any = {};
 
-//     // 1. Define Prefixes for Content Table (General Pages)
+//     // 2. Prefixes for Content Table
 //     const contentPrefixes = [
 //         'hero_', 'global_stat_', 'home_', 'guide_', 'partner_',
-//         'learn_', 'about_', 'locations_', 'rates_', 'security_',
+//         'learn_', 'about_', 'locations_', 'rate_', 'rates_', 'security_',
 //         'legal_', 'help_', 'careers_', 'press_', 'investors_',
 //         'dashboard_', 'footer_', 'social_'
 //     ];
 
-//     // 2. Define Prefixes for Features Table (The Heavy Product Pages)
+//     // 3. Prefixes for Features Table
 //     const featurePrefixes = [
 //         'bank_', 'save_', 'borrow_', 'wealth_', 'crypto_', 'insure_', 'payments_'
 //     ];
 
-//     // Loop through metadata to extract values
+//     // 4. Iterate and Sort Data
 //     for (const [key, meta] of Object.entries(SETTING_METADATA)) {
 //         const rawValue = formData.get(key);
-//         let finalValue: string | null = null;
+//         let finalValue: any = null;
+
+//         // Handle initial extraction
+//         if (rawValue === null) continue;
+//         const stringValue = rawValue as string;
+
+//         // --- DYNAMIC TYPE CONVERSION ---
+//     switch (meta.type) {
+//         case 'BOOLEAN':
+//             const isChecked = stringValue === 'on' || stringValue === 'true' || stringValue === '1';
+//             finalValue = isChecked ? "true" : "false";
+//             break;
+
+//         case 'INT':
+//             const parsedInt = parseInt(stringValue, 10);
+//             finalValue = isNaN(parsedInt) ? 0 : parsedInt;
+//             break;
+
+//         case 'FLOAT':
+//             const parsedFloat = parseFloat(stringValue);
+//             finalValue = isNaN(parsedFloat) ? 0.0 : parsedFloat;
+//             break;
+
+//         default:
+//             // Default to string for everything else
+//             finalValue = stringValue;
+//     }
 
 //         // Handle Boolean Logic
-//         if (meta.type === 'BOOLEAN') {
-//             const isChecked = rawValue === 'on' || rawValue === 'true' || rawValue === '1';
-//             finalValue = isChecked ? "true" : "false";
-//         } else {
-//             // Handle Strings/Text
-//             if (rawValue !== null) {
-//                 finalValue = rawValue as string;
-//             }
-//         }
+//         // if (meta.type === 'BOOLEAN') {
+//         //     const isChecked = rawValue === 'on' || rawValue === 'true' || rawValue === '1';
+//         //     finalValue = isChecked ? "true" : "false";
+//         // } else {
+//         //     // Handle Strings/Text
+//         //     if (rawValue !== null) {
+//         //         finalValue = rawValue as string;
+//         //     }
+//         // }
 
-//         // Sort into the correct bucket if value exists
 //         if (finalValue !== null) {
+//     //      const integerFields = ['auth_login_limit', 'save_calc_max_deposit', 'save_calc_max_monthly'];
+
+//     //      const floatFields = ['save_calc_default_apy'];
+
+//     //   if (integerFields.includes(key)) {
+//     //         finalValue = parseInt(finalValue, 10);
+//     //         if (isNaN(finalValue)) finalValue = 0;
+//     //     }
+//     //     else if (floatFields.includes(key)) {
+//     //         finalValue = parseFloat(finalValue);
+//     //         if (isNaN(finalValue)) finalValue = 0.0;
+//     //     }
+//             // if (key === 'auth_login_limit') {
+//             //     mainUpdates['auth_login_limit'] = parseInt(finalValue, 10);
+//             //     continue;
+//             // }
+
 //             const isFeatureField = featurePrefixes.some(prefix => key.startsWith(prefix));
 //             const isContentField = contentPrefixes.some(prefix => key.startsWith(prefix));
 
@@ -932,7 +1300,7 @@ export async function updateSiteSettings(formData: FormData) {
 //     }
 
 //     try {
-//         // 1. Update Main Settings Table
+//         // 5. Update Main Settings Table
 //         if (Object.keys(mainUpdates).length > 0) {
 //             await db.siteSettings.update({
 //                 where: { id: existing.id },
@@ -940,7 +1308,7 @@ export async function updateSiteSettings(formData: FormData) {
 //             });
 //         }
 
-//         // 2. Upsert Content Settings
+//         // 6. Upsert Content Settings
 //         if (Object.keys(contentUpdates).length > 0) {
 //             await db.contentSettings.upsert({
 //                 where: { siteSettingsId: existing.id },
@@ -952,7 +1320,7 @@ export async function updateSiteSettings(formData: FormData) {
 //             });
 //         }
 
-//         // 3. Upsert Content Features
+//         // 7. Upsert Content Features
 //         if (Object.keys(featureUpdates).length > 0) {
 //             await db.contentFeatures.upsert({
 //                 where: { siteSettingsId: existing.id },
@@ -963,6 +1331,19 @@ export async function updateSiteSettings(formData: FormData) {
 //                 }
 //             });
 //         }
+
+//         // 8. LOG THE ACTION
+//         await logAdminAction(
+//             "SYSTEM_SETTINGS_UPDATE",
+//             existing.id,
+//             {
+//                 action: "CMS Content Update",
+//                 updatedFields: Object.keys({ ...mainUpdates, ...contentUpdates, ...featureUpdates }).length,
+//                 admin: session.user.email
+//             },
+//             "INFO",
+//             "SUCCESS"
+//         );
 
 //         revalidatePath('/', 'layout');
 

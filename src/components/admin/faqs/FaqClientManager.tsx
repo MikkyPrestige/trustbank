@@ -214,7 +214,7 @@ export default function FaqClientManager({ initialFaqs }: Props) {
                             </div>
 
                             <button type="submit" className={styles.submitBtn} disabled={loading}>
-                                {loading ? <Loader2 className="animate-spin" /> : (editingItem ? 'Update FAQ' : 'Create FAQ')}
+                                {loading ? <Loader2 className={styles.spin} /> : (editingItem ? 'Update FAQ' : 'Create FAQ')}
                             </button>
                         </form>
                     </div>

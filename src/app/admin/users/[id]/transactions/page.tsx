@@ -13,12 +13,20 @@ export default async function AdminUserTransactionsPage({ params }: { params: Pr
 
     const user = await db.user.findUnique({
         where: { id },
-        select: { fullName: true, email: true }
+        select: { fullName: true, email: true, currency: true }
     });
 
     if (!user) return notFound();
 
-    // Fetch ALL transactions for this user (across all accounts)
+    // 1. Fetch Exchange Rate
+    const currency = user.currency || "USD";
+    let exchangeRate = 1;
+    if (currency !== "USD") {
+        const rateData = await db.exchangeRate.findUnique({ where: { currency } });
+        if (rateData) exchangeRate = Number(rateData.rate);
+    }
+
+    // 2. Fetch Transactions
     const transactions = await db.ledgerEntry.findMany({
         where: {
             account: { userId: id }
@@ -37,11 +45,20 @@ export default async function AdminUserTransactionsPage({ params }: { params: Pr
                         <ChevronLeft size={14} /> Back to User Profile
                     </Link>
                     <h1 className={styles.title}>History: {user.fullName}</h1>
-                    <p className={styles.subtitle}>{user.email}</p>
+                    <div className={styles.currencyContainer}>
+                        <p className={styles.subtitle}>{user.email}</p>
+                        {currency !== "USD" && (
+                            <span className={styles.currencyBadge}>{currency} (Rate: {exchangeRate})</span>
+                        )}
+                    </div>
                 </div>
             </div>
 
-            <TransactionTable transactions={transactions} />
+            <TransactionTable
+                transactions={transactions}
+                currency={currency}
+                rate={exchangeRate}
+            />
         </div>
     );
 }

@@ -7,105 +7,107 @@ import styles from './borrow.module.css';
 export default async function BorrowPage() {
     const settings = await getSiteSettings();
 
-    // 1. ANCHOR SECTIONS (Rich Content)
-    // These link to the ID for smooth scrolling or external pages
+    // 1. ANCHOR SECTIONS
     const ANCHORS = [
         {
             id: 'cc',
             title: settings.borrow_cc_title,
             desc: settings.borrow_cc_desc,
             btn: settings.borrow_cc_btn,
-            img: settings.borrow_cc_img || "/borrow-cc.png",
-            alt: settings.borrow_cc_img_alt
+            img: settings.borrow_cc_img,
+            alt: settings.borrow_cc_img_alt,
+            link: settings.borrow_cc_link
         },
         {
             id: 'pl',
             title: settings.borrow_pl_title,
             desc: settings.borrow_pl_desc,
             btn: settings.borrow_pl_btn,
-            img: settings.borrow_pl_img || "/borrow-pl.png",
-            alt: settings.borrow_pl_img_alt
+            img: settings.borrow_pl_img,
+            alt: settings.borrow_pl_img_alt,
+            link: settings.borrow_pl_link
         },
         {
             id: 'mt',
             title: settings.borrow_mt_title,
             desc: settings.borrow_mt_desc,
             btn: settings.borrow_mt_btn,
-            img: settings.borrow_mt_img || "/borrow-mt.png",
-            alt: settings.borrow_mt_img_alt
-        },
-        {
-            id: 'he',
-            title: settings.borrow_prod6_title,
-            desc: settings.borrow_prod6_desc,
-            btn: "Check Eligibility",
-            img: "/borrow-hero.png",
-            alt: "Home Equity Line of Credit"
+            img: settings.borrow_mt_img,
+            alt: settings.borrow_mt_img_alt,
+            link: settings.borrow_mt_link
         },
         {
             id: 'al',
             title: settings.borrow_al_title,
             desc: settings.borrow_al_desc,
             btn: settings.borrow_al_btn,
-            img: settings.borrow_al_img || "/borrow-al.png",
-            alt: settings.borrow_al_img_alt
+            img: settings.borrow_al_img,
+            alt: settings.borrow_al_img_alt,
+            link: settings.borrow_al_link
         },
         {
             id: 'sl',
             title: settings.borrow_sl_title,
             desc: settings.borrow_sl_desc,
             btn: settings.borrow_sl_btn,
-            img: settings.borrow_sl_img || "/borrow-sl.png",
-            alt: settings.borrow_sl_img_alt
+            img: settings.borrow_sl_img,
+            alt: settings.borrow_sl_img_alt,
+            link: settings.borrow_sl_link
         },
         {
             id: 'he',
             title: settings.borrow_he_title,
             desc: settings.borrow_he_desc,
             btn: settings.borrow_he_btn,
-            img: settings.borrow_he_img || "/borrow-equity.png",
-            alt: settings.borrow_he_alt
+            img: settings.borrow_he_img,
+            alt: settings.borrow_he_alt,
+            link: settings.borrow_he_link
         },
     ];
 
-    // 2. RATE GRID (Quick Comparison)
-    // Uses the generic prod1-6 fields to show APRs side-by-side
+    // 2. RATE GRID
     const RATE_PRODUCTS = [
         {
             title: settings.borrow_prod1_title, // Personal Loan
             desc: settings.borrow_prod1_desc,
             icon: <Banknote size={32} className={styles.iconGreen} />,
-            rate: `From ${settings.rate_personal_apr}% APR`
+            rate: `From ${settings.rate_personal_apr}% APR`,
+            link: settings.borrow_prod1_link
         },
         {
             title: settings.borrow_prod2_title, // Mortgage
             desc: settings.borrow_prod2_desc,
             icon: <Home size={32} className={styles.iconBlue} />,
-            rate: settings.rate_mortgage_label
+            rate: settings.rate_mortgage_label,
+            link: settings.borrow_prod2_link
         },
         {
             title: settings.borrow_prod3_title, // Auto
             desc: settings.borrow_prod3_desc,
             icon: <Car size={32} className={styles.iconOrange} />,
-            rate: `From ${settings.rate_auto_apr}% APR`
+            rate: `From ${settings.rate_auto_apr}% APR`,
+            link: settings.borrow_prod3_link
         },
         {
             title: settings.borrow_prod4_title, // Student
             desc: settings.borrow_prod4_desc,
             icon: <GraduationCap size={32} className={styles.iconPurple} />,
-            rate: settings.rate_student_label
+            rate: settings.rate_student_label,
+            link: settings.borrow_prod4_link
         },
         {
             title: settings.borrow_prod5_title, // Credit Card
             desc: settings.borrow_prod5_desc,
             icon: <CreditCard size={32} className={styles.iconRed} />,
-            rate: `${settings.rate_credit_intro_apr} Intro APR`
+            rate: `${settings.rate_credit_intro_apr} Intro APR`,
+            link: settings.borrow_prod5_link
         },
         {
-            title: settings.borrow_prod6_title, // Home Equity (Unique to Grid)
+            title: settings.borrow_prod6_title, // Home Equity
             desc: settings.borrow_prod6_desc,
             icon: <Percent size={32} className={styles.iconGold} />,
-            rate: settings.rate_home_equity_label
+            rate: settings.rate_home_equity_label,
+            link: settings.borrow_prod6_link
         }
     ];
 
@@ -114,8 +116,8 @@ export default async function BorrowPage() {
             {/* 1. HERO SECTION */}
             <section className={styles.heroBackground}>
                 <Image
-                    src={settings.borrow_hero_img || "/borrow-hero.png"}
-                    alt={settings.borrow_hero_alt || "TrustBank Borrowing"}
+                    src={settings.borrow_hero_img}
+                    alt={settings.borrow_hero_alt}
                     fill
                     className={styles.heroBgImage}
                     priority
@@ -133,13 +135,13 @@ export default async function BorrowPage() {
 
                     <div className={styles.heroStatsRow}>
                         <div className={styles.statPill}>
-                            <strong>{settings.borrow_stat_funded}</strong> Funded
+                            <strong>{settings.borrow_stat_funded}</strong> {settings.borrow_stat_funded_text}
                         </div>
                         <div className={styles.statPill}>
-                            <strong>{settings.borrow_stat_speed}</strong> Speed
+                            <strong>{settings.borrow_stat_speed}</strong> {settings.borrow_stat_speed_text}
                         </div>
                         <div className={styles.statPill}>
-                            <strong>{settings.borrow_stat_approval}</strong> Approval
+                            <strong>{settings.borrow_stat_approval}</strong> {settings.borrow_stat_approval_text}
                         </div>
                     </div>
                 </div>
@@ -152,7 +154,7 @@ export default async function BorrowPage() {
                 </div>
             </section>
 
-            {/* 3. ANCHOR SECTIONS (Zig-Zag) */}
+            {/* 3. ANCHOR SECTIONS */}
             {ANCHORS.map((p, i) => (
                 <section key={p.id} id={p.id} className={`${styles.productSection} ${i % 2 !== 0 ? styles.bgAlt : ''}`}>
                     <div className={styles.container}>
@@ -160,7 +162,7 @@ export default async function BorrowPage() {
                             <div className={styles.productContent}>
                                 <h2 className={styles.productTitle}>{p.title}</h2>
                                 <p className={styles.productDesc}>{p.desc}</p>
-                                <a href="#" className={styles.productBtn}>
+                                <a href={p.link} className={styles.productBtn}>
                                     {p.btn} <ArrowRight size={18} />
                                 </a>
                             </div>
@@ -177,7 +179,7 @@ export default async function BorrowPage() {
                 </section>
             ))}
 
-            {/* 4. RATE GRID (Supplemental) */}
+            {/* 4. RATE GRID  */}
             <section className={styles.productsSection}>
                 <div className={styles.container}>
                     <div className={styles.sectionHeader}>
@@ -193,7 +195,7 @@ export default async function BorrowPage() {
                                 </div>
                                 <h3>{product.title}</h3>
                                 <p>{product.desc}</p>
-                                <a href="#" className={styles.cardLink}>
+                                <a href={product.link} className={styles.cardLink}>
                                     {settings.borrow_prod_btn_text} <ArrowRight size={16} />
                                 </a>
                             </div>
@@ -223,7 +225,6 @@ export default async function BorrowPage() {
                     </div>
                 </div>
             </section>
-
         </main>
     );
 }

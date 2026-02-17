@@ -5,7 +5,7 @@ import styles from "./home.module.css";
 import { getLiveMarketData } from "@/lib/marketData";
 import { getSiteSettings } from "@/lib/content/get-settings";
 
-// Helper to format currency
+// format currency
 const formatPrice = (num: number, isCrypto: boolean) => {
     const decimals = isCrypto && num < 10 ? 4 : 2;
     return new Intl.NumberFormat('en-US', {
@@ -25,12 +25,14 @@ const formatPercent = (num: number) => {
 };
 
 export default async function InvestmentSection() {
-    const [marketData, settings] = await Promise.all([
+    const [{ assets: marketAssets }, settings] = await Promise.all([
         getLiveMarketData(),
         getSiteSettings()
     ]);
 
-    const tickerItems = [...marketData, ...marketData];
+    const tickerItems = [...marketAssets, ...marketAssets];
+    const btcAsset = marketAssets.find(a => a.symbol.toUpperCase() === 'BTC');
+    const btcDisplayPrice = btcAsset ? formatPrice(btcAsset.price, true) : "$99,000";
 
     return (
         <section className={styles.investSection}>
@@ -55,7 +57,6 @@ export default async function InvestmentSection() {
 
             <div className={styles.container}>
                 <div className={styles.investGrid}>
-
                     {/* LEFT: CONTENT & TABS */}
                     <div className={styles.investContent}>
                         <div className={styles.investHeader}>
@@ -103,11 +104,11 @@ export default async function InvestmentSection() {
                         </div>
 
                         <div className={styles.investActions}>
-                            <Link href="/investors" className={styles.btnPrimary}>
-                                Start Investing
+                            <Link href={settings.home_invest_btn1_link} className={styles.btnPrimary}>
+                                {settings.home_invest_btn1_text}
                             </Link>
-                            <Link href="/crypto" className={styles.linkDark}>
-                                View Crypto Assets <ArrowRight size={16} />
+                            <Link href={settings.home_invest_btn2_link} className={styles.linkDark}>
+                                {settings.home_invest_btn2_text} <ArrowRight size={16} />
                             </Link>
                         </div>
                     </div>
@@ -118,20 +119,21 @@ export default async function InvestmentSection() {
 
                         <div className={styles.phoneWrapper}>
                             <Image
-                                src={settings.home_invest_img || "/app-invest.png"}
-                                alt={settings.home_invest_alt || "Investment App Dashboard"}
+                                src={settings.home_invest_img}
+                                alt={`${settings.site_name} ${settings.home_invest_alt}`}
                                 width={340}
                                 height={680}
                                 className={styles.phoneImage}
                             />
 
-                            {/* Floating Card: Updated with Real BTC Data */}
                             <div className={styles.floatCardTop}>
                                 <div className={styles.floatIconGold}><Bitcoin size={20} /></div>
                                 <div>
-                                    <span className={styles.floatLabel}>Bitcoin</span>
+                                    <span className={styles.floatLabel}>
+                                        {settings.home_invest_float1_label}
+                                    </span>
                                     <span className={styles.floatValue}>
-                                        {marketData.length > 0 ? formatPrice(marketData[1].price, true) : "$98k"}
+                                        {btcDisplayPrice}
                                     </span>
                                 </div>
                             </div>
@@ -139,13 +141,16 @@ export default async function InvestmentSection() {
                             <div className={styles.floatCardBottom}>
                                 <div className={styles.floatIconBlue}><RefreshCcw size={20} /></div>
                                 <div>
-                                    <span className={styles.floatLabel}>Auto-Invest</span>
-                                    <span className={styles.floatValue}>$500/mo</span>
+                                    <span className={styles.floatLabel}>
+                                        {settings.home_invest_float2_label}
+                                    </span>
+                                    <span className={styles.floatValue}>
+                                        {settings.home_invest_float2_value}
+                                    </span>
                                 </div>
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </section>

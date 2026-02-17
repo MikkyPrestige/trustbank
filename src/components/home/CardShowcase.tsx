@@ -11,21 +11,18 @@ export default async function CardShowcase() {
         <section className={styles.cardSection}>
             <div className={styles.container}>
                 <div className={styles.cardGrid}>
-
                     {/* Left: Content */}
                     <div className={styles.cardContent}>
                         <div className={styles.tagline}>
                             <div className={styles.taglineLine}></div>
                             <span>{settings.home_card_series}</span>
                         </div>
-
                         <h2 className={styles.cardTitle}>
                             {settings.home_card_title} <br />
                             <span className={styles.goldText}>{settings.home_card_highlight}</span>
                         </h2>
-
                         <p className={styles.cardDesc}>
-                            {settings.home_card_desc}
+                            {settings.home_card_desc} {settings.site_name}.
                         </p>
 
                         <div className={styles.cardFeatures}>
@@ -56,11 +53,11 @@ export default async function CardShowcase() {
                         </div>
 
                         <div className={styles.cardActions}>
-                            <Link href="/register" className={styles.btnGold}>
-                                Apply Now
+                            <Link href={settings.home_card_btn1_link} className={styles.btnGold}>
+                                {settings.home_card_btn1_text}
                             </Link>
-                            <Link href="/cards" className={styles.linkWhite}>
-                                Compare Cards <ChevronRight size={16} />
+                            <Link href={settings.home_card_btn2_link} className={styles.linkWhite}>
+                                {settings.home_card_btn2_text} <ChevronRight size={16} />
                             </Link>
                         </div>
                     </div>
@@ -68,16 +65,14 @@ export default async function CardShowcase() {
                     {/* Right: Floating Card Visual */}
                     <div className={styles.cardVisual}>
                         <div className={styles.goldGlow}></div>
-
                         <Image
-                            src={settings.home_card_img || "/card-front.png"}
-                            alt={settings.home_card_alt || `${settings.site_name} Credit Card`}
+                            src={settings.home_card_img}
+                            alt={`${settings.site_name} ${settings.home_card_alt}`}
                             width={600}
                             height={400}
                             className={styles.realCard}
                         />
                     </div>
-
                 </div>
             </div>
         </section>

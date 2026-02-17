@@ -12,7 +12,7 @@ import {
   TransactionDirection
 } from "@prisma/client";
 
-// --- 1. FEE CALCULATOR ---
+// --- 1. FEE CALCULATOR (Base USD Logic) ---
 function calculateWireFee(amount: number): number {
     if (amount <= 5000) return 25.00;
     if (amount <= 50000) return 50.00;
@@ -21,7 +21,7 @@ function calculateWireFee(amount: number): number {
 
 const wireSchema = z.object({
   accountId: z.string().min(1, "Account Selection is required"),
-  amount: z.coerce.number().min(100, "Minimum wire amount is $100"),
+  amount: z.coerce.number().min(50, "Minimum wire amount is $50 equivalent"),
   pin: z.string().length(4, "PIN must be 4 digits"),
   bankName: z.string().min(3, "Bank Name is required"),
   accountName: z.string().min(3, "Account Name is required"),
@@ -29,6 +29,8 @@ const wireSchema = z.object({
   country: z.string().min(2, "Country is required"),
   swiftCode: z.string().optional(),
   saveBeneficiary: z.string().optional(),
+  displayAmount: z.string().optional(),
+  displayCurrency: z.string().optional(),
 });
 
 export async function initiateWireTransfer(prevState: any, formData: FormData) {
@@ -52,6 +54,8 @@ export async function initiateWireTransfer(prevState: any, formData: FormData) {
     country: formData.get("country")?.toString() || "",
     swiftCode: formData.get("swiftCode")?.toString() || undefined,
     saveBeneficiary: formData.get("saveBeneficiary")?.toString() || undefined,
+    displayAmount: formData.get("displayAmount")?.toString(),
+    displayCurrency: formData.get("displayCurrency")?.toString(),
   };
 
   const validated = wireSchema.safeParse(rawData);
@@ -62,7 +66,7 @@ export async function initiateWireTransfer(prevState: any, formData: FormData) {
 
   const {
     accountId, amount, pin, bankName, accountNumber, accountName,
-    swiftCode, country, saveBeneficiary
+    swiftCode, country, saveBeneficiary, displayAmount, displayCurrency
   } = validated.data;
 
   // 2. LOGIC & COMPLIANCE
@@ -80,7 +84,7 @@ export async function initiateWireTransfer(prevState: any, formData: FormData) {
       return { message: "TrustBank Account detected. Please use 'Local Transfer' for instant, fee-free transactions." };
   }
 
-  // C. Calculate Fee
+  // C. Calculate Fee (On USD amount)
   const serviceFee = calculateWireFee(amount);
   const totalDeduction = amount + serviceFee;
 
@@ -105,7 +109,7 @@ const permission = await checkPermissions(user.id, 'TRANSFER_WIRE', amount);
   if (!account) return { message: "Account not found." };
 
   if (Number(account.availableBalance) < totalDeduction) {
-      return { message: `Insufficient funds. Balance needed: $${totalDeduction.toLocaleString()} (Includes $${serviceFee} fee).` };
+      return { message: `Insufficient funds. Balance needed: $${totalDeduction.toLocaleString()} (Includes service fee).` };
   }
 
   // 5. THE TRANSACTION
@@ -146,6 +150,7 @@ const permission = await checkPermissions(user.id, 'TRANSFER_WIRE', amount);
           status: TransactionStatus.ON_HOLD,
           description: `Authorization Hold: Wire to ${bankName}`,
           referenceId: "WIRE-" + wire.id,
+          metadata: JSON.stringify({ originalAmount: displayAmount, originalCurrency: displayCurrency })
         }
       });
 
@@ -173,6 +178,10 @@ const permission = await checkPermissions(user.id, 'TRANSFER_WIRE', amount);
 
     // 6. NOTIFICATIONS
     if (transactionResult) {
+      const formattedAmount = (displayAmount && displayCurrency)
+        ? `${displayCurrency} ${Number(displayAmount).toLocaleString()}`
+        : `$${amount.toLocaleString()}`;
+
       const admins = await db.user.findMany({
           where: { role: { in: ["ADMIN", "SUPER_ADMIN"] } },
           select: { id: true }
@@ -183,7 +192,7 @@ const permission = await checkPermissions(user.id, 'TRANSFER_WIRE', amount);
               data: admins.map(admin => ({
                   userId: admin.id,
                   title: "New Wire Authorization",
-                  message: `${user.fullName || 'User'} requested wire of $${amount.toLocaleString()}. Funds held.`,
+                  message: `${user.fullName || 'User'} requested wire of ${formattedAmount}. Funds held.`,
                   type: "WARNING",
                   link: `/admin/wires?id=${transactionResult.id}`,
                   isRead: false
@@ -200,5 +209,5 @@ const permission = await checkPermissions(user.id, 'TRANSFER_WIRE', amount);
   revalidatePath("/dashboard");
   revalidatePath("/dashboard/beneficiaries");
 
-  return { success: true, message: `Wire Authorized. Funds Reserved ($${totalDeduction.toLocaleString()}).` };
+  return { success: true, message: `Wire Authorized.` };
 }

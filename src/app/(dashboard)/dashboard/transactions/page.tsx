@@ -33,7 +33,15 @@ export default async function TransactionsPage() {
         }
     });
 
-    // 3. Sanitize Data for Client
+    // 3. Fetch Exchange Rate for User's Currency
+    const currency = user.currency || "USD";
+    let exchangeRate = 1;
+    if (currency !== "USD") {
+        const rateData = await db.exchangeRate.findUnique({ where: { currency } });
+        if (rateData) exchangeRate = Number(rateData.rate);
+    }
+
+    // 4. Sanitize Data for Client
     const transactions = rawTransactions.map(t => ({
         id: t.id,
         amount: Number(t.amount),
@@ -45,5 +53,11 @@ export default async function TransactionsPage() {
         accountName: (t.account?.type || 'External').toUpperCase() + " ••" + (t.account?.accountNumber?.slice(-4) || 'xxxx')
     }));
 
-    return <TransactionClient transactions={transactions} />;
+    return (
+        <TransactionClient
+            transactions={transactions}
+            currency={currency}
+            rate={exchangeRate}
+        />
+    );
 }

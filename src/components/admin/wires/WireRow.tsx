@@ -11,7 +11,13 @@ import { useRouter } from 'next/navigation';
 
 type WireWithUser = WireTransfer & { user: User };
 
-export default function WireRow({ wire }: { wire: WireWithUser }) {
+interface WireRowProps {
+    wire: WireWithUser;
+    currency?: string;
+    rate?: number;
+}
+
+export default function WireRow({ wire, currency = "USD", rate = 1 }: WireRowProps) {
     const [showModal, setShowModal] = useState(false);
     const [loading, setLoading] = useState(false);
     const router = useRouter();
@@ -19,6 +25,10 @@ export default function WireRow({ wire }: { wire: WireWithUser }) {
     const stopProp = (e: React.MouseEvent) => {
         e.stopPropagation();
     };
+
+    // Calculate Display Values
+    const amountNative = Number(wire.amount) * rate;
+    const feeNative = Number(wire.fee) * rate;
 
     // 1. REJECT LOGIC
     const handleReject = async (e: React.MouseEvent) => {
@@ -41,7 +51,7 @@ export default function WireRow({ wire }: { wire: WireWithUser }) {
         }
     };
 
-    // 2. APPROVE LOGIC (Settles Funds)
+    // 2. APPROVE LOGIC
     const handleApprove = async (e: React.MouseEvent) => {
         stopProp(e);
         const msg = wire.status === 'PENDING_AUTH'
@@ -99,10 +109,19 @@ export default function WireRow({ wire }: { wire: WireWithUser }) {
 
                 {/* 4. AMOUNT */}
                 <td className={styles.amountCell}>
-                    {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(wire.amount))}
+                    <div style={{ fontWeight: 600 }}>
+                        {new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(amountNative)}
+                    </div>
+
+                    {currency !== 'USD' && (
+                        <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+                            ≈ {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(wire.amount))}
+                        </div>
+                    )}
+
                     {Number(wire.fee) > 0 && (
                         <div className={styles.feeText}>
-                            + {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(wire.fee))} Fee
+                            + {new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(feeNative)} Fee
                         </div>
                     )}
                 </td>
@@ -131,7 +150,6 @@ export default function WireRow({ wire }: { wire: WireWithUser }) {
                     <div className={styles.actions}>
                         {isActive ? (
                             <>
-                                {/* A. Generate Codes Button (Visible during HOLD) */}
                                 <button
                                     onClick={(e) => { stopProp(e); setShowModal(true); }}
                                     className={styles.btnCode}
@@ -141,7 +159,6 @@ export default function WireRow({ wire }: { wire: WireWithUser }) {
                                     <Key size={14} />
                                 </button>
 
-                                {/* B. Approve Button (Highlight if Ready) */}
                                 <button
                                     onClick={handleApprove}
                                     disabled={loading}
@@ -151,7 +168,6 @@ export default function WireRow({ wire }: { wire: WireWithUser }) {
                                     {loading ? <Loader2 className={styles.spin} size={16} /> : <CheckCircle size={16} />}
                                 </button>
 
-                                {/* C. Reject Button */}
                                 <button
                                     onClick={handleReject}
                                     disabled={loading}

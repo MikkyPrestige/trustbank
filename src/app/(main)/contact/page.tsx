@@ -12,8 +12,8 @@ export default async function ContactPage() {
             <section className={styles.hero}>
                 <div className={styles.heroImageWrapper}>
                     <Image
-                        src={settings.support_hero_img || "/support-hero.png"}
-                        alt={settings.support_hero_alt || "Contact Support"}
+                        src={settings.support_hero_img}
+                        alt={settings.support_hero_alt}
                         fill
                         className={styles.heroImage}
                         priority
@@ -60,8 +60,8 @@ export default async function ContactPage() {
                     <div>
                         <h2>{settings.support_faq_title}</h2>
                         <p>{settings.support_faq_desc}</p>
-                        <a href={settings.support_faq_link || "/help"} className={styles.link}>
-                            {settings.support_faq_linkText} &rarr;
+                        <a href={settings.support_faq_link} className={styles.link}>
+                            {settings.support_faq_linkText} {settings.support_faq_linkArrow}
                         </a>
                     </div>
                 </div>

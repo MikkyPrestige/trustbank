@@ -13,8 +13,8 @@
   margin-bottom: 2.5rem;
 }
 .iconBox {
-  background: rgba(34, 197, 94, 0.1); /* Green tint */
-  color: #22c55e;
+  background: rgba(34, 197, 94, 0.1);
+  color: var(--success);
   padding: 12px;
   border-radius: 12px;
 }

@@ -35,9 +35,23 @@ import { LegalTab } from "./tabs/LegalTab";
 import { NavTab } from "./tabs/NavTab";
 import { FooterTab } from './tabs/FooterTab';
 
-interface SettingsProps { settings: any; footerLinks: any[]; }
+interface ManagedAsset {
+    id: string;
+    name: string;
+    symbol: string;
+    api_id: string;
+    type: 'CRYPTO' | 'STOCK';
+    isActive: boolean;
+}
 
-export default function SettingsForm({ settings, footerLinks }: SettingsProps) {
+interface SettingsProps {
+    settings: any;
+    initialManagedAssets: ManagedAsset[];
+    currencies: any[];
+    footerLinks: any[];
+}
+
+export default function SettingsForm({ settings, initialManagedAssets, currencies, footerLinks }: SettingsProps) {
     const router = useRouter();
     const [isPending, setIsPending] = useState(false);
 
@@ -85,8 +99,8 @@ export default function SettingsForm({ settings, footerLinks }: SettingsProps) {
 
     const [wealthHeroUrl, setWealthHeroUrl] = useState(settings.wealth_hero_img || "");
     const [wealthPcgUrl, setWealthPcgUrl] = useState(settings.wealth_pcg_img || "");
-    const [wealthRetUrl, setWealthRetUrl] = useState(settings.wealth_retirement_img || "");
-    const [wealthEstUrl, setWealthEstUrl] = useState(settings.wealth_estate_img || "");
+    const [wealthRetUrl, setWealthRetUrl] = useState(settings.wealth_ret_img || "");
+    const [wealthEstUrl, setWealthEstUrl] = useState(settings.wealth_est_img || "");
     const [cryptoHeroUrl, setCryptoHeroUrl] = useState(settings.crypto_hero_img || "");
 
     const [insureHeroUrl, setInsureHeroUrl] = useState(settings.insure_hero_img || "");
@@ -94,15 +108,15 @@ export default function SettingsForm({ settings, footerLinks }: SettingsProps) {
     const [insPartner2, setInsPartner2] = useState(settings.insure_partner2_img || "");
     const [insPartner3, setInsPartner3] = useState(settings.insure_partner3_img || "");
     const [insPartner4, setInsPartner4] = useState(settings.insure_partner4_img || "");
-    const [insureP1Url, setInsureP1Url] = useState(settings.insure_partner1_img || "");
-    const [insureP2Url, setInsureP2Url] = useState(settings.insure_partner2_img || "");
-    const [insureP3Url, setInsureP3Url] = useState(settings.insure_partner3_img || "");
-    const [insureP4Url, setInsureP4Url] = useState(settings.insure_partner4_img || "");
+    const [insureP1Url, setInsureP1Url] = useState(settings.insure_prod1_img || "");
+    const [insureP2Url, setInsureP2Url] = useState(settings.insure_prod2_img || "");
+    const [insureP3Url, setInsureP3Url] = useState(settings.insure_prod3_img || "");
+    const [insureP4Url, setInsureP4Url] = useState(settings.insure_prod4_img || "");
 
     const [paymentsHeroUrl, setPaymentsHeroUrl] = useState(settings.payments_hero_img || "");
-    const [payBillsUrl, setPayBillsUrl] = useState(settings.support_paybills_img || "");
-    const [payP2PUrl, setPayP2PUrl] = useState(settings.support_p2p_img || "");
-    const [payWiresUrl, setPayWiresUrl] = useState(settings.support_wires_img || "");
+    const [payBillsUrl, setPayBillsUrl] = useState(settings.payments_bills_img || "");
+    const [payP2PUrl, setPayP2PUrl] = useState(settings.payments_p2p_img || "");
+    const [payWiresUrl, setPayWiresUrl] = useState(settings.payments_wires_img || "");
 
     // --- 4. COMPANY & RESOURCES ---
     const [aboutHeroUrl, setAboutHeroUrl] = useState(settings.about_hero_img || "");
@@ -261,6 +275,7 @@ export default function SettingsForm({ settings, footerLinks }: SettingsProps) {
                 {activeTab === 'crypto' && (
                     <CryptoTab
                         settings={settings}
+                        initialManagedAssets={initialManagedAssets}
                         cryptoHeroUrl={cryptoHeroUrl} setCryptoHeroUrl={setCryptoHeroUrl}
                     />
                 )}
@@ -283,6 +298,7 @@ export default function SettingsForm({ settings, footerLinks }: SettingsProps) {
                 {activeTab === 'payments' && (
                     <PaymentsTab
                         settings={settings}
+                        currencies={currencies}
                         paymentsHeroUrl={paymentsHeroUrl} setPaymentsHeroUrl={setPaymentsHeroUrl}
                         payBillsUrl={payBillsUrl} setPayBillsUrl={setPayBillsUrl}
                         payP2PUrl={payP2PUrl} setPayP2PUrl={setPayP2PUrl}

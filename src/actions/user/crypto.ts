@@ -7,10 +7,10 @@ import { revalidatePath } from "next/cache";
 import bcrypt from "bcryptjs";
 import { getLiveMarketData } from "@/lib/marketData";
 import {
-  UserStatus,
-  TransactionType,
-  TransactionStatus,
-  TransactionDirection
+    UserStatus,
+    TransactionType,
+    TransactionStatus,
+    TransactionDirection
 } from "@prisma/client";
 
 // ==========================================
@@ -19,7 +19,6 @@ import {
 export async function tradeCrypto(prevState: any, formData: FormData) {
     const { success, message, user } = await getAuthenticatedUser();
 
-    // 1. Global Kill Switch
     if (await checkMaintenanceMode()) {
         return { success: false, message: "System is currently under maintenance. Please try again later." };
     }
@@ -28,17 +27,21 @@ export async function tradeCrypto(prevState: any, formData: FormData) {
         return { message };
     }
 
-    // 2.  Permission Check
     const permission = await checkPermissions(user.id, 'CRYPTO_TRADE');
     if (!permission.allowed) return { message: `🚫 ${permission.error}` };
 
     const type = formData.get("type") as "BUY" | "SELL";
     const symbol = formData.get("currency") as string;
+
+    // inputAmount is USD (Converted by Client)
     const inputAmount = Number(formData.get("amount"));
+
+    // Display Info for Notifications
+    const displayAmount = formData.get("displayAmount") as string;
+    const displayCurrency = formData.get("displayCurrency") as string;
 
     if (!inputAmount || inputAmount <= 0) return { message: "Invalid amount" };
 
-    // 3. Fetch Market Data
     const marketData = await getLiveMarketData();
     const targetCoin = marketData.find(coin => coin.symbol === symbol);
     let currentPrice = targetCoin?.price || 0;
@@ -46,7 +49,7 @@ export async function tradeCrypto(prevState: any, formData: FormData) {
 
     if (!currentPrice || currentPrice <= 0) return { message: "Price unavailable. Try again." };
 
-    // 4. Balance Cap Check (For SELLS only)
+    // Balance Cap Check (For SELLS only)
     if (type === "SELL") {
         const inboundCheck = await checkInboundLimit(user.id, inputAmount);
         if (!inboundCheck.allowed) {
@@ -85,7 +88,7 @@ export async function tradeCrypto(prevState: any, formData: FormData) {
             newAvgPrice = currentPrice;
         }
 
-        if (type === "BUY" && Number(account.availableBalance) < inputAmount) return { message: "Insufficient USD funds." };
+        if (type === "BUY" && Number(account.availableBalance) < inputAmount) return { message: "Insufficient funds." };
         if (type === "SELL" && (!asset || Number(asset.quantity) < cryptoAmount)) return { message: "Insufficient Crypto balance." };
 
         // 5. Execute Trade
@@ -133,18 +136,23 @@ export async function tradeCrypto(prevState: any, formData: FormData) {
                     status: TransactionStatus.COMPLETED,
                     description: type === "BUY" ? `Bought ${cryptoAmount.toFixed(6)} ${symbol}` : `Sold ${cryptoAmount.toFixed(6)} ${symbol}`,
                     referenceId: `${type}-${Date.now()}`,
+                    metadata: JSON.stringify({ originalAmount: displayAmount, originalCurrency: displayCurrency })
                 }
             });
 
             return ledgerTx.id;
         });
 
-        // 6. Notification
+        // 6. Notification (Smart)
+        const formatMoney = (displayAmount && displayCurrency)
+            ? `${displayCurrency} ${Number(displayAmount).toLocaleString()}`
+            : `$${inputAmount.toLocaleString()}`;
+
         await db.notification.create({
             data: {
                 userId: user.id,
                 title: `Crypto ${type === "BUY" ? "Purchase" : "Sale"} Successful`,
-                message: `You successfully ${type === "BUY" ? "bought" : "sold"} ${cryptoAmount.toFixed(6)} ${symbol} for $${inputAmount.toLocaleString()}.`,
+                message: `You successfully ${type === "BUY" ? "bought" : "sold"} ${cryptoAmount.toFixed(6)} ${symbol} for ${formatMoney}.`,
                 type: "SUCCESS",
                 link: `/dashboard/transactions/${ledgerId}`,
                 isRead: false
@@ -160,9 +168,9 @@ export async function tradeCrypto(prevState: any, formData: FormData) {
     return { success: true, message: `${type} Order Executed Successfully!` };
 }
 
-// ==========================================
-// TRANSFER CRYPTO (SEND)
-// ==========================================
+//  ==========================================
+//  TRANSFER CRYPTO (SEND)
+//  ==========================================
 export async function transferCrypto(prevState: any, formData: FormData) {
     const { success, message, user: sessionUser } = await getAuthenticatedUser();
 

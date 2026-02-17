@@ -2,7 +2,13 @@ import { db } from "@/lib/db";
 import { ArrowUpRight, ArrowDownLeft } from "lucide-react";
 import styles from "./users.module.css";
 
-export default async function LocalTransferList({ userId }: { userId: string }) {
+interface LocalTransferListProps {
+    userId: string;
+    currency?: string;
+    rate?: number;
+}
+
+export default async function LocalTransferList({ userId, currency = "USD", rate = 1 }: LocalTransferListProps) {
     const transfers = await db.ledgerEntry.findMany({
         where: {
             account: { userId: userId },
@@ -21,6 +27,8 @@ export default async function LocalTransferList({ userId }: { userId: string }) 
         <div className={styles.listContainer}>
             {transfers.map((tx) => {
                 const isCredit = tx.direction === 'CREDIT';
+                const displayAmount = Number(tx.amount) * rate;
+
                 return (
                     <div key={tx.id} className={styles.listItem}>
                         <div className={styles.flexCenterGap}>
@@ -36,7 +44,8 @@ export default async function LocalTransferList({ userId }: { userId: string }) 
                         </div>
                         <div style={{ textAlign: 'right' }}>
                             <div className={isCredit ? styles.textGreen : styles.textRed} style={{ fontWeight: 600 }}>
-                                {isCredit ? '+' : '-'}{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(tx.amount))}
+                                {isCredit ? '+' : '-'}
+                                {new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(displayAmount)}
                             </div>
                             <div className={styles.tiny}>{tx.status}</div>
                         </div>

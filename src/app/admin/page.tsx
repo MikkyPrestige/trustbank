@@ -30,7 +30,8 @@ export default async function AdminDashboard() {
         pendingKyc,
         liquidityData,
         todayCredits,
-        todayDebits
+        todayDebits,
+        rates // Fetch rates here
     ] = await Promise.all([
         db.user.findMany({
             where: { ...(scopeFilter as any), status: { not: 'ARCHIVED' } },
@@ -59,11 +60,16 @@ export default async function AdminDashboard() {
         db.ledgerEntry.aggregate({
             _sum: { amount: true },
             where: { direction: TransactionDirection.DEBIT, createdAt: { gte: startOfDay } }
-        })
+        }),
+        // Exchange Rates
+        db.exchangeRate.findMany()
     ]);
 
     const totalReserves = Number(liquidityData._sum.availableBalance || 0);
     const liquidityTrend = Number(todayCredits._sum.amount || 0) - Number(todayDebits._sum.amount || 0);
+
+    // Create Map for fast lookup
+    const rateMap = new Map(rates.map(r => [r.currency, Number(r.rate)]));
 
     return (
         <div className={styles.container}>
@@ -141,6 +147,7 @@ export default async function AdminDashboard() {
                                     key={u.id}
                                     user={u}
                                     styles={styles}
+                                    exchangeRate={(u.currency === 'USD' || !u.currency) ? 1 : (rateMap.get(u.currency) || 1)}
                                 />
                             ))}
                         </tbody>

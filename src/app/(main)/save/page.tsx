@@ -13,20 +13,23 @@ export default async function SavePage() {
             apy: `${settings.rate_hysa_apy}% APY`,
             desc: settings.save_prod1_desc,
             link: settings.save_prod1_link,
+            anchorLink: settings.save_prod1_anchorLink,
             icon: <TrendingUp size={32} className={styles.iconGreen} />
         },
         {
-            title: settings.save_prod5_title, // Business
+            title: settings.save_prod2_title, // Business
             apy: `${settings.rate_business_apy}% APY`,
-            desc: settings.save_prod5_desc,
-            link: settings.save_prod5_link,
+            desc: settings.save_prod2_desc,
+            link: settings.save_prod2_link,
+            anchorLink: settings.save_prod2_anchorLink,
             icon: <Briefcase size={32} className={styles.iconTeal} />
         },
         {
-            title: settings.save_prod6_title, // Retirement
+            title: settings.save_prod3_title, // Retirement
             apy: `~${settings.rate_ira_apy}% Rtrn`,
-            desc: settings.save_prod6_desc,
-            link: settings.save_prod6_link,
+            desc: settings.save_prod3_desc,
+            link: settings.save_prod3_link,
+            anchorLink: settings.save_prod3_anchorLink,
             icon: <Sun size={32} className={styles.iconOrange} />
         }
     ];
@@ -36,8 +39,8 @@ export default async function SavePage() {
             {/* 1. HERO */}
             <section className={styles.heroBackground}>
                 <Image
-                    src={settings.save_hero_img || "/save-hero.png"}
-                    alt={settings.save_hero_alt || "TrustBank Savings"}
+                    src={settings.save_hero_img}
+                    alt={settings.save_hero_alt}
                     fill
                     className={styles.heroBgImage}
                     priority
@@ -57,25 +60,22 @@ export default async function SavePage() {
             {/* 2. CALCULATOR */}
             <section className={styles.calcSection}>
                 <div className={styles.container}>
-                    <SavingsCalculator
-                        defaultApy={Number(settings.rate_hysa_apy)}
-                        settings={settings}
-                    />
+                    <SavingsCalculator settings={settings} />
                 </div>
             </section>
 
-            {/* 3. CDS SECTION (#cds) */}
+            {/* 3. CDS SECTION */}
             <section id="cds" className={styles.productSection}>
                 <div className={styles.container}>
                     <div className={styles.productGrid}>
                         <div className={styles.productImageWrapper}>
-                            <Image src={settings.save_cds_img || "/save-cds.png"} alt={settings.save_cds_img_alt} fill className={styles.productImage} />
+                            <Image src={settings.save_cds_img} alt={settings.save_cds_img_alt} fill className={styles.productImage} />
                         </div>
                         <div className={styles.productContent}>
-                            <span className={styles.apyDisplay}>Up to {settings.rate_cd_apy}% APY</span>
+                            <span className={styles.apyDisplay}>Up to {settings.rate_cd_apy}{settings.rate_cd_apy_percent}</span>
                             <h2 className={styles.productTitle}>{settings.save_cds_title}</h2>
                             <p className={styles.productDesc}>{settings.save_cds_desc}</p>
-                            <a href="#" className={styles.productBtn}>
+                            <a href={settings.save_cds_link} className={styles.productBtn}>
                                 {settings.save_cds_btn} <ArrowRight size={18} />
                             </a>
                         </div>
@@ -88,15 +88,15 @@ export default async function SavePage() {
                 <div className={styles.container}>
                     <div className={`${styles.productGrid} ${styles.reverseGrid}`}>
                         <div className={styles.productContent}>
-                            <span className={styles.apyDisplay}>Up to {settings.rate_mma_apy}% APY</span>
+                            <span className={styles.apyDisplay}>Up to {settings.rate_mma_apy}{settings.rate_cd_apy_percent}</span>
                             <h2 className={styles.productTitle}>{settings.save_mma_title}</h2>
                             <p className={styles.productDesc}>{settings.save_mma_desc}</p>
-                            <a href="#" className={styles.productBtn}>
+                            <a href={settings.save_mma_link} className={styles.productBtn}>
                                 {settings.save_mma_btn} <ArrowRight size={18} />
                             </a>
                         </div>
                         <div className={styles.productImageWrapper}>
-                            <Image src={settings.save_mma_img || "/save-mma.png"} alt={settings.save_mma_img_alt} fill className={styles.productImage} />
+                            <Image src={settings.save_mma_img} alt={settings.save_mma_img_alt} fill className={styles.productImage} />
                         </div>
                     </div>
                 </div>
@@ -107,13 +107,13 @@ export default async function SavePage() {
                 <div className={styles.container}>
                     <div className={styles.productGrid}>
                         <div className={styles.productImageWrapper}>
-                            <Image src={settings.save_kids_img || "/save-kids.png"} alt={settings.save_kids_img_alt} fill className={styles.productImage} />
+                            <Image src={settings.save_kids_img} alt={settings.save_kids_img_alt} fill className={styles.productImage} />
                         </div>
                         <div className={styles.productContent}>
-                            <span className={styles.apyDisplay}>{settings.rate_kids_apy}% APY</span>
+                            <span className={styles.apyDisplay}>{settings.rate_kids_apy}{settings.rate_cd_apy_percent}</span>
                             <h2 className={styles.productTitle}>{settings.save_kids_title}</h2>
                             <p className={styles.productDesc}>{settings.save_kids_desc}</p>
-                            <a href="#" className={styles.productBtn}>
+                            <a href={settings.save_kids_link} className={styles.productBtn}>
                                 {settings.save_kids_btn} <ArrowRight size={18} />
                             </a>
                         </div>
@@ -121,7 +121,7 @@ export default async function SavePage() {
                 </div>
             </section>
 
-            {/* 6. MORE PRODUCTS GRID (The "Supplemental" List) */}
+            {/* 6. MORE PRODUCTS GRID  */}
             <section className={styles.suppSection}>
                 <div className={styles.container}>
                     <div className={styles.sectionHeader}>
@@ -138,7 +138,7 @@ export default async function SavePage() {
                                 </div>
                                 <h3>{p.title}</h3>
                                 <p>{p.desc}</p>
-                                <a href="#" className={styles.cardBtn}>
+                                <a href={p.anchorLink} className={styles.cardBtn}>
                                     {p.link} <ArrowRight size={16} />
                                 </a>
                             </div>

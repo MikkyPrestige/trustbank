@@ -36,14 +36,13 @@ export default async function GlobalReach() {
                 {/* THE MAP VISUAL */}
                 <div className={styles.mapWrapper}>
                     <Image
-                        src={settings.home_global_img || "/world-map-dark.png"}
-                        alt={settings.home_global_alt || "Global Network Map"}
+                        src={settings.home_global_img}
+                        alt={settings.home_global_alt}
                         fill
                         className={styles.mapImage}
                         quality={100}
                     />
 
-                    {/* Pulsing Hotspots */}
                     {HOTSPOTS.map((spot) => (
                         <div
                             key={spot.city}
@@ -55,7 +54,7 @@ export default async function GlobalReach() {
 
                             <div className={styles.hotspotTooltip}>
                                 <span className={styles.tooltipCity}>{spot.city}</span>
-                                <span className={styles.tooltipStatus}>Operational</span>
+                                <span className={styles.tooltipStatus}>{settings.home_global_hotspot}</span>
                             </div>
                         </div>
                     ))}
@@ -66,24 +65,24 @@ export default async function GlobalReach() {
                     <div className={styles.statItem}>
                         <Globe size={24} className={styles.statIcon} />
                         <div>
-                            <strong>{settings.global_stat_countries} Countries</strong>
-                            <span>Accepted worldwide</span>
+                            <strong>{settings.global_stat_countries} {settings.global_stat_countries_text}</strong>
+                            <span>{settings.global_stat_countries_subtext}</span>
                         </div>
                     </div>
                     <div className={styles.statDivider}></div>
                     <div className={styles.statItem}>
                         <Wifi size={24} className={styles.statIcon} />
                         <div>
-                            <strong>{settings.global_stat_digital} Digital</strong>
-                            <span>Manage from anywhere</span>
+                            <strong>{settings.global_stat_digital} {settings.global_stat_digital_text}</strong>
+                            <span>{settings.global_stat_digital_subtext}</span>
                         </div>
                     </div>
                     <div className={styles.statDivider}></div>
                     <div className={styles.statItem}>
                         <ShieldCheck size={24} className={styles.statIcon} />
                         <div>
-                            <strong>Global Fraud Shield</strong>
-                            <span>{settings.global_stat_fraud} Monitoring</span>
+                            <strong>{settings.global_stat_fraud_title}</strong>
+                            <span>{settings.global_stat_fraud} {settings.global_stat_fraud_text}</span>
                         </div>
                     </div>
                 </div>

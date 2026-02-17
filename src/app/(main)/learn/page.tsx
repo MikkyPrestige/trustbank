@@ -13,34 +13,35 @@ export const metadata: Metadata = {
 export default async function LearnPage() {
     const settings = await getSiteSettings();
 
-    // Helper Array for Articles
-    // The first article is "Large" (Featured), others are standard cards
     const ARTICLES = [
         {
             tag: settings.learn_art1_tag,
             title: settings.learn_art1_title,
             desc: settings.learn_art1_desc,
-            img: settings.learn_art1_img || "/learn-invest.png",
-            alt: settings.learn_art1_alt || "Investment Chart",
-            linkText: settings.learn_art1_link,
+            img: settings.learn_art1_img,
+            alt: settings.learn_art1_alt,
+            link: settings.learn_art1_link,
+            linkText: settings.learn_art1_linkText,
             isLarge: true
         },
         {
             tag: settings.learn_art2_tag,
             title: settings.learn_art2_title,
             desc: settings.learn_art2_desc,
-            img: settings.learn_art2_img || "/learn-tax.png",
-            alt: settings.learn_art2_alt || "Tax Documents",
-            linkText: settings.learn_art2_link,
+            img: settings.learn_art2_img,
+            alt: settings.learn_art2_alt,
+            link: settings.learn_art2_link,
+            linkText: settings.learn_art2_linkText,
             isLarge: false
         },
         {
             tag: settings.learn_art3_tag,
             title: settings.learn_art3_title,
             desc: settings.learn_art3_desc,
-            img: settings.learn_art3_img || "/learn-business.png",
-            alt: settings.learn_art3_alt || "Business Strategy",
-            linkText: settings.learn_art3_link,
+            img: settings.learn_art3_img,
+            alt: settings.learn_art3_alt,
+            link: settings.learn_art3_link,
+            linkText: settings.learn_art3_linkText,
             isLarge: false
         }
     ];
@@ -51,8 +52,8 @@ export default async function LearnPage() {
             {/* 1. HERO SECTION */}
             <section className={styles.heroBackground}>
                 <Image
-                    src={settings.learn_hero_img || "/learn-hero.png"}
-                    alt={settings.learn_hero_alt || "Financial Learning"}
+                    src={settings.learn_hero_img}
+                    alt={settings.learn_hero_alt}
                     fill
                     className={styles.heroBgImage}
                     priority
@@ -61,7 +62,7 @@ export default async function LearnPage() {
 
                 <div className={styles.container}>
                     <div className={styles.heroContent}>
-                        <div className={styles.amberBadge}>Trust Education</div>
+                        <div className={styles.amberBadge}>{settings.learn_hero_badge}</div>
                         <h1 className={styles.heroTitle}>
                             {settings.learn_hero_title} <br />
                             <span className={styles.highlight}>{settings.learn_hero_highlight}</span>
@@ -72,13 +73,12 @@ export default async function LearnPage() {
                     </div>
 
                     <div className={styles.heroWidget}>
-                        {/* Interactive Quiz Widget */}
                         <WellnessPulse settings={settings} />
                     </div>
                 </div>
             </section>
 
-            {/* 2. FEATURED GUIDES (Magazine Layout) */}
+            {/* 2. FEATURED GUIDES */}
             <section className={styles.contentSection}>
                 <div className={styles.container}>
                     <div className={styles.sectionHeader}>
@@ -101,7 +101,7 @@ export default async function LearnPage() {
                                 <div className={styles.cardContent}>
                                     <h3>{art.title}</h3>
                                     <p>{art.desc}</p>
-                                    <a href="#" className={styles.readLink}>
+                                    <a href={art.link} className={styles.readLink}>
                                         {art.linkText} <ArrowRight size={16} />
                                     </a>
                                 </div>

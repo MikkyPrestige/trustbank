@@ -5,7 +5,6 @@ import { useState } from "react";
 import { ArrowRight, Flame, ShieldCheck, Info, TrendingUp, CheckCircle2 } from "lucide-react";
 import styles from "./home.module.css";
 
-
 interface RatesGridProps {
     settings: any;
 }
@@ -16,7 +15,6 @@ export default function RatesGrid({ settings }: RatesGridProps) {
     return (
         <section className={styles.ratesSection}>
             <div className={styles.container}>
-
                 {/* 1. HEADER WITH TABS */}
                 <div className={styles.ratesHeader}>
                     <div className={styles.headerText}>
@@ -26,171 +24,169 @@ export default function RatesGrid({ settings }: RatesGridProps) {
                         </p>
                     </div>
 
-                    {/* THE TAB SWITCHER */}
                     <div className={styles.rateTabs}>
                         <button
                             className={`${styles.tabBtn} ${activeTab === 'deposits' ? styles.activeTab : ''}`}
                             onClick={() => setActiveTab('deposits')}
                         >
-                            Save & Grow
+                            {settings.home_rates_tab1_label}
                         </button>
                         <button
                             className={`${styles.tabBtn} ${activeTab === 'borrowing' ? styles.activeTab : ''}`}
                             onClick={() => setActiveTab('borrowing')}
                         >
-                            Borrow & Spend
+                            {settings.home_rates_tab2_label}
                         </button>
                     </div>
                 </div>
 
-                {/* 2. THE DYNAMIC GRID */}
+                {/* 2.  GRID */}
                 <div className={styles.ratesGrid}>
-
                     {activeTab === 'deposits' ? (
                         <>
-                            {/* CARD 1: SAVINGS (Uses HYSA Rate from Save Page) */}
+                            {/* CARD 1: SAVINGS */}
                             <div className={`${styles.rateCard} ${styles.featuredCard}`}>
                                 <div className={styles.badge}>
-                                    <Flame size={14} fill="white" className={styles.badgeIcon} /> POPULAR
+                                    <Flame size={14} fill="white" className={styles.badgeIcon} /> {settings.home_rates_c1_badge}
                                 </div>
                                 <div className={styles.cardTop}>
-                                    <h3 className={styles.rateTitle}>Platinum Savings</h3>
+                                    <h3 className={styles.rateTitle}>{settings.home_rates_c1_title}</h3>
                                     <div className={styles.rateValue}>
-                                        {settings.rate_hysa_apy}% <small>APY</small>
+                                        {settings.rate_hysa_apy}{settings.home_rates_percent_symbol} <small>{settings.home_rates_unit_apy}</small>
                                     </div>
                                     <p className={styles.rateSub}>
-                                        <TrendingUp size={16} /> 7x the national average
+                                        <TrendingUp size={16} /> {settings.home_rates_c1_sub}
                                     </p>
                                 </div>
                                 <div className={styles.cardDetails}>
                                     <div className={styles.detailRow}>
-                                        <span>Min. Balance</span>
-                                        <strong>$0.00</strong>
+                                        <span>{settings.home_rates_c1_row1_label}</span>
+                                        <strong>{settings.home_rates_c1_row1_value}</strong>
                                     </div>
                                     <div className={styles.detailRow}>
-                                        <span>Monthly Fee</span>
-                                        <strong>$0</strong>
+                                        <span>{settings.home_rates_c1_row2_label}</span>
+                                        <strong>{settings.home_rates_c1_row2_value}</strong>
                                     </div>
                                 </div>
-                                <Link href="/register" className={styles.btnFull}>
-                                    Start Saving <ArrowRight size={18} />
+                                <Link href={settings.home_rates_c1_btn_link} className={styles.btnFull}>
+                                    {settings.home_rates_c1_btn_text} <ArrowRight size={18} />
                                 </Link>
                             </div>
 
-                            {/* CARD 2: CD (Uses CD Rate from Save Page) */}
+                            {/* CARD 2: CD */}
                             <div className={styles.rateCard}>
                                 <div className={styles.cardTop}>
-                                    <h3 className={styles.rateTitle}>12-Month CD</h3>
+                                    <h3 className={styles.rateTitle}>{settings.home_rates_c2_title}</h3>
                                     <div className={styles.rateValue}>
-                                        {settings.rate_cd_apy}% <small>APY</small>
+                                        {settings.rate_cd_apy}{settings.home_rates_percent_symbol} <small>{settings.home_rates_unit_apy}</small>
                                     </div>
                                     <p className={styles.rateSub}>
-                                        <ShieldCheck size={16} /> Guaranteed return
+                                        <ShieldCheck size={16} /> {settings.home_rates_c2_sub}
                                     </p>
                                 </div>
                                 <div className={styles.cardDetails}>
                                     <div className={styles.detailRow}>
-                                        <span>Term</span>
-                                        <strong>12 Months</strong>
+                                        <span>{settings.home_rates_c2_row1_label}</span>
+                                        <strong>{settings.home_rates_c2_row1_value}</strong>
                                     </div>
                                     <div className={styles.detailRow}>
-                                        <span>Min. Deposit</span>
-                                        <strong>$500</strong>
+                                        <span>{settings.home_rates_c2_row2_label}</span>
+                                        <strong>{settings.home_rates_c2_row2_value}</strong>
                                     </div>
                                 </div>
-                                <Link href="/register" className={styles.btnOutlineDark}>
-                                    Open CD <ArrowRight size={18} />
+                                <Link href={settings.home_rates_c2_btn_link} className={styles.btnOutlineDark}>
+                                    {settings.home_rates_c2_btn_text} <ArrowRight size={18} />
                                 </Link>
                             </div>
 
-                            {/* CARD 3: CHECKING (Uses Checking Bonus) */}
+                            {/* CARD 3: CHECKING */}
                             <div className={styles.rateCard}>
                                 <div className={styles.cardTop}>
-                                    <h3 className={styles.rateTitle}>Total Checking</h3>
+                                    <h3 className={styles.rateTitle}>{settings.home_rates_c3_title}</h3>
                                     <div className={styles.rateValue}>
-                                        ${settings.rate_checking_bonus} <small>BONUS</small>
+                                        {settings.home_rates_currency_symbol}{settings.rate_checking_bonus} <small>{settings.home_rates_unit_bonus}</small>
                                     </div>
                                     <p className={styles.rateSub}>
-                                        <CheckCircle2 size={16} /> With direct deposit
+                                        <CheckCircle2 size={16} /> {settings.home_rates_c3_sub}
                                     </p>
                                 </div>
                                 <div className={styles.cardDetails}>
                                     <div className={styles.detailRow}>
-                                        <span>ATMs</span>
-                                        <strong>Unlimited</strong>
+                                        <span>{settings.home_rates_c3_row1_label}</span>
+                                        <strong>{settings.home_rates_c3_row1_value}</strong>
                                     </div>
                                     <div className={styles.detailRow}>
-                                        <span>Overdraft</span>
-                                        <strong>$0 Fee</strong>
+                                        <span>{settings.home_rates_c3_row2_label}</span>
+                                        <strong>{settings.home_rates_c3_row2_value}</strong>
                                     </div>
                                 </div>
-                                <Link href="/register" className={styles.btnOutlineDark}>
-                                    Open Checking <ArrowRight size={18} />
+                                <Link href={settings.home_rates_c3_btn_link} className={styles.btnOutlineDark}>
+                                    {settings.home_rates_c3_btn_text} <ArrowRight size={18} />
                                 </Link>
                             </div>
                         </>
                     ) : (
                         <>
-                            {/* CARD 4: MORTGAGE (Uses 30yr Rate from Borrow Page) */}
+                            {/* CARD 4: MORTGAGE */}
                             <div className={styles.rateCard}>
                                 <div className={styles.cardTop}>
-                                    <h3 className={styles.rateTitle}>30-Year Fixed</h3>
+                                    <h3 className={styles.rateTitle}>{settings.home_rates_c4_title}</h3>
                                     <div className={styles.rateValue}>
-                                        {settings.rate_mortgage_30yr}% <small>APR</small>
+                                        {settings.rate_mortgage_30yr}{settings.home_rates_percent_symbol} <small>{settings.home_rates_unit_apr}</small>
                                     </div>
-                                    <p className={styles.rateSub}>Purchase or Refinance.</p>
+                                    <p className={styles.rateSub}>{settings.home_rates_c4_sub}</p>
                                 </div>
                                 <div className={styles.cardDetails}>
                                     <div className={styles.detailRow}>
-                                        <span>Closing Costs</span>
-                                        <strong>Low</strong>
+                                        <span>{settings.home_rates_c4_row1_label}</span>
+                                        <strong>{settings.home_rates_c4_row1_value}</strong>
                                     </div>
                                 </div>
-                                <Link href="/borrow" className={styles.btnOutlineDark}>
-                                    Check Rates <ArrowRight size={18} />
+                                <Link href={settings.home_rates_c4_btn_link} className={styles.btnOutlineDark}>
+                                    {settings.home_rates_c4_btn_text} <ArrowRight size={18} />
                                 </Link>
                             </div>
 
-                            {/* CARD 5: AUTO (Uses Low Auto Rate from Borrow Page) */}
+                            {/* CARD 5: AUTO */}
                             <div className={`${styles.rateCard} ${styles.featuredCard}`}>
                                 <div className={styles.badge}>
-                                    <TrendingUp size={14} /> LOW RATE
+                                    <TrendingUp size={14} /> {settings.home_rates_c5_badge}
                                 </div>
                                 <div className={styles.cardTop}>
-                                    <h3 className={styles.rateTitle}>Auto Loans</h3>
-                                    <div className={styles.rateValue}>
-                                        {settings.rate_auto_low}% <small>APR</small>
-                                    </div>
-                                    <p className={styles.rateSub}>New or Used vehicles.</p>
+                                    <h3 className={styles.rateTitle}>{settings.home_rates_c5_title}</h3>
+                                        <div className={styles.rateValue}>
+                                            {settings.rate_auto_low}{settings.home_rates_percent_symbol} <small>{settings.home_rates_unit_apr}</small>
+                                        </div>
+                                    <p className={styles.rateSub}>{settings.home_rates_c5_sub}</p>
                                 </div>
                                 <div className={styles.cardDetails}>
                                     <div className={styles.detailRow}>
-                                        <span>Term</span>
-                                        <strong>Up to 72 mo</strong>
+                                        <span>{settings.home_rates_c5_row1_label}</span>
+                                        <strong>{settings.home_rates_c5_row1_value}</strong>
                                     </div>
                                 </div>
-                                <Link href="/borrow" className={styles.btnFull}>
-                                    Apply Now <ArrowRight size={18} />
+                                <Link href={settings.home_rates_c5_btn_link} className={styles.btnFull}>
+                                    {settings.home_rates_c5_btn_text} <ArrowRight size={18} />
                                 </Link>
                             </div>
 
-                            {/* CARD 6: PERSONAL (Uses Personal Rate from Borrow Page) */}
+                            {/* CARD 6: PERSONAL */}
                             <div className={styles.rateCard}>
                                 <div className={styles.cardTop}>
-                                    <h3 className={styles.rateTitle}>Personal Loan</h3>
-                                    <div className={styles.rateValue}>
-                                        {settings.rate_personal_apr}% <small>APR</small>
+                                    <h3 className={styles.rateTitle}>{settings.home_rates_c6_title}</h3>
+                                 <div className={styles.rateValue}>
+                                        {settings.rate_personal_apr}{settings.home_rates_percent_symbol} <small>{settings.home_rates_unit_apr}</small>
                                     </div>
-                                    <p className={styles.rateSub}>Consolidate debt instantly.</p>
+                                    <p className={styles.rateSub}>{settings.home_rates_c6_sub}</p>
                                 </div>
                                 <div className={styles.cardDetails}>
                                     <div className={styles.detailRow}>
-                                        <span>Funding</span>
-                                        <strong>Same Day</strong>
+                                        <span>{settings.home_rates_c6_row1_label}</span>
+                                        <strong>{settings.home_rates_c6_row1_value}</strong>
                                     </div>
                                 </div>
-                                <Link href="/borrow" className={styles.btnOutlineDark}>
-                                    View Options <ArrowRight size={18} />
+                                <Link href={settings.home_rates_c6_btn_link} className={styles.btnOutlineDark}>
+                                    {settings.home_rates_c6_btn_text} <ArrowRight size={18} />
                                 </Link>
                             </div>
                         </>
@@ -199,8 +195,7 @@ export default function RatesGrid({ settings }: RatesGridProps) {
                 </div>
 
                 <div className={styles.disclaimer}>
-                    <Info size={14} /> Rates are subject to change without notice. APY = Annual Percentage Yield. APR = Annual Percentage Rate.
-                    See full <Link href="/terms">disclosures</Link> for details.
+                    <Info size={14} /> {settings.home_rates_disclaimer}
                 </div>
             </div>
         </section>

@@ -1,110 +1,51 @@
-'use client';
+import { auth } from "@/auth";
+import { db } from "@/lib/db";
+import { redirect } from "next/navigation";
+import BillsClient from "@/components/dashboard/bills/BillsClient";
+import { getFeatureStatus } from "@/actions/admin/system-status";
+import { Ban } from "lucide-react";
+import styles from "../../../../components/dashboard/bills/bills.module.css";
 
-import { useActionState, useState, useEffect } from 'react';
-import { payBill } from '@/actions/user/bills';
-import { Zap, Wifi, Tv, Smartphone, Loader2 } from 'lucide-react';
-import toast from 'react-hot-toast';
-import styles from './bills.module.css';
+export default async function BillsPage() {
+    const session = await auth();
+    const features = await getFeatureStatus();
 
-const PROVIDERS = [
-    { id: 'Electric', name: 'Electricity', icon: Zap, color: '#eab308' },
-    { id: 'Internet', name: 'Internet / WiFi', icon: Wifi, color: '#3b82f6' },
-    { id: 'Cable', name: 'Cable TV', icon: Tv, color: '#ef4444' },
-    { id: 'Phone', name: 'Airtime', icon: Smartphone, color: '#22c55e' },
-];
+    if (!session?.user?.id) redirect("/login");
 
-export default function BillsPage() {
-    const [selected, setSelected] = useState(PROVIDERS[0]);
-    const [state, action, isPending] = useActionState(payBill, undefined);
+    const [user, rates] = await Promise.all([
+        db.user.findUnique({
+            where: { id: session.user.id },
+            select: { currency: true }
+        }),
+        db.exchangeRate.findMany()
+    ]);
 
-    useEffect(() => {
-        if (state?.message) {
-            if (state.success) {
-                toast.success(state.message);
-            } else {
-                toast.error(state.message);
-            }
-        }
-    }, [state]);
+    // 1. Determine Currency Context
+    const currency = user?.currency || "USD";
+    const rate = currency === "USD"
+        ? 1
+        : Number(rates.find(r => r.currency === currency)?.rate || 1);
+
+    if (!features.bills) {
+        return (
+            <div className={styles.container}>
+                <div className={styles.lockedState}>
+                    <div className={styles.lockIconBox}>
+                        <Ban size={32} />
+                    </div>
+                    <h2>Bill Payments Paused</h2>
+                    <p>
+                        Utility payments are currently disabled by administration. Please check back later.
+                    </p>
+                </div>
+            </div>
+        );
+    }
 
     return (
-        <div className={styles.container}>
-            <div className={styles.header}>
-                <h1 className={styles.title}>Utility Payments</h1>
-                <p className={styles.subtitle}>Select a service provider to settle bills instantly.</p>
-            </div>
-
-            {/* Provider Selection Grid */}
-            <div className={styles.grid}>
-                {PROVIDERS.map(p => (
-                    <div
-                        key={p.id}
-                        onClick={() => setSelected(p)}
-                        className={`${styles.card} ${selected.id === p.id ? styles.cardSelected : ''}`}
-                    >
-                        <div className={styles.iconBox} style={{
-                            color: p.color,
-                            background: selected.id === p.id ? `${p.color}15` : 'rgba(255,255,255,0.03)'
-                        }}>
-                            <p.icon size={28} />
-                        </div>
-                        <span className={styles.providerName}>{p.name}</span>
-                        {selected.id === p.id && <div className={styles.indicator} style={{ background: p.color }} />}
-                    </div>
-                ))}
-            </div>
-
-            {/* Payment Form */}
-            <form action={action} className={styles.formCard}>
-                <input type="hidden" name="provider" value={selected.name} />
-
-                <h3 className={styles.formTitle}>Pay {selected.name}</h3>
-                <p className={styles.formSubtitle}>Enter your billing details below to proceed.</p>
-
-                <div className={styles.group}>
-                    <label className={styles.label}>Account / Meter Number</label>
-                    <input
-                        name="accountNumber"
-                        required
-                        placeholder="e.g. 1029384756"
-                        className={styles.input}
-                    />
-                </div>
-
-                <div className={styles.row}>
-                    <div className={styles.group} style={{ flex: 2 }}>
-                        <label className={styles.label}>Amount (USD)</label>
-                        <input
-                            name="amount"
-                            type="number"
-                            step="0.01"
-                            required
-                            placeholder="0.00"
-                            className={`${styles.input} ${styles.inputAmount}`}
-                        />
-                    </div>
-
-                    <div className={styles.group} style={{ flex: 1 }}>
-                        <label className={styles.label}>Security PIN</label>
-                        <input
-                            name="pin"
-                            type="password"
-                            maxLength={4}
-                            required
-                            placeholder="••••"
-                            className={`${styles.input} ${styles.inputPin}`}
-                        />
-                    </div>
-                </div>
-
-                <button disabled={isPending} className={styles.payBtn}>
-                    {isPending ? (
-                        <><Loader2 className={styles.spin} size={18} /> Processing Payment...</>
-                    ) : (
-                        `Pay ${selected.name} Bill`
-                    )}
-                </button>
-            </form>
-        </div>
+        <BillsClient
+            currency={currency}
+            rate={rate}
+        />
     );
 }

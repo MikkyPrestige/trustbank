@@ -52,6 +52,9 @@ export type AdminLogAction =
   // --- Financial Reports ---
   | 'CREATE_REPORT' | 'DELETE_REPORT'
 
+  // --- Payments Currency ---
+  | 'CREATE_CURRENCY' | 'UPDATE_CURRENCY_RATE' | 'DELETE_CURRENCY'
+
   // --- System ---
   | 'SYSTEM_SETTINGS_UPDATE';
 

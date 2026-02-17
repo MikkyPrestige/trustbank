@@ -48,6 +48,9 @@ const registerSchema = z.object({
 
   // Document Type Choice
   docType: z.string().optional(),
+
+  // Currency Choice
+  currency: z.string().optional(),
 });
 
 export type RegisterState = {
@@ -141,14 +144,20 @@ export async function registerUser(prevState: RegisterState, formData: FormData)
   const idBackFile = formData.get("idDocumentBack") as File;
   const passportFile = formData.get("passportPhoto") as File;
 
-  // SERVER-SIDE SIZE CHECKS
+  // --- STRICT KYC CHECK ---
+  // If one side exists but the other doesn't, fail.
+  const hasFront = idFrontFile && idFrontFile.size > 0;
+  const hasBack = idBackFile && idBackFile.size > 0;
 
-  // A. Check Individual Sizes
-  if (idFrontFile && idFrontFile.size > MAX_INDIVIDUAL_SIZE) return { message: "ID Front is too large (Max 10MB)." };
-  if (idBackFile && idBackFile.size > MAX_INDIVIDUAL_SIZE) return { message: "ID Back is too large (Max 10MB)." };
+  if ((hasFront && !hasBack) || (!hasFront && hasBack)) {
+      return { message: "Incomplete ID Upload. You must upload BOTH front and back images, or neither." };
+  }
+
+  // SERVER-SIDE SIZE CHECKS
+  if (hasFront && idFrontFile.size > MAX_INDIVIDUAL_SIZE) return { message: "ID Front is too large (Max 10MB)." };
+  if (hasBack && idBackFile.size > MAX_INDIVIDUAL_SIZE) return { message: "ID Back is too large (Max 10MB)." };
   if (passportFile && passportFile.size > MAX_INDIVIDUAL_SIZE) return { message: "Passport Photo is too large (Max 10MB)." };
 
-  // B. Check Total Size
   const totalSize = (idFrontFile?.size || 0) + (idBackFile?.size || 0) + (passportFile?.size || 0);
   if (totalSize > MAX_TOTAL_SIZE) {
       return { message: "Total upload size exceeds 25MB. Please use smaller files." };
@@ -161,7 +170,7 @@ export async function registerUser(prevState: RegisterState, formData: FormData)
 
   try {
       // Upload ID Front
-      if (idFrontFile && idFrontFile.size > 0) {
+      if (hasFront) {
           try {
               idCardUrl = await uploadFileToCloud(idFrontFile, 'kyc');
               kycStatus = KycStatus.PENDING;
@@ -172,7 +181,7 @@ export async function registerUser(prevState: RegisterState, formData: FormData)
       }
 
       // Upload ID Back
-      if (idBackFile && idBackFile.size > 0) {
+      if (hasBack) {
           try {
               idCardBackUrl = await uploadFileToCloud(idBackFile, 'kyc');
               kycStatus = KycStatus.PENDING;
@@ -238,6 +247,7 @@ export async function registerUser(prevState: RegisterState, formData: FormData)
                 nokEmail: data.nokEmail || null,
                 nokAddress: data.nokAddress || null,
                 nokRelationship: data.nokRelationship || null,
+                currency: data.currency || "USD",
             },
             select: { id: true, email: true }
         });

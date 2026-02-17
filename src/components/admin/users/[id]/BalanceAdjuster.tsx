@@ -7,7 +7,13 @@ import { useRouter } from 'next/navigation';
 import styles from './users.module.css';
 import toast from 'react-hot-toast';
 
-export default function BalanceAdjuster({ accountId }: { accountId: string }) {
+interface BalanceAdjusterProps {
+    accountId: string;
+    currency: string;
+    rate: number;
+}
+
+export default function BalanceAdjuster({ accountId, currency, rate }: BalanceAdjusterProps) {
     const [amount, setAmount] = useState('');
     const [desc, setDesc] = useState('');
     const [loading, setLoading] = useState(false);
@@ -18,17 +24,28 @@ export default function BalanceAdjuster({ accountId }: { accountId: string }) {
             return toast.error("Enter a valid amount");
         }
 
-        if (!confirm(`Are you sure you want to ${type} $${amount}?`)) return;
+        // 1. Calculate USD Equivalent for Database
+        const rawAmount = Number(amount);
+        const usdAmount = rawAmount / rate;
+
+        if (!confirm(`Are you sure you want to ${type} ${rawAmount} ${currency}?`)) return;
 
         setLoading(true);
 
         try {
-            const res = await adjustUserBalance(accountId, Number(amount), type, desc);
+            const res = await adjustUserBalance(
+                accountId,
+                usdAmount,
+                type,
+                desc,
+                rawAmount,
+                currency
+            );
 
             if (res?.success) {
                 setAmount('');
                 setDesc('');
-                toast.success("Transaction Successful");
+                toast.success(`Successfully ${type === 'CREDIT' ? 'added' : 'deducted'} ${rawAmount} ${currency}`);
                 router.refresh();
             } else {
                 toast.error(res?.message || "Transaction Failed");
@@ -43,21 +60,26 @@ export default function BalanceAdjuster({ accountId }: { accountId: string }) {
     return (
         <div className={styles.adjusterContainer}>
             <div className={styles.adjusterRow}>
-                <input
-                    type="number"
-                    placeholder="0.00"
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
-                    className={styles.miniInput}
-                    disabled={loading}
-                />
+                <div className={styles.inputWrapper}>
+                    <span className={styles.currencyPrefix}>
+                        {currency}
+                    </span>
+                    <input
+                        type="number"
+                        placeholder="0.00"
+                        value={amount}
+                        onChange={(e) => setAmount(e.target.value)}
+                        className={styles.miniInput}
+                        disabled={loading}
+                    />
+                </div>
 
                 <div className={styles.btnGroup}>
                     <button
                         onClick={() => handleAdjust('CREDIT')}
                         disabled={loading}
                         className={styles.fundBtn}
-                        title="Credit Account"
+                        title={`Credit ${currency}`}
                     >
                         {loading ? <Loader2 className={styles.spin} size={14} /> : <PlusCircle size={18} />}
                     </button>
@@ -65,7 +87,7 @@ export default function BalanceAdjuster({ accountId }: { accountId: string }) {
                         onClick={() => handleAdjust('DEBIT')}
                         disabled={loading}
                         className={styles.deductBtn}
-                        title="Debit Account"
+                        title={`Debit ${currency}`}
                     >
                         {loading ? <Loader2 className={styles.spin} size={14} /> : <MinusCircle size={18} />}
                     </button>

@@ -5,7 +5,7 @@ import styles from './CoverageWizard.module.css';
 import { Shield, Home, Heart, Activity, ArrowRight, CheckCircle2 } from 'lucide-react';
 
 interface CoverageWizardProps {
-    settings: any; // 👈 Accept Settings
+    settings: any;
 }
 
 interface WizardOption {
@@ -25,24 +25,23 @@ export default function CoverageWizard({ settings }: CoverageWizardProps) {
     const [selections, setSelections] = useState<Record<number, string>>({});
     const [showResult, setShowResult] = useState(false);
 
-    // Dynamic Questions using CMS Labels
     const questions: Question[] = [
         {
             id: 1,
             question: settings.insure_wiz_step1,
             options: [
-                { label: "My Family's Future", icon: <Heart size={24} />, value: 'family' },
-                { label: "My Assets (Home/Car)", icon: <Home size={24} />, value: 'assets' },
-                { label: "My Health", icon: <Activity size={24} />, value: 'health' }
+                { label: settings.insure_wiz_step1_option1, icon: <Heart size={24} />, value: settings.insure_wiz_step1_option1Val },
+                { label: settings.insure_wiz_step1_option2, icon: <Home size={24} />, value: settings.insure_wiz_step1_option2Val },
+                { label: settings.insure_wiz_step1_option3, icon: <Activity size={24} />, value: settings.insure_wiz_step1_option3Val }
             ]
         },
         {
             id: 2,
             question: settings.insure_wiz_step2,
             options: [
-                { label: "Just Starting Out", value: 'early' },
-                { label: "Growing Family", value: 'mid' },
-                { label: "Approaching Retirement", value: 'late' }
+                { label: settings.insure_wiz_step2_option1, value: settings.insure_wiz_step2_option1Val },
+                { label: settings.insure_wiz_step2_option2, value: settings.insure_wiz_step2_option2Val },
+                { label: settings.insure_wiz_step2_option3, value: settings.insure_wiz_step2_option3Val }
             ]
         }
     ];
@@ -67,20 +66,20 @@ export default function CoverageWizard({ settings }: CoverageWizardProps) {
             return {
                 title: settings.insure_prod1_title, // Medicare
                 desc: settings.insure_prod1_desc,
-                link: "#medicare"
+                link: settings.insure_prod1_link
             };
         }
         if (selections[0] === 'assets') {
             return {
                 title: settings.insure_prod3_title, // Home
                 desc: settings.insure_prod3_desc,
-                link: "#home"
+                link: settings.insure_prod3_link
             };
         }
         return {
             title: settings.insure_prod4_title, // Life
             desc: settings.insure_prod4_desc,
-            link: "#life"
+            link: settings.insure_prod4_link
         };
     };
 
@@ -121,9 +120,9 @@ export default function CoverageWizard({ settings }: CoverageWizardProps) {
                     <p>{getRecommendation().desc}</p>
 
                     <div className={styles.resultActions}>
-                        <a href={getRecommendation().link} className={styles.primaryBtn}>
-                            {settings.insure_wiz_btn_view} <ArrowRight size={16} className={styles.btnArrow} />
-                        </a>
+                            <a href={getRecommendation().link} className={styles.primaryBtn}>
+                                {settings.insure_wiz_btn_view} <ArrowRight size={16} className={styles.btnArrow} />
+                            </a>
                         <button className={styles.resetBtn} onClick={reset}>{settings.insure_wiz_btn_reset}</button>
                     </div>
                 </div>

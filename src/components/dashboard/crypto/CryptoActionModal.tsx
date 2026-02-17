@@ -83,15 +83,14 @@ export default function CryptoActionModal({ asset }: { asset: Asset }) {
                                 src={qrUrl}
                                 alt="Wallet QR Code"
                                 className={styles.qrImage}
-                                style={{ borderRadius: '12px', border: '4px solid white', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}
                             />
                         </div>
-                        <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '1.5rem', marginTop: '1rem', textAlign: 'center', lineHeight: 1.5 }}>
+                        <p className={styles.qrText}>
                             Scan to deposit <strong>{asset.symbol}</strong> directly to your wallet.
                             <br />Network: <strong>TrustBank Chain (TBC)</strong>
                         </p>
                         <div className={styles.addressBox}>
-                            <span style={{ fontSize: '0.8rem', wordBreak: 'break-all' }}>{walletAddress}</span>
+                            <span className={styles.addressText}>{walletAddress}</span>
                             <button onClick={handleCopy} className={styles.copyBtn}>
                                 {copied ? <Check size={16} color="var(--success)" /> : <Copy size={16} />}
                             </button>

@@ -6,15 +6,27 @@ import SettingsForm from "@/components/admin/settings/SettingsForm";
 export default async function AdminSettingsPage() {
     await requireAdmin();
 
-    const settings = await getSiteSettings();
+    const [settings, managedAssets, currencies, footerLinks] = await Promise.all([
+        getSiteSettings(),
+        db.managedAsset.findMany({ orderBy: { sortOrder: 'asc' } }),
+        db.currency.findMany({orderBy: { code: 'asc' }}),
+        db.footerLink.findMany({orderBy: { order: 'asc' }})
+    ]);
+    // const settings = await getSiteSettings();
 
-    const footerLinks = await db.footerLink.findMany({
-        orderBy: { order: 'asc' }
-    });
+    // const currencies = await db.currency.findMany({
+    //     orderBy: { code: 'asc' }
+    // });
+
+    // const footerLinks = await db.footerLink.findMany({
+    //     orderBy: { order: 'asc' }
+    // });
 
     return (
         <SettingsForm
             settings={settings}
+            currencies={currencies}
+            initialManagedAssets={managedAssets}
             footerLinks={footerLinks}
         />
     );

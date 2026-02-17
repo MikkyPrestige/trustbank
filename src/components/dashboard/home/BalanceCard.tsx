@@ -25,6 +25,8 @@ interface BalanceCardProps {
     bankName: string;
     trend: number;
     status: string;
+    currencyCode?: string;
+    exchangeRate?: number;
 }
 
 export default function BalanceCard({
@@ -34,7 +36,9 @@ export default function BalanceCard({
     routingNumber,
     bankName,
     trend,
-    status
+    status,
+    currencyCode = "USD",
+    exchangeRate = 1
 }: BalanceCardProps) {
     const router = useRouter();
     const [isVisible, setIsVisible] = useState(true);
@@ -42,6 +46,18 @@ export default function BalanceCard({
     const [copied, setCopied] = useState(false);
 
     const toggleVisibility = () => setIsVisible(!isVisible);
+
+    // --- CURRENCY LOGIC ---
+    const convertedBalance = totalBalance * exchangeRate;
+
+    const displayMoney = (amount: number, currency: string) => {
+        return new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: currency,
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+        }).format(amount);
+    };
 
     // --- STATUS LOGIC ---
     const isFrozen = status === 'FROZEN' || status === 'SUSPENDED';
@@ -53,8 +69,6 @@ export default function BalanceCard({
     };
 
     const statusConfig = getStatusConfig();
-
-    // Determine visual state
     const isPositive = trend > 0;
     const isNeutral = trend === 0;
 
@@ -68,28 +82,15 @@ export default function BalanceCard({
         setTimeout(() => setCopied(false), 2000);
     };
 
-    const displayMoney = (amount: number) => {
-        return new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD',
-        }).format(amount);
-    };
-
     return (
         <>
             <div className={styles.balanceCard}>
                 <div className={styles.cardTexture}></div>
-                {/* Hide if frozen to emphasize stoppage */}
+
                 {!isFrozen && (
                     <svg className={styles.sparkline} viewBox="0 0 100 30" preserveAspectRatio="none">
                         <path d="M0,30 Q10,25 20,28 T40,15 T60,20 T80,5 T100,15 L100,30 L0,30 Z" className={styles.sparklinePathFill} />
                         <path d="M0,30 Q10,25 20,28 T40,15 T60,20 T80,5 T100,15" className={styles.sparklinePathStroke} />
-                        <defs>
-                            <linearGradient id="gradient" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.4" />
-                                <stop offset="100%" stopColor="#3b82f6" stopOpacity="0" />
-                            </linearGradient>
-                        </defs>
                     </svg>
                 )}
 
@@ -103,7 +104,15 @@ export default function BalanceCard({
 
                 <div className={styles.balanceRow} onClick={toggleVisibility}>
                     <div className={isVisible ? styles.balanceAmount : styles.hiddenBalance}>
-                        {displayMoney(totalBalance)}
+                        {/* 👇 Show Converted Amount (e.g. ZAR) */}
+                        {displayMoney(convertedBalance, currencyCode)}
+
+                        {/* 👇 Small badge showing original USD if converted */}
+                        {currencyCode !== "USD" && isVisible && (
+                            <div style={{ fontSize: '0.8rem', opacity: 0.7, marginTop: '4px', fontWeight: 400 }}>
+                                ≈ {displayMoney(totalBalance, 'USD')}
+                            </div>
+                        )}
                     </div>
                 </div>
 
@@ -132,7 +141,7 @@ export default function BalanceCard({
                 </div>
             </div>
 
-            {/* --- DEPOSIT MODAL --- */}
+            {/* --- DEPOSIT MODAL (Unchanged) --- */}
             {showDepositModal && (
                 <div className={styles.modalOverlay}>
                     <div className={styles.modalContent}>
@@ -160,7 +169,6 @@ export default function BalanceCard({
                                 <span className={styles.detailValue}>{accountName}</span>
                             </div>
 
-                            {/* Copyable Account Number */}
                             <div className={styles.copyContainer}>
                                 <div>
                                     <div className={styles.accountLabel}>Account Number</div>

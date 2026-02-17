@@ -4,6 +4,10 @@
   min-height: 100vh;
 }
 
+.backLinkContainer {
+  margin-bottom: 1rem;
+}
+
 .backLink {
   display: inline-flex;
   align-items: center;
@@ -120,6 +124,12 @@
   gap: 6px;
 }
 
+.metaAddress {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
 .actions {
   display: flex;
   gap: 0.5rem;
@@ -150,7 +160,7 @@
 }
 
 /* =========================================
-   MODAL (THE FIX)
+   MODAL
    ========================================= */
 .modalOverlay {
   position: fixed;
@@ -158,28 +168,26 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5); /* Dim background */
+  background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(4px);
   z-index: 50;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1rem; /* Safety padding so modal doesn't touch screen edges */
+  padding: 1rem;
 }
 
 .modal {
   background: var(--bg-card);
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: 1rem;
   width: 100%;
-  max-width: 500px;
+  max-width: 600px;
   padding: 2rem;
   position: relative;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-
-  /* --- SCROLL FIXES --- */
-  max-height: 85vh; /* Never taller than 85% of screen height */
-  overflow-y: auto; /* Enable vertical scrolling if content overflows */
+  box-shadow: 0 2rem 5rem -1rem var(--shadow-card);
+  max-height: 85vh;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
 }
@@ -214,13 +222,37 @@
   display: block;
   font-size: 0.9rem;
   font-weight: 500;
-  color: var(--text-main);
+  color: var(--text-muted);
   margin-bottom: 0.5rem;
+}
+
+.autoFillBtn {
+  background: var(--bg-surface);
+  color: var(--primary);
+  border: none;
+  padding: .7rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: background 0.2s ease;
+}
+
+.autoFillBtn:hover:not(:disabled) {
+  background: var(--border-hover);
+}
+
+.autoFillBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .input {
   width: 100%;
-  padding: 10px 12px;
+  padding: .7rem;
   border-radius: 8px;
   border: 1px solid var(--border);
   background: var(--bg-app);
@@ -237,36 +269,47 @@
 
 .grid2 {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
+}
+
+.grid3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.serviceCheckboxes {
+  margin-bottom: 1.5rem;
+  margin-top: 1rem;
 }
 
 .checkboxWrapper {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 0.5rem;
   font-size: 0.95rem;
   color: var(--text-main);
   cursor: pointer;
 }
 
 .checkbox {
-  width: 18px;
-  height: 18px;
+  width: 1rem;
+  height: 1rem;
   accent-color: var(--primary);
 }
 
 .submitBtn {
   width: 100%;
-  padding: 12px;
+  padding: 0.8rem;
   background: var(--primary);
   color: var(--text-invert);
   border: none;
-  border-radius: 8px;
+  border-radius: 0.5rem;
   font-weight: 600;
   font-size: 1rem;
   cursor: pointer;
-  margin-top: 1rem;
+  margin-top: 1.5rem;
   transition: opacity 0.2s;
   display: flex;
   align-items: center;
@@ -284,4 +327,17 @@
   color: var(--text-muted);
   font-style: italic;
   margin-top: 2rem;
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }

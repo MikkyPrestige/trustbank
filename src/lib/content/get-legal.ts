@@ -36,8 +36,8 @@ export const getLegalContent = cache(async (type: 'privacy' | 'terms' | 'accessi
         const layoutConfig = {
             backText: settings?.content?.legal_back_text || defaultLayout.backText,
             footerText: settings?.content?.legal_footer_text || defaultLayout.footerText,
-            linkText: settings?.content?.legal_link_text || defaultLayout.linkText,
-            linkUrl: settings?.content?.legal_link_url || defaultLayout.linkUrl,
+            linkText: settings?.content?.legal_contact_text || defaultLayout.linkText,
+            linkUrl: settings?.content?.legal_contact_url || defaultLayout.linkUrl,
             updatedLabel: settings?.content?.legal_updated_label || defaultLayout.updatedLabel,
         };
 

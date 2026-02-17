@@ -32,7 +32,7 @@ export default function SitemapPage() {
                     </div>
                 ))}
 
-                {/* 2. GENERAL / UTILITY (Manually Added) */}
+                {/* 2. GENERAL / UTILITY */}
                 <div className={styles.card}>
                     <h2 className={styles.sectionTitle}>GENERAL & ACCOUNT</h2>
                     <ul className={styles.linkList}>
@@ -55,7 +55,6 @@ export default function SitemapPage() {
                         <li><Link href="/accessibility">Accessibility</Link></li>
                     </ul>
                 </div>
-
             </div>
         </div>
     );

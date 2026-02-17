@@ -8,7 +8,7 @@
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 1.5rem;
+  padding: 0 1rem;
 }
 
 /* =========================================
@@ -16,19 +16,18 @@
    ========================================= */
 .hero {
   position: relative;
-  padding: 6rem 0;
   background: var(--bg-app);
   overflow: hidden;
 }
 
-/* Background glow effect for crypto vibes */
+/* Background glow effect */
 .hero::before {
   content: "";
   position: absolute;
-  top: -20%;
+  top: -10%;
   right: -10%;
-  width: 600px;
-  height: 600px;
+  width: 500px;
+  height: 500px;
   background: radial-gradient(
     circle,
     rgba(147, 51, 234, 0.15) 0%,
@@ -56,7 +55,7 @@
   align-items: center;
   gap: 8px;
   background: rgba(147, 51, 234, 0.1);
-  color: #a855f7; /* Purple-500 */
+  color: #a855f7;
   border: 1px solid rgba(147, 51, 234, 0.3);
   padding: 6px 14px;
   border-radius: 50px;
@@ -69,19 +68,19 @@
   font-size: 3.5rem;
   font-weight: 800;
   line-height: 1.1;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   color: var(--text-main);
 }
 
 .highlight {
-  color: #a855f7; /* Purple */
+  color: #a855f7;
 }
 
 .heroDesc {
   font-size: 1.25rem;
   color: var(--text-muted);
   line-height: 1.6;
-  margin-bottom: 2.5rem;
+  margin-bottom: 2rem;
 }
 
 .heroActions {
@@ -92,7 +91,7 @@
 .btnPrimary {
   background: var(--primary);
   color: var(--text-invert);
-  padding: 14px 28px;
+  padding: 10px 20px;
   border-radius: 50px;
   font-weight: 600;
   text-decoration: none;
@@ -108,7 +107,7 @@
   background: transparent;
   color: var(--text-main);
   border: 1px solid var(--border);
-  padding: 14px 28px;
+  padding: 10px 20px;
   border-radius: 50px;
   font-weight: 600;
   text-decoration: none;
@@ -164,7 +163,7 @@
    2. MARKET TABLE
    ========================================= */
 .marketSection {
-  padding: 4rem 0;
+  padding: 1rem 2rem;
 }
 
 .tableCard {
@@ -179,7 +178,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   padding-bottom: 1rem;
   border-bottom: 1px solid var(--border);
 }
@@ -252,25 +251,76 @@
 }
 
 .symbolIcon {
-  width: 40px;
-  height: 40px;
+  width: 32px;
+  height: 32px;
   background: var(--bg-surface);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
-  color: var(--primary);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.coinLogo {
+  object-fit: contain;
+  display: block;
 }
 
 .assetMeta {
-  display: flex;
-  flex-direction: column;
+display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.symbolContainer {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 1.1rem;
+    color: var(--primary);
+}
+
+.staleDot {
+    color: var(--accent);
+    font-size: 12px;
+    cursor: help;
+    display: inline-flex;
+    align-items: center;
+    animation: pulseStale 2s infinite;
+}
+
+@keyframes pulseStale {
+    0% { opacity: 1; }
+    50% { opacity: 0.4; }
+    100% { opacity: 1; }
 }
 
 .assetFullname {
   font-size: 0.8rem;
   color: var(--text-muted);
+  opacity: 0.8;
+}
+
+.lastUpdatedTiny {
+    display: block;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-top: 1px;
+}
+
+.isFresh {
+    color: #10b981;
+    animation: pulseFade 2s infinite ease-in-out;
+}
+
+@keyframes pulseFade {
+    0% { opacity: 0.6; }
+    50% { opacity: 1; }
+    100% { opacity: 0.6; }
 }
 
 .price {
@@ -288,6 +338,19 @@
   font-weight: 600;
 }
 
+.chartCell {
+  padding: 8px 16px;
+  vertical-align: middle;
+  width: 120px;
+  min-width: 100px;
+}
+
+/* @media (max-width: 640px) {
+  .chartCell {
+    display: none;
+  }
+} */
+
 .tradeBtn {
   background: rgba(59, 130, 246, 0.1);
   color: var(--primary);
@@ -296,32 +359,35 @@
   text-decoration: none;
   font-weight: 600;
   font-size: 0.9rem;
-  transition: all 0.2s;
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease;
 }
 
 .tradeBtn:hover {
   background: var(--primary);
   color: var(--text-invert);
+  transform: translateY(-1px);
 }
 
 /* =========================================
    3. FEATURES SECTION
    ========================================= */
 .featuresSection {
-  padding: 6rem 0;
+  padding: 3rem 0;
   background: var(--bg-surface);
   border-top: 1px solid var(--border);
 }
 
 .sectionHeader {
   text-align: center;
-  margin-bottom: 4rem;
+  margin-bottom: 2rem;
 }
 
 .sectionHeader h2 {
   font-size: 2.5rem;
   color: var(--text-main);
-  margin-bottom: 0.5rem;
+  /* margin-bottom: 0.5rem; */
 }
 
 .sectionHeader p {

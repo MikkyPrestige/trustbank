@@ -3,21 +3,25 @@ import Image from "next/image";
 import styles from "./home.module.css";
 
 interface HeroProps {
+    siteName: string;
     badgeText?: string;
+    imgSrc: string;
+    imgAlt: string;
     title?: string;
     subtitle?: string;
+    ctaLink: string;
     ctaText?: string;
-    imgSrc?: string;
-    imgAlt?: string;
+    cta1Text?: string;
+    cta1Link: string;
 }
 
-export default function Hero({ badgeText, title, subtitle, ctaText, imgSrc, imgAlt }: HeroProps) {
+export default function Hero({ siteName, badgeText, imgSrc, imgAlt, title, subtitle, ctaLink, ctaText, cta1Text, cta1Link }: HeroProps) {
     return (
         <section className={styles.hero}>
             <div className={styles.heroBg}>
                 <Image
-                    src={imgSrc || "/hero-human.png"}
-                    alt={imgAlt || "Banking Lifestyle"}
+                    src={imgSrc}
+                    alt={imgAlt}
                     fill
                     style={{ objectFit: "cover", objectPosition: "top center" }}
                     priority
@@ -28,7 +32,7 @@ export default function Hero({ badgeText, title, subtitle, ctaText, imgSrc, imgA
             <div className={styles.container}>
                 <div className={styles.heroContent}>
                     <span className={styles.heroBadge}>
-                        {badgeText || "TRUST BANK PERSONAL"}
+                        {siteName} {badgeText}
                     </span>
 
                     <h1 className={styles.heroTitle}>
@@ -51,11 +55,11 @@ export default function Hero({ badgeText, title, subtitle, ctaText, imgSrc, imgA
                     </p>
 
                     <div className={styles.ctaRow}>
-                        <Link href="/register" className={styles.btnPrimary}>
-                            {ctaText || "OPEN ACCOUNT"}
+                        <Link href={ctaLink} className={styles.btnPrimary}>
+                            {ctaText}
                         </Link>
-                        <Link href="/rates" className={styles.btnOutline}>
-                            SEE CURRENT RATES
+                        <Link href={cta1Link} className={styles.btnOutline}>
+                            {cta1Text}
                         </Link>
                     </div>
                 </div>

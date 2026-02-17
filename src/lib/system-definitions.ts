@@ -105,6 +105,14 @@ feature_loan_apply_enabled: {
     description: "Allow users to create new crypto wallets."
   },
 
+  feature_bills_enabled: {
+    label: "Enable Bill Payments",
+    type: "BOOLEAN",
+    group: "features",
+    defaultValue: "true",
+    description: "Allow users to pay utility bills (Electric, Internet, etc)."
+  },
+
   // --- SYSTEM CONTROL ---
   maintenance_mode: {
     label: "Maintenance Mode",

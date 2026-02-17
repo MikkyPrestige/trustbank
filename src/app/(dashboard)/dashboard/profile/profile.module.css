@@ -1,9 +1,16 @@
 .container {
   width: 100%;
   max-width: 1000px;
-  margin: 0 auto;
   padding: 2rem;
   animation: fadeIn 0.4s ease-out;
+}
+
+.textSuccess {
+    color: var(--success);
+}
+
+.textDanger {
+    color: var(--danger);
 }
 
 /* --- HEADER CARD --- */
@@ -125,6 +132,10 @@
   box-shadow: var(--shadow-card);
 }
 
+.cardSpacing {
+    margin-top: 1.5rem;
+}
+
 .cardHeader {
   display: flex;
   align-items: center;
@@ -178,11 +189,26 @@
   text-transform: uppercase;
 }
 
+.pinStatus {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
 .value {
   font-size: 1rem;
   font-weight: 600;
   color: var(--text-main);
   text-align: right;
+}
+
+.valueHighlight {
+    font-weight: 600;
+    color: var(--primary);
+}
+
+.valueCapitalized {
+    text-transform: capitalize;
 }
 
 .valueMono {
@@ -191,6 +217,15 @@
   font-weight: 700;
   color: var(--text-main);
   letter-spacing: 1px;
+}
+
+.limitWarning {
+    margin-top: 1rem;
+    font-size: 0.8rem;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
 .divider {

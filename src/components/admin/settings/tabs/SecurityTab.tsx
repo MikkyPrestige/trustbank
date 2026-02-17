@@ -50,8 +50,8 @@ export function SecurityTab({ settings, securityHeroUrl, setSecurityHeroUrl }: S
                 <input name="security_feat1_title" defaultValue={settings.security_feat1_title} className={styles.input} />
             </div>
             <div className={styles.group}>
-                <label className={styles.label}>Feature 1 Desc</label>
-                <input name="security_feat1_desc" defaultValue={settings.security_feat1_desc} className={styles.input} />
+                <label className={styles.label}>Feature 1 Description</label>
+                <textarea name="security_feat1_desc" defaultValue={settings.security_feat1_desc} className={styles.textarea} />
             </div>
             {/* Feature 2 */}
             <div className={styles.group}>
@@ -59,8 +59,8 @@ export function SecurityTab({ settings, securityHeroUrl, setSecurityHeroUrl }: S
                 <input name="security_feat2_title" defaultValue={settings.security_feat2_title} className={styles.input} />
             </div>
             <div className={styles.group}>
-                <label className={styles.label}>Feature 2 Desc</label>
-                <input name="security_feat2_desc" defaultValue={settings.security_feat2_desc} className={styles.input} />
+                <label className={styles.label}>Feature 2 Description</label>
+                <textarea name="security_feat2_desc" defaultValue={settings.security_feat2_desc} className={styles.textarea} />
             </div>
             {/* Feature 3 */}
             <div className={styles.group}>
@@ -68,13 +68,16 @@ export function SecurityTab({ settings, securityHeroUrl, setSecurityHeroUrl }: S
                 <input name="security_feat3_title" defaultValue={settings.security_feat3_title} className={styles.input} />
             </div>
             <div className={styles.group}>
-                <label className={styles.label}>Feature 3 Desc</label>
-                <input name="security_feat3_desc" defaultValue={settings.security_feat3_desc} className={styles.input} />
+                <label className={styles.label}>Feature 3 Description</label>
+                <textarea name="security_feat3_desc" defaultValue={settings.security_feat3_desc} className={styles.textarea} />
             </div>
 
             {/* Fraud Section */}
-            <div className={styles.fullWidth}><hr className={styles.divider} /><h3 className={styles.sectionTitle}>Fraud Alert Section</h3></div>
-            <div className={styles.group}>
+            <div className={styles.fullWidth}>
+                <hr className={styles.divider} />
+                <h3 className={styles.sectionTitle}>Fraud Alert Section</h3>
+            </div>
+            <div className={`${styles.group} ${styles.fullWidth}`}>
                 <label className={styles.label}>Section Title</label>
                 <input name="security_fraud_title" defaultValue={settings.security_fraud_title} className={styles.input} />
             </div>
@@ -82,9 +85,23 @@ export function SecurityTab({ settings, securityHeroUrl, setSecurityHeroUrl }: S
                 <label className={styles.label}>Warning Card Title</label>
                 <input name="security_fraud_card_title" defaultValue={settings.security_fraud_card_title} className={styles.input} />
             </div>
+            <div className={styles.group}>
+                <label className={styles.label}>Card Action</label>
+                <input name="security_fraud_card_action" defaultValue={settings.security_fraud_card_action} className={styles.input} />
+            </div>
             <div className={`${styles.group} ${styles.fullWidth}`}>
                 <label className={styles.label}>Warning Description</label>
                 <textarea name="security_fraud_card_desc" defaultValue={settings.security_fraud_card_desc} className={styles.textarea} />
+            </div>
+
+            {/* Help Section */}
+            <div className={styles.group}>
+                <label className={styles.label}>Help Paragraph</label>
+                <input name="security_help" defaultValue={settings.security_help} className={styles.input} />
+            </div>
+            <div className={styles.group}>
+                <label className={styles.label}>Link Text</label>
+                <input name="security_help_linkText" defaultValue={settings.security_help_linkText} className={styles.input} />
             </div>
         </div>
     );

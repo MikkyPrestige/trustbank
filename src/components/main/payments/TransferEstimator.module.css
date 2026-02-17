@@ -15,7 +15,7 @@
   align-items: center;
 }
 .iconBox {
-  background: rgba(99, 102, 241, 0.1); /* Indigo Tint */
+  background: rgba(99, 102, 241, 0.1);
   color: #6366f1;
   padding: 12px;
   border-radius: 12px;
@@ -67,10 +67,9 @@
 .select,
 .displayAmount {
   font-size: 1.5rem;
-  font-weight: 700;
   color: var(--text-main);
-  background: transparent;
-  border: none;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
   text-align: right;
   width: 150px;
 }
@@ -80,6 +79,7 @@
 .select {
   cursor: pointer;
   direction: rtl;
+  font-size: 1rem;
 }
 
 /* CONNECTOR */
@@ -146,10 +146,14 @@
 }
 
 .sendBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
   width: 100%;
   background: #6366f1;
   color: var(--text-invert);
-  padding: 16px;
+  padding: 10px;
   border-radius: 12px;
   border: none;
   font-weight: 700;
@@ -157,6 +161,7 @@
   transition: 0.2s;
   font-size: 1rem;
 }
+
 .sendBtn:hover {
   background: #4f46e5;
   transform: translateY(-2px);

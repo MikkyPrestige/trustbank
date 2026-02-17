@@ -1,5 +1,7 @@
 .pageWrapper {
+  min-height: 100vh;
   background: var(--bg-app);
+  color: var(--text-main);
 }
 
 .container {
@@ -11,7 +13,7 @@
 /* HERO */
 .hero {
   position: relative;
-  height: 400px;
+  min-height: 300px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -49,7 +51,7 @@
   position: relative;
   z-index: 2;
   max-width: 800px;
-  padding: 0 20px;
+  padding: 0 2rem;
 }
 
 .heroContent h1 {
@@ -69,7 +71,7 @@
   background: var(--primary);
   color: var(--text-main);
   border: none;
-  padding: 14px 28px;
+  padding: 1rem 2rem;
   font-size: 1rem;
   font-weight: 600;
   border-radius: 50px;
@@ -83,19 +85,19 @@
 
 /* VALUES */
 .valuesSection {
-  padding: 5rem 0;
+  padding: 2rem 0;
   background: var(--bg-surface);
 }
 
 .sectionHeader {
   text-align: center;
-  margin-bottom: 4rem;
+  margin-bottom: 2rem;
 }
 .sectionHeader h2 {
   font-size: 2.25rem;
   color: var(--text-main);
-  margin-bottom: 0.5rem;
 }
+
 .sectionHeader p {
   color: var(--text-muted);
   font-size: 1.1rem;
@@ -110,30 +112,30 @@
 .valueCard {
   background: var(--bg-card);
   padding: 2rem;
-  border-radius: 16px;
+  border-radius: 1rem;
   border: 1px solid var(--border);
   transition: box-shadow 0.2s;
 }
 
 .valueCard:hover {
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1rem 3rem -1rem rgba(0, 0, 0, 0.1);
 }
 
 .iconBox {
-  width: 48px;
-  height: 48px;
+  width: 4rem;
+  height: 4rem;
   background: rgba(37, 99, 235, 0.1);
   color: var(--primary);
-  border-radius: 12px;
+  border-radius: 1rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .valueCard h3 {
   font-size: 1.25rem;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.5rem;
   color: var(--text-main);
 }
 .valueCard p {
@@ -143,11 +145,12 @@
 
 /* JOB LIST */
 .jobsSection {
-  padding: 5rem 0;
+  padding: 2rem 0;
 }
+
 .jobsTitle {
   font-size: 2rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   color: var(--text-main);
 }
 
@@ -204,12 +207,12 @@
 .applyBtn {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: .5rem;
   background: transparent;
   color: var(--text-main);
   border: 1px solid var(--border);
-  padding: 8px 16px;
-  border-radius: 8px;
+  padding: .5rem 1rem;
+  border-radius: .8rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;

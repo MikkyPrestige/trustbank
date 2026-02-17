@@ -14,26 +14,26 @@ interface Asset {
 interface TradeFormProps {
     livePrices: Record<string, { price: number; change: number }>;
     assets: Asset[];
+    currency: string;
+    rate: number;
 }
 
-export default function TradeForm({ livePrices, assets }: TradeFormProps) {
+export default function TradeForm({ livePrices, assets, currency, rate }: TradeFormProps) {
     const [state, action, isPending] = useActionState(tradeCrypto, undefined);
     const [type, setType] = useState<'BUY' | 'SELL'>('BUY');
-    const [currency, setCurrency] = useState('BTC');
+    const [selectedCoin, setSelectedCoin] = useState('BTC');
     const [amount, setAmount] = useState('');
 
-    const currentPrice = livePrices[currency]?.price || 0;
+    const currentPrice = livePrices[selectedCoin]?.price || 0;
 
-    // Find how much of this coin the user owns
-    const userAsset = assets.find(a => a.symbol === currency);
+    const userAsset = assets.find(a => a.symbol === selectedCoin);
     const userBalance = userAsset ? Number(userAsset.quantity) : 0;
 
-    // Calculate Max Sell Value in USD
     const maxSellValue = userBalance * currentPrice;
 
     // Estimate Logic
     const estimate = amount && currentPrice > 0
-        ? (Number(amount) / currentPrice).toFixed(6) + ` ${currency}`
+        ? (Number(amount) / currentPrice).toFixed(6) + ` ${selectedCoin}`
         : '---';
 
     useEffect(() => {
@@ -55,12 +55,28 @@ export default function TradeForm({ livePrices, assets }: TradeFormProps) {
         }
     };
 
-    const availableSymbols = Object.keys(livePrices).filter(s => s !== 'HYPE');
+    const handleSubmit = (formData: FormData) => {
+        const inputAmount = Number(formData.get("amount"));
+
+        // 1. Convert to USD for Server
+        const usdAmount = inputAmount / rate;
+        formData.set("amount", usdAmount.toString());
+
+        // 2. Add Display Data
+        formData.set("displayAmount", inputAmount.toString());
+        formData.set("displayCurrency", currency);
+
+        action(formData);
+    }
+
+    const availableSymbols = Object.keys(livePrices);
 
     return (
         <div className={styles.tradeCard}>
             <div className={styles.tradeHeader}>
-                <h3><Activity size={18} style={{ marginRight: '8px', color: 'var(--primary)' }} /> Quick Trade</h3>
+                <h3 className={styles.headerRow}>
+                    <Activity size={18} style={{ marginRight: '8px', color: 'var(--primary)' }} /> Quick Trade
+                </h3>
                 <span className={styles.liveBadge}><div className={styles.pulse}></div> Live</span>
             </div>
 
@@ -69,27 +85,26 @@ export default function TradeForm({ livePrices, assets }: TradeFormProps) {
                 <button type="button" onClick={() => setType('SELL')} className={`${styles.toggleBtn} ${type === 'SELL' ? styles.sellActive : ''}`}>Sell</button>
             </div>
 
-            <form action={action} className={styles.form}>
+            <form action={handleSubmit} className={styles.form}>
                 <input type="hidden" name="type" value={type} />
 
                 <div className={styles.group}>
                     <label>Select Asset</label>
-                    <select name="currency" value={currency} onChange={e => setCurrency(e.target.value)} className={styles.select}>
+                    <select name="currency" value={selectedCoin} onChange={e => setSelectedCoin(e.target.value)} className={styles.select}>
                         {availableSymbols.map(sym => (
-                            <option key={sym} value={sym}>{sym} - ${livePrices[sym].price.toLocaleString()}</option>
+                            <option key={sym} value={sym}>
+                                {sym} - {new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(livePrices[sym].price)}
+                            </option>
                         ))}
                     </select>
                 </div>
 
                 <div className={styles.group}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <label>{type === 'BUY' ? 'Pay Amount (USD)' : 'Sell Value (USD)'}</label>
+                    <div className={styles.maxBtnContainer}>
+                        <label>{type === 'BUY' ? `Pay Amount (${currency})` : `Sell Value (${currency})`}</label>
                         {type === 'SELL' && userBalance > 0 && (
-                            <span
-                                onClick={handleMaxClick}
-                                style={{ fontSize: '0.75rem', color: 'var(--primary)', cursor: 'pointer', fontWeight: 600 }}
-                            >
-                                Max: ${maxSellValue.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                            <span onClick={handleMaxClick} className={styles.maxBtn}>
+                                Max: {new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(maxSellValue)}
                             </span>
                         )}
                     </div>
@@ -101,13 +116,12 @@ export default function TradeForm({ livePrices, assets }: TradeFormProps) {
                         placeholder="0.00"
                         value={amount}
                         onChange={e => setAmount(e.target.value)}
-                        className={styles.input}
-                        style={{ fontSize: '1.4rem', fontWeight: 'bold' }}
+                        className={`${styles.input} ${styles.inputLarge}`}
                     />
                 </div>
 
                 <div className={styles.estimateBox}>
-                    <span>Rate: 1 {currency} = ${currentPrice.toLocaleString()}</span>
+                    <span>Rate: 1 {selectedCoin} = {new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(currentPrice)}</span>
                     <div className={styles.conversion}>{amount ? `≈ ${estimate}` : '0.00'}</div>
                 </div>
 

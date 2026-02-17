@@ -12,7 +12,8 @@ export async function getFeatureStatus() {
                     'feature_loan_repay_enabled',
                     'feature_crypto_enabled',
                     'feature_transfer_enabled',
-                    'feature_wire_enabled'
+                    'feature_wire_enabled',
+                    'feature_bills_enabled'
                 ]
             }
         }
@@ -24,7 +25,8 @@ export async function getFeatureStatus() {
         repay: true,
         crypto: true,
         transfers: true,
-        wire: true
+        wire: true,
+        bills: true
     };
 
     // 3. Map Database Values to Simple Flags
@@ -51,6 +53,11 @@ export async function getFeatureStatus() {
         // Wire
         if (s.key === 'feature_wire_enabled') {
             flags.wire = s.value === 'true';
+        }
+
+        // Bills
+        if (s.key === 'feature_bills_enabled') {
+            flags.bills = s.value === 'true';
         }
     });
 

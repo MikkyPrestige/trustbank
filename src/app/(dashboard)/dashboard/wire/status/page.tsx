@@ -18,9 +18,23 @@ export default async function WireStatusPage({
     const params = await searchParams;
     const selectedId = params?.id;
 
+    // Fetch User Currency settings
+    const [user, rates] = await Promise.all([
+        db.user.findUnique({ where: { id: session.user.id }, select: { currency: true } }),
+        db.exchangeRate.findMany()
+    ]);
+
+    const currency = user?.currency || "USD";
+    const rate = currency === "USD" ? 1 : Number(rates.find(r => r.currency === currency)?.rate || 1);
+
     // PAGINATION SETTINGS
     const currentPage = Number(params?.page) || 1;
     const PAGE_SIZE = 5;
+
+    // Helper: Display Formatter
+    const formatMoney = (usdAmount: number) => {
+        return new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(usdAmount * rate);
+    };
 
     // 1. DETAIL VIEW (If ID is selected)
     if (selectedId) {
@@ -67,7 +81,7 @@ export default async function WireStatusPage({
                             </div>
                             <div className={styles.receiptRow}>
                                 <span>Amount Sent</span>
-                                <span>{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(wire.amount))}</span>
+                                <span>{formatMoney(Number(wire.amount))}</span>
                             </div>
                             <div className={styles.receiptRow}>
                                 <span>Status</span>
@@ -157,7 +171,7 @@ export default async function WireStatusPage({
                             </div>
                             <div className={styles.receiptRow}>
                                 <span>Amount</span>
-                                <strong>{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(wire.amount))}</strong>
+                                <strong>{formatMoney(Number(wire.amount))}</strong>
                             </div>
                             <div className={styles.receiptRow}>
                                 <span>Status</span>
@@ -205,6 +219,10 @@ export default async function WireStatusPage({
                         </div>
 
                         <div className={styles.receiptDetails}>
+                            <div className={styles.receiptRow}>
+                                <span>Amount</span>
+                                <span>{formatMoney(Number(wire.amount))}</span>
+                            </div>
                             <div className={styles.receiptRow}>
                                 <span>Current Status</span>
                                 <strong className={styles.warning}>ON HOLD (Action Required)</strong>
@@ -289,7 +307,7 @@ export default async function WireStatusPage({
                                         <div className={styles.wireBank}>{wire.bankName}</div>
                                         <div className={styles.wireDate}>{new Date(wire.createdAt).toLocaleDateString()}</div>
                                         <div className={styles.wireAmount}>
-                                            {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(wire.amount))}
+                                            {formatMoney(Number(wire.amount))}
                                         </div>
                                     </div>
                                     <div className={styles.wireAction}>

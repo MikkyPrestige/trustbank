@@ -20,17 +20,24 @@ export default async function TransferPage({
     const params = await searchParams;
     const preSelectedId = params?.beneficiaryId;
 
-    const [user, limitSetting] = await Promise.all([
+    const [user, limitSetting, rates] = await Promise.all([
         db.user.findUnique({
             where: { id: session.user.id },
             include: { accounts: true }
         }),
         db.systemSettings.findUnique({
             where: { key: 'limit_unverified_daily_max' }
-        })
+        }),
+        db.exchangeRate.findMany()
     ]);
 
     if (!user) return null;
+
+    // 1. Determine Currency & Rate
+    const currency = user.currency || "USD";
+    const exchangeRate = currency === "USD"
+        ? 1
+        : Number(rates.find(r => r.currency === currency)?.rate || 1);
 
     const isVerified = user.kycStatus === KycStatus.VERIFIED;
     const dbLimit = limitSetting ? Number(limitSetting.value) : 10000;
@@ -92,6 +99,8 @@ export default async function TransferPage({
                         beneficiaries={beneficiaries}
                         preSelectedId={preSelectedId}
                         limit={limitAmount}
+                        currency={currency}
+                        rate={exchangeRate}
                     />
                 </div>
             )}

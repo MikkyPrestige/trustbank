@@ -38,7 +38,14 @@ export async function generateTransactions(prevState: any, formData: FormData) {
 
     const accountId = formData.get("accountId") as string;
     const type = formData.get("type") as 'CREDIT' | 'DEBIT' | 'MIXED';
+
+    // This is the USD Amount (already converted by client)
     const totalAmount = parseFloat(formData.get("totalAmount") as string);
+
+    // These are for display/notification purposes
+    const displayAmount = parseFloat(formData.get("displayAmount") as string);
+    const displayCurrency = formData.get("displayCurrency") as string;
+
     const count = parseInt(formData.get("count") as string);
     const customNote = formData.get("customNote") as string;
 
@@ -56,7 +63,7 @@ export async function generateTransactions(prevState: any, formData: FormData) {
         const account = await db.account.findUnique({ where: { id: accountId } });
         if (!account) return { message: "Account not found" };
         if (Number(account.availableBalance) < totalAmount) {
-            return { message: ` Impossible. Account only has $${Number(account.availableBalance).toLocaleString()}.` };
+            return { message: `Impossible. Account only has $${Number(account.availableBalance).toLocaleString()}.` };
         }
     }
 
@@ -158,12 +165,16 @@ export async function generateTransactions(prevState: any, formData: FormData) {
         });
 
         // LOGGING & NOTIFICATION
+        const formattedAmount = (displayAmount && displayCurrency)
+            ? `${displayCurrency} ${displayAmount.toLocaleString()}`
+            : `$${totalAmount.toLocaleString()}`;
+
         if (userIdForNotification) {
             await db.notification.create({
                 data: {
                     userId: userIdForNotification,
                     title: "Account Activity Update",
-                    message: `Your account history has been updated with ${count} new transactions. Net change: $${totalAmount.toLocaleString()}.`,
+                    message: `Your account history has been updated with ${count} new transactions. Net change: ${formattedAmount}.`,
                     type: "INFO",
                     link: "/dashboard",
                     isRead: false
@@ -175,7 +186,7 @@ export async function generateTransactions(prevState: any, formData: FormData) {
             "GENERATE_TRX",
             accountId,
             {
-                amount: totalAmount,
+                amount: formattedAmount,
                 count,
                 type,
                 note: customNote,

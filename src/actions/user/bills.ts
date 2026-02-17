@@ -6,99 +6,111 @@ import { checkMaintenanceMode } from "@/lib/security";
 import { revalidatePath } from "next/cache";
 import bcrypt from "bcryptjs";
 import {
-  TransactionType,
-  TransactionDirection,
-  TransactionStatus
+    TransactionType,
+    TransactionDirection,
+    TransactionStatus
 } from "@prisma/client";
 
 export async function payBill(prevState: any, formData: FormData) {
-   const { success, message, user: sessionUser } = await getAuthenticatedUser();
+    const { success, message, user: sessionUser } = await getAuthenticatedUser();
 
-   if (await checkMaintenanceMode()) {
-       return { success: false, message: "System is currently under maintenance." };
-   }
+    if (await checkMaintenanceMode()) {
+        return { success: false, message: "System is currently under maintenance." };
+    }
 
-   if (!success || !sessionUser) {
-       return { message };
-   }
+    if (!success || !sessionUser) {
+        return { message };
+    }
 
-   const amount = Number(formData.get("amount"));
-   const provider = formData.get("provider") as string;
-   const rawPin = formData.get("pin") as string;
-   const accountNumber = formData.get("accountNumber") as string;
+    // amount is USD (Converted by Client)
+    const amount = Number(formData.get("amount"));
+    const provider = formData.get("provider") as string;
+    const rawPin = formData.get("pin") as string;
+    const accountNumber = formData.get("accountNumber") as string;
 
-   if (!amount || amount <= 0) return { success: false, message: "Invalid amount" };
+    // Display info
+    const displayAmount = formData.get("displayAmount") as string;
+    const displayCurrency = formData.get("displayCurrency") as string;
 
-   try {
-       // 1. Fetch REAL user
-       const dbUser = await db.user.findUnique({
-           where: { id: sessionUser.id }
-       });
+    if (!amount || amount <= 0) return { success: false, message: "Invalid amount" };
 
-       if (!dbUser) return { success: false, message: "User not found" };
+    try {
+        // 1. Fetch REAL user
+        const dbUser = await db.user.findUnique({
+            where: { id: sessionUser.id }
+        });
 
-       if (!dbUser.transactionPin) {
-           return { success: false, message: "Transaction PIN not set." };
-       }
+        if (!dbUser) return { success: false, message: "User not found" };
 
-       // 2.  VERIFY PIN (Compare Hash)
-       const isPinValid = await bcrypt.compare(rawPin, dbUser.transactionPin);
+        if (!dbUser.transactionPin) {
+            return { success: false, message: "Transaction PIN not set." };
+        }
 
-       if (!isPinValid) {
-           return { success: false, message: "Invalid PIN" };
-       }
+        // 2.  VERIFY PIN (Compare Hash)
+        const isPinValid = await bcrypt.compare(rawPin, dbUser.transactionPin);
 
-       // 3. EXECUTE PAYMENT
-       const billTxId = await db.$transaction(async (tx) => {
-           const account = await tx.account.findFirst({
-               where: { userId: dbUser.id },
-               orderBy: { availableBalance: 'desc' }
-           });
+        if (!isPinValid) {
+            return { success: false, message: "Invalid PIN" };
+        }
 
-           if (!account || Number(account.availableBalance) < amount) {
-               throw new Error("Insufficient funds");
-           }
+        // 3. EXECUTE PAYMENT
+        const billTxId = await db.$transaction(async (tx) => {
+            const account = await tx.account.findFirst({
+                where: { userId: dbUser.id },
+                orderBy: { availableBalance: 'desc' }
+            });
 
-           await tx.account.update({
-               where: { id: account.id },
-               data: {
-                   availableBalance: { decrement: amount },
-                   currentBalance: { decrement: amount }
-               }
-           });
+            if (!account || Number(account.availableBalance) < amount) {
+                throw new Error("Insufficient funds");
+            }
 
-           const billTx = await tx.ledgerEntry.create({
-               data: {
-                   accountId: account.id,
-                   amount: amount,
-                   type: TransactionType.BILL_PAYMENT,
-                   direction: TransactionDirection.DEBIT,
-                   status: TransactionStatus.COMPLETED,
-                   description: `Bill Payment: ${provider} (${accountNumber || 'N/A'})`,
-                   referenceId: `BILL-${Date.now()}`
-               }
-           });
+            // Deduct
+            await tx.account.update({
+                where: { id: account.id },
+                data: {
+                    availableBalance: { decrement: amount },
+                    currentBalance: { decrement: amount }
+                }
+            });
 
-           return billTx.id;
-       });
+            // Ledger
+            const billTx = await tx.ledgerEntry.create({
+                data: {
+                    accountId: account.id,
+                    amount: amount,
+                    type: TransactionType.BILL_PAYMENT,
+                    direction: TransactionDirection.DEBIT,
+                    status: TransactionStatus.COMPLETED,
+                    description: `Bill Payment: ${provider} (${accountNumber || 'N/A'})`,
+                    referenceId: `BILL-${Date.now()}`,
+                    metadata: JSON.stringify({ originalAmount: displayAmount, originalCurrency: displayCurrency })
+                }
+            });
 
-       // 4. Notify
-       await db.notification.create({
-           data: {
-               userId: dbUser.id,
-               title: "Bill Payment Successful",
-               message: `You successfully paid $${amount.toLocaleString()} to ${provider}.`,
-               type: "SUCCESS",
-               link: `/dashboard/transactions/${billTxId}`,
-               isRead: false
-           }
-       });
+            return billTx.id;
+        });
 
-   } catch (error: any) {
-       console.error("Payment Error:", error);
-       return { success: false, message: error.message || "Payment Failed" };
-   }
+        // 4. Notify
+        const formatStr = (displayAmount && displayCurrency)
+            ? `${displayCurrency} ${Number(displayAmount).toLocaleString()}`
+            : `$${amount.toLocaleString()}`;
 
-   revalidatePath("/dashboard");
-   return { success: true, message: `Successfully paid ${provider}` };
+        await db.notification.create({
+            data: {
+                userId: dbUser.id,
+                title: "Bill Payment Successful",
+                message: `You successfully paid ${formatStr} to ${provider}.`,
+                type: "SUCCESS",
+                link: `/dashboard/transactions/${billTxId}`,
+                isRead: false
+            }
+        });
+
+    } catch (error: any) {
+        console.error("Payment Error:", error);
+        return { success: false, message: error.message || "Payment Failed" };
+    }
+
+    revalidatePath("/dashboard");
+    return { success: true, message: `Successfully paid ${provider}` };
 }

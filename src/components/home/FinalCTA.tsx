@@ -12,14 +12,13 @@ export default async function FinalCTA() {
             <div className={styles.container}>
 
                 <div className={styles.ctaCardWrapper}>
-                    {/* Background Gradient Mesh */}
                     <div className={styles.ctaMeshGradient}></div>
 
                     <div className={styles.ctaGrid}>
-                        {/* LEFT SIDE: TEXT & ACTIONS */}
+                        {/* LEFT SIDE */}
                         <div className={styles.ctaContentLeft}>
                             <div className={styles.ctaBadge}>
-                                <Shield size={16} /> Secure & Insured
+                                <Shield size={16} /> {settings.home_cta_badge}
                             </div>
                             <h2>{settings.home_cta_title}</h2>
                             <p>
@@ -42,33 +41,33 @@ export default async function FinalCTA() {
                             </div>
 
                             <div className={styles.ctaButtonRow}>
-                                <button className={styles.appStoreBtn}>
+                                <a href={settings.home_cta_apple_link} target="_blank" rel="noopener noreferrer" className={styles.appStoreBtn}>
                                     <Apple size={24} fill="currentColor" />
                                     <div className={styles.btnText}>
-                                        <small>Download on the</small>
-                                        <span>App Store</span>
+                                        <small>{settings.home_cta_apple_small}</small>
+                                        <span>{settings.home_cta_apple_large}</span>
                                     </div>
-                                </button>
+                                </a>
 
-                                <button className={styles.googlePlayBtn}>
+                                <a href={settings.home_cta_google_link} target="_blank" rel="noopener noreferrer" className={styles.googlePlayBtn}>
                                     <Play size={24} fill="currentColor" />
                                     <div className={styles.btnText}>
-                                        <small>Get it on</small>
-                                        <span>Google Play</span>
+                                        <small>{settings.home_cta_google_small}</small>
+                                        <span>{settings.home_cta_google_large}</span>
                                     </div>
-                                </button>
+                                </a>
                             </div>
 
-                            <Link href="/register" className={styles.ctaWebLink}>
-                                Or create an account on the web <ArrowRight size={16} />
+                            <Link href={settings.home_cta_web_link} className={styles.ctaWebLink}>
+                                {settings.home_cta_web_text} <ArrowRight size={16} />
                             </Link>
                         </div>
 
-                        {/* RIGHT SIDE: THE VISUAL */}
+                        {/* RIGHT SIDE */}
                         <div className={styles.ctaVisualRight}>
                             <Image
-                                src={settings.home_cta_img || "/cta-visual.png"}
-                                alt={settings.home_cta_alt || `${settings.site_name} Mobile App`}
+                                src={settings.home_cta_img}
+                                alt={`${settings.site_name} ${settings.home_cta_alt}`}
                                 width={500}
                                 height={500}
                                 className={styles.ctaImage}
@@ -76,7 +75,6 @@ export default async function FinalCTA() {
                             />
                         </div>
                     </div>
-
                 </div>
             </div>
         </section>

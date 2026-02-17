@@ -8,16 +8,16 @@ interface ContactStripProps {
 export default function ContactStrip({ settings }: ContactStripProps) {
     return (
         <div className={styles.contactStrip}>
-            <h2>{settings.help_cta_title}</h2>
-            <p>{settings.help_cta_desc}</p>
+            <h2>{settings.help_contact_title}</h2>
+            <p>{settings.help_contact_desc}</p>
 
             <div className={styles.contactActions}>
                 <a href={`tel:${settings.support_phone}`} className={styles.contactBtn}>
-                    <Phone size={18} /> Call Support
+                    <Phone size={18} /> {settings.help_contact_btn1_text}
                 </a>
 
-                <a href="/help" className={styles.chatBtn}>
-                    <MessageSquare size={18} /> Live Chat
+                <a href={settings.help_contact_btn2_link} className={styles.chatBtn}>
+                    <MessageSquare size={18} /> {settings.help_contact_btn2_text}
                 </a>
             </div>
         </div>

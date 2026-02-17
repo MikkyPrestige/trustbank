@@ -6,12 +6,12 @@ export default async function SiteHeader() {
     // 1. Fetch CMS Settings
     const settings = await getSiteSettings();
 
-    // 2. Initialize Menu Logic (Database JSON vs Default File)
+    // 2. Initialize Menu Logic
     let dynamicMenus;
 
     if (settings.nav_structure_json && settings.nav_structure_json.trim() !== "") {
         try {
-            // A. Try to use the Custom JSON from Admin Panel
+            // A. Use Custom JSON
             dynamicMenus = JSON.parse(settings.nav_structure_json);
         } catch (error) {
             console.error("Failed to parse Nav JSON from DB, reverting to default.", error);
@@ -23,7 +23,7 @@ export default async function SiteHeader() {
         dynamicMenus = JSON.parse(JSON.stringify(MEGA_MENUS));
     }
 
-    // 3. Update Menu Promo Content Based on Settings (CMS Overrides)
+    // 3. Update Menu Promo Content
     // Banking
     if (dynamicMenus['BANK']?.promo) {
         if (settings.nav_bank_title) dynamicMenus['BANK'].promo.title = settings.nav_bank_title;
@@ -59,7 +59,7 @@ export default async function SiteHeader() {
         if (settings.nav_learn_link) dynamicMenus['LEARN'].promo.link = settings.nav_learn_link;
     }
 
-    // 4. Render the Client Component with Data
+    // 4. Render Client Component
     return (
         <Navbar
             logoUrl={settings.site_logo}

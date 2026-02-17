@@ -16,7 +16,9 @@ export async function adjustUserBalance(
     accountId: string,
     amount: number,
     type: 'CREDIT' | 'DEBIT',
-    description: string
+    description: string,
+    displayAmount?: number,
+    displayCurrency?: string
 ) {
     const { authorized, session } = await checkAdminAction();
 
@@ -25,7 +27,7 @@ export async function adjustUserBalance(
     }
 
     if (!canPerform(session.user.role as UserRole, 'MONEY')) {
-        return { success: false, message: "Insufficient permissions. Only Admins can adjust balances." };
+        return { success: false, message: "Insufficient permissions." };
     }
 
     const adminUser = session.user;
@@ -36,7 +38,12 @@ export async function adjustUserBalance(
         ? description
         : (type === 'CREDIT' ? "Bank Deposit" : "Bank Withdrawal");
 
-    // 1. SAFETY CHECK (Read-before-write)
+    // Formatter for the notification message
+    const formattedMoney = (displayAmount && displayCurrency)
+        ? `${displayCurrency} ${displayAmount.toLocaleString()}`
+        : `$${amount.toLocaleString()}`;
+
+    // 1. SAFETY CHECK
     if (type === 'DEBIT') {
         const account = await db.account.findUnique({ where: { id: accountId } });
         if (!account) return { success: false, message: "Account not found" };
@@ -67,7 +74,6 @@ export async function adjustUserBalance(
                 throw new Error("Insufficient funds during processing.");
             }
 
-            // set finalBalance for logging after transaction
             finalBalance = newBal;
 
             // Update Account
@@ -90,20 +96,24 @@ export async function adjustUserBalance(
                     status: TransactionStatus.COMPLETED,
                     description: finalDescription,
                     referenceId: "ADM-" + Math.floor(Math.random() * 10000000),
-                    metadata: JSON.stringify({ adminId: adminUser.id })
+                    metadata: JSON.stringify({
+                        adminId: adminUser.id,
+                        originalCurrency: displayCurrency,
+                        originalAmount: displayAmount
+                    })
                 }
             });
         });
 
-        // 3. NOTIFICATION & LOGS
+        // 3. NOTIFICATION
         if (userIdForNotification) {
             await db.notification.create({
                 data: {
                     userId: userIdForNotification,
                     title: type === 'CREDIT' ? "Funds Credited" : "Funds Debited",
                     message: type === 'CREDIT'
-                        ? `Your account was credited with $${amount.toLocaleString()}. Ref: ${finalDescription}`
-                        : `Your account was debited by $${amount.toLocaleString()}. Ref: ${finalDescription}`,
+                        ? `Your account was credited with ${formattedMoney}. Ref: ${finalDescription}`
+                        : `Your account was debited by ${formattedMoney}. Ref: ${finalDescription}`,
                     type: type === 'CREDIT' ? "SUCCESS" : "WARNING",
                     link: "/dashboard",
                     isRead: false
@@ -116,7 +126,8 @@ export async function adjustUserBalance(
             type === 'CREDIT' ? "MANUAL_CREDIT" : "MANUAL_DEBIT",
             accountId,
             {
-                amount,
+                amount: formattedMoney,
+                usdAmount: amount,
                 reason: finalDescription,
                 adminEmail: adminUser.email,
                 balanceAfter: finalBalance
@@ -127,26 +138,13 @@ export async function adjustUserBalance(
 
     } catch (err: any) {
         console.error("Funding Error:", err);
-
-        // Log Failure
-        await logAdminAction(
-            type === 'CREDIT' ? "MANUAL_CREDIT" : "MANUAL_DEBIT",
-            accountId,
-            { error: err.message, amount },
-            "WARNING",
-            "FAILED"
-        );
-
         return { success: false, message: err.message || "Transaction failed." };
     }
 
-    // 5. REVALIDATE
     try {
         revalidatePath("/admin/users");
         revalidatePath(`/admin/users/${accountId}`);
-    } catch (e) {
-        console.warn("Revalidation warning:", e);
-    }
+    } catch (e) {}
 
     return { success: true, message: "Balance updated successfully." };
 }

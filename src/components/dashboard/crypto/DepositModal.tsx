@@ -8,12 +8,16 @@ import { Plus, X, Wallet, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const SUPPORTED_COINS = [
+    { code: 'USDT', name: 'Tether' },
     { code: 'BTC', name: 'Bitcoin' },
     { code: 'ETH', name: 'Ethereum' },
     { code: 'SOL', name: 'Solana' },
-    { code: 'USDT', name: 'Tether' },
+    { code: 'BNB', name: 'Binance' },
+    { code: 'HYPE', name: 'HyperLiquid' },
     { code: 'XRP', name: 'Ripple' },
-    { code: 'ADA', name: 'Cardano' }
+    { code: 'ADA', name: 'Cardano' },
+    { code: 'DOT', name: 'PolkaDot' },
+    { code: 'DOGE', name: 'DogeCoin' }
 ];
 
 export default function DepositModal() {
@@ -54,7 +58,7 @@ export default function DepositModal() {
                 <div className={styles.modalOverlay}>
                     <div className={styles.modalContent}>
                         <div className={styles.modalHeader}>
-                            <h3>Create Crypto Wallet</h3>
+                            <h3 className={styles.modalTitle}>Create Crypto Wallet</h3>
                             <button onClick={() => setIsOpen(false)} className={styles.closeBtn}><X size={20} /></button>
                         </div>
 

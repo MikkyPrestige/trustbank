@@ -138,7 +138,6 @@ export function NavTab({ settings, jsonMenu, setJsonMenu }: NavTabProps) {
                 <label className={styles.label}>Resources Desc</label>
                 <input name="nav_learn_desc" defaultValue={settings.nav_learn_desc} className={styles.input} />
             </div>
-
         </div>
     );
 }

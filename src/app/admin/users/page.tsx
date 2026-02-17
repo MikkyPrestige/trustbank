@@ -52,7 +52,8 @@ export default async function AdminUsersPage({
         })
     };
 
-    const [users, totalCount] = await Promise.all([
+    // 1. Fetch Users AND Exchange Rates in parallel
+    const [users, totalCount, exchangeRates] = await Promise.all([
         db.user.findMany({
             where: whereClause,
             include: { accounts: true },
@@ -60,8 +61,13 @@ export default async function AdminUsersPage({
             take: itemsPerPage,
             skip: skip,
         }),
-        db.user.count({ where: whereClause })
+        db.user.count({ where: whereClause }),
+        db.exchangeRate.findMany() // Fetch rates for conversion
     ]);
+
+    // 2. Create Rate Map for fast lookup
+    const rateMap = new Map<string, number>();
+    exchangeRates.forEach(r => rateMap.set(r.currency, Number(r.rate)));
 
     const totalPages = Math.ceil(totalCount / itemsPerPage);
 
@@ -138,7 +144,13 @@ export default async function AdminUsersPage({
                             </tr>
                         ) : (
                             users.map(user => {
-                                const totalBal = user.accounts.reduce((sum, acc) => sum + Number(acc.availableBalance), 0);
+                                // 3. Calculate Balances
+                                const totalBalUSD = user.accounts.reduce((sum, acc) => sum + Number(acc.availableBalance), 0);
+
+                                // Determine currency & rate
+                                const currency = user.currency || "USD";
+                                const rate = currency === "USD" ? 1 : (rateMap.get(currency) || 1);
+                                const convertedBal = totalBalUSD * rate;
 
                                 return (
                                     <tr key={user.id} className={isArchivedView ? styles.archivedRow : ''}>
@@ -171,8 +183,18 @@ export default async function AdminUsersPage({
                                             </div>
                                         </td>
 
+                                        {/* 4. Display Converted Balance */}
                                         <td className={styles.money}>
-                                            {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(totalBal)}
+                                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '2px' }}>
+                                                <span>
+                                                    {new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(convertedBal)}
+                                                </span>
+                                                {currency !== 'USD' && (
+                                                    <span style={{ fontSize: '0.7rem', color: '#9ca3af' }}>
+                                                        ≈ {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(totalBalUSD)}
+                                                    </span>
+                                                )}
+                                            </div>
                                         </td>
 
                                         <td className={styles.dateText}>{new Date(user.createdAt).toLocaleDateString()}</td>

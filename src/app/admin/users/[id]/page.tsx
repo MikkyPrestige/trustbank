@@ -36,7 +36,16 @@ export default async function UserDetailsPage({ params }: { params: Promise<{ id
 
     if (!user) return notFound();
 
-    // 2. Fetch Security Logs (Spy Mode)
+    // 2. Fetch Exchange Rate for User's Currency
+    const currency = user.currency || "USD";
+    let exchangeRate = 1;
+
+    if (currency !== "USD") {
+        const rateData = await db.exchangeRate.findUnique({ where: { currency } });
+        if (rateData) exchangeRate = Number(rateData.rate);
+    }
+
+    // 3. Fetch Security Logs (Spy Mode)
     const securityLogs = await db.adminLog.findMany({
         where: {
             targetId: user.email,
@@ -46,7 +55,7 @@ export default async function UserDetailsPage({ params }: { params: Promise<{ id
         take: 20
     });
 
-    // 3. Merge & Sort the Feed
+    // 4. Merge & Sort the Feed
     const unifiedFeed = [
         ...user.Notification.map(n => ({
             id: n.id,
@@ -106,6 +115,10 @@ export default async function UserDetailsPage({ params }: { params: Promise<{ id
                                 <Lock size={10} /> LOCKED
                             </span>
                         )}
+                        {/* Currency Tag */}
+                        <span className={`${styles.badge}`} style={{ backgroundColor: 'var(--bg-card)', color: 'var(--primary', border: '1px solid var(--border)' }}>
+                            {currency}
+                        </span>
                     </div>
                     <p className={styles.subtitle}>ID: {user.id}</p>
                     <p className={styles.subtitle}>Joined: {formatDate(user.createdAt)}</p>
@@ -202,28 +215,54 @@ export default async function UserDetailsPage({ params }: { params: Promise<{ id
                             </Link>
                         </div>
                         <div className={styles.accountsList}>
-                            {user.accounts.map(acc => (
-                                <div key={acc.id} className={styles.accCard}>
-                                    <div className={styles.accInfo}>
-                                        <h4>{acc.type.replace('_', ' ')} <span className={styles.tiny}>({acc.accountNumber})</span></h4>
-                                        <div className={styles.accBal}>
-                                            {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(acc.availableBalance))}
+                            {user.accounts.map(acc => {
+                                // Conversion Logic
+                                const balanceUSD = Number(acc.availableBalance);
+                                const converted = balanceUSD * exchangeRate;
+
+                                return (
+                                    <div key={acc.id} className={styles.accCard}>
+                                        <div className={styles.accInfo}>
+                                            <h4>{acc.type.replace('_', ' ')} <span className={styles.tiny}>({acc.accountNumber})</span></h4>
+                                            <div className={styles.accBal}>
+                                                {/* Main Converted Balance */}
+                                                {new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(converted)}
+
+                                                {/* Subtitle USD Balance */}
+                                                {currency !== "USD" && (
+                                                    <span style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 'normal' }}>
+                                                        ≈ {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(balanceUSD)}
+                                                    </span>
+                                                )}
+                                            </div>
                                         </div>
+                                        <BalanceAdjuster
+                                            accountId={acc.id}
+                                            currency={currency}
+                                            rate={exchangeRate}
+                                        />
                                     </div>
-                                    <BalanceAdjuster accountId={acc.id} />
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
                     </div>
 
                     <div className={styles.section}>
                         <h3 className={styles.secTitle}><Activity size={18} /> Recent Wires</h3>
-                        <WireManager wires={user.wireTransfers} />
+                        <WireManager
+                            wires={user.wireTransfers}
+                            currency={currency}
+                            rate={exchangeRate}
+                        />
                     </div>
 
                     <div className={styles.section}>
                         <h3 className={styles.secTitle}><ArrowRightLeft size={18} /> Local Transfers</h3>
-                        <LocalTransferList userId={user.id} />
+                        <LocalTransferList
+                            userId={user.id}
+                            currency={currency}
+                            rate={exchangeRate}
+                        />
                     </div>
                 </div>
 

@@ -82,6 +82,12 @@
   width: 100%;
 }
 
+.stack {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
 .card {
   background: var(--bg-card);
   border: 1px solid var(--border);

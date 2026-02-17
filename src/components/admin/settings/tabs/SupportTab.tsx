@@ -13,17 +13,14 @@ export function SupportTab({ settings, supportHeroUrl, setSupportHeroUrl }: Supp
             <div className={styles.fullWidth}>
                 <h3 className={styles.sectionTitle}>Contact Page Settings</h3>
             </div>
-
             <div className={styles.group}>
                 <label className={styles.label}>Hero Title</label>
                 <input name="support_hero_title" defaultValue={settings.support_hero_title} className={styles.input} />
             </div>
-
             <div className={`${styles.group} ${styles.fullWidth}`}>
                 <label className={styles.label}>Hero Description</label>
                 <textarea name="support_hero_desc" defaultValue={settings.support_hero_desc} className={styles.textarea} />
             </div>
-
             <div className={styles.group}>
                 <ImageUploader
                     label="Hero Background Image"
@@ -47,7 +44,7 @@ export function SupportTab({ settings, supportHeroUrl, setSupportHeroUrl }: Supp
                 <label className={styles.label}>Phone Number</label>
                 <input name="support_phone" defaultValue={settings.support_phone} className={styles.input} />
             </div>
-            <div className={styles.group}>
+            <div className={`${styles.group} ${styles.fullWidth}`}>
                 <label className={styles.label}>Support Hours</label>
                 <input name="support_hours" defaultValue={settings.support_hours} className={styles.input} />
             </div>
@@ -60,7 +57,7 @@ export function SupportTab({ settings, supportHeroUrl, setSupportHeroUrl }: Supp
                 <label className={styles.label}>Email Address</label>
                 <input name="support_email" defaultValue={settings.support_email} className={styles.input} />
             </div>
-            <div className={styles.group}>
+            <div className={`${styles.group} ${styles.fullWidth}`}>
                 <label className={styles.label}>Email Subtext</label>
                 <input name="support_email_desc" defaultValue={settings.support_email_desc} className={styles.input} placeholder="e.g. Response within 24hrs" />
             </div>
@@ -70,12 +67,12 @@ export function SupportTab({ settings, supportHeroUrl, setSupportHeroUrl }: Supp
                 <input name="support_address_title" defaultValue={settings.support_address_title} className={styles.input} />
             </div>
             <div className={styles.group}>
-                <label className={styles.label}>Physical Address</label>
-                <input name="support_address" defaultValue={settings.support_address} className={styles.input} />
-            </div>
-            <div className={styles.group}>
                 <label className={styles.label}>Address Label</label>
                 <input name="support_address_label" defaultValue={settings.support_address_label} className={styles.input} placeholder="e.g. Headquarters" />
+            </div>
+            <div className={`${styles.group} ${styles.fullWidth}`}>
+                <label className={styles.label}>Physical Address</label>
+                <input name="support_address" defaultValue={settings.support_address} className={styles.input} />
             </div>
 
             {/* FAQ SECTION */}
@@ -95,9 +92,15 @@ export function SupportTab({ settings, supportHeroUrl, setSupportHeroUrl }: Supp
                 <label className={styles.label}>Button Link</label>
                 <input name="support_faq_link" defaultValue={settings.support_faq_link} className={styles.input} />
             </div>
+            <div className={styles.row}>
             <div className={styles.group}>
                 <label className={styles.label}>Button Text</label>
                 <input name="support_faq_linkText" defaultValue={settings.support_faq_linkText} className={styles.input} />
+            </div>
+            <div className={styles.group}>
+                <label className={styles.label}>Button Arrow</label>
+                <input name="support_faq_linkArrow" defaultValue={settings.support_faq_linkArrow} className={styles.input} />
+            </div>
             </div>
         </div >
     );

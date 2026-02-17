@@ -12,19 +12,18 @@ export default async function SecurityPage() {
             <section className={styles.hero}>
                 <div className={styles.heroImageWrapper}>
                     <Image
-                        src={settings.security_hero_img || "/security-bg.png"}
-                        alt={settings.security_hero_alt || "Security Center"}
+                        src={settings.security_hero_img}
+                        alt={settings.security_hero_alt}
                         fill
                         className={styles.heroImage}
                         priority
                     />
                     <div className={styles.heroOverlay} />
                 </div>
-
                 {/* Hero Content */}
                 <div className={styles.heroContent}>
                     <h1 className={styles.heroTitle}>
-                        {settings.security_hero_title || "Security Center"}
+                        {settings.security_hero_title}
                     </h1>
                     <p className={styles.heroDesc}>
                         {settings.security_hero_desc}
@@ -53,9 +52,8 @@ export default async function SecurityPage() {
 
                 <div className={styles.fraudSection}>
                     <h2 className={styles.sectionTitle}>
-                        {settings.security_fraud_title || "How to spot fraud"}
+                        {settings.security_fraud_title}
                     </h2>
-
                     <div className={`${styles.card} ${styles.fraudCard}`}>
                         <div className={styles.fraudIconWrapper}>
                             <ShieldAlert size={32} className={styles.fraudIcon} />
@@ -63,9 +61,8 @@ export default async function SecurityPage() {
                         <div className={styles.fraudContent}>
                             <h3>{settings.security_fraud_card_title}</h3>
                             <p>{settings.security_fraud_card_desc}</p>
-
                             <p className={styles.fraudAction}>
-                                If someone asks, hang up and call us immediately at <strong>{settings.support_phone}</strong>.
+                                {settings.security_fraud_card_action} <strong>{settings.support_phone}</strong>.
                             </p>
                         </div>
                     </div>
@@ -73,8 +70,8 @@ export default async function SecurityPage() {
 
                 <div className={styles.helpSection}>
                     <p>
-                        Think your account might be compromised?
-                        <a href={`mailto:${settings.support_email}`} className={styles.link}> Contact Security Team <Mail size={14} style={{ display: 'inline', marginLeft: 4 }} /></a>
+                        {settings.security_help}
+                        <a href={`mailto:${settings.support_email}`} className={styles.link}> {settings.security_help_linkText} <Mail size={14} style={{ display: 'inline', marginLeft: 4 }} /></a>
                     </p>
                 </div>
             </div>

@@ -1,4 +1,3 @@
-/* GLOBAL RESET FOR HOME */
 .main {
   background: var(--bg-app);
   overflow-x: hidden;
@@ -7,7 +6,7 @@
 .container {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 2rem;
   position: relative;
   z-index: 2;
   width: 100%;
@@ -16,11 +15,10 @@
 /* --- 1. HERO SECTION --- */
 .hero {
   position: relative;
-  height: 700px;
+  height: 500px;
   display: flex;
   align-items: center;
   color: var(--text-invert);
-  padding-top: 80px;
 }
 
 .heroBg {
@@ -54,12 +52,12 @@
   display: inline-block;
   background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(4px);
-  padding: 6px 12px;
+  padding: 0.5rem;
   border-radius: 4px;
   font-size: 0.8rem;
   font-weight: 700;
   letter-spacing: 1px;
-  margin-bottom: 24px;
+  margin-bottom: 2rem;
   border: 1px solid rgba(255, 255, 255, 0.2);
   text-transform: uppercase;
 }
@@ -68,29 +66,29 @@
   font-size: 3.5rem;
   font-weight: 900;
   line-height: 1.1;
-  margin-bottom: 24px;
+  margin-bottom: 1rem;
   text-transform: uppercase;
   color: var(--text-invert);
 }
 
 .heroSub {
   font-size: 1.25rem;
-  margin-bottom: 40px;
+  margin-bottom: 2rem;
   line-height: 1.6;
   color: rgba(255, 255, 255, 0.9);
-  max-width: 500px;
+  /* max-width: 500px; */
 }
 
 .ctaRow {
   display: flex;
-  gap: 16px;
+  gap: 2rem;
   flex-wrap: wrap;
 }
 
 .btnPrimary {
   background: var(--accent);
-  color: #0f172a;
-  padding: 16px 36px;
+  color: var(--text-dark);
+  padding: 1rem 2rem;
   font-weight: 800;
   border-radius: 6px;
   text-transform: uppercase;
@@ -105,14 +103,14 @@
 
 .btnPrimary:hover {
   transform: translateY(-2px);
-  background: #fbbf24;
-  box-shadow: 0 10px 20px rgba(251, 191, 36, 0.3);
+  background: var(--accent);
+  box-shadow: 0 1rem 2rem rgba(251, 191, 36, 0.3);
 }
 
 .btnOutline {
-  border: 2px solid white;
+  border: 2px solid var(--text-invert);
   color: var(--text-invert);
-  padding: 16px 36px;
+  padding: 1rem 2rem;
   font-weight: 700;
   border-radius: 6px;
   text-transform: uppercase;
@@ -121,29 +119,68 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
 .btnOutline:hover {
-  background: white;
+  background: var(--text-invert);
   color: var(--primary);
 }
 
-/* --- 2. INFO BAR --- */
+/* --- 2. INFO SECTION --- */
+/* --- ANNOUNCEMENT BANNER --- */
+.announcementBanner {
+  background-color: var(--accent);
+  color: var(--text-dark);
+  width: 100%;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border);
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.announcementContent {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  text-align: center;
+}
+
+.announcementIcon {
+  flex-shrink: 0;
+}
+
+.announcementText {
+  font-weight: 600;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+/* ---  INFO BAR --- */
 .infoBarSection {
   position: relative;
   z-index: 10;
-  margin-top: -60px;
-  margin-bottom: 60px;
-  padding: 0 24px;
+  margin-top: -4rem;
 }
 
 .infoContainer {
-  max-width: 1100px;
+  max-width: 1200px;
   margin: 0 auto;
   display: flex;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-  border-radius: 12px;
+  box-shadow: 0 2rem 4rem var(--shadow-sm);
+  border-radius: 1rem;
   overflow: hidden;
   flex-wrap: wrap;
 }
@@ -151,23 +188,41 @@
 .infoBlock {
   flex: 1;
   min-width: 250px;
-  padding: 32px;
+  padding: 2rem;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  gap: 16px;
+  gap: 1rem;
   text-align: left;
 }
 
-/* HYBRID COLORS (Safe for Light/Dark) */
+.bankingCodes {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.bankingCodes strong {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.divider {
+  color: var(--text-muted);
+}
+
+/* HYBRID COLORS  */
 .blueBlock {
   background-color: var(--primary);
-  color: #ffffff;
+  color: var(--text-invert);
 }
 .goldBlock {
   background: var(--accent);
-  color: #0f172a;
+  color: var(--text-dark);
 }
 .whiteBlock {
   background-color: var(--text-invert);
@@ -175,11 +230,11 @@
 }
 
 .blueBlock .infoIcon {
-  color: #ffffff;
+  color: var(--text-invert);
   opacity: 0.9;
 }
 .goldBlock .infoIcon {
-  color: #0f172a;
+  color: var(--text-dark);
   opacity: 0.8;
 }
 .whiteBlock .infoIconDark {
@@ -208,25 +263,18 @@
   cursor: pointer;
   margin-top: 4px;
 }
-.infoLinkDark {
-  font-weight: 700;
-  color: var(--primary);
-  cursor: pointer;
-  margin-top: 4px;
-}
 
 /* --- 3. RATES SECTION --- */
 .ratesSection {
-  padding: 100px 0;
-  background: var(--bg-app);
+  padding: 3rem 0;
 }
 
 .ratesHeader {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 40px;
-  margin-bottom: 60px;
+  gap: 2rem;
+  margin-bottom: 2rem;
   text-align: center;
 }
 
@@ -242,7 +290,7 @@
 .headerText {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 1px;
   max-width: 600px;
   text-align: center;
 }
@@ -258,21 +306,21 @@
   font-weight: 800;
   color: var(--text-main);
   line-height: 1.2;
-  margin-bottom: 12px;
+  margin-bottom: 0.1rem;
 }
 
 .sectionDescDark {
   font-size: 1.1rem;
   color: var(--text-body);
-  max-width: 500px;
+  /* max-width: 500px; */
 }
 
 /* THE TABS */
 .rateTabs {
   display: inline-flex;
   background: var(--bg-surface);
-  padding: 6px;
-  border-radius: 50px; /* Pill shape */
+  padding: 0.5rem;
+  border-radius: 5rem;
   border: 1px solid var(--border);
   box-shadow: var(--shadow-sm);
 }
@@ -280,8 +328,8 @@
 .tabBtn {
   background: transparent;
   border: none;
-  padding: 12px 24px;
-  border-radius: 40px;
+  padding: 0.8rem 2rem;
+  border-radius: 4rem;
   font-weight: 600;
   color: var(--text-main);
   cursor: pointer;
@@ -304,16 +352,16 @@
 .ratesGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 30px;
-  align-items: stretch; /* Makes all cards same height */
+  gap: 2rem;
+  align-items: stretch;
 }
 
-/* THE CARD DESIGN */
+/* CARD DESIGN */
 .rateCard {
   background: var(--bg-card);
   border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 32px;
+  border-radius: 1rem;
+  padding: 3rem 2rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -330,7 +378,7 @@
   border-color: var(--primary-light);
 }
 
-/* FEATURED CARD (Pop out) */
+/* FEATURED CARD  */
 .featuredCard {
   border: 2px solid var(--primary);
   background: linear-gradient(180deg, rgba(37, 99, 235, 0.03) 0%, white 100%);
@@ -339,19 +387,19 @@
 /* Badge Layout */
 .badge {
   position: absolute;
-  top: 16px;
-  right: 16px;
+  top: 5px;
+  right: 5px;
   background: var(--primary);
   color: var(--text-invert);
   font-size: 0.75rem;
   font-weight: 700;
-  padding: 6px 12px;
-  border-radius: 20px;
+  padding: 0.5rem;
+  border-radius: 2rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 0.2rem;
   box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
 }
 
@@ -362,7 +410,7 @@
 
 /* Card Content */
 .cardTop {
-  margin-bottom: 24px;
+  margin-bottom: 1.5rem;
   text-align: center;
 }
 
@@ -370,7 +418,7 @@
   font-size: 1.2rem;
   font-weight: 700;
   color: var(--text-muted);
-  margin-bottom: 16px;
+  margin-bottom: 1.5rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -380,7 +428,7 @@
   font-weight: 800;
   color: var(--text-main);
   line-height: 1;
-  margin-bottom: 10px;
+  margin-bottom: 1rem;
   display: flex;
   justify-content: center;
   align-items: flex-start;
@@ -391,24 +439,24 @@
   font-size: 1rem;
   font-weight: 700;
   color: var(--primary);
-  margin-top: 8px;
+  margin-top: 0.5rem;
 }
 
 .rateSub {
   font-size: 0.95rem;
-  color: var(--success); /* Green text for positive reinforcement */
+  color: var(--success);
   font-weight: 600;
 }
 
 /* Details Table inside Card */
 .cardDetails {
   background: var(--bg-app);
-  border-radius: 8px;
-  padding: 16px;
-  margin-bottom: 24px;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 1rem;
 }
 
 .detailRow {
@@ -416,7 +464,7 @@
   justify-content: space-between;
   font-size: 0.9rem;
   border-bottom: 1px dashed var(--border);
-  padding-bottom: 8px;
+  padding-bottom: 0.5rem;
 }
 
 .detailRow:last-child {
@@ -436,8 +484,8 @@
   width: 100%;
   background: var(--primary);
   color: var(--text-invert);
-  padding: 14px;
-  border-radius: 8px;
+  padding: 1rem;
+  border-radius: 0.5rem;
   font-weight: 700;
   text-align: center;
   text-decoration: none;
@@ -445,7 +493,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
 .btnFull:hover {
@@ -456,10 +504,10 @@
 .btnOutlineDark {
   width: 100%;
   background: transparent;
-  border: 1px solid var(--border-hover);
-  color: var(--text-main);
-  padding: 14px;
-  border-radius: 8px;
+  border: 1px solid var(--border);
+  color: var(--primary);
+  padding: 1rem;
+  border-radius: 0.5rem;
   font-weight: 700;
   text-align: center;
   text-decoration: none;
@@ -468,13 +516,13 @@
 }
 
 .btnOutlineDark:hover {
-  border-color: var(--text-main);
-  background: white;
+  border-color: var(--border-hover);
+  background: var(--text-invert);
 }
 
 /* Disclaimer Footer */
 .disclaimer {
-  margin-top: 40px;
+  margin-top: 2rem;
   font-size: 0.75rem;
   color: var(--text-muted);
   text-align: center;
@@ -489,16 +537,16 @@
   text-decoration: underline;
 }
 
-/* --- 4. PREMIUM CARD SHOWCASE (ONYX SERIES) --- */
+/* --- 4. CARD SHOWCASE  --- */
 .cardSection {
-  padding: 120px 0;
+  padding: 2rem 0;
   background-color: var(--bg-surface);
   color: var(--text-main);
   position: relative;
   overflow: hidden;
 }
 
-/* Background Texture (Subtle dots) */
+/* Background Texture */
 .cardSection::before {
   content: "";
   position: absolute;
@@ -507,14 +555,14 @@
   width: 100%;
   height: 100%;
   background-image: radial-gradient(var(--text-muted) 1px, transparent 1px);
-  background-size: 40px 40px;
-  opacity: 0.1; /* Kept very subtle */
+  background-size: 4rem 4rem;
+  opacity: 0.1;
 }
 
 .cardGrid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 80px;
+  gap: 5rem;
   align-items: center;
   position: relative;
   z-index: 2;
@@ -539,14 +587,14 @@
 .tagline {
   display: flex;
   align-items: center;
-  gap: 16px;
-  margin-bottom: 24px;
+  gap: 1rem;
+  margin-bottom: 1rem;
 }
 
 .taglineLine {
-  width: 60px;
-  height: 2px;
-  background: var(--accent); /* Gold Line */
+  width: 5rem;
+  height: 0.5rem;
+  background: var(--accent);
 }
 
 .tagline span {
@@ -558,11 +606,10 @@
 }
 
 .cardTitle {
-  font-size: 3.5rem;
+  font-size: 3rem;
   font-weight: 800;
   line-height: 1.1;
-  margin-bottom: 24px;
-  /* Title color inherits from section color (Adaptive) */
+  margin-bottom: 1rem;
 }
 
 .goldText {
@@ -571,41 +618,38 @@
 
 .cardDesc {
   font-size: 1.15rem;
-  /* ✅ FIX: Uses global body text variable */
   color: var(--text-body);
   line-height: 1.7;
-  margin-bottom: 40px;
-  max-width: 500px;
+  margin-bottom: 1rem;
+  /* max-width: 500px; */
 }
 
 /* FEATURES LIST */
 .cardFeatures {
   display: flex;
   flex-direction: column;
-  gap: 30px;
-  margin-bottom: 40px;
+  gap: 1rem;
+  margin-bottom: 2rem;
 }
 
 .featureItem {
   display: flex;
-  gap: 20px;
+  gap: 1rem;
 }
 
 .goldIcon {
   color: var(--accent);
-  min-width: 24px;
+  min-width: 2rem;
 }
 
 .featureItem strong {
   display: block;
   font-size: 1.1rem;
   margin-bottom: 6px;
-  /* ✅ FIX: Uses main text variable */
   color: var(--text-main);
 }
 
 .featureItem p {
-  /* ✅ FIX: Uses body text variable */
   color: var(--text-body);
   font-size: 0.95rem;
   margin: 0;
@@ -615,14 +659,13 @@
 .cardActions {
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 2rem;
 }
 
 .btnGold {
   background: var(--accent);
-  /* Keep text dark on the Gold button for readability */
   color: #0f172a;
-  padding: 16px 36px;
+  padding: 1rem 2rem;
   font-weight: 700;
   border-radius: 6px;
   text-transform: uppercase;
@@ -631,14 +674,12 @@
 }
 
 .btnGold:hover {
-  background: #fbbf24;
+  background: var(--accent);
   transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(245, 158, 11, 0.2);
+  box-shadow: 0 1rem 2rem rgba(245, 158, 11, 0.2);
 }
 
-/* Renamed from .linkWhite to .linkAdaptive since it's not always white now */
 .linkWhite {
-  /* ✅ FIX: Adapts link color (Navy in Light, White in Dark) */
   color: var(--text-main);
   font-weight: 700;
   text-decoration: none;
@@ -650,7 +691,7 @@
 
 .linkWhite:hover {
   color: var(--accent);
-  gap: 12px;
+  gap: 10px;
 }
 
 /* RIGHT VISUAL (Floating Card) */
@@ -669,7 +710,6 @@
   background: var(--accent);
   border-radius: 50%;
   filter: blur(80px);
-  /* Lower opacity so it doesn't look weird on light backgrounds */
   opacity: 0.2;
   z-index: 0;
 }
@@ -679,7 +719,6 @@
   z-index: 2;
   transform: rotateY(-15deg) rotateX(10deg);
   transition: transform 0.5s ease;
-  /* Enhanced shadow to separate it from background in Light Mode */
   filter: drop-shadow(0 30px 60px rgba(0, 0, 0, 0.4));
 }
 
@@ -687,107 +726,9 @@
   transform: rotateY(0deg) rotateX(0deg) scale(1.05);
 }
 
-/* --- 5. PARTNER STRIP (Infinite Marquee) --- */
-.partnerSection {
-  padding: 60px 0;
-  /* Matches the dark Global Reach background for seamless flow */
-  background: var(--bg-app);
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-  overflow: hidden;
-}
-
-.partnerContainer {
-  max-width: 1400px;
-  margin: 0 auto;
-  text-align: center;
-}
-
-.partnerLabel {
-  color: var(--text-muted);
-  font-size: 0.85rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  margin-bottom: 40px;
-}
-
-/* MARQUEE MASK - The "Fade" Effect */
-.marqueeMask {
-  position: relative;
-  width: 100%;
-  overflow: hidden;
-  -webkit-mask-image: linear-gradient(
-    to right,
-    transparent 0%,
-    black 20%,
-    black 80%,
-    transparent 100%
-  );
-  mask-image: linear-gradient(
-    to right,
-    transparent 0%,
-    black 20%,
-    black 80%,
-    transparent 100%
-  );
-}
-
-.marqueeTrack {
-  display: flex;
-  align-items: center;
-  gap: 80px;
-  width: max-content;
-  animation: scrollLogos 40s linear infinite;
-}
-
-/* Pause on hover so users can see details */
-.marqueeTrack:hover {
-  animation-play-state: paused;
-}
-
-.logoItem {
-  position: relative;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 50px;
-  width: 100px;
-  margin: 0 2rem;
-  transition: transform 0.3s ease;
-}
-
-.imgWrapper {
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
-
-.logoImage {
-  object-fit: contain;
-  filter: grayscale(100%) opacity(0.6);
-  transition: all 0.3s ease;
-}
-
-/* On Hover: Bring back color (or sharpen white) */
-.logoItem:hover .logoImage {
-  filter: grayscale(0%) opacity(1);
-  transform: scale(1.1);
-}
-
-@keyframes scrollLogos {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-33.33%);
-  } /* Move exactly 1/3rd (since we have 3 sets) */
-}
-
-/* --- 6. FINANCIAL GUIDANCE (Bento Grid) --- */
+/* --- 5. FINANCIAL GUIDANCE --- */
 .guideSection {
-  padding: 100px 0;
+  padding: 2rem 0;
   background: var(--bg-app);
 }
 
@@ -795,9 +736,9 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  margin-bottom: 50px;
+  margin-bottom: 2rem;
   flex-wrap: wrap;
-  gap: 20px;
+  /* gap: 2rem; */
 }
 
 .linkUnderline {
@@ -821,55 +762,52 @@
 .guideGrid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 24px;
-  /* Mobile: Stacked */
+  gap: 2rem;
 }
 
 @media (min-width: 992px) {
   .guideGrid {
-    /* Desktop: 3 Columns. Left card takes 1, Right side takes 2 */
     grid-template-columns: 1fr 1fr 1fr;
-    grid-template-rows: 250px 250px; /* Two rows of height */
+    grid-template-rows: 250px 250px;
   }
 }
 
 /* CARD STYLES */
-/* 1. Large Card (Spans 2 rows on Desktop) */
 .guideCardLarge {
   position: relative;
-  border-radius: 24px;
+  border-radius: 1rem;
   overflow: hidden;
   background: #0f172a;
-  grid-row: span 2; /* Takes up full height */
+  grid-row: span 2;
   min-height: 400px;
 }
 
-/* 2. Gold Security Card */
+/* Gold Security Card */
 .guideCardGold {
-  background: var(--accent); /* GOLD Background */
-  border-radius: 24px;
-  padding: 30px;
+  background: var(--accent);
+  border-radius: 1rem;
+  padding: 2rem;
   display: flex;
   align-items: center;
   position: relative;
   overflow: hidden;
 }
 
-/* 3. Small Image Card */
+/* Small Image Card */
 .guideCardSmall {
   position: relative;
-  border-radius: 24px;
+  border-radius: 1rem;
   overflow: hidden;
   background: #1e293b;
 }
 
-/* 4. Wide Business Card (Spans 2 columns on right) */
+/* 4. Wide Business Card */
 .guideCardWide {
   position: relative;
-  border-radius: 24px;
+  border-radius: 1rem;
   overflow: hidden;
   background: #334155;
-  grid-column: span 2; /* Takes up bottom right width */
+  grid-column: span 2;
 }
 
 /* IMAGES & OVERLAYS */
@@ -881,7 +819,7 @@
 .guideCardLarge:hover .cardBgImage,
 .guideCardSmall:hover .cardBgImage,
 .guideCardWide:hover .cardBgImage {
-  transform: scale(1.05); /* Subtle Zoom Effect */
+  transform: scale(1.05);
 }
 
 .cardOverlay {
@@ -894,7 +832,7 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  padding: 30px;
+  padding: 2rem;
   color: var(--text-invert);
 }
 
@@ -911,7 +849,8 @@
   align-items: center;
   text-align: center;
   color: var(--text-invert);
-  gap: 10px;
+  gap: 1rem;
+  padding: 0 1rem;
 }
 
 .cardOverlaySide {
@@ -924,48 +863,34 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 40px;
+  padding: 3rem;
   color: var(--text-invert);
   align-items: flex-start;
-}
-
-.iconWrapperSmall {
-  width: 40px;
-  height: 40px;
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(5px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 50%;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 12px;
 }
 
 /* TEXT & BUTTONS */
 .guideCardLarge h3 {
   font-size: 1.8rem;
   font-weight: 800;
-  margin-bottom: 10px;
+  margin-bottom: 1rem;
   line-height: 1.1;
 }
 .guideCardLarge p {
   font-size: 1rem;
   opacity: 0.9;
-  margin-bottom: 24px;
+  margin-bottom: 2rem;
   line-height: 1.5;
 }
 
 .securityContent h3 {
   font-size: 1.5rem;
   font-weight: 800;
-  color: #0f172a;
-  margin-bottom: 10px;
+  color: var(--text-dark);
+  margin-bottom: 0.6rem;
 }
 .securityContent p {
   color: #334155;
-  margin-bottom: 20px;
+  margin-bottom: 0.2rem;
   font-weight: 600;
   line-height: 1.4;
 }
@@ -973,7 +898,7 @@
 .guideCardWide h3 {
   font-size: 1.8rem;
   font-weight: 800;
-  margin-bottom: 20px;
+  margin-bottom: 2rem;
   max-width: 300px;
 }
 
@@ -981,22 +906,42 @@
 .tagBlue {
   background: var(--primary);
   color: var(--text-invert);
-  padding: 6px 12px;
+  padding: 0.5rem 1rem;
   font-size: 0.75rem;
   font-weight: 700;
   border-radius: 4px;
-  margin-bottom: 16px;
+  margin-bottom: 1.5rem;
   align-self: flex-start;
 }
 
-.tagWhite {
-  background: white;
-  color: #0f172a;
-  padding: 6px 12px;
+.tagGreen {
+  background: var(--success);
+  color: var(--text-invert);
+  padding: 0.5rem 1rem;
   font-size: 0.75rem;
   font-weight: 700;
   border-radius: 4px;
-  margin-bottom: 16px;
+  margin-bottom: 1.5rem;
+}
+
+.tagRed {
+  background: var(--danger);
+  color: var(--text-invert);
+  padding: 0.5rem 1rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 4px;
+  margin-bottom: 1.5rem;
+}
+
+.tagWhite {
+  background: var(--text-invert);
+  color: var(--text-dark);
+  padding: 0.5rem 1rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 4px;
+  margin-bottom: 1.5rem;
 }
 
 /* BUTTONS */
@@ -1005,7 +950,7 @@
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.4);
   color: var(--text-invert);
-  padding: 12px 24px;
+  padding: 0.7rem 1.5rem;
   border-radius: 50px;
   text-decoration: none;
   font-weight: 700;
@@ -1026,21 +971,25 @@
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.4);
   color: var(--text-invert);
-  padding: 8px 16px;
+  padding: 0.5rem 1rem;
   border-radius: 50px;
   text-decoration: none;
   font-weight: 700;
   font-size: 0.9rem;
   transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
 }
 
 .btnGlassSmall:hover {
-  background: white;
-  color: #0f172a;
+  background: var(--text-invert);
+  color: var(--text-dark);
 }
 
 .linkDark {
-  color: #0f172a;
+  color: var(--text-dark);
   font-weight: 800;
   text-decoration: none;
   display: flex;
@@ -1049,25 +998,25 @@
 }
 
 .iconCircleWhite {
-  width: 60px;
-  height: 60px;
-  background: white;
+  width: 3rem;
+  height: 3rem;
+  background: var(--text-invert);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 20px;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1rem;
+  box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.1);
 }
 
 .iconGold {
   color: var(--accent);
   fill: var(--accent);
-} /* Filled Shield */
+}
 
-/* --- 7. LOAN SECTION --- */
+/* --- 6. LOAN SECTION --- */
 .loanSection {
-  padding: 100px 0;
+  padding: 2rem 0;
   background: var(--bg-surface);
 }
 
@@ -1075,26 +1024,27 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  margin-bottom: 50px;
+  margin-bottom: 2rem;
   flex-wrap: wrap;
-  gap: 30px;
+  gap: 2rem;
 }
 
 .headerContent {
-  max-width: 500px;
+  padding: 0;
+  /* max-width: 500px; */
 }
 
 /* Icon Navigation */
 .loanIcons {
   display: flex;
-  gap: 30px;
+  gap: 3rem;
 }
 
 .loanIconItem {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 5px;
   color: var(--text-muted);
   cursor: pointer;
   transition: all 0.2s;
@@ -1114,8 +1064,8 @@
 .loanGrid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 30px;
-  margin-bottom: 60px;
+  gap: 3rem;
+  margin-bottom: 3rem;
 }
 
 @media (min-width: 992px) {
@@ -1128,8 +1078,8 @@
 .loanCardBlue,
 .loanCardGrey {
   display: flex;
-  flex-direction: column-reverse; /* Image on top on mobile */
-  border-radius: 20px;
+  flex-direction: column-reverse;
+  border-radius: 2rem;
   overflow: hidden;
   min-height: 450px;
 }
@@ -1138,18 +1088,18 @@
   .loanCardBlue,
   .loanCardGrey {
     flex-direction: column;
-  } /* Vertical on Desktop */
+  }
 }
 
-/* CARD 1: BLUE (Mortgage) - Keeps Blue Brand Color */
+/* CARD 1:  */
 .loanCardBlue {
   background: var(--primary);
-  color: var(--text-invert); /* Always white text on blue background */
+  color: var(--text-invert);
   position: relative;
 }
 
 .loanTextContent {
-  padding: 40px;
+  padding: 2rem;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -1157,7 +1107,7 @@
 }
 
 .loanImageWrapper {
-  height: 250px;
+  height: 300px;
   position: relative;
   overflow: hidden;
 }
@@ -1172,16 +1122,28 @@
   transform: scale(1.05);
 }
 
-/* Typography & Elements (Blue Card) */
+/* Typography & Elements */
 .iconBoxWhite {
-  width: 50px;
-  height: 50px;
-  background: white; /* This stays white because it sits on Blue */
-  border-radius: 12px;
+  width: 3rem;
+  height: 3rem;
+  background: var(--text-invert);
+  border-radius: 1rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 24px;
+  margin-bottom: 1rem;
+}
+
+.smallNote {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin: 0.1rem;
+  line-height: 1.5;
+}
+
+.smallNote strong {
+  color: var(--accent);
+  font-weight: 600;
 }
 
 .iconBlue {
@@ -1189,26 +1151,26 @@
 }
 
 .loanCardBlue h3 {
-  font-size: 1.8rem;
+  font-size: 2rem;
   font-weight: 800;
-  margin-bottom: 16px;
+  margin-bottom: 0.1rem;
   color: var(--text-invert);
 }
 .loanCardBlue p {
   font-size: 1.05rem;
   opacity: 0.9;
   line-height: 1.6;
-  margin-bottom: 30px;
+  margin-bottom: 1rem;
   color: rgba(255, 255, 255, 0.9);
 }
 
 .loanStatRow {
   display: flex;
-  gap: 20px;
-  background: rgba(255, 255, 255, 0.1); /* Glass effect */
-  padding: 16px;
+  gap: 2rem;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 1.5rem;
   border-radius: 8px;
-  margin-bottom: 30px;
+  margin-bottom: 2rem;
 }
 
 .statLabel {
@@ -1236,13 +1198,13 @@
 .loanActions {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 2rem;
 }
 
 .btnWhite {
-  background: white;
+  background: var(--text-invert);
   color: var(--primary);
-  padding: 12px 24px;
+  padding: 0.7rem 1.2rem;
   border-radius: 6px;
   font-weight: 700;
   text-decoration: none;
@@ -1265,7 +1227,7 @@
   text-decoration: underline;
 }
 
-/* CARD 2: ADAPTIVE GREY (Auto) - THIS WAS THE ISSUE */
+/* CARD 2 */
 .loanCardGrey {
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -1273,14 +1235,14 @@
 }
 
 .iconBoxBlue {
-  width: 50px;
-  height: 50px;
+  width: 3rem;
+  height: 3rem;
   background: var(--primary);
-  border-radius: 12px;
+  border-radius: 1rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 24px;
+  margin-bottom: 1rem;
 }
 .iconWhite {
   color: var(--text-invert);
@@ -1289,26 +1251,24 @@
 .loanCardGrey h3 {
   font-size: 1.8rem;
   font-weight: 800;
-  margin-bottom: 16px;
-  /* ✅ FIX: Uses variable text color */
+  margin-bottom: 0.1rem;
   color: var(--text-main);
 }
 
 .loanCardGrey p {
   font-size: 1.05rem;
   line-height: 1.6;
-  margin-bottom: 24px;
-  /* ✅ FIX: Uses variable body text */
+  margin-bottom: 1rem;
   color: var(--text-body);
 }
 
 .loanChecklist {
   list-style: none;
   padding: 0;
-  margin-bottom: 30px;
+  margin-bottom: 2rem;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 1rem;
 }
 
 .loanChecklist li {
@@ -1325,7 +1285,7 @@
 .btnBlueOutline {
   border: 2px solid var(--primary);
   color: var(--primary);
-  padding: 12px 24px;
+  padding: 0.7rem 1.2rem;
   border-radius: 6px;
   font-weight: 700;
   text-decoration: none;
@@ -1338,7 +1298,6 @@
 }
 
 .linkDark {
-  /* ✅ FIX: Adapts link color */
   color: var(--text-main);
   font-weight: 700;
   text-decoration: none;
@@ -1350,16 +1309,15 @@
   color: var(--primary);
 }
 
-/* TOOLS STRIP (Bottom) - ADAPTIVE */
+/* TOOLS STRIP */
 .toolsStrip {
-  /* ✅ FIX: Uses card background, not white */
   background: var(--bg-card);
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 30px;
+  border-radius: 1rem;
+  padding: 2rem;
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  gap: 3rem;
 }
 
 @media (min-width: 992px) {
@@ -1372,7 +1330,7 @@
 .toolItem {
   display: flex;
   align-items: flex-start;
-  gap: 16px;
+  gap: 1rem;
   flex: 1;
 }
 
@@ -1385,7 +1343,6 @@
   font-size: 1rem;
   font-weight: 700;
   margin-bottom: 4px;
-  /* ✅ FIX: Variable text */
   color: var(--text-main);
 }
 
@@ -1413,34 +1370,30 @@
   }
 }
 
-/* --- 8. INVESTMENT & CRYPTO SECTION --- */
+/* --- 7. INVESTMENT SECTION --- */
 .investSection {
-  padding: 0 0 100px 0;
   background: var(--bg-app);
   position: relative;
   overflow: hidden;
 }
 
-/* 1. TICKER STRIP */
+/* TICKER STRIP */
 .tickerStrip {
   background: var(--bg-card);
   border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
-  padding: 14px 0;
-  margin-bottom: 80px;
+  padding: 1rem 0;
   overflow: hidden;
   position: relative;
-  width: 100%;
 }
 
 .tickerTrack {
   display: flex;
-  width: max-content; /* Allow track to be as long as needed */
-  /* The Animation: Scroll for 60 seconds, linear, infinite loop */
+  width: max-content;
   animation: scroll 60s linear infinite;
+  gap: 5rem;
 }
 
-/* Pause when user hovers to read values */
 .tickerTrack:hover {
   animation-play-state: paused;
 }
@@ -1453,29 +1406,31 @@
 .tickerItem {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 1rem;
   font-size: 0.9rem;
   font-weight: 600;
-  padding: 0 24px;
-  white-space: nowrap; /* Prevent text wrapping */
+  padding: 0 1rem;
+  white-space: nowrap;
 }
 .tickerSymbol {
-  color: var(--text-muted);
+  color: var(--text-main);
   font-weight: 700;
+  letter-spacing: 0.05em;
 }
 .tickerValue {
-  color: var(--text-main);
+  font-family: "Inter", sans-serif;
+  color: var(--text-muted);
 }
 .tickerUp {
   color: var(--success);
 }
 .tickerDown {
-  color: #ef4444;
+  color: var(--danger);
 }
 
 .tickerDivider {
-  width: 1px;
-  height: 16px;
+  width: 0.15rem;
+  height: 1.5rem;
   background: var(--border);
 }
 
@@ -1488,11 +1443,11 @@
   }
 }
 
-/* 2. MAIN GRID */
+/* MAIN GRID */
 .investGrid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 60px;
+  gap: 3rem;
   align-items: center;
 }
 
@@ -1508,13 +1463,14 @@
   justify-content: center;
   height: 100%;
   position: relative;
-  z-index: 5; /* Ensures text sits above any background blobs */
+  z-index: 5;
 }
 
 /* LEFT CONTENT */
 .investHeader {
-  margin-bottom: 40px;
+  margin-bottom: 2rem;
 }
+
 .highlightBlue {
   color: var(--primary);
 }
@@ -1522,20 +1478,19 @@
 .investFeatures {
   display: flex;
   flex-direction: column;
-  gap: 30px;
-  margin-bottom: 40px;
+  gap: 2rem;
+  margin-bottom: 2rem;
 }
 
 .investFeatureItem {
   display: flex;
-  gap: 20px;
+  gap: 2rem;
   align-items: flex-start;
 }
 
 .iconBoxGlass {
-  width: 56px;
-  height: 56px;
-  /* Adaptive Glass Effect */
+  width: 4rem;
+  height: 4rem;
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: 16px;
@@ -1576,15 +1531,14 @@
   gap: 24px;
 }
 
-/* RIGHT VISUAL (Phone Mockup) */
+/* RIGHT VISUAL */
 .investVisual {
   position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 700px;
+  min-height: 600px;
   width: 100%;
-  padding: 40px 0;
 }
 
 .blueBlob {
@@ -1593,7 +1547,7 @@
   height: 500px;
   background: var(--primary);
   border-radius: 50%;
-  filter: blur(120px);
+  filter: blur(12rem);
   opacity: 0.15;
   z-index: 0;
 }
@@ -1613,25 +1567,25 @@
 }
 
 .phoneImage {
-  width: 100%; /* Responsive width */
-  height: auto; /* Height adjusts automatically to keep ratio */
+  width: 100%;
+  height: auto;
   max-width: 420px;
   object-fit: contain;
-  filter: drop-shadow(0 50px 100px rgba(0, 0, 0, 0.4)); /* deeper shadow */
-  border-radius: 50px;
+  filter: drop-shadow(0 5rem 10rem rgba(0, 0, 0, 0.4));
+  border-radius: 5rem;
 }
 
-/* FLOATING CARDS (The Robust Touch) */
+/* FLOATING CARDS  */
 .floatCardTop,
 .floatCardBottom {
   position: absolute;
   background: var(--bg-card);
-  padding: 12px 20px;
-  border-radius: 12px;
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+  padding: 0.7rem 1.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 1.5rem 4rem rgba(0, 0, 0, 0.15);
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 1rem;
   border: 1px solid var(--border);
   animation: float 6s ease-in-out infinite;
   min-width: 200px;
@@ -1646,7 +1600,7 @@
 @media (min-width: 1200px) {
   .floatCardTop {
     left: 10%;
-  } /* Adjust for large screens */
+  }
 }
 
 .floatCardBottom {
@@ -1657,7 +1611,7 @@
 @media (min-width: 1200px) {
   .floatCardBottom {
     right: 10%;
-  } /* Adjust for large screens */
+  }
 }
 
 @keyframes float {
@@ -1673,8 +1627,8 @@
 }
 
 .floatIconGold {
-  width: 36px;
-  height: 36px;
+  width: 2.5rem;
+  height: 2.5rem;
   background: rgba(251, 191, 36, 0.15);
   border-radius: 50%;
   display: flex;
@@ -1684,8 +1638,8 @@
 }
 
 .floatIconBlue {
-  width: 36px;
-  height: 36px;
+  width: 2.5rem;
+  height: 2.5rem;
   background: rgba(37, 99, 235, 0.1);
   border-radius: 50%;
   display: flex;
@@ -1707,21 +1661,16 @@
   color: var(--text-main);
   font-weight: 800;
 }
-.textGreen {
-  color: var(--success);
-  font-size: 0.8rem;
-  margin-left: 4px;
-}
 
-/* --- 9. GLOBAL REACH (Map Section) --- */
+/* --- 8. GLOBAL REACH --- */
 .globalSection {
-  padding: 100px 0;
+  padding: 2rem 0;
   background: var(--bg-surface);
   position: relative;
   overflow: hidden;
 }
 
-/* Background Grid Texture (Subtle) */
+/* Background Grid  */
 .globalSection::before {
   content: "";
   position: absolute;
@@ -1740,15 +1689,13 @@
 .globalHeader {
   text-align: center;
   max-width: 700px;
-  margin: 0 auto 60px auto;
+  margin: 0 auto 1rem auto;
   position: relative;
   z-index: 2;
 }
 
-/* Override title colors for this dark section */
 .globalHeader h2 {
   color: var(--text-main);
-  margin-bottom: 20px;
   font-size: 3rem;
   font-weight: 800;
 }
@@ -1762,24 +1709,23 @@
 .mapWrapper {
   position: relative;
   width: 100%;
-  /* Aspect Ratio for World Map (Roughly 2:1) */
   aspect-ratio: 16 / 9;
   max-width: 1200px;
-  margin: 0 auto 60px auto;
+  margin: 0 auto 2rem auto;
   z-index: 2;
 }
 
 .mapImage {
   object-fit: contain;
-  opacity: 0.6; /* Dim the map slightly so dots shine brighter */
+  opacity: 0.6;
 }
 
 /* HOTSPOTS */
 .hotspot {
   position: absolute;
-  width: 20px;
-  height: 20px;
-  transform: translate(-50%, -50%); /* Center on the coordinate */
+  width: 2rem;
+  height: 2rem;
+  transform: translate(-50%, -50%);
   cursor: pointer;
   z-index: 10;
   display: flex;
@@ -1788,9 +1734,9 @@
 }
 
 .hotspotDot {
-  width: 8px;
-  height: 8px;
-  background: var(--primary); /* Blue Dot */
+  width: 1rem;
+  height: 1rem;
+  background: var(--primary);
   border-radius: 50%;
   box-shadow: 0 0 10px var(--primary);
   position: relative;
@@ -1819,21 +1765,21 @@
   }
 }
 
-/* TOOLTIP (Hidden by default, shown on hover) */
+/* TOOLTIP */
 .hotspotTooltip {
   position: absolute;
-  bottom: 25px; /* Above the dot */
+  bottom: 2rem;
   left: 50%;
   transform: translateX(-50%) translateY(10px);
   background: var(--bg-card);
   border: 1px solid var(--primary);
-  padding: 8px 12px;
+  padding: 0.5rem 1rem;
   border-radius: 8px;
   white-space: nowrap;
   opacity: 0;
   pointer-events: none;
   transition: all 0.3s ease;
-  /* backdrop-filter: blur(4px); */
+  backdrop-filter: blur(4px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
@@ -1864,12 +1810,12 @@
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
-  gap: 40px;
+  gap: 3rem;
   background: var(--bg-card);
   border: 1px solid var(--border);
   backdrop-filter: blur(10px);
-  padding: 30px;
-  border-radius: 20px;
+  padding: 2rem;
+  border-radius: 2rem;
   max-width: 900px;
   margin: 0 auto;
   position: relative;
@@ -1879,7 +1825,7 @@
 .statItem {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 1rem;
   color: var(--text-main);
 }
 
@@ -1890,7 +1836,6 @@
 .statItem strong {
   display: block;
   font-size: 1.1rem;
-  margin-bottom: 4px;
 }
 .statItem span {
   color: var(--text-muted);
@@ -1898,8 +1843,8 @@
 }
 
 .statDivider {
-  width: 1px;
-  height: 40px;
+  width: 0.1rem;
+  height: 4rem;
   background: var(--border);
   display: none;
 }
@@ -1910,9 +1855,103 @@
   }
 }
 
-/* --- 11. FINAL CTA (The Closer) --- */
+/* --- 9. PARTNER STRIP --- */
+.partnerSection {
+  padding: 2rem 0;
+  background: var(--bg-app);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.partnerContainer {
+  max-width: 1400px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.partnerLabel {
+  color: var(--text-muted);
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 2rem;
+}
+
+/* MARQUEE MASK  */
+.marqueeMask {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 20%,
+    black 80%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 20%,
+    black 80%,
+    transparent 100%
+  );
+}
+
+.marqueeTrack {
+  display: flex;
+  align-items: center;
+  gap: 10rem;
+  width: max-content;
+  animation: scrollLogos 40s linear infinite;
+}
+
+.marqueeTrack:hover {
+  animation-play-state: paused;
+}
+
+.logoItem {
+  position: relative;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 5rem;
+  width: 10rem;
+  transition: transform 0.3s ease;
+}
+
+.imgWrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.logoImage {
+  object-fit: contain;
+  filter: grayscale(100%) opacity(0.6);
+  transition: all 0.3s ease;
+}
+
+.logoItem:hover .logoImage {
+  filter: grayscale(0%) opacity(1);
+  transform: scale(1.1);
+}
+
+@keyframes scrollLogos {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-33.33%);
+  }
+}
+
+/* --- 10. FINAL CTA --- */
 .ctaSection {
-  padding: 20px 0 20px 0;
+  padding: 2rem 0;
   background: var(--bg-surface);
   position: relative;
   z-index: 10;
@@ -1920,14 +1959,13 @@
 
 .ctaCardWrapper {
   position: relative;
-  border-radius: 40px;
+  border-radius: 3rem;
   overflow: hidden;
   background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #000000 100%);
   box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Subtle background mesh effect */
 .ctaMeshGradient {
   position: absolute;
   top: 0;
@@ -1953,38 +1991,38 @@
 
 /* LEFT CONTENT */
 .ctaContentLeft {
-  padding: 60px;
+  padding: 2rem;
   color: var(--text-invert);
 }
 
 .ctaBadge {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.5rem;
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 8px 16px;
-  border-radius: 30px;
+  padding: 0.5rem 1rem;
+  border-radius: 2rem;
   font-size: 0.85rem;
   font-weight: 600;
-  color: #60a5fa; /* Light blue */
-  margin-bottom: 24px;
+  color: var(--primary);
+  margin-bottom: 2rem;
 }
 
 .ctaContentLeft h2 {
   font-size: 3.5rem;
   font-weight: 800;
   line-height: 1.1;
-  margin-bottom: 20px;
-  background: linear-gradient(to right, #ffffff, #93c5fd);
+  margin-bottom: 1rem;
+  background: linear-gradient(to right, var(--text-invert), var(--primary));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .ctaContentLeft p {
   font-size: 1.15rem;
-  color: #cbd5e1; /* Slate 300 */
-  margin-bottom: 32px;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
   max-width: 500px;
   line-height: 1.6;
 }
@@ -1992,60 +2030,60 @@
 .ctaBenefitsList {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  margin-bottom: 40px;
+  gap: 1rem;
+  margin-bottom: 2rem;
 }
 
 .benefitItem {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 1rem;
   font-weight: 500;
   font-size: 1rem;
 }
 
 .checkIcon {
-  color: #22c55e; /* Green checkmark */
+  color: var(--success);
 }
 
 /* BUTTONS */
 .ctaButtonRow {
   display: flex;
-  gap: 16px;
-  margin-bottom: 24px;
+  gap: 2rem;
+  margin-bottom: 2rem;
   flex-wrap: wrap;
 }
 
-/* Common Store Button Styles */
+/* Store Button Styles */
 .appStoreBtn,
 .googlePlayBtn {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 10px 20px;
-  border-radius: 14px;
+  gap: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.8rem;
   cursor: pointer;
   transition: all 0.2s ease;
   min-width: 160px;
 }
 
 .appStoreBtn {
-  background: #fff;
-  color: #000;
-  border: 1px solid #fff;
+  background: var(--text-invert);
+  color: var(--text-dark);
+  border: 1px solid var(--text-invert);
 }
 
 .googlePlayBtn {
   background: rgba(255, 255, 255, 0.1);
-  color: #fff;
+  color: var(--text-invert);
   border: 1px solid rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(1rem);
 }
 
 .appStoreBtn:hover,
 .googlePlayBtn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+  transform: translateY(-0.3rem);
+  box-shadow: 0 1rem 2rem -0.5rem rgba(0, 0, 0, 0.3);
 }
 
 .btnText {
@@ -2068,13 +2106,13 @@
   text-decoration: none;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.3rem;
   font-weight: 600;
   transition: gap 0.2s ease;
 }
 .ctaWebLink:hover {
-  gap: 12px;
-  color: #fff;
+  gap: 0.5rem;
+  color: var(--text-invert);
 }
 
 /* RIGHT VISUAL */
@@ -2083,15 +2121,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  /* Optional: Make the image break out of the box slightly on large screens */
-  transform: scale(1.1) translateX(20px);
+  transform: scale(1.1) translateX(2rem);
 }
 
 .ctaImage {
   object-fit: contain;
-  /* Add a subtle float animation */
   animation: floatImage 6s ease-in-out infinite;
-  filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.4));
+  filter: drop-shadow(0 2rem 4rem rgba(0, 0, 0, 0.4));
 }
 
 @keyframes floatImage {
@@ -2111,7 +2147,7 @@
     text-align: center;
   }
   .ctaContentLeft {
-    padding: 40px 24px;
+    padding: 4rem 2rem;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -2120,7 +2156,7 @@
     font-size: 2.5rem;
   }
   .ctaContentLeft p {
-    margin: 0 auto 32px auto;
+    margin: 0 auto 3rem auto;
   }
   .ctaBenefitsList {
     align-items: center;
@@ -2131,64 +2167,11 @@
 
   .ctaVisualRight {
     height: auto;
-    padding-bottom: 40px;
-    transform: none; /* Reset desktop transform */
+    padding-bottom: 4rem;
+    transform: none;
   }
   .ctaImage {
-    width: 80%; /* Make image smaller on mobile */
+    width: 80%;
     height: auto;
-  }
-}
-
-/* --- ANNOUNCEMENT BANNER --- */
-.announcementBanner {
-  background-color: #f59e0b;
-  color: #0f172a;
-  width: 100%;
-  padding: 10px 0;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  animation: slideDown 0.3s ease-out;
-}
-
-.announcementContent {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  text-align: center;
-}
-
-.announcementIcon {
-  flex-shrink: 0;
-}
-
-.announcementText {
-  font-weight: 600;
-  font-size: 0.9rem;
-  line-height: 1.4;
-}
-
-.smallNote {
-  font-size: 0.9rem;
-  color: var(--text-muted);
-  margin-top: 0.5rem;
-  margin-bottom: 1rem;
-  line-height: 1.5;
-}
-
-.smallNote strong {
-  color: var(--accent);
-  font-weight: 600;
-}
-
-@keyframes slideDown {
-  from {
-    transform: translateY(-100%);
-  }
-  to {
-    transform: translateY(0);
   }
 }

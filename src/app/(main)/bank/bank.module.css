@@ -1,6 +1,7 @@
 .main {
   background: var(--bg-app);
   min-height: 100vh;
+  color: var(--text-main);
 }
 
 .container {
