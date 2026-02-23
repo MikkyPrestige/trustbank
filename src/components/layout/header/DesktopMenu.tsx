@@ -13,7 +13,7 @@ const ROUTE_MAP: Record<string, string> = {
     BANKING: '/bank',
     LENDING: '/borrow',
     WEALTH: '/wealth',
-    INSURE: '/insure',
+    INSURANCE: '/insure',
     RESOURCES: '/learn',
 };
 
@@ -21,10 +21,18 @@ export default function DesktopMenu({ menus }: DesktopMenuProps) {
     const [activeMenu, setActiveMenu] = useState<string | null>(null);
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+
     const handleMouseEnter = (menuName: string) => {
-        if (timeoutRef.current) clearTimeout(timeoutRef.current);
-        if (menus[menuName]) setActiveMenu(menuName);
-        else setActiveMenu(null);
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+            timeoutRef.current = null;
+        }
+
+        if (menus[menuName]) {
+            setActiveMenu(menuName);
+        } else {
+            setActiveMenu(null);
+        }
     };
 
     const handleMouseLeave = () => {
@@ -37,7 +45,6 @@ export default function DesktopMenu({ menus }: DesktopMenuProps) {
         <div className={styles.bottomBar} onMouseLeave={handleMouseLeave}>
             <div className={styles.container}>
                 <nav className={styles.navLinks}>
-                    {/* Iterate over props.menus */}
                     {Object.keys(menus).map((key) => (
                         <Link
                             key={key}
@@ -77,12 +84,15 @@ export default function DesktopMenu({ menus }: DesktopMenuProps) {
                                 </div>
                             ))}
 
-                            {/* PROMO COLUMN (Dynamic from CMS) */}
+                            {/* PROMO COLUMN */}
                             {menus[activeMenu].promo && (
                                 <div className={styles.promoColumn}>
                                     <h3>{menus[activeMenu].promo.title}</h3>
                                     <p>{menus[activeMenu].promo.desc}</p>
-                                    <Link href={menus[activeMenu].promo.href} className={styles.promoBtn}>
+                                    <Link
+                                        href={menus[activeMenu].promo.link || menus[activeMenu].promo.href || '#'}
+                                        className={styles.promoBtn}
+                                    >
                                         {menus[activeMenu].promo.btnText}
                                     </Link>
                                 </div>

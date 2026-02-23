@@ -60,7 +60,7 @@
 
 /* --- CONTAINERS --- */
 .container {
-  max-width: 1100px;
+  /* max-width: 1100px; */
   margin: 0 auto;
   padding: 2rem;
 }
@@ -155,7 +155,7 @@
 .card:hover {
   border-color: var(--primary);
   transform: translateY(-4px);
-  box-shadow: 0 1rem 2rem -.5rem rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1rem 2rem -0.5rem rgba(0, 0, 0, 0.1);
 }
 
 .iconBox {

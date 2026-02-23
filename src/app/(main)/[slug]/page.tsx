@@ -7,7 +7,6 @@ export default async function DynamicLegalPage({ params }: { params: Promise<{ s
     const settings = await getSiteSettings();
     const currentPath = `/${slug}`;
 
-    // 1. Determine which "type"
     let type: 'privacy' | 'terms' | 'accessibility' | null = null;
 
     if (settings.legal_privacy_slug === currentPath) type = 'privacy';
@@ -16,7 +15,6 @@ export default async function DynamicLegalPage({ params }: { params: Promise<{ s
 
     if (!type) notFound();
 
-    // 2. Extract specific content based on identified type
     const pageData = {
         privacy: {
             title: settings.legal_nav_privacy_label,
@@ -68,7 +66,6 @@ export default async function DynamicLegalPage({ params }: { params: Promise<{ s
     );
 }
 
-// Ensure Next.js knows which slugs to pre-render at build time
 export async function generateStaticParams() {
     const settings = await getSiteSettings();
     const paths = [

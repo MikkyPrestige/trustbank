@@ -96,11 +96,12 @@ export function HomeTab({ settings, logoUrl, setLogoUrl, heroUrl, setHeroUrl, ho
             </div>
             {/* Announcement */}
             <div className={`${styles.group} ${styles.toggleWrapper}`}>
+                <input type="hidden" name="announcement_active" value="false" />
                 <input
                     type="checkbox"
                     name="announcement_active"
-                    value="true"
-                    defaultChecked={settings.announcement_active === "true"}
+                    value='true'
+                    defaultChecked={settings.announcement_active}
                     className={styles.checkbox}
                 />
                 <label className={styles.toggleLabel}>Show Announcement Bar?</label>

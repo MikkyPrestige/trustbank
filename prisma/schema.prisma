@@ -346,8 +346,8 @@ model TicketMessage {
 }
 
 model SiteSettings {
-  id        String      @id      @default("settings")
-  updatedAt DateTime    @updatedAt
+  id                    String   @id      @default("settings")
+  updatedAt             DateTime @updatedAt
   auth_login_limit      Int      @default(5)
   routingNumber         String   @default("091000022")
   swiftCode             String   @default("TRUSUS33")
@@ -361,24 +361,40 @@ model SiteSettings {
   address_main          String @default("123 Finance Street, New York, NY")
 
   // --- GLOBAL SETTINGS ---
-  announcement_active        String @default("true")
-  announcement_text          String @default("Get $200 when you open a new checking account.")
-  announcement_contact_phone String @default("1-800-TRUST-BK")
+  announcement_active        Boolean @default(true)
+  announcement_text          String  @default("Get $200 when you open a new checking account.")
+  announcement_contact_phone String  @default("1-800-TRUST-BK")
 
   // --- NAVIGATION STRUCTURE ---
   nav_structure_json String @default("") @db.Text
 
+  // --- TOP BAR CONFIG ---
+  nav_dashboard_label String? @default("My Dashboard")
+  nav_dashboard_link  String? @default("/dashboard")
+  nav_rates_label     String?  @default("Rates")
+  nav_rates_link      String?  @default("/rates")
+  nav_locations_label String? @default("Locations")
+  nav_locations_link  String? @default("/locations")
+  nav_login_label     String? @default("LOGIN")
+  nav_register_label  String? @default("OPEN ACCOUNT")
+  nav_logout_label    String? @default("Log Out")
+
   // --- NAVBAR PROMOS ---
   nav_bank_title     String @default("Complete Banking")
   nav_bank_desc      String @default("Checking, Savings & Business Solutions")
+  nav_bank_link      String? @default("/bank")
   nav_borrow_title   String @default("Finance Your Dreams")
   nav_borrow_desc    String @default("Mortgages, Auto Loans & Credit Cards")
+  nav_borrow_link    String? @default("/borrow")
   nav_wealth_title   String @default("Grow Your Wealth")
   nav_wealth_desc    String @default("Expert Advisory & Retirement Planning")
+  nav_wealth_link    String? @default("/wealth")
   nav_insure_title   String @default("Total Protection")
   nav_insure_desc    String @default("Coverage for Life, Home & Auto")
+  nav_insure_link    String? @default("/insure")
   nav_learn_title    String @default("Market Pulse")
   nav_learn_desc     String @default("Latest Financial News & Insights")
+  nav_learn_link     String? @default("/learn")
 
   // --- RELATIONS ---
   content  ContentSettings?

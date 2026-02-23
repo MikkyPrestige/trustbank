@@ -1,14 +1,15 @@
 'use server';
 
+import { auth } from "@/auth";
 import { getAuthenticatedUser } from "@/lib/auth/user-guard";
 import { db } from "@/lib/db";
 import { checkMaintenanceMode, hashPin } from "@/lib/security";
+import { uploadFileToCloud } from "@/lib/utils/upload";
 import { revalidatePath } from "next/cache";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { UserStatus } from "@prisma/client";
 
-// --- SCHEMAS ---
 const profileSchema = z.object({
     fullName: z.string().min(2, "Name is required").optional(),
     occupation: z.string().optional(),
@@ -16,22 +17,16 @@ const profileSchema = z.object({
     dateOfBirth: z.string().optional(),
     phone: z.string().optional(),
     taxId: z.string().optional(),
-
-    // Address
     address: z.string().optional(),
     city: z.string().optional(),
     state: z.string().optional(),
     country: z.string().optional(),
     zipCode: z.string().optional(),
-
-    // Next of Kin
     nokName: z.string().optional(),
     nokPhone: z.string().optional(),
     nokRelationship: z.string().optional(),
     nokEmail: z.string().email("Invalid email").optional().or(z.literal("")),
     nokAddress: z.string().optional(),
-
-    // URLs
     image: z.string().optional(),
     passportUrl: z.string().optional(),
     idCardUrl: z.string().optional(),
@@ -47,7 +42,50 @@ const pinSchema = z.object({
     newPin: z.string().length(4, "PIN must be exactly 4 digits"),
 });
 
-// --- 1. UPDATE PROFILE ---
+
+// --- 1. UPDATE AVATAR ---
+const MAX_FILE_SIZE = 10 * 1024 * 1024;
+
+export async function updateAvatar(formData: FormData) {
+   const { success, message, user } = await getAuthenticatedUser();
+
+   if (await checkMaintenanceMode()) {
+        return { success: false, message: "System is currently under maintenance. Please try again later." };
+    }
+
+   if (!success || !user) {
+        return { success: false, message };
+    }
+
+   const file = formData.get("file") as File;
+    if (!file || file.size === 0) return { success: false, message: "No file selected" };
+
+    if (file.size > MAX_FILE_SIZE) {
+        return { success: false, message: "File is too large. Max 10MB." };
+    }
+
+    let secureUrl = "";
+
+    try {
+
+        // Upload to Server
+        secureUrl = await uploadFileToCloud(file, "avatars");
+
+        await db.user.update({
+            where: { id: user.id },
+            data: { image: secureUrl }
+        });
+
+    } catch (error: any) {
+        console.error("Avatar Update Error:", error);
+        return { success: false, message: error.message || "Failed to upload profile picture." };
+    }
+    revalidatePath("/dashboard");
+
+    return { success: true, message: "Profile picture updated!", url: secureUrl };
+}
+
+// --- 2. UPDATE PROFILE ---
 export async function updateProfile(prevState: any, formData: FormData) {
       const { success, message, user } = await getAuthenticatedUser();
 
@@ -69,7 +107,6 @@ export async function updateProfile(prevState: any, formData: FormData) {
     const { dateOfBirth, ...otherData } = validated.data;
 
     try {
-        // 1. CRITICAL DB WRITE
         await db.user.update({
             where: { id: user.id },
             data: {
@@ -78,7 +115,6 @@ export async function updateProfile(prevState: any, formData: FormData) {
             }
         });
 
-        // 2. NOTIFY ADMINS
         try {
             const admins = await db.user.findMany({
                 where: { role: { in: ["ADMIN", "SUPER_ADMIN"] } },
@@ -111,7 +147,7 @@ export async function updateProfile(prevState: any, formData: FormData) {
     return { success: true, message: "Profile Updated Successfully!" };
 }
 
-// --- 2. CHANGE PASSWORD ---
+// --- 3. CHANGE PASSWORD ---
 export async function changePassword(prevState: any, formData: FormData) {
      const { success, message, user } = await getAuthenticatedUser();
 
@@ -136,13 +172,14 @@ export async function changePassword(prevState: any, formData: FormData) {
 
         const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-        // 1. Update Password
         await db.user.update({
             where: { id: user.id },
-            data: { passwordHash: hashedPassword }
+            data: {
+                passwordHash: hashedPassword,
+                tokenVersion: { increment: 1 }
+            }
         });
 
-        // 2. Security Notification
         await db.notification.create({
             data: {
                 userId: user.id,
@@ -162,11 +199,10 @@ export async function changePassword(prevState: any, formData: FormData) {
     return { success: true, message: "Password Changed Successfully!" };
 }
 
-// --- 3. CHANGE PIN  ---
+// --- 4. CHANGE PIN  ---
 export async function changePin(prevState: any, formData: FormData) {
     const { success, message, user } = await getAuthenticatedUser();
 
-    // 1. Maintenance Check
     if (await checkMaintenanceMode()) {
         return { success: false, message: "System is currently under maintenance. Please try again later." };
     }
@@ -184,14 +220,11 @@ export async function changePin(prevState: any, formData: FormData) {
     try {
         if (!user.passwordHash) return { message: "User has no password set." };
 
-        // 2. Verify Password  before changing PIN
         const isMatch = await bcrypt.compare(currentPassword, user.passwordHash);
         if (!isMatch) return { message: "Incorrect Password. Cannot update PIN." };
 
-        // 3. HASH THE NEW PIN
         const securePin = await hashPin(newPin);
 
-        // 4. Update DB
         await db.user.update({
             where: { id: user.id },
             data: {
@@ -201,7 +234,6 @@ export async function changePin(prevState: any, formData: FormData) {
             }
         });
 
-        // 5. Security Notification
         await db.notification.create({
             data: {
                 userId: user.id,
@@ -222,11 +254,10 @@ export async function changePin(prevState: any, formData: FormData) {
     return { success: true, message: "Transaction PIN Updated!" };
 }
 
-// --- 4. CHANGE CURRENCY ---
+// --- 5. CHANGE CURRENCY ---
 export async function updateUserCurrency(currencyCode: string) {
     const { success, message, user } = await getAuthenticatedUser();
 
-    // 1. Maintenance Check
     if (await checkMaintenanceMode()) {
         return { success: false, message: "System is currently under maintenance. Please try again later." };
     }
@@ -249,21 +280,43 @@ export async function updateUserCurrency(currencyCode: string) {
 }
 
 
-// --- 5. CLOSE ACCOUNT  ---
-export async function closeAccount(password: string) {
-    const { success, message, user } = await getAuthenticatedUser();
+// --- 6. LOGOUT ALL DEVICES  ---
+export async function logoutAllDevices() {
+    const session = await auth();
 
-    // 1. Maintenance Check
+    if (!session?.user?.id) {
+        return { error: "Unauthorized" };
+    }
+
+    try {
+        await db.user.update({
+            where: { id: session.user.id },
+            data: {
+                tokenVersion: { increment: 1 }
+            }
+        });
+
+        revalidatePath('/dashboard/settings');
+        return { success: true, message: "Successfully logged out of all other sessions." };
+    } catch (error) {
+        console.error("Global Logout Error:", error);
+        return { error: "Failed to process request." };
+    }
+}
+
+
+// --- 7. CLOSE ACCOUNT  ---
+export async function closeAccount(password: string) {
+  const { success, message, user } = await getAuthenticatedUser();
+
     if (await checkMaintenanceMode()) {
         return { success: false, message: "System is currently under maintenance. Please try again later." };
     }
 
-    if (!success || !user) {
-        return { success: false, message };
-    }
+    if (!success || !user) return { message };
 
     if (!password) {
-        return { error: "Password is required to confirm this action." };
+        return { error: "Current password is required to close account." };
     }
 
     try {
@@ -276,31 +329,29 @@ export async function closeAccount(password: string) {
             return { error: "User record not found." };
         }
 
-        // 3. Security Check: Verify Password
         const passwordMatch = await bcrypt.compare(password, dbUser.passwordHash);
         if (!passwordMatch) {
-            return { error: "Incorrect password. Cannot verify account ownership." };
+            return { error: "Incorrect password. Cannot verify ownership." };
         }
 
-        // 4. Financial Logic: Validate Zero Balance
+        // Check Balances
         const totalBalance = dbUser.accounts.reduce((sum, acc) => sum + Number(acc.availableBalance), 0);
 
-        // Formatter for clear error messages
         const formatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
 
         if (totalBalance > 0) {
             return {
-                error: `Cannot close account: You still have ${formatter.format(totalBalance)} remaining. Please withdraw all funds first.`
+                error: `Action Failed: You still have ${formatter.format(totalBalance)} in your accounts. You must withdraw all funds to $0.00 before closing.`
             };
         }
 
         if (totalBalance < 0) {
             return {
-                error: `Cannot close account: You have an outstanding balance of ${formatter.format(totalBalance)}. Please settle your debt first.`
+                error: `Action Failed: Your account is in overdraft (${formatter.format(totalBalance)}). You must settle this debt before closing.`
             };
         }
 
-        // 5. Execution: Archive User (Soft Delete)
+        //  ARCHIVE USER (Soft Delete)
         const archivedEmail = `deleted-${Date.now()}_${dbUser.email}`;
 
         await db.user.update({
@@ -312,12 +363,11 @@ export async function closeAccount(password: string) {
             }
         });
 
-        // 6. Cleanup
         revalidatePath("/");
         return { success: true };
 
     } catch (error) {
         console.error("Close Account Error:", error);
-        return { error: "System error. Please contact support." };
+        return { error: "System error. Please contact support if this persists." };
     }
 }

@@ -34,7 +34,7 @@
   position: absolute;
   top: -2px;
   right: -2px;
-  background: var(--danger); /* Replaced #ef4444 */
+  background: var(--danger);
   color: var(--text-invert);
   font-size: 0.65rem;
   font-weight: 700;
@@ -45,7 +45,7 @@
   align-items: center;
   justify-content: center;
   padding: 0 4px;
-  border: 2px solid var(--bg-main); /* Matches page background */
+  border: 2px solid var(--bg-main);
 }
 
 /* DROPDOWN */

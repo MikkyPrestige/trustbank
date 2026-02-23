@@ -43,7 +43,6 @@ export async function markNotificationRead(notificationId: string) {
     return { success: false, message: "Database error" };
   }
 
-  // ✅ Fix: Revalidate outside try/catch
   revalidatePath("/dashboard");
   return { success: true };
 }
@@ -66,7 +65,6 @@ export async function markAllNotificationsRead() {
       return { success: false, message: "Database error" };
     }
 
-    // ✅ Fix: Revalidate outside try/catch
     revalidatePath("/dashboard");
     return { success: true };
 }

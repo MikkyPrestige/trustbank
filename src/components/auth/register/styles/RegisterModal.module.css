@@ -19,12 +19,12 @@
   background: var(--bg-card);
   border: 1px solid var(--border);
   width: 100%;
-  max-width: 440px;
-  border-radius: 24px;
-  padding: 2.5rem;
+  max-width: 500px;
+  border-radius: 2rem;
+  padding: 2rem;
   position: relative;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2.5rem 5rem -1rem var(--shadow-card);
+  animation: modalPop 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* CLOSE BUTTON */
@@ -35,8 +35,8 @@
   background: var(--bg-surface);
   border: 1px solid var(--border);
   color: var(--text-muted);
-  width: 32px;
-  height: 32px;
+  width: 3rem;
+  height: 3rem;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -57,14 +57,46 @@
   text-align: center;
 }
 
+.loadingPulse {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: rgba(var(--primary-rgb), 0.1);
+  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  margin-left: auto;
+  margin-right: auto;
+  border: 1px solid rgba(var(--primary-rgb), 0.2);
+}
+
+.loadingPulse.success {
+  background: rgba(16, 185, 129, 0.1);
+  border-color: rgba(16, 185, 129, 0.2);
+}
+
+.checkIcon {
+  color: var(--success);
+  animation: checkPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.spinner {
+  color: var(--primary);
+  animation:
+    spin 1s linear infinite,
+    pulse 1.5s ease-in-out infinite;
+}
+
 .securityBadge {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: rgba(34, 197, 94, 0.1); /* Green tint */
-  color: #22c55e;
-  padding: 4px 12px;
-  border-radius: 20px;
+  background: rgba(34, 197, 94, 0.1);
+  color: var(--success);
+  padding: 0.5rem 1rem;
+  border-radius: 1.5rem;
   font-size: 0.75rem;
   font-weight: 700;
   margin-bottom: 1rem;
@@ -72,16 +104,10 @@
   letter-spacing: 0.5px;
 }
 
-.shieldIcon {
-  display: inline-block;
-  animation: pulseSecure 2s infinite ease-in-out;
-}
-
 .header h2 {
   font-size: 1.75rem;
   font-weight: 800;
   color: var(--text-main);
-  margin-bottom: 0.5rem;
   letter-spacing: -0.5px;
 }
 
@@ -94,13 +120,40 @@
 .form {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1.5rem;
+}
+
+.form.loading {
+  opacity: 0.5;
+  pointer-events: none;
+  filter: blur(1px);
+}
+
+.formFadeOut {
+  opacity: 0;
+  transform: translateY(10px);
+  pointer-events: none;
+  transition: all 0.4s ease;
 }
 
 .inputGroup {
   position: relative;
   display: flex;
   align-items: center;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg-surface);
+  transition: all 0.2s;
+}
+
+.inputGroup:hover {
+  border-color: var(--text-muted);
+}
+
+.focused {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px var(--primary-light, rgba(59, 130, 246, 0.2));
+  background: var(--bg-card);
 }
 
 .iconBox {
@@ -113,6 +166,10 @@
   pointer-events: none;
 }
 
+.focused .iconBox {
+  color: var(--primary);
+}
+
 .fieldWrapper {
   width: 100%;
   position: relative;
@@ -122,7 +179,7 @@
   width: 100%;
   background: var(--bg-surface);
   border: 1px solid var(--border);
-  padding: 1rem 1rem 1rem 3rem; /* Space for icon */
+  padding: 1.5rem 1rem 0.8rem 3rem;
   border-radius: 12px;
   color: var(--text-main);
   font-size: 1rem;
@@ -136,7 +193,6 @@
   background: var(--bg-card);
 }
 
-/* Floating Label Logic (Optional visual flair) */
 .floatingLabel {
   position: absolute;
   left: 3rem;
@@ -146,7 +202,13 @@
   font-size: 0.95rem;
   pointer-events: none;
   transition: all 0.2s;
-  opacity: 0; /* Hidden by default if using placeholders, or logic below */
+}
+
+.focused .floatingLabel,
+.input:not(:placeholder-shown) + .floatingLabel {
+  top: 14px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
 }
 
 /* BUTTON */
@@ -155,8 +217,8 @@
   background: var(--primary);
   color: var(--text-invert);
   border: none;
-  padding: 14px;
-  border-radius: 12px;
+  padding: 1rem;
+  border-radius: 1rem;
   font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
@@ -179,12 +241,34 @@
   cursor: wait;
 }
 
+/* FOOTER */
+.footer {
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-top: 0.5rem;
+}
+
+.switchBtn {
+  background: none;
+  border: none;
+  color: var(--primary);
+  font-weight: 600;
+  cursor: pointer;
+  padding-left: 5px;
+  text-decoration: underline;
+  transition: color 0.2s;
+}
+
+.switchBtn:hover {
+  color: var(--primary-hover);
+}
+
 .disclaimer {
   font-size: 0.75rem;
   color: var(--text-muted);
   text-align: center;
   line-height: 1.4;
-  margin-top: 0.5rem;
 }
 
 /* ANIMATIONS */
@@ -197,13 +281,45 @@
   }
 }
 
-@keyframes slideUp {
+@keyframes modalPop {
   from {
     opacity: 0;
-    transform: translateY(20px) scale(0.95);
+    transform: scale(0.95) translateY(10px);
   }
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes checkPop {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 2px var(--primary));
+  }
+  50% {
+    transform: scale(1.15);
+    filter: drop-shadow(0 0 12px var(--primary));
   }
 }

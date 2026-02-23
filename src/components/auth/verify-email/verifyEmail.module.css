@@ -4,7 +4,7 @@
   align-items: center;
   justify-content: center;
   background-color: var(--bg-app);
-  padding: 20px;
+  padding: 2rem;
   position: relative;
   overflow: hidden;
 }
@@ -15,7 +15,11 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: radial-gradient(circle at 50% 50%, rgba(37, 99, 235, 0.05) 0%, transparent 50%);
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(37, 99, 235, 0.05) 0%,
+    transparent 50%
+  );
   z-index: 0;
 }
 
@@ -23,13 +27,13 @@
   position: relative;
   z-index: 1;
   background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(1rem);
   border: 1px solid rgba(255, 255, 255, 0.5);
-  border-radius: 20px;
-  padding: 40px;
+  border-radius: 2rem;
+  padding: 2rem;
   width: 100%;
-  max-width: 440px;
-  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.1);
+  max-width: 500px;
+  box-shadow: 0 2rem 4rem -1rem rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -38,28 +42,27 @@
 }
 
 .iconWrapper {
-  width: 60px;
-  height: 60px;
+  width: 4rem;
+  height: 4rem;
   background: var(--primary-light);
   color: var(--primary);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 20px;
+  margin-bottom: 1rem;
 }
 
 .title {
   font-size: 1.75rem;
   font-weight: 700;
   color: var(--text-main);
-  margin-bottom: 8px;
 }
 
 .subText {
   color: var(--text-body);
   font-size: 0.95rem;
-  margin-bottom: 30px;
+  margin-bottom: 2rem;
   line-height: 1.5;
 }
 
@@ -67,8 +70,8 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  margin-bottom: 24px;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .inputWrapper {
@@ -86,9 +89,9 @@
 
 .input {
   width: 100%;
-  padding: 12px 16px;
+  padding: 1rem;
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: 0.8rem;
   font-size: 1rem;
   background: var(--bg-card);
   transition: all 0.2s;
@@ -109,8 +112,8 @@
 
 .primaryBtn {
   width: 100%;
-  padding: 14px;
-  border-radius: 10px;
+  padding: 1rem;
+  border-radius: 0.8rem;
   background: var(--primary);
   color: white;
   font-weight: 600;
@@ -119,7 +122,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 0.5rem;
   transition: all 0.2s;
 }
 
@@ -134,10 +137,10 @@
 }
 
 .footer {
-  margin-top: 24px;
+  margin-top: 2rem;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 1rem;
   align-items: center;
   width: 100%;
 }
@@ -171,37 +174,38 @@
 }
 
 /* Status Banners */
-.errorBanner, .successBanner {
+.errorBanner,
+.successBanner {
   width: 100%;
-  padding: 12px;
-  border-radius: 8px;
-  margin-bottom: 20px;
+  padding: 1rem;
+  border-radius: 0.8rem;
+  margin-bottom: 2rem;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 1rem;
   font-size: 0.9rem;
   text-align: left;
 }
 
 .errorBanner {
-  background: #fef2f2;
-  color: #b91c1c;
-  border: 1px solid #fecaca;
+  background: rgba(var(--danger-rgb), 0.1);
+  color: var(--danger);
+  border: 1px solid rgba(var(--danger-rgb), 0.3);
 }
 
 .successBanner {
-  background: #ecfdf5;
-  color: #047857;
-  border: 1px solid #a7f3d0;
+  background: rgba(var(--success-rgb), 0.1);
+  color: var(--success);
+  border: 1px solid rgba(var(--success-rgb), 0.3);
 }
 
 .successIcon {
   color: var(--success);
-  margin-bottom: 20px;
+  margin-bottom: 2rem;
 }
 
 .timerBox {
-  margin: 20px 0;
+  margin: 2rem 0;
   font-size: 0.95rem;
   color: var(--text-body);
 }
@@ -217,8 +221,8 @@
 }
 
 .loadingState .spin {
-  width: 32px;
-  height: 32px;
+  width: 3rem;
+  height: 3rem;
   opacity: 0.8;
 }
 
@@ -227,15 +231,23 @@
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-[data-theme='dark'] .card {
+[data-theme="dark"] .card {
   background: rgba(15, 23, 42, 0.8);
   border-color: rgba(255, 255, 255, 0.1);
 }

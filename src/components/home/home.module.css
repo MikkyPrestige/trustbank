@@ -188,7 +188,7 @@
 .infoBlock {
   flex: 1;
   min-width: 250px;
-  padding: 2rem;
+  padding: 1rem;
   display: flex;
   flex-direction: row;
   align-items: center;

@@ -86,7 +86,7 @@
 
 @media (min-width: 992px) {
   .mainGrid {
-    grid-template-columns: 2fr 1fr 1fr 1.5fr;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
   }
 }
 
@@ -176,13 +176,12 @@
 /* BRAND COLUMN  */
 .brandColumn {
   background: rgba(255, 255, 255, 0.03);
-  padding: 2rem;
+  padding: 1rem 2rem;
   border-radius: 1rem;
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .whiteLogoBox {
-  background: var(--text-invert);
   padding: 0.5rem;
   text-align: center;
   margin-bottom: 2rem;

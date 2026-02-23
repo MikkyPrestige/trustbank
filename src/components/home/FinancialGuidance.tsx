@@ -29,6 +29,7 @@ export default async function FinancialGuidance() {
                         <Image
                             src={settings.guide_article_1_img}
                             alt={settings.guide_article_1_alt}
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                             fill
                             className={styles.cardBgImage}
                         />
@@ -62,6 +63,7 @@ export default async function FinancialGuidance() {
                         <Image
                             src={settings.guide_article_3_img}
                             alt={settings.guide_article_3_alt}
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                             fill
                             className={styles.cardBgImage}
                         />
@@ -80,6 +82,7 @@ export default async function FinancialGuidance() {
                         <Image
                             src={settings.guide_article_4_img}
                             alt={settings.guide_article_4_alt}
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                             fill
                             className={styles.cardBgImage}
                         />

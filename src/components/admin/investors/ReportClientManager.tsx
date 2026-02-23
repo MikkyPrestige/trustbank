@@ -3,8 +3,9 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { createReport, deleteReport } from '@/actions/admin/reports';
-import { Plus, Trash2, X, Loader2, FileText, ArrowLeft, Link as LinkIcon } from 'lucide-react';
+// Import the updateReport action you just created
+import { createReport, deleteReport, updateReport } from '@/actions/admin/reports';
+import { Plus, Trash2, X, Loader2, FileText, ArrowLeft, Link as LinkIcon, Edit2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import styles from './reports.module.css';
 import { FinancialReport } from '@prisma/client';
@@ -17,13 +18,36 @@ export default function ReportClientManager({ initialReports }: Props) {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingId, setEditingId] = useState<string | null>(null);
 
-    // Form
+    // Form States
     const [title, setTitle] = useState('');
     const [summary, setSummary] = useState('');
     const [fileUrl, setFileUrl] = useState('');
     const [type, setType] = useState('PDF');
     const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
+
+    // Handle opening modal for a new report
+    const openAddModal = () => {
+        setEditingId(null);
+        setTitle('');
+        setSummary('');
+        setFileUrl('');
+        setType('PDF');
+        setDate(new Date().toISOString().split('T')[0]);
+        setIsModalOpen(true);
+    };
+
+    // Handle opening modal for editing
+    const startEdit = (report: FinancialReport) => {
+        setEditingId(report.id);
+        setTitle(report.title);
+        setSummary(report.summary || '');
+        setFileUrl(report.fileUrl);
+        setType(report.type);
+        setDate(new Date(report.date).toISOString().split('T')[0]);
+        setIsModalOpen(true);
+    };
 
     const handleDelete = async (id: string) => {
         if (!confirm("Delete this report?")) return;
@@ -41,6 +65,7 @@ export default function ReportClientManager({ initialReports }: Props) {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
+
         const formData = new FormData();
         formData.append("title", title);
         formData.append("summary", summary);
@@ -48,11 +73,17 @@ export default function ReportClientManager({ initialReports }: Props) {
         formData.append("type", type);
         formData.append("date", date);
 
-        const res = await createReport(formData);
+        // Switch between Create and Update actions
+        const res = editingId
+            ? await updateReport(editingId, formData)
+            : await createReport(formData);
+
         if (res.success) {
             toast.success(res.message);
             setIsModalOpen(false);
             router.refresh();
+            // Reset form
+            setEditingId(null);
             setTitle(''); setSummary(''); setFileUrl('');
         } else {
             toast.error(res.message);
@@ -68,7 +99,7 @@ export default function ReportClientManager({ initialReports }: Props) {
 
             <div className={styles.header}>
                 <h1 className={styles.title}>Financial Reports</h1>
-                <button onClick={() => setIsModalOpen(true)} className={styles.addBtn}>
+                <button onClick={openAddModal} className={styles.addBtn}>
                     <Plus size={18} /> Add Report
                 </button>
             </div>
@@ -83,12 +114,17 @@ export default function ReportClientManager({ initialReports }: Props) {
                             <div>
                                 <h3 className={styles.cardTitle}>{report.title}</h3>
                                 <p className={styles.cardDate}>{new Date(report.date).toLocaleDateString()}</p>
-                                <a href={report.fileUrl} target="_blank" className={styles.link}>{report.fileUrl}</a>
+                                <a href={report.fileUrl} target="_blank" className={styles.link} rel="noreferrer">{report.fileUrl}</a>
                             </div>
                         </div>
-                        <button onClick={() => handleDelete(report.id)} className={styles.deleteBtn}>
-                            <Trash2 size={16} />
-                        </button>
+                        <div className={styles.actions}>
+                            <button onClick={() => startEdit(report)} className={styles.editBtn}>
+                                <Edit2 size={16} />
+                            </button>
+                            <button onClick={() => handleDelete(report.id)} className={styles.deleteBtn}>
+                                <Trash2 size={16} />
+                            </button>
+                        </div>
                     </div>
                 ))}
             </div>
@@ -97,7 +133,7 @@ export default function ReportClientManager({ initialReports }: Props) {
                 <div className={styles.modalOverlay}>
                     <div className={styles.modal}>
                         <div className={styles.modalHeader}>
-                            <h2>Publish Report</h2>
+                            <h2>{editingId ? "Edit Report" : "Publish Report"}</h2>
                             <button onClick={() => setIsModalOpen(false)}><X /></button>
                         </div>
                         <form onSubmit={handleSubmit}>
@@ -124,8 +160,9 @@ export default function ReportClientManager({ initialReports }: Props) {
                                 <label>Summary (Optional)</label>
                                 <textarea value={summary} onChange={e => setSummary(e.target.value)} className={styles.textarea} />
                             </div>
+
                             <button disabled={loading} className={styles.submitBtn}>
-                                {loading ? <Loader2 className="animate-spin" /> : "Publish Report"}
+                                {loading ? <Loader2 className={styles.spin} /> : (editingId ? "Update Report" : "Publish Report")}
                             </button>
                         </form>
                     </div>

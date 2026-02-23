@@ -7,13 +7,17 @@
 
   /* Primary */
   --primary: #2563eb;
+  --primary-rgb: rgba(59, 130, 246);
   --primary-hover: #1d4ed8;
   --primary-light: #eff6ff;
 
   /* Secondary */
   --accent: #f59e0b;
+  --accent-rgb: 245, 158, 11;
   --success: #10b981;
+  --success-rgb: 16, 185, 129;
   --danger: #ef4444;
+  --danger-rgb: 239, 68, 68;
 
   /* Typography */
   --text-main: #0f172a;
@@ -22,9 +26,21 @@
   --text-invert: #ffffff;
   --text-dark: #0a0a0a;
 
+  --sub-bg: rgba(0, 0, 0, 0.03);
+  --sub-divider: rgba(0, 0, 0, 0.05);
+  --sub-hover: rgba(0, 0, 0, 0.06);
+  --sub-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.04);
+
+  --ui-bg-med: rgba(0, 0, 0, 0.08);
+  --ui-bg-high: rgba(0, 0, 0, 0.1);
+  --ui-bg-low: rgba(0, 0, 0, 0.05);
+  --ui-border-low: rgba(0, 0, 0, 0.05);
+  --ui-border-med: rgba(0, 0, 0, 0.1);
+
   /* Borders & Shadows */
   --border: #e2e8f0;
   --border-hover: #cbd5e1;
+  --border-subtle: rgba(0, 0, 0, 0.08);
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
   --shadow-card:
     0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
@@ -43,13 +59,17 @@
 
   /* Primary Brand Colors */
   --primary: #3b82f6;
+  --primary-rgb: #3b82f6;
   --primary-hover: #60a5fa;
   --primary-light: rgba(59, 130, 246, 0.1);
 
-  /* Secondary / Accents */
+  /* Secondary */
   --accent: #fbbf24;
+  --accent-rgb: 251, 191, 36;
   --success: #34d399;
+  --success-rgb: 52, 211, 153;
   --danger: #f87171;
+  --danger-rgb: 248, 113, 113;
 
   /* Typography */
   --text-main: #f8fafc;
@@ -58,9 +78,21 @@
   --text-invert: #ffffff;
   --text-dark: #0a0a0a;
 
+  --sub-bg: rgba(255, 255, 255, 0.05);
+  --sub-divider: rgba(255, 255, 255, 0.08);
+  --sub-hover: rgba(255, 255, 255, 0.12);
+  --sub-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.3);
+
+  --ui-bg-med: rgba(255, 255, 255, 0.08);
+  --ui-bg-high: rgba(255, 255, 255, 0.1);
+  --ui-bg-low: rgba(255, 255, 255, 0.05);
+  --ui-border-low: rgba(255, 255, 255, 0.05);
+  --ui-border-med: rgba(255, 255, 255, 0.1);
+
   /* Borders & Shadows */
   --border: #1e293b;
   --border-hover: #334155;
+  --border-subtle: rgba(255, 255, 255, 0.1);
   --shadow-sm: none;
   --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
   --shadow-glow: 0 0 15px rgba(59, 130, 246, 0.15);
@@ -86,6 +118,7 @@ body {
   transition:
     background 0.3s ease,
     color 0.3s ease;
+  top: 0 !important;
 }
 
 a {
@@ -97,6 +130,16 @@ button {
   font-family: inherit;
   cursor: pointer;
   border: none;
+}
+
+iframe.goog-te-banner-frame {
+  display: none !important;
+}
+.goog-te-balloon-frame {
+  display: none !important;
+}
+#goog-gt-tt {
+  display: none !important;
 }
 
 /* --- REUSABLE UTILITY CLASSES --- */
@@ -119,28 +162,28 @@ button {
   }
 }
 
-/* 2. Standard Buttons (Vibrant) */
+/* 2. Standard Buttons */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 12px 24px;
+  padding: 1rem 2rem;
   border-radius: 8px;
   font-weight: 600;
   font-size: 1rem;
   transition: all 0.2s ease;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
 .btn-primary {
   background: var(--gradient-primary);
   color: var(--text-invert);
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+  box-shadow: 0 0.5rem 1rem rgba(37, 99, 235, 0.2);
 }
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 0.5rem 1rem rgba(37, 99, 235, 0.3);
 }
 
 .btn-outline {
@@ -157,7 +200,7 @@ button {
 
 /* 3. Section Spacing */
 .section {
-  padding: 80px 0;
+  padding: 5rem 0;
 }
 
 /* 4. Text Utilities */
@@ -172,8 +215,8 @@ button {
   background: var(--bg-card) !important;
   color: var(--text-main) !important;
   border: 1px solid var(--border) !important;
-  padding: 16px !important;
+  padding: 1rem !important;
   border-radius: 8px !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 0.5rem 1rem var(--shadow-card) !important;
   z-index: 999999;
 }

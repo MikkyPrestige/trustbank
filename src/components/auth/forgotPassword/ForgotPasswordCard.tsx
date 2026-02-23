@@ -4,7 +4,7 @@ import { useActionState } from "react";
 import Link from "next/link";
 import { ShieldAlert, ArrowLeft, Mail, CheckCircle, Loader2, ArrowRight } from "lucide-react";
 import styles from "./forgotPassword.module.css";
-import { requestPasswordReset } from "@/actions/user/request-reset";
+import { requestPasswordReset } from "@/actions/user/password";
 
 const initialState = {
     message: '',

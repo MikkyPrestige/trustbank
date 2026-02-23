@@ -41,7 +41,7 @@ export type AdminLogAction =
   | 'CREATE_FAQ' | 'UPDATE_FAQ' | 'DELETE_FAQ'
 
   // --- Footer ---
-  | 'CREATE_FOOTER_LINK' | 'DELETE_FOOTER_LINK'
+  | 'CREATE_FOOTER_LINK' | 'DELETE_FOOTER_LINK' | 'UPDATE_FOOTER_LINK'
 
   // --- Careers/Jobs ---
   | 'CREATE_JOB' | 'UPDATE_JOB' | 'DELETE_JOB' | 'TOGGLE_JOB_STATUS'
@@ -50,7 +50,7 @@ export type AdminLogAction =
   | 'CREATE_PRESS_RELEASE' | 'UPDATE_PRESS_RELEASE' | 'DELETE_PRESS_RELEASE'
 
   // --- Financial Reports ---
-  | 'CREATE_REPORT' | 'DELETE_REPORT'
+  | 'CREATE_REPORT' | 'UPDATE_REPORT' | 'DELETE_REPORT'
 
   // --- Payments Currency ---
   | 'CREATE_CURRENCY' | 'UPDATE_CURRENCY_RATE' | 'DELETE_CURRENCY'

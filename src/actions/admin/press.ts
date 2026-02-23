@@ -90,7 +90,6 @@ export async function deletePressRelease(id: string) {
     if (!authorized || !session || !session.user) return { success: false, message: "Unauthorized" };
 
     try {
-        // Fetch first for logging context
         const release = await db.pressRelease.findUnique({ where: { id } });
 
         await db.pressRelease.delete({ where: { id } });

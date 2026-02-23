@@ -143,7 +143,7 @@ export default function PressClientManager({ initialReleases }: Props) {
                                 <input value={link} onChange={e => setLink(e.target.value)} className={styles.input} placeholder="https://..." />
                             </div>
                             <button disabled={loading} className={styles.submitBtn}>
-                                {loading ? <Loader2 className="animate-spin" /> : "Save Release"}
+                                {loading ? <Loader2 className={styles.spin} /> : "Save Release"}
                             </button>
                         </form>
                     </div>

@@ -42,6 +42,7 @@ export async function createFooterLink(formData: FormData) {
     }
 }
 
+
 export async function deleteFooterLink(id: string) {
     const auth = await checkAdminAction();
     if (!auth.authorized || !auth.session || !auth.session.user) {
@@ -49,7 +50,6 @@ export async function deleteFooterLink(id: string) {
     }
 
     try {
-        // Fetch first to log what we are deleting
         const link = await db.footerLink.findUnique({ where: { id } });
 
         await db.footerLink.delete({ where: { id } });
@@ -70,5 +70,71 @@ export async function deleteFooterLink(id: string) {
         return { success: true, message: "Link deleted" };
     } catch (error) {
         return { success: false, message: "Failed to delete" };
+    }
+}
+
+
+export async function updateFooterLink(id: string, formData: FormData) {
+    const auth = await checkAdminAction();
+    if (!auth.authorized || !auth.session || !auth.session.user) {
+        return { success: false, message: "Unauthorized" };
+    }
+
+    const label = formData.get("label") as string;
+    const href = formData.get("href") as string;
+    const column = formData.get("column") as string;
+    const order = parseInt(formData.get("order") as string) || 0;
+
+    if (!id || !label || !href) return { success: false, message: "Missing required fields" };
+
+    try {
+        const updatedLink = await db.footerLink.update({
+            where: { id },
+            data: { label, href, column, order }
+        });
+
+        await logAdminAction(
+            "UPDATE_FOOTER_LINK",
+            id,
+            {
+                label,
+                href,
+                column,
+                order,
+                action: "Updated Footer Link",
+                admin: auth.session.user.email
+            },
+            "INFO",
+            "SUCCESS"
+        );
+
+        revalidatePath('/');
+        return { success: true, message: "Link updated successfully" };
+    } catch (error) {
+        console.error("Update Error:", error);
+        return { success: false, message: "Failed to update link" };
+    }
+}
+
+
+export async function updateFooterOrder(links: { id: string; order: number }[]) {
+    const auth = await checkAdminAction();
+    if (!auth.authorized) return { success: false, message: "Unauthorized" };
+
+    try {
+        await db.$transaction(
+            links.map((link) =>
+                db.footerLink.update({
+                    where: { id: link.id },
+                    data: { order: link.order },
+                })
+            )
+        );
+
+        revalidatePath('/');
+        return { success: true, message: "Order saved" };
+    } catch (error) {
+        console.error("Order Update Error:", error);
+        return { success: false, message: "Failed to save new order" };
     }
 }

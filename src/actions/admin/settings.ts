@@ -26,17 +26,32 @@ const SETTING_METADATA: Record<string, { group: string, type: string }> = {
 
        // --- 2. NAV BAR ---
     nav_structure_json: { group: 'NAV', type: 'JSON' },
+    // TOP BAR CONFIG
+    nav_dashboard_label: { group: 'NAV', type: 'STRING' },
+    nav_dashboard_link:  { group: 'NAV', type: 'STRING' },
+    nav_rates_label:     { group: 'NAV', type: 'STRING' },
+    nav_rates_link:      { group: 'NAV', type: 'STRING' },
+    nav_locations_label: { group: 'NAV', type: 'STRING' },
+    nav_locations_link:  { group: 'NAV', type: 'STRING' },
+    nav_login_label:     { group: 'NAV', type: 'STRING' },
+    nav_register_label:  { group: 'NAV', type: 'STRING' },
+    nav_logout_label:    { group: 'NAV', type: 'STRING' },
     // Nav Promos
     nav_bank_title:     { group: 'NAV', type: 'STRING' },
     nav_bank_desc:      { group: 'NAV', type: 'STRING' },
+    nav_bank_link:      { group: 'NAV', type: 'STRING' },
     nav_borrow_title:   { group: 'NAV', type: 'STRING' },
     nav_borrow_desc:    { group: 'NAV', type: 'STRING' },
+    nav_borrow_link:    { group: 'NAV', type: 'STRING' },
     nav_wealth_title:   { group: 'NAV', type: 'STRING' },
     nav_wealth_desc:    { group: 'NAV', type: 'STRING' },
+    nav_wealth_link:    { group: 'NAV', type: 'STRING' },
     nav_insure_title:   { group: 'NAV', type: 'STRING' },
     nav_insure_desc:    { group: 'NAV', type: 'STRING' },
+    nav_insure_link:    { group: 'NAV', type: 'STRING' },
     nav_learn_title:    { group: 'NAV', type: 'STRING' },
     nav_learn_desc:     { group: 'NAV', type: 'STRING' },
+    nav_learn_link:     { group: 'NAV', type: 'STRING' },
 
     // --- 3. ANNOUNCEMENT SETTINGS ---
     announcement_active:        { group: 'ANNOUNCEMENT', type: 'BOOLEAN' },
@@ -1094,9 +1109,15 @@ export async function updateSiteSettings(formData: FormData) {
 
         let finalValue: any;
         switch (meta.type) {
-            case 'BOOLEAN': finalValue = (stringValue === 'on' || stringValue === 'true') ? "true" : "false"; break;
-            case 'INT': finalValue = parseInt(stringValue, 10) || 0; break;
-            case 'FLOAT': finalValue = parseFloat(stringValue) || 0.0; break;
+            case 'BOOLEAN':
+            finalValue = (stringValue === 'true' || stringValue === 'on');
+            break;
+            case 'INT':
+            finalValue = parseInt(stringValue, 10) || 0;
+            break;
+            case 'FLOAT':
+            finalValue = parseFloat(stringValue) || 0.0;
+            break;
             default: finalValue = stringValue;
         }
 
@@ -1115,7 +1136,7 @@ export async function updateSiteSettings(formData: FormData) {
         } else if (isFeature) {
             featureUpdates[key] = finalValue;
         } else {
-            console.warn(`⚠️ Field "${key}" skipped: No matching prefix found.`);
+            console.warn(`Field "${key}" skipped: No matching prefix found.`);
         }
     }
 
@@ -1192,164 +1213,3 @@ for (const asset of assetsToSync) {
         return { success: false, message: "Failed to save settings" };
     }
 }
-
-
-// export async function updateSiteSettings(formData: FormData) {
-//     // 1. Security & Auth Check
-//     const { authorized, session } = await checkAdminAction();
-
-//     if (!authorized || !session || !session.user) {
-//         return { success: false, message: "Unauthorized" };
-//     }
-
-//     const existing = await db.siteSettings.findFirst();
-
-//     if (!existing) {
-//         return { success: false, message: "Settings initialization error. Run seed." };
-//     }
-
-//     // Initialize Update Objects
-//     const mainUpdates: any = {};
-//     const contentUpdates: any = {};
-//     const featureUpdates: any = {};
-
-//     // 2. Prefixes for Content Table
-//     const contentPrefixes = [
-//         'hero_', 'global_stat_', 'home_', 'guide_', 'partner_',
-//         'learn_', 'about_', 'locations_', 'rate_', 'rates_', 'security_',
-//         'legal_', 'help_', 'careers_', 'press_', 'investors_',
-//         'dashboard_', 'footer_', 'social_'
-//     ];
-
-//     // 3. Prefixes for Features Table
-//     const featurePrefixes = [
-//         'bank_', 'save_', 'borrow_', 'wealth_', 'crypto_', 'insure_', 'payments_'
-//     ];
-
-//     // 4. Iterate and Sort Data
-//     for (const [key, meta] of Object.entries(SETTING_METADATA)) {
-//         const rawValue = formData.get(key);
-//         let finalValue: any = null;
-
-//         // Handle initial extraction
-//         if (rawValue === null) continue;
-//         const stringValue = rawValue as string;
-
-//         // --- DYNAMIC TYPE CONVERSION ---
-//     switch (meta.type) {
-//         case 'BOOLEAN':
-//             const isChecked = stringValue === 'on' || stringValue === 'true' || stringValue === '1';
-//             finalValue = isChecked ? "true" : "false";
-//             break;
-
-//         case 'INT':
-//             const parsedInt = parseInt(stringValue, 10);
-//             finalValue = isNaN(parsedInt) ? 0 : parsedInt;
-//             break;
-
-//         case 'FLOAT':
-//             const parsedFloat = parseFloat(stringValue);
-//             finalValue = isNaN(parsedFloat) ? 0.0 : parsedFloat;
-//             break;
-
-//         default:
-//             // Default to string for everything else
-//             finalValue = stringValue;
-//     }
-
-//         // Handle Boolean Logic
-//         // if (meta.type === 'BOOLEAN') {
-//         //     const isChecked = rawValue === 'on' || rawValue === 'true' || rawValue === '1';
-//         //     finalValue = isChecked ? "true" : "false";
-//         // } else {
-//         //     // Handle Strings/Text
-//         //     if (rawValue !== null) {
-//         //         finalValue = rawValue as string;
-//         //     }
-//         // }
-
-//         if (finalValue !== null) {
-//     //      const integerFields = ['auth_login_limit', 'save_calc_max_deposit', 'save_calc_max_monthly'];
-
-//     //      const floatFields = ['save_calc_default_apy'];
-
-//     //   if (integerFields.includes(key)) {
-//     //         finalValue = parseInt(finalValue, 10);
-//     //         if (isNaN(finalValue)) finalValue = 0;
-//     //     }
-//     //     else if (floatFields.includes(key)) {
-//     //         finalValue = parseFloat(finalValue);
-//     //         if (isNaN(finalValue)) finalValue = 0.0;
-//     //     }
-//             // if (key === 'auth_login_limit') {
-//             //     mainUpdates['auth_login_limit'] = parseInt(finalValue, 10);
-//             //     continue;
-//             // }
-
-//             const isFeatureField = featurePrefixes.some(prefix => key.startsWith(prefix));
-//             const isContentField = contentPrefixes.some(prefix => key.startsWith(prefix));
-
-//             if (isFeatureField) {
-//                 featureUpdates[key] = finalValue;
-//             } else if (isContentField) {
-//                 contentUpdates[key] = finalValue;
-//             } else {
-//                 mainUpdates[key] = finalValue;
-//             }
-//         }
-//     }
-
-//     try {
-//         // 5. Update Main Settings Table
-//         if (Object.keys(mainUpdates).length > 0) {
-//             await db.siteSettings.update({
-//                 where: { id: existing.id },
-//                 data: mainUpdates,
-//             });
-//         }
-
-//         // 6. Upsert Content Settings
-//         if (Object.keys(contentUpdates).length > 0) {
-//             await db.contentSettings.upsert({
-//                 where: { siteSettingsId: existing.id },
-//                 update: contentUpdates,
-//                 create: {
-//                     siteSettingsId: existing.id,
-//                     ...contentUpdates
-//                 }
-//             });
-//         }
-
-//         // 7. Upsert Content Features
-//         if (Object.keys(featureUpdates).length > 0) {
-//             await db.contentFeatures.upsert({
-//                 where: { siteSettingsId: existing.id },
-//                 update: featureUpdates,
-//                 create: {
-//                     siteSettingsId: existing.id,
-//                     ...featureUpdates
-//                 }
-//             });
-//         }
-
-//         // 8. LOG THE ACTION
-//         await logAdminAction(
-//             "SYSTEM_SETTINGS_UPDATE",
-//             existing.id,
-//             {
-//                 action: "CMS Content Update",
-//                 updatedFields: Object.keys({ ...mainUpdates, ...contentUpdates, ...featureUpdates }).length,
-//                 admin: session.user.email
-//             },
-//             "INFO",
-//             "SUCCESS"
-//         );
-
-//         revalidatePath('/', 'layout');
-
-//         return { success: true, message: "Settings updated successfully" };
-//     } catch (error) {
-//         console.error("Settings Update Error:", error);
-//         return { success: false, message: "Failed to save settings" };
-//     }
-// }

@@ -13,7 +13,6 @@ export default async function DashboardPage() {
         redirect("/login");
     }
 
-    // 1. Fetch Settings & Currency Data concurrently
     const [settings, currencyData] = await Promise.all([
         getSiteSettings(),
         getUserCurrencyData()
@@ -22,7 +21,6 @@ export default async function DashboardPage() {
     const currencyCode = currencyData?.currency || "USD";
     const exchangeRate = currencyData?.rate || 1;
 
-    // 2. Fetch User with Accounts and Ledger Entries
     const userRaw = await db.user.findUnique({
         where: { email: session.user.email },
         include: {
@@ -40,11 +38,10 @@ export default async function DashboardPage() {
 
     if (!userRaw) redirect("/login");
 
-    // 3. SETUP TIME WINDOW
+    //  TIME WINDOW
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-    // 4. FETCH TREND DATA
     const [creditStats, debitStats] = await Promise.all([
         db.ledgerEntry.aggregate({
             where: {
@@ -66,7 +63,6 @@ export default async function DashboardPage() {
         })
     ]);
 
-    // 5. Fetch Beneficiaries
     const rawBeneficiaries = await db.beneficiary.findMany({
         where: { userId: userRaw.id },
         take: 5,
@@ -90,7 +86,7 @@ export default async function DashboardPage() {
         };
     });
 
-    // 6. SERIALIZATION
+    // SERIALIZATION
     const userSafe = {
         ...userRaw,
         accounts: userRaw.accounts.map(acc => ({
@@ -106,7 +102,7 @@ export default async function DashboardPage() {
         }))
     };
 
-    // 7. CALCULATE TOTALS & TRENDS
+    // CALCULATE TOTALS & TRENDS
     const totalBalance = userSafe.accounts.reduce((sum, acc) => sum + acc.availableBalance, 0);
 
     const moneyIn = Number(creditStats._sum.amount || 0);

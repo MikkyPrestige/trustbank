@@ -10,13 +10,11 @@ export default async function BeneficiariesPage() {
     const session = await auth();
     if (!session?.user?.id) redirect("/login");
 
-    // 1. Fetch raw beneficiaries
     const rawBeneficiaries = await db.beneficiary.findMany({
         where: { userId: session.user.id },
         orderBy: { createdAt: 'desc' }
     });
 
-    // 2. Fetch images for internal users
     const accountNumbers = rawBeneficiaries.map(b => b.accountNumber);
     const internalAccounts = await db.account.findMany({
         where: { accountNumber: { in: accountNumbers } },
@@ -26,7 +24,6 @@ export default async function BeneficiariesPage() {
         }
     });
 
-    // 3. Merge Images
     const beneficiaries = rawBeneficiaries.map(ben => {
         const match = internalAccounts.find(acc => acc.accountNumber === ben.accountNumber);
         return {

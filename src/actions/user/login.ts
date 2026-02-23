@@ -15,12 +15,15 @@ import { compare } from "bcryptjs";
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(1, "Password is required"),
+  callbackUrl: z.string().optional(),
 });
+
+const DUMMY_HASH = "$2a$12$L7R.qM.Yx.GzO7KzP8W1u.p9X5E5G7R9T2k1l3m4n5o6p7q8r9s1t";
 
 export async function login(prevState: any, formData: FormData) {
   const rawData = Object.fromEntries(formData.entries());
   const settings = await getSiteSettings();
-  const siteName = settings.site_name || "Trust Bank";
+  const siteName = settings.site_name;
   const MAX_ATTEMPTS = settings.auth_login_limit || 5;
 
   // 1. Validate Input
@@ -29,7 +32,7 @@ export async function login(prevState: any, formData: FormData) {
     return { message: validated.error.issues[0].message };
   }
 
-  const { email, password } = loginSchema.parse(rawData);
+  const { email, password, callbackUrl } = loginSchema.parse(rawData);
   const headersList = await headers();
   const ip = headersList.get("x-forwarded-for") || "Unknown IP";
   const userAgent = headersList.get("user-agent") || "";
@@ -56,9 +59,16 @@ export async function login(prevState: any, formData: FormData) {
       if (!existingUser) return { message: "System is currently under maintenance." };
   }
 
-  // 4. PRE-CHECK & NOTIFICATION
+  // 4. PRE-CHECK & NOTIFICATION (User verification & Password check)
   try {
       const user = await db.user.findUnique({ where: { email } });
+
+      const hashToCompare = user?.passwordHash || DUMMY_HASH;
+    const isPasswordCorrect = await compare(password, hashToCompare);
+
+    if (!user || !isPasswordCorrect) {
+        // DO Nothing
+    }
 
      if (user && !user.emailVerified) {
          return {
@@ -67,16 +77,14 @@ export async function login(prevState: any, formData: FormData) {
          };
       }
 
-      // Check if user exists and password is correct
       if (user && user.passwordHash && (await compare(password, user.passwordHash))) {
-
-          // A. SUCCESS! RESET COUNTERS NOW
+          // Reset Failed Attempts
           await db.user.update({
               where: { email },
               data: { failedLoginAttempts: 0 }
           });
 
-          // B. SEND NOTIFICATION
+          // Security NOTIFICATION
           const parser = new UAParser(userAgent);
           const result = parser.getResult();
           const device = `${result.browser.name || 'Web'} on ${result.os.name || 'Unknown OS'}`;
@@ -101,9 +109,8 @@ export async function login(prevState: any, formData: FormData) {
     await signIn("credentials", {
       email,
       password,
-      redirectTo: "/dashboard",
+      redirectTo: callbackUrl || "/dashboard",
     });
-
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {
@@ -123,7 +130,6 @@ export async function login(prevState: any, formData: FormData) {
               userForNotify = updatedUser;
           } catch (e) { }
 
-          // Check IP Status again to be safe
           const freshStatus = await getSecurityStatus(ip);
           if (freshStatus.isBlocked) {
              if (userForNotify) {
@@ -145,9 +151,7 @@ export async function login(prevState: any, formData: FormData) {
              return { message: `Too many failed attempts. Access blocked for ${freshStatus.remainingTime} minutes.` };
           }
 
-          // Return remaining attempts based on USER counter, not just IP
           const remaining = Math.max(0, MAX_ATTEMPTS - attempts);
-
           if (remaining === 0) {
              if (userForNotify) {
                  await db.notification.create({
@@ -160,11 +164,8 @@ export async function login(prevState: any, formData: FormData) {
                          isRead: false
                      }
                  });
-
-                 // 'void' to fire-and-forget (don't wait for email to send)
                 void sendSecurityEmail(email, userForNotify.fullName || "Client", "LOCKED", siteName);
              }
-
              return { message: "Account locked due to excessive failed attempts. Contact support." };
           }
 
@@ -180,6 +181,11 @@ export async function login(prevState: any, formData: FormData) {
           return { message: "Authentication failed." };
       }
     }
+
+    if (error instanceof Error && error.message === "NEXT_REDIRECT") {
+    throw error;
+    }
+
     throw error;
   }
 }

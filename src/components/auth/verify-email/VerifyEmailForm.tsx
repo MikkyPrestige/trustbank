@@ -2,8 +2,7 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { verifyOtp } from '@/actions/user/verify-otp';
-import { resendOtp } from '@/actions/user/resend-otp';
+import { verifyOtp, resendOtp } from '@/actions/user/otp';
 import { Mail, AlertCircle, Loader2, CheckCircle, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import styles from './verifyEmail.module.css';
@@ -11,7 +10,6 @@ import styles from './verifyEmail.module.css';
 function VerifyFormContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
-
     const [email, setEmail] = useState(searchParams.get('email') || "");
     const [otp, setOtp] = useState("");
     const [error, setError] = useState("");
@@ -20,15 +18,17 @@ function VerifyFormContent() {
     const [isResending, setIsResending] = useState(false);
     const [isVerified, setIsVerified] = useState(false);
     const [countdown, setCountdown] = useState(3);
+    const callbackUrl = searchParams.get('callbackUrl') || "/dashboard";
 
     useEffect(() => {
         if (isVerified && countdown > 0) {
             const timer = setTimeout(() => setCountdown(c => c - 1), 1000);
             return () => clearTimeout(timer);
         } else if (isVerified && countdown === 0) {
-            router.push('/login?verified=true');
+            const loginUrl = `/login?verified=true&callbackUrl=${encodeURIComponent(callbackUrl)}&email=${encodeURIComponent(email)}`;
+            router.push(loginUrl);
         }
-    }, [isVerified, countdown, router]);
+    }, [isVerified, countdown, router, callbackUrl, email]);
 
     const handleVerify = async () => {
         if (!email) {

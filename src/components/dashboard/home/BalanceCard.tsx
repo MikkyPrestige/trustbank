@@ -104,10 +104,8 @@ export default function BalanceCard({
 
                 <div className={styles.balanceRow} onClick={toggleVisibility}>
                     <div className={isVisible ? styles.balanceAmount : styles.hiddenBalance}>
-                        {/* 👇 Show Converted Amount (e.g. ZAR) */}
                         {displayMoney(convertedBalance, currencyCode)}
 
-                        {/* 👇 Small badge showing original USD if converted */}
                         {currencyCode !== "USD" && isVisible && (
                             <div style={{ fontSize: '0.8rem', opacity: 0.7, marginTop: '4px', fontWeight: 400 }}>
                                 ≈ {displayMoney(totalBalance, 'USD')}

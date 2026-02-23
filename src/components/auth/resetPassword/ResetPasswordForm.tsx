@@ -4,7 +4,7 @@ import { useActionState } from "react";
 import Link from "next/link";
 import { Lock, CheckCircle, AlertCircle, ArrowRight, Loader2, KeyRound } from "lucide-react";
 import styles from "./resetPassword.module.css";
-import { resetPassword } from "@/actions/user/reset-password";
+import { resetPassword } from "@/actions/user/password";
 
 interface Props {
     token: string;

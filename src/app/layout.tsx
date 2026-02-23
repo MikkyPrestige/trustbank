@@ -13,7 +13,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-    title: "TrustBank - Banking for the Future",
+    title: "Trust Bank - Banking for the Future",
     description: "Secure, fast, and modern banking for everyone.",
 };
 

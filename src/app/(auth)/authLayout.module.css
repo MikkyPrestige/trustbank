@@ -1,72 +1,79 @@
 .authLayout {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    background: var(--bg-app); /* Matches your global theme */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-app);
 }
 
 /* HEADER */
 .minimalHeader {
-    padding: 30px 40px;
-    display: flex;
-    justify-content: center; /* Center logo for security feel */
-    align-items: center;
-    position: absolute; /* Float above the content */
-    top: 0; left: 0; width: 100%;
-    z-index: 50;
+  padding: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 50;
 }
 
 .logoLink {
-    opacity: 0.9;
-    transition: 0.2s;
+  opacity: 0.9;
+  transition: 0.2s;
 }
-.logoLink:hover { opacity: 1; transform: scale(1.02); }
+.logoLink:hover {
+  opacity: 1;
+  transform: scale(1.02);
+}
 
 /* MAIN */
 .mainContent {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    /* The form (pageWrapper) handles the centering */
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 /* FOOTER */
 .minimalFooter {
-    padding: 40px 20px;
-    text-align: center;
-    background: transparent;
-    border-top: 1px solid rgba(255, 255, 255, 0.05); /* Subtle border */
-    margin-top: auto; /* Pushes to bottom */
+  padding: 2rem;
+  text-align: center;
+  background: transparent;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  margin-top: auto;
 }
 
 .footerLinks {
-    display: flex;
-    justify-content: center;
-    gap: 24px;
-    margin-bottom: 16px;
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 0.5rem;
 }
 
 .footerLinks a {
-    color: var(--text-muted);
-    font-size: 0.85rem;
-    text-decoration: none;
-    font-weight: 600;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  text-decoration: none;
+  font-weight: 600;
 }
-.footerLinks a:hover { color: var(--text-main); text-decoration: underline; }
+.footerLinks a:hover {
+  color: var(--text-main);
+  text-decoration: underline;
+}
 
 .copyright {
-    color: var(--text-muted);
-    font-size: 0.75rem;
-    opacity: 0.6;
-    margin-bottom: 12px;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  opacity: 0.6;
+  margin-bottom: 1rem;
 }
 
 .secureBadge {
-    display: inline-block;
-    font-size: 0.7rem;
-    color: #16a34a; /* Green security color */
-    background: rgba(22, 163, 74, 0.1);
-    padding: 4px 12px;
-    border-radius: 50px;
-    font-weight: 700;
+  display: inline-block;
+  font-size: 0.7rem;
+  color: var(--success);
+  background: rgba(22, 163, 74, 0.1);
+  padding: 0.5rem 1rem;
+  border-radius: 1rem;
+  font-weight: 700;
 }

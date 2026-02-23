@@ -18,39 +18,30 @@ import {
   KycStatus
 } from "@prisma/client";
 
-// --- VALIDATION SCHEMA ---
+
 const registerSchema = z.object({
   fullName: z.string().min(2, "Name is required"),
   email: z.string().email("Invalid email"),
   password: z.string().min(6, "Password must be at least 6 characters"),
   pin: z.string().length(4, "PIN must be exactly 4 digits"),
-
-  // Basic Profile
   phone: z.string().optional(),
   dateOfBirth: z.string().optional(),
   gender: z.string().optional(),
   occupation: z.string().optional(),
   taxId: z.string().optional(),
-
-  // Address
   country: z.string().optional(),
   city: z.string().optional(),
   state: z.string().optional(),
   address: z.string().optional(),
   zipCode: z.string().optional(),
-
-  // Next of Kin
   nokName: z.string().optional(),
   nokPhone: z.string().optional(),
   nokEmail: z.string().email("Invalid NOK email").optional().or(z.literal("")),
   nokAddress: z.string().optional(),
   nokRelationship: z.string().optional(),
-
-  // Document Type Choice
   docType: z.string().optional(),
-
-  // Currency Choice
   currency: z.string().optional(),
+  callbackUrl: z.string().optional(),
 });
 
 export type RegisterState = {
@@ -60,6 +51,7 @@ export type RegisterState = {
   requireOtp?: boolean;
   isUnverified?: boolean;
   email?: string;
+  callbackUrl?: string;
 };
 
 // --- HELPER GENERATORS ---
@@ -102,7 +94,6 @@ async function generateCardDetails() {
   return { cardNumber, cvv, expiryDate };
 }
 
-// --- THE ACTION ---
 
 const MAX_INDIVIDUAL_SIZE = 10 * 1024 * 1024; // 10MB
 const MAX_TOTAL_SIZE = 25 * 1024 * 1024;      // 25MB
@@ -110,7 +101,7 @@ const MAX_TOTAL_SIZE = 25 * 1024 * 1024;      // 25MB
 export async function registerUser(prevState: RegisterState, formData: FormData): Promise<RegisterState> {
   const rawData = Object.fromEntries(formData.entries());
   const settings = await getSiteSettings();
-  const siteName = settings.site_name || "Trust Bank";
+  const siteName = settings.site_name;
 
   // 1. Feature Flag & Maintenance Check
   const isRegistrationEnabled = await getBooleanSetting('feature_register_enabled', true);
@@ -138,14 +129,14 @@ export async function registerUser(prevState: RegisterState, formData: FormData)
   }
 
   const data = validated.data;
+  const callbackUrl = data.callbackUrl || "/dashboard";
 
   // 3. File Upload Handling
   const idFrontFile = formData.get("idDocumentFront") as File;
   const idBackFile = formData.get("idDocumentBack") as File;
   const passportFile = formData.get("passportPhoto") as File;
 
-  // --- STRICT KYC CHECK ---
-  // If one side exists but the other doesn't, fail.
+  // --- KYC CHECK ---
   const hasFront = idFrontFile && idFrontFile.size > 0;
   const hasBack = idBackFile && idBackFile.size > 0;
 
@@ -153,7 +144,7 @@ export async function registerUser(prevState: RegisterState, formData: FormData)
       return { message: "Incomplete ID Upload. You must upload BOTH front and back images, or neither." };
   }
 
-  // SERVER-SIDE SIZE CHECKS
+  // SIZE CHECKS
   if (hasFront && idFrontFile.size > MAX_INDIVIDUAL_SIZE) return { message: "ID Front is too large (Max 10MB)." };
   if (hasBack && idBackFile.size > MAX_INDIVIDUAL_SIZE) return { message: "ID Back is too large (Max 10MB)." };
   if (passportFile && passportFile.size > MAX_INDIVIDUAL_SIZE) return { message: "Passport Photo is too large (Max 10MB)." };
@@ -169,7 +160,6 @@ export async function registerUser(prevState: RegisterState, formData: FormData)
   let kycStatus: KycStatus = KycStatus.NOT_SUBMITTED;
 
   try {
-      // Upload ID Front
       if (hasFront) {
           try {
               idCardUrl = await uploadFileToCloud(idFrontFile, 'kyc');
@@ -180,7 +170,6 @@ export async function registerUser(prevState: RegisterState, formData: FormData)
           }
       }
 
-      // Upload ID Back
       if (hasBack) {
           try {
               idCardBackUrl = await uploadFileToCloud(idBackFile, 'kyc');
@@ -191,7 +180,6 @@ export async function registerUser(prevState: RegisterState, formData: FormData)
           }
       }
 
-      // Upload Passport Photo (Avatar)
       if (passportFile && passportFile.size > 0) {
           try {
               userImageUrl = await uploadFileToCloud(passportFile, 'avatars');
@@ -216,7 +204,6 @@ export async function registerUser(prevState: RegisterState, formData: FormData)
 
     // 5. CRITICAL DB TRANSACTION
     const newUserId = await db.$transaction(async (tx) => {
-        // A. Create User
         const newUser = await tx.user.create({
             data: {
                 email: data.email,
@@ -252,7 +239,7 @@ export async function registerUser(prevState: RegisterState, formData: FormData)
             select: { id: true, email: true }
         });
 
-        // B. Create Savings
+        // Savings
         await tx.account.create({
             data: {
                 userId: newUser.id,
@@ -265,7 +252,7 @@ export async function registerUser(prevState: RegisterState, formData: FormData)
             }
         });
 
-        // C. Create Checking
+        //  Checking
         await tx.account.create({
             data: {
                 userId: newUser.id,
@@ -278,7 +265,7 @@ export async function registerUser(prevState: RegisterState, formData: FormData)
             }
         });
 
-        // D. Create Card
+        // Card
         await tx.card.create({
             data: {
                 userId: newUser.id,
@@ -318,9 +305,9 @@ export async function registerUser(prevState: RegisterState, formData: FormData)
         success: true,
         message: "Verification code sent to your email.",
         requireOtp: true,
-        email: data.email
+        email: data.email,
+        callbackUrl: callbackUrl
     };
-
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === 'P2002') {
@@ -337,6 +324,7 @@ export async function registerUser(prevState: RegisterState, formData: FormData)
               success: false,
               isUnverified: true,
               email: data.email,
+              callbackUrl: callbackUrl,
               message: "Account exists but is not verified."
           };
       }

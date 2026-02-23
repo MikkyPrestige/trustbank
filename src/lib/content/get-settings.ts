@@ -5,7 +5,6 @@ import { cache } from "react";
 export const getSiteSettings = cache(async () => {
 
     try {
-        // 1. Fetch Main Settings WITH Content AND Features
         let mainSettings = await db.siteSettings.findFirst({
             include: {
                 content: true,
@@ -18,7 +17,7 @@ export const getSiteSettings = cache(async () => {
             mainSettings = await db.siteSettings.create({
                 data: {
                     id: "settings",
-                    site_name: "TrustBank",
+                    site_name: "Trust Bank",
                     auth_login_limit: 5,
                     content: { create: { id: "content-settings" } },
                     features: { create: { } }

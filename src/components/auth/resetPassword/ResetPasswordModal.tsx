@@ -14,7 +14,7 @@ interface Props {
     siteName?: string;
 }
 
-export default function ResetPasswordModal({ userId, onClose, siteName = "TrustBank" }: Props) {
+export default function ResetPasswordModal({ userId, onClose, siteName }: Props) {
     const [state, action, isPending] = useActionState(adminResetPassword, initialState);
 
     if (state.success) {

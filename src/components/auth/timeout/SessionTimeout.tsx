@@ -16,7 +16,6 @@ export default function SessionTimeout() {
     const logoutTimer = useRef<NodeJS.Timeout | null>(null);
     const countdownInterval = useRef<NodeJS.Timeout | null>(null);
 
-    //  Actually Log Out
     const handleLogout = useCallback(() => {
         if (countdownInterval.current) clearInterval(countdownInterval.current);
         if (logoutTimer.current) clearTimeout(logoutTimer.current);
@@ -25,7 +24,6 @@ export default function SessionTimeout() {
         signOut({ callbackUrl: '/login?error=SessionExpired' });
     }, []);
 
-    //  Start the Countdown
     const startCountdown = useCallback(() => {
         setTimeLeft(60);
 
@@ -57,7 +55,6 @@ export default function SessionTimeout() {
 
     }, [showWarning, startCountdown]);
 
-    //  Stay logged in
     const handleStayLoggedIn = () => {
         setShowWarning(false);
         // Clear warning timers
@@ -70,14 +67,11 @@ export default function SessionTimeout() {
     // SETUP EVENT LISTENERS
     useEffect(() => {
         const events = ['mousemove', 'mousedown', 'click', 'scroll', 'keydown'];
-        // Start initial timer
         resetTimer();
-        // Attach listeners
         const handler = () => resetTimer();
         events.forEach((event) => {
             window.addEventListener(event, handler);
         });
-        // Cleanup
         return () => {
             if (inactivityTimer.current) clearTimeout(inactivityTimer.current);
             if (logoutTimer.current) clearTimeout(logoutTimer.current);

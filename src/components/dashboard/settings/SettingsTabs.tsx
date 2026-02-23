@@ -3,10 +3,8 @@
 
 import Link from "next/link";
 import { useState, useActionState, useRef, useEffect } from 'react';
-import { updateProfile, changePin, changePassword } from '@/actions/user/settings';
-import { closeAccount } from "@/actions/user/close-account";
-import { updateAvatar } from '@/actions/user/avatar';
-import { User, Lock, Shield, Save, Camera, KeyRound, Loader2, HeartHandshake, AlertTriangle } from 'lucide-react'
+import { updateAvatar, updateProfile, changePin, changePassword, logoutAllDevices, closeAccount } from '@/actions/user/settings';
+import { User, Lock, Shield, Save, Camera, KeyRound, Loader2, HeartHandshake, AlertTriangle, ShieldCheck, LogOut } from 'lucide-react'
 import styles from './styles/settings.module.css';
 import toast from 'react-hot-toast';
 import { signOut } from "next-auth/react";
@@ -38,7 +36,7 @@ interface SettingsUser {
 const initialState = { message: '', success: false };
 
 export default function SettingsTabs({ user }: { user: SettingsUser }) {
-    const [activeTab, setActiveTab] = useState<'profile' | 'security'>('profile');
+    const [activeTab, setActiveTab] = useState<'profile' | 'security' | 'account'>('profile');
     const [profileState, profileAction, profilePending] = useActionState(updateProfile, initialState);
     const [pinState, pinAction, pinPending] = useActionState(changePin, initialState);
     const [passState, passAction, passPending] = useActionState(changePassword, initialState);
@@ -47,6 +45,7 @@ export default function SettingsTabs({ user }: { user: SettingsUser }) {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [isClosing, setIsClosing] = useState(false);
     const [closePassword, setClosePassword] = useState("");
+    const [isLoggingOutAll, setIsLoggingOutAll] = useState(false);
 
     const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -73,6 +72,24 @@ export default function SettingsTabs({ user }: { user: SettingsUser }) {
             toast.error("Upload failed due to network error.");
         } finally {
             setUploading(false);
+        }
+    };
+
+    const handleGlobalLogout = async () => {
+        const confirmed = window.confirm(
+            "This will log you out of all devices including this one. You will need to log back in. Continue?"
+        );
+        if (!confirmed) return;
+
+        setIsLoggingOutAll(true);
+        const res = await logoutAllDevices();
+
+        if (res.success) {
+            toast.success("Security reset successful!");
+            await signOut({ callbackUrl: '/login?reason=security_reset' });
+        } else {
+            toast.error(res.error || "Failed to reset sessions.");
+            setIsLoggingOutAll(false);
         }
     };
 
@@ -132,28 +149,26 @@ export default function SettingsTabs({ user }: { user: SettingsUser }) {
                     onClick={() => setActiveTab('security')}
                     className={`${styles.tabBtn} ${activeTab === 'security' ? styles.active : ''}`}
                 >
-                    <Shield size={18} /> Security & PIN
+                    <Shield size={18} /> Security & Access
+                </button>
+                <button
+                    onClick={() => setActiveTab('account')}
+                    className={`${styles.tabBtn} ${activeTab === 'account' ? styles.active : ''}`}
+                >
+                    <KeyRound size={18} /> Account Preferences
                 </button>
             </div>
 
             {/* MAIN CONTENT AREA */}
             <div className={styles.main}>
-
                 {/* --- PROFILE TAB --- */}
                 {activeTab === 'profile' && (
                     <div className={styles.stack}>
-
-                        {/* 1. CURRENCY SELECTOR */}
-                        <CurrencySelector currentCurrency={user.currency || "USD"} />
-
-                        {/* 2. PROFILE FORM */}
                         <form action={profileAction} className={styles.card}>
                             <div className={styles.cardHeader}>
                                 <h2>Personal Details</h2>
                                 <p>Manage your identity and contact information.</p>
                             </div>
-
-                            {/* AVATAR SECTION */}
                             <div className={styles.avatarSection}>
                                 <div className={styles.avatarWrapper}>
                                     {avatarUrl ? (
@@ -171,7 +186,6 @@ export default function SettingsTabs({ user }: { user: SettingsUser }) {
                                     <p>{user.email}</p>
                                 </div>
                             </div>
-
                             {/* READ-ONLY FIELDS */}
                             <div className={styles.grid}>
                                 <div className={styles.group}>
@@ -195,10 +209,8 @@ export default function SettingsTabs({ user }: { user: SettingsUser }) {
                                     <input defaultValue={user.gender || ''} disabled className={styles.inputDisabled} />
                                 </div>
                             </div>
-
                             {/* EDITABLE CONTACT FIELDS */}
                             <div className={styles.divider}>Contact Details</div>
-
                             <div className={styles.grid}>
                                 <div className={styles.group}>
                                     <label>Phone Number</label>
@@ -209,17 +221,14 @@ export default function SettingsTabs({ user }: { user: SettingsUser }) {
                                     <input name="occupation" defaultValue={user.occupation || ''} className={styles.input} />
                                 </div>
                             </div>
-
                             <div className={styles.group}>
                                 <label>Tax ID / SSN</label>
                                 <input name="taxId" defaultValue={user.taxId || ''} className={styles.input} />
                             </div>
-
                             <div className={`${styles.group} ${styles.topMargin}`}>
                                 <label>Street Address</label>
                                 <input name="address" defaultValue={user.address || ''} className={styles.input} />
                             </div>
-
                             <div className={styles.grid}>
                                 <div className={styles.group}>
                                     <label>City</label>
@@ -238,12 +247,10 @@ export default function SettingsTabs({ user }: { user: SettingsUser }) {
                                     <input name="country" defaultValue={user.country || ''} className={styles.input} />
                                 </div>
                             </div>
-
                             <div className={styles.divider}>
                                 <HeartHandshake size={16} className={styles.dividerIcon} />
                                 Next of Kin
                             </div>
-
                             <div className={styles.grid}>
                                 <div className={styles.group}>
                                     <label>Full Name</label>
@@ -254,7 +261,6 @@ export default function SettingsTabs({ user }: { user: SettingsUser }) {
                                     <input name="nokPhone" defaultValue={user.nokPhone || ''} className={styles.input} placeholder="Contact Number" />
                                 </div>
                             </div>
-
                             <div className={styles.grid}>
                                 <div className={styles.group}>
                                     <label>Email Address</label>
@@ -302,7 +308,6 @@ export default function SettingsTabs({ user }: { user: SettingsUser }) {
                                     <p>Used to authorize money transfers.</p>
                                 </div>
                             </div>
-
                             <div className={styles.grid}>
                                 <div className={styles.group}>
                                     <label>Current Login Password</label>
@@ -317,7 +322,6 @@ export default function SettingsTabs({ user }: { user: SettingsUser }) {
                                 {pinPending ? <Loader2 className={styles.spin} /> : 'Update PIN'}
                             </button>
                         </form>
-
                         {/* PASSWORD CHANGE */}
                         <form action={passAction} className={styles.card}>
                             <div className={styles.cardHeader}>
@@ -327,7 +331,6 @@ export default function SettingsTabs({ user }: { user: SettingsUser }) {
                                     <p>Secure your account access.</p>
                                 </div>
                             </div>
-
                             <div className={styles.grid}>
                                 <div className={styles.group}>
                                     <div className={styles.labelRow}>
@@ -361,6 +364,53 @@ export default function SettingsTabs({ user }: { user: SettingsUser }) {
                                 {passPending ? <Loader2 className={styles.spin} /> : 'Change Password'}
                             </button>
                         </form>
+                        {/* SESSION MANAGEMENT */}
+                        <div className={styles.card}>
+                            <div className={styles.cardHeader}>
+                                <div className={`${styles.iconBadge} ${styles.iconBadgeGreen}`}>
+                                    <ShieldCheck size={20} />
+                                </div>
+                                <div>
+                                    <h3>Active Sessions</h3>
+                                    <p>Manage your account access across all devices.</p>
+                                </div>
+                            </div>
+                            <div className={styles.sessionBox}>
+                                <p className={styles.sessionText}>
+                                    Logged in on a public computer or lost a device?
+                                    You can sign out of every active session instantly.
+                                </p>
+                                <button
+                                    type="button"
+                                    onClick={handleGlobalLogout}
+                                    disabled={isLoggingOutAll}
+                                    className={styles.outlineBtn}
+                                >
+                                    {isLoggingOutAll ? (
+                                        <Loader2 className={styles.spin} size={18} />
+                                    ) : (
+                                        <> <LogOut size={18} /> Logout All Devices</>
+                                    )}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* --- ACCOUNT PREFERENCES --- */}
+                {activeTab === 'account' && (
+                    <div className={styles.stack}>
+                        {/*  CURRENCY SELECTOR */}
+                        <div className={styles.card}>
+                            <div className={styles.cardHeader}>
+                                <div className={styles.iconBadge}><Save size={20} /></div>
+                                <div>
+                                    <h3>Local Currency</h3>
+                                    <p>Set your preferred currency for dashboard balances.</p>
+                                </div>
+                            </div>
+                            <CurrencySelector currentCurrency={user.currency || "USD"} />
+                        </div>
 
                         {/* DANGER ZONE */}
                         <div className={styles.dangerCard}>
@@ -370,13 +420,11 @@ export default function SettingsTabs({ user }: { user: SettingsUser }) {
                                 </div>
                                 <h3 className={styles.dangerTitle}>Close Account</h3>
                             </div>
-
                             <p className={styles.dangerText}>
                                 Closing your account will permanently disable your access, freeze all cards,
                                 and cancel pending transactions. You must have a <strong>$0.00</strong> balance
                                 to proceed.
                             </p>
-
                             <div className={styles.dangerGroup}>
                                 <label className={styles.dangerLabel}>
                                     Enter Password to Confirm
@@ -389,7 +437,6 @@ export default function SettingsTabs({ user }: { user: SettingsUser }) {
                                     placeholder="Your current password"
                                     autoComplete="new-password"
                                 />
-
                                 <button
                                     type="button"
                                     onClick={handleCloseAccount}

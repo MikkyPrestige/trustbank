@@ -146,6 +146,38 @@
   min-height: 100px;
 }
 
+/* --- NAV TAB STYLES --- */
+.promoAdminGroup {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+@media (min-width: 768px) {
+  .promoAdminGroup {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .promoAdminGroup label {
+    grid-column: span 2;
+    font-weight: 600;
+    color: var(--brand-primary);
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+  }
+
+  .promoAdminGroup input[name*="_desc"] {
+    grid-column: span 2;
+  }
+}
+
 /* --- JSON EDITOR STYLES --- */
 .editorToolbar {
   display: flex;
@@ -175,7 +207,8 @@
 
 .jsonEditor {
   min-height: 400px;
-  font-family: "Consolas", "Monaco", "Courier New", monospace;
+  font-family: "Fira Code", "Courier New", monospace;
+  /* font-family: "Consolas", "Monaco", "Courier New", monospace; */
   font-size: 14px;
   background-color: var(--bg-surface);
   color: var(--text-main);
@@ -211,6 +244,29 @@
   align-items: center;
   gap: 6px;
   opacity: 0.8;
+}
+
+.promoHeader {
+    grid-column: span 2;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.overrideBadge {
+    font-size: 10px;
+    background: rgba(52, 211, 153, 0.1); /* Soft Emerald */
+    color: #34d399;
+    padding: 2px 8px;
+    border-radius: 10px;
+    border: 1px solid rgba(52, 211, 153, 0.2);
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.promoAdminGroup input:not(:placeholder-shown) {
+    border-color: rgba(52, 211, 153, 0.3);
 }
 
 /* CONTENT TAB STYLES */
@@ -551,7 +607,7 @@
 .inlineForm label {
   display: block;
   font-size: 11px;
-  color: var(--text-muted);;
+  color: var(--text-muted);
   margin-bottom: 6px;
 }
 
@@ -803,22 +859,21 @@
 }
 
 .miniUploaderWrapper [class*="label"] {
-    display: none !important;
+  display: none !important;
 }
 
 .miniUploaderWrapper [class*="uploadText"] {
-    display: none !important;
+  display: none !important;
 }
 
 .miniUploaderWrapper svg {
-    width: 16px;
-    height: 16px;
+  width: 16px;
+  height: 16px;
 }
 
 .miniUploader label {
   display: none;
 }
-
 
 /* Empty State */
 .emptyState {

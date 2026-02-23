@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { submitClearanceCode } from '@/actions/user/clearance';
+import { submitClearanceCode } from '@/actions/user/wire';
 import styles from './styles/status.module.css';
 import toast from 'react-hot-toast';
 

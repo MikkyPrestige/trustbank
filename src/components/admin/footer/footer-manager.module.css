@@ -6,13 +6,19 @@
   box-shadow: var(--shadow-sm);
 }
 
-/* --- ADD NEW FORM --- */
 .formRow {
   display: flex;
   gap: 10px;
   margin-bottom: 1.5rem;
   padding-bottom: 1.5rem;
   border-bottom: 1px solid var(--border);
+}
+
+.editingHighlight {
+  border: 1px solid var(--primary);
+  background-color: var(--bg-card);
+  border-radius: 8px;
+  padding: 10px;
 }
 
 .select {
@@ -41,13 +47,26 @@
   box-shadow: 0 0 0 2px var(--primary-light);
 }
 
-.addBtn {
+.orderInput {
+  width: 40px;
+  padding: 5px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  text-align: center;
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 5px;
+}
+
+.addBtn,
+.saveBtn,
+.cancelBtn {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 0 1.25rem;
-  background: var(--primary);
-  color: var(--text-main);
+  gap: 5px;
+  padding: 0 1rem;
   border: none;
   border-radius: 8px;
   font-weight: 600;
@@ -55,13 +74,28 @@
   transition: background 0.2s;
 }
 
+.addBtn {
+  background: var(--primary);
+  color: var(--text-main);
+}
 .addBtn:hover {
   background: var(--primary-hover);
 }
 
-.addBtn:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
+.saveBtn {
+  background: var(--success);
+  color: var(--text-main);
+}
+.saveBtn:hover {
+  background: #10b981;
+}
+
+.cancelBtn {
+  background: var(--text-muted);
+  color: var(--text-main);
+}
+.cancelBtn:hover {
+  background: var(--primary-light);
 }
 
 /* --- LIST ITEMS --- */
@@ -79,12 +113,44 @@
   background: var(--bg-surface);
   border: 1px solid var(--border);
   border-radius: 8px;
-  transition: all 0.2s;
+  transition:
+    border-left 0.3s ease,
+    background-color 0.3s ease;
+    user-select: none;
 }
 
 .item:hover {
   border-color: var(--border-hover);
   background: var(--bg-app);
+}
+
+.itemOrderBadge {
+    background: var(--bg-app);
+    color: var(--text-muted);
+    font-size: 11px;
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-right: 8px;
+}
+
+.dragging {
+    background: #f8fafc !important;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    border-color: #3b82f6 !important;
+    z-index: 999;
+}
+
+.dragHandle {
+    display: flex;
+    align-items: center;
+    padding-right: 10px;
+    color: #cbd5e1;
+    cursor: grab;
+}
+
+.dragHandle:active {
+    cursor: grabbing;
 }
 
 .itemContent {
@@ -117,6 +183,31 @@
   font-family: monospace;
 }
 
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.editBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--text-main);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.editBtn:hover {
+  background: var(--text-body);
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
 .deleteBtn {
   display: flex;
   align-items: center;
@@ -133,7 +224,7 @@
 
 .deleteBtn:hover {
   background: #fee2e2;
-  color: #ef4444;
+  color: var(--danger);
   border-color: #fca5a5;
 }
 

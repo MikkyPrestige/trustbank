@@ -39,7 +39,6 @@ export default function DashboardView({
     const [copiedId, setCopiedId] = useState<string | null>(null);
     const [showMore, setShowMore] = useState(false);
 
-    // --- LOGIC ---
     const toggleVisibility = () => setIsVisible(!isVisible);
 
     const copyToClipboard = (text: string, id: string) => {
@@ -52,7 +51,6 @@ export default function DashboardView({
     const displayMoney = (amount: number) => {
         if (!isVisible) return "••••••";
 
-        // Apply conversion
         const converted = amount * exchangeRate;
 
         return new Intl.NumberFormat('en-US', {
@@ -61,7 +59,6 @@ export default function DashboardView({
         }).format(converted);
     };
 
-    // Handle Real Card Data
     const activeCard = user.cards && user.cards.length > 0 ? user.cards[0] : null;
     const primaryAccount = user.accounts && user.accounts.length > 0 ? user.accounts[0] : null;
 
@@ -73,14 +70,11 @@ export default function DashboardView({
 
     const isFrozen = user.status === 'FROZEN';
 
-    // Time Greeting
     const hour = new Date().getHours();
     const greeting = hour < 12 ? "Good Morning" : hour < 18 ? "Good Afternoon" : "Good Evening";
 
     return (
         <div className={styles.container}>
-
-            {/* 1. HEADER */}
             <header className={styles.header}>
                 <div className={styles.greeting}>
                     <h1>{greeting}, {user.fullName.split(' ')[0]}</h1>
@@ -94,7 +88,6 @@ export default function DashboardView({
                 </div>
             </header>
 
-            {/* 2. FROZEN ALERT */}
             {isFrozen && (
                 <div className={styles.frozenWrapper}>
                     <div className={styles.frozenBanner}>
@@ -107,8 +100,7 @@ export default function DashboardView({
                 </div>
             )}
 
-            {/* CMS ALERT BANNER  */}
-            <div style={{ padding: '0 2rem', marginTop: '1rem' }}>
+            <div className={styles.dashboardBanner}>
                 <DashboardBanner
                     show={settings.dashboard_alert_show === "true"}
                     type={settings.dashboard_alert_type}
@@ -117,7 +109,6 @@ export default function DashboardView({
             </div>
 
             <div className={styles.mainGrid}>
-                {/* --- LEFT COLUMN --- */}
                 <div className={styles.leftCol}>
                     <BalanceCard
                         totalBalance={totalBalance}
@@ -126,7 +117,7 @@ export default function DashboardView({
                         routingNumber={primaryAccount?.routingNumber}
                         trend={trend}
                         status={user.status}
-                        bankName="Trust Bank"
+                        bankName={settings.site_name}
                         currencyCode={currencyCode}
                         exchangeRate={exchangeRate}
                     />
@@ -156,7 +147,6 @@ export default function DashboardView({
                                 </div>
                                 <div className={styles.accBal}>
                                     <div className={styles.balWrapper}>
-                                        {/* displayMoney now handles conversion automatically */}
                                         <span className={styles.balMain}>{displayMoney(Number(acc.availableBalance))}</span>
                                         <span className={`${styles.balLabel} ${styles.textSuccess}`}>Available</span>
                                     </div>
@@ -200,7 +190,6 @@ export default function DashboardView({
                                                 >
                                                     <td>
                                                         <div className={styles.txRow}>
-                                                            {/* 1. ICON LOGIC */}
                                                             <div className={`${styles.txIcon} ${isReversed ? styles.txIconReversed :
                                                                 isFailed ? styles.txIconFailed :
                                                                     tx.direction === 'CREDIT' ? styles.txIconCredit : styles.txIconDebit
@@ -210,7 +199,6 @@ export default function DashboardView({
                                                                         tx.direction === 'CREDIT' ? <ArrowDownLeft size={16} /> : <ArrowUpRight size={16} />}
                                                             </div>
 
-                                                            {/* 2. DESCRIPTION & BADGE */}
                                                             <div className={styles.txDescWrapper}>
                                                                 <span className={`${styles.txDesc} ${isReversed ? styles.textReversed :
                                                                     isFailed ? styles.textFailed : ''
@@ -227,8 +215,6 @@ export default function DashboardView({
                                                     <td className={styles.txDate}>
                                                         {new Date(tx.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                                                     </td>
-
-                                                    {/* 3. AMOUNT LOGIC - Uses updated displayMoney */}
                                                     <td className={`${styles.txAmount} ${isReversed ? styles.amountReversed :
                                                         isFailed ? styles.amountFailed :
                                                             tx.direction === 'CREDIT' ? styles.amountPositive : styles.amountNegative
@@ -244,7 +230,6 @@ export default function DashboardView({
                     </div>
                 </div>
 
-                {/* --- RIGHT COLUMN  --- */}
                 <div className={styles.rightCol}>
                     <PromoSidebar
                         title={settings.dashboard_promo_title}
@@ -308,7 +293,6 @@ export default function DashboardView({
                         )}
                     </div>
 
-                    {/* BENEFICIARIES (QUICK SEND) */}
                     <div className={`${styles.sectionHeader} ${styles.sectionSpacerSmall}`}>
                         <h3>Quick Send</h3>
                     </div>
@@ -343,11 +327,9 @@ export default function DashboardView({
                         ))}
                     </div>
 
-                    {/* VISA CARD VISUAL */}
                     <div className={`${styles.sectionHeader} ${styles.sectionSpacer}`}>
                         <h3>My Card</h3>
                     </div>
-
                     {activeCard ? (
                         <div className={`${styles.visaCard} ${activeCard.status === 'FROZEN' ? styles.cardFrozen : ''}`}>
                             <div className={styles.cardTexture}></div>
@@ -355,7 +337,7 @@ export default function DashboardView({
 
                             <div className={styles.cardTop}>
                                 <span className={styles.bankLogo}>
-                                    {settings.site_name ? settings.site_name.toUpperCase() : 'TRUSTBANK'}
+                                    {settings.site_name ? settings.site_name.toUpperCase() : 'TRUST BANK'}
                                 </span>
                                 <Wifi size={24} className={styles.contactless} color="rgba(255,255,255,0.7)" />
                             </div>

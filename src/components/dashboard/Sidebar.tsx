@@ -36,7 +36,6 @@ export default function Sidebar({ data }: SidebarProps) {
     const pathname = usePathname();
     const [isMobileOpen, setIsMobileOpen] = useState(false);
 
-    // Status Logic
     const isVerified = data.user.kycStatus === 'VERIFIED';
     const isPending = data.user.kycStatus === 'PENDING';
     const actionRequired = !isVerified && !isPending;
@@ -44,11 +43,10 @@ export default function Sidebar({ data }: SidebarProps) {
     const wireBadgeVariant = data.counts.actionRequired > 0 ? 'danger' : 'default';
 
     const logoSource = data.logoUrl || '/logo.png';
-    const siteTitle = data.siteName || 'TrustBank';
+    const siteTitle = data.siteName || 'Trust Bank';
 
     return (
         <>
-            {/* MOBILE HEADER */}
             <div className={styles.mobileHeader}>
                 <Link href="/dashboard">
                     <Image src={logoSource} alt={siteTitle} width={140} height={40} className={styles.logoImage} />
@@ -58,7 +56,6 @@ export default function Sidebar({ data }: SidebarProps) {
                 </button>
             </div>
 
-            {/* BACKDROP */}
             <div
                 className={`${styles.overlay} ${isMobileOpen ? styles.visible : ''}`}
                 onClick={() => setIsMobileOpen(false)}
@@ -66,14 +63,12 @@ export default function Sidebar({ data }: SidebarProps) {
 
             {/* SIDEBAR */}
             <aside className={`${styles.sidebar} ${isMobileOpen ? styles.open : ''}`}>
-                {/* 1. LOGO */}
                 <div className={styles.logoArea}>
                     <Link href="/dashboard" onClick={() => setIsMobileOpen(false)}>
                         <Image src={logoSource} alt={siteTitle} width={160} height={45} className={styles.logoImage} />
                     </Link>
                 </div>
 
-                {/* 2. NAVIGATION */}
                 <nav className={styles.navMenu}>
                     {/* SECTION: PERSONAL */}
                     <p className={styles.navLabel}>Personal Banking</p>
@@ -122,7 +117,6 @@ export default function Sidebar({ data }: SidebarProps) {
                     )}
                 </nav>
 
-                {/* 3. USER FOOTER */}
                 <div className={styles.userProfile}>
                     <Link href="/dashboard/profile" className={styles.avatarWrapper}>
                         <div className={styles.avatar}>

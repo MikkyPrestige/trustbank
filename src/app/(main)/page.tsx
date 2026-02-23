@@ -29,7 +29,7 @@ export default async function Home() {
                 cta1Link={settings.hero_cta1_link}
             />
             <InfoBar
-                isActive={settings.announcement_active === 'true'}
+                isActive={settings.announcement_active}
                 text={settings.announcement_text}
                 phone={settings.announcement_contact_phone}
                 routingNumber={settings.routingNumber}

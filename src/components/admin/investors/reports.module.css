@@ -128,6 +128,28 @@
   text-decoration: underline;
 }
 
+.actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.editBtn {
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    padding: 6px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.editBtn:hover {
+    color: var(--primary);
+    border-color:  var(--primary);
+    background: #eff6ff;
+}
+
 .deleteBtn {
   width: 36px;
   height: 36px;
@@ -275,4 +297,17 @@ select.input {
 
 .submitBtn:hover:not(:disabled) {
   background: var(--primary-hover);
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }

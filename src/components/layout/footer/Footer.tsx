@@ -8,6 +8,7 @@ interface FooterLinkItem {
     label: string;
     href: string;
     column: string;
+    order: number;
 }
 
 interface FooterProps {
@@ -17,12 +18,10 @@ interface FooterProps {
 
 export default function Footer({ settings, links = [] }: FooterProps) {
     const currentYear = new Date().getFullYear();
-    // const siteName = settings.site_name;
-    // const content = settings.content || {};
 
-    const col1Links = links.filter(l => l.column === 'col1');
-    const col2Links = links.filter(l => l.column === 'col2');
-    const legalLinks = links.filter(l => l.column === 'legal');
+    const col1Links = links.filter(l => l.column === 'col1').sort((a, b) => a.order - b.order);
+    const col2Links = links.filter(l => l.column === 'col2').sort((a, b) => a.order - b.order);
+    const legalLinks = links.filter(l => l.column === 'legal').sort((a, b) => a.order - b.order);
 
     return (
         <footer className={styles.footer}>

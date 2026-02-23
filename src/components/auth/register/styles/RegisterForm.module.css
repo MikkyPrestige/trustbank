@@ -49,29 +49,14 @@
   padding-bottom: 1rem;
 }
 
-.brandBadge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 4px 12px;
-  border-radius: 50px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--text-muted);
-  margin-bottom: 0.75rem;
-  backdrop-filter: blur(4px);
-}
-
-.header h1 {
+.headerTitle {
   font-size: 2rem;
   font-weight: 800;
   color: var(--text-main);
   letter-spacing: -0.5px;
 }
 
-.header p {
+.headerSubTitle {
   color: var(--text-muted);
   font-size: 1rem;
 }
@@ -79,12 +64,12 @@
 /* GLASS FORM CARD */
 .glassForm {
   background: var(--bg-card);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(1rem);
+  -webkit-backdrop-filter: blur(1rem);
   border: 1px solid var(--border);
   border-radius: 20px;
   padding: 2rem;
-  box-shadow: var(--shadow-card, 0 25px 50px -12px rgba(0, 0, 0, 0.5));
+  box-shadow: var(--shadow-card, 0 2.5rem 5rem -1rem rgba(0, 0, 0, 0.5));
 }
 
 /* ALERTS */
@@ -93,12 +78,12 @@
   border: 1px solid rgba(239, 68, 68, 0.2);
   color: var(--danger);
   padding: 1rem;
-  border-radius: 12px;
+  border-radius: 1rem;
   font-size: 0.9rem;
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 2rem;
+  gap: 1rem;
+  margin-bottom: 1rem;
   animation: fadeIn 0.3s ease-out;
 }
 
@@ -107,7 +92,7 @@
   color: var(--danger);
 }
 
-/* SPLIT LAYOUT (The Core Grid) */
+/* SPLIT LAYOUT  */
 .splitLayout {
   display: grid;
   grid-template-columns: 1fr;
@@ -187,16 +172,8 @@
   gap: 1rem;
 }
 
-/* 3-Column Grid (Fixes hanging spaces) */
-.grid3 {
-  display: grid;
-  grid-template-columns: 1fr 1fr 0.8fr;
-  gap: 1rem;
-}
-
 @media (max-width: 600px) {
-  .grid2,
-  .grid3 {
+  .grid2 {
     grid-template-columns: 1fr;
   }
 }
@@ -232,10 +209,9 @@
   background: var(--bg-surface);
   border: 1px solid var(--border);
   border-radius: 8px;
-  padding: 10px 12px;
+  padding: 1rem;
   color: var(--text-main);
   font-size: 0.9rem;
-  height: 44px;
   outline: none;
   transition: all 0.2s;
 }
@@ -307,13 +283,13 @@
   gap: 1rem;
   background: var(--bg-surface);
   padding: 0.75rem;
-  border-radius: 12px;
+  border-radius: 1rem;
   border: 1px solid var(--border);
 }
 
 .previewCircle {
-  width: 48px;
-  height: 48px;
+  width: 4rem;
+  height: 4rem;
   border-radius: 50%;
   background: var(--bg-card);
   border: 1px dashed var(--border);
@@ -377,7 +353,7 @@
 .uploadGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  gap: 1rem;
   margin-top: 4px;
 }
 
@@ -425,8 +401,8 @@
 }
 
 .cloudIcon {
-  width: 36px;
-  height: 36px;
+  width: 3rem;
+  height: 3rem;
   background: var(--bg-card);
   border-radius: 50%;
   display: flex;
@@ -459,8 +435,8 @@
   font-size: 0.85rem;
   font-weight: 600;
   background: rgba(34, 197, 94, 0.1);
-  padding: 4px 12px;
-  border-radius: 20px;
+  padding: 0.5rem 1rem;
+  border-radius: 1.5rem;
 }
 
 .complianceNote {
@@ -473,20 +449,20 @@
 
 /* FOOTER */
 .footer {
-  margin-top: 2rem;
+  margin-top: 1rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
   border-top: 1px solid var(--border);
-  padding-top: 1.5rem;
+  padding-top: 1rem;
 }
 
 .primaryBtn {
   background: var(--primary);
   color: var(--text-invert);
   border: none;
-  height: 50px;
-  border-radius: 10px;
+  border-radius: 1rem;
+  padding: 1rem;
   font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
@@ -550,15 +526,6 @@
   font-size: 2rem;
   color: var(--text-main);
   margin-bottom: 1rem;
-}
-
-.successDetails {
-  background: var(--bg-surface);
-  padding: 1.5rem;
-  border-radius: 12px;
-  margin: 2rem 0;
-  font-size: 0.95rem;
-  color: var(--text-muted);
 }
 
 /* --- OTP VIEW STYLES --- */
@@ -648,7 +615,6 @@
 }
 
 /* --- SUCCESS MODAL --- */
-
 .modalOverlay {
   position: fixed;
   top: 0;
@@ -666,33 +632,33 @@
 
 .modalCard {
   background: var(--bg-surface);
-  padding: 2.5rem;
-  border-radius: 16px;
+  padding: 2rem;
+  border-radius: 1rem;
   text-align: center;
   max-width: 400px;
   width: 90%;
   box-shadow:
-    0 20px 25px -5px rgba(0, 0, 0, 0.1),
-    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    0 2rem 2.5rem -.5rem rgba(0, 0, 0, 0.1),
+    0 1rem 1rem -.5rem rgba(0, 0, 0, 0.04);
   animation: scaleUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .modalIcon {
-  width: 80px;
-  height: 80px;
+  width: 5rem;
+  height: 5rem;
   background: #dcfce7;
   color: var(--success);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 1.5rem auto;
+  margin: 0 auto 1rem auto;
 }
 
 .modalTitle {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #111827;
+  color: var(--text-dark);
   margin-bottom: 0.5rem;
 }
 
@@ -709,6 +675,20 @@
   display: block;
 }
 
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 @keyframes scaleUp {
   from {
     transform: scale(0.9);
@@ -720,7 +700,6 @@
   }
 }
 
-/* ANIMATIONS */
 @keyframes slideUp {
   from {
     opacity: 0;
