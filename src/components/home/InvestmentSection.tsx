@@ -36,8 +36,6 @@ export default async function InvestmentSection() {
 
     return (
         <section className={styles.investSection}>
-
-            {/* 1. REAL-TIME TICKER STRIP  */}
             <div className={styles.tickerStrip}>
                 <div className={styles.tickerTrack}>
                     {tickerItems.map((item, index) => (
@@ -57,7 +55,6 @@ export default async function InvestmentSection() {
 
             <div className={styles.container}>
                 <div className={styles.investGrid}>
-                    {/* LEFT: CONTENT & TABS */}
                     <div className={styles.investContent}>
                         <div className={styles.investHeader}>
                             <h2 className={styles.sectionTitleDark}>
@@ -69,9 +66,7 @@ export default async function InvestmentSection() {
                             </p>
                         </div>
 
-                        {/* Feature List */}
                         <div className={styles.investFeatures}>
-                            {/* FEATURE 1 */}
                             <div className={styles.investFeatureItem}>
                                 <div className={styles.iconBoxGlass}>
                                     <PieChart size={24} className={styles.iconBlue} />
@@ -81,7 +76,7 @@ export default async function InvestmentSection() {
                                     <p>{settings.home_invest_feat1_desc}</p>
                                 </div>
                             </div>
-                            {/* FEATURE 2 */}
+
                             <div className={styles.investFeatureItem}>
                                 <div className={styles.iconBoxGlass}>
                                     <Bitcoin size={24} className={styles.iconGold} />
@@ -91,7 +86,7 @@ export default async function InvestmentSection() {
                                     <p>{settings.home_invest_feat2_desc}</p>
                                 </div>
                             </div>
-                            {/* FEATURE 3 */}
+
                             <div className={styles.investFeatureItem}>
                                 <div className={styles.iconBoxGlass}>
                                     <Lock size={24} className={styles.iconGreen} />
@@ -113,7 +108,6 @@ export default async function InvestmentSection() {
                         </div>
                     </div>
 
-                    {/* RIGHT: VISUAL */}
                     <div className={styles.investVisual}>
                         <div className={styles.blueBlob}></div>
 

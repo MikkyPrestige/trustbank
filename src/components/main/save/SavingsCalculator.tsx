@@ -4,7 +4,6 @@ import { useState, useMemo } from 'react';
 import styles from './SavingsCalculator.module.css';
 import { DollarSign, TrendingUp } from 'lucide-react';
 
-// 1. Accept Props
 interface CalculatorProps {
     settings: any;
 }
@@ -56,7 +55,6 @@ export default function SavingsCalculator({ settings }: CalculatorProps) {
 
             <div className={styles.grid}>
                 <div className={styles.inputs}>
-                    {/* INITIAL DEPOSIT */}
                     <div className={styles.inputGroup}>
                         <label>{settings.save_calc_label_initial}</label>
                         <div className={styles.inputWrapper}>
@@ -76,7 +74,7 @@ export default function SavingsCalculator({ settings }: CalculatorProps) {
                             style={getBgSize(initialDeposit, 0, maxDep)}
                         />
                     </div>
-                    {/* MONTHLY CONTRIB */}
+
                     <div className={styles.inputGroup}>
                         <label>{settings.save_calc_label_monthly}</label>
                         <div className={styles.inputWrapper}>
@@ -120,7 +118,6 @@ export default function SavingsCalculator({ settings }: CalculatorProps) {
                     </div>
                 </div>
 
-                {/* RESULTS */}
                 <div className={styles.results}>
                     <span className={styles.resultLabel}>{settings.save_calc_label_res} {years} Years</span>
                     <h2 className={styles.totalValue}>

@@ -58,7 +58,6 @@ export default function DesktopMenu({ menus }: DesktopMenuProps) {
                 </nav>
             </div>
 
-            {/* MEGA MENU POPUP */}
             {activeMenu && menus[activeMenu] && (
                 <div
                     className={styles.megaMenu}
@@ -73,7 +72,6 @@ export default function DesktopMenu({ menus }: DesktopMenuProps) {
                         </div>
 
                         <div className={styles.megaGrid}>
-                            {/* LINKS COLUMN */}
                             {menus[activeMenu].links.map((col: any[], i: number) => (
                                 <div key={i} className={styles.linkColumn}>
                                     {col.map((link) => (
@@ -84,7 +82,6 @@ export default function DesktopMenu({ menus }: DesktopMenuProps) {
                                 </div>
                             ))}
 
-                            {/* PROMO COLUMN */}
                             {menus[activeMenu].promo && (
                                 <div className={styles.promoColumn}>
                                     <h3>{menus[activeMenu].promo.title}</h3>

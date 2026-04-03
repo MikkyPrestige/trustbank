@@ -29,7 +29,6 @@ export default function WealthSimulator({ settings }: SimulatorProps) {
         )`
     };
 
-    // Get dynamic status text based on risk value
     const getRiskStatus = () => {
         if (risk < 30) return settings.wealth_sim_status_low;
         if (risk < 70) return settings.wealth_sim_status_mid;
@@ -44,7 +43,6 @@ export default function WealthSimulator({ settings }: SimulatorProps) {
 
     return (
         <div className={styles.simCard}>
-            {/* Header */}
             <div className={styles.header}>
                 <div className={styles.iconWrapper}><PieChart size={24} /></div>
                 <div>
@@ -84,7 +82,6 @@ export default function WealthSimulator({ settings }: SimulatorProps) {
                     </div>
                 </div>
 
-                {/* Chart */}
                 <div className={styles.chartWrapper}>
                     <div className={styles.pieChart} style={pieStyle}>
                         <div className={styles.innerCircle}>

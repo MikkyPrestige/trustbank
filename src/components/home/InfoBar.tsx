@@ -43,7 +43,6 @@ export default function InfoBar({
             )}
 
             <div className={styles.infoContainer}>
-                {/* Support Block */}
                 <div className={`${styles.infoBlock} ${styles.blueBlock}`}>
                     <Phone size={24} className={styles.infoIcon} />
                     <div className={styles.infoText}>
@@ -52,7 +51,6 @@ export default function InfoBar({
                     </div>
                 </div>
 
-                {/* Hours Block */}
                 <div className={`${styles.infoBlock} ${styles.goldBlock}`}>
                     <Clock size={24} className={styles.infoIcon} />
                     <div className={styles.infoText}>
@@ -63,7 +61,6 @@ export default function InfoBar({
                     </div>
                 </div>
 
-                {/* Banking Block */}
                 <div className={`${styles.infoBlock} ${styles.whiteBlock}`}>
                     <Globe size={24} className={styles.infoIconDark} />
                     <div className={styles.infoText}>

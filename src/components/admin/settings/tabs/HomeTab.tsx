@@ -25,17 +25,15 @@ interface GeneralTabProps {
 export function HomeTab({ settings, logoUrl, setLogoUrl, heroUrl, setHeroUrl, homeCardUrl, setHomeCardUrl, homeCtaUrl, setHomeCtaUrl, guide1Url, setGuide1Url, guide3Url, setGuide3Url, guide4Url, setGuide4Url, loan1Url, setLoan1Url, loan2Url, setLoan2Url, investUrl, setInvestUrl, globalMapUrl, setGlobalMapUrl, partner1, setPartner1, partner2, setPartner2, partner3, setPartner3, partner4, setPartner4, partner5, setPartner5, partner6, setPartner6 }: GeneralTabProps) {
     return (
         <div className={styles.grid}>
-
-            {/* 1. BRAND IDENTITY */}
-            <div className={styles.fullWidth}><h3 className={styles.sectionTitle}>Brand Identity</h3></div>
+            {/* 1. BRAND */}
+            <div className={styles.fullWidth}>
+                <h3 className={styles.sectionTitle}>Brand Identity</h3>
+            </div>
             <div className={styles.group}>
                 <label className={styles.label}>Site Name</label>
                 <input name="site_name" defaultValue={settings.site_name} className={styles.input} />
             </div>
-            <div className={styles.group}>
-                <label className={styles.label}>Logo Alt</label>
-                <input name="site_logo_alt" defaultValue={settings.site_logo_alt} className={styles.input} />
-            </div>
+            <div className={styles.groupHeader}></div>
             <div className={styles.group}>
                 <ImageUploader
                     label="Site Logo"
@@ -44,11 +42,15 @@ export function HomeTab({ settings, logoUrl, setLogoUrl, heroUrl, setHeroUrl, ho
                 />
                 <input type="hidden" name="site_logo" value={logoUrl} />
             </div>
+            <div className={styles.group}>
+                <label className={styles.label}>Logo Alt</label>
+                <textarea name="site_logo_alt" defaultValue={settings.site_logo_alt} className={styles.textarea} />
+            </div>
 
             {/* 2. HERO SECTION */}
             <div className={styles.fullWidth}>
                 <hr className={styles.divider} />
-                <h3 className={styles.sectionTitle}>Home: Hero Section</h3>
+                <h3 className={styles.sectionTitle}>Hero Section</h3>
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Hero Badge</label>
@@ -68,9 +70,9 @@ export function HomeTab({ settings, logoUrl, setLogoUrl, heroUrl, setHeroUrl, ho
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Image Alt Text</label>
-                <input name="home_hero_alt" defaultValue={settings.home_hero_alt} className={styles.input} />
+                <textarea name="home_hero_alt" defaultValue={settings.home_hero_alt} className={styles.textarea} />
             </div>
-            <div className={styles.fullWidth}><strong>CTA</strong></div>
+            <div className={styles.groupHeader}><strong>CTA</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Text</label>
                 <input name="hero_cta_link" defaultValue={settings.hero_cta_link} className={styles.input} />
@@ -79,7 +81,7 @@ export function HomeTab({ settings, logoUrl, setLogoUrl, heroUrl, setHeroUrl, ho
                 <label className={styles.label}>Link</label>
                 <input name="hero_cta_text" defaultValue={settings.hero_cta_text} className={styles.input} />
             </div>
-            <div className={styles.fullWidth}><strong>CTA 2</strong></div>
+            <div className={styles.groupHeader}><strong>CTA 2</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Text</label>
                 <input name="hero_cta1_text" defaultValue={settings.hero_cta1_text} className={styles.input} />
@@ -92,9 +94,8 @@ export function HomeTab({ settings, logoUrl, setLogoUrl, heroUrl, setHeroUrl, ho
             {/* 3. INFO BAR */}
             <div className={styles.fullWidth}>
                 <hr className={styles.divider} />
-                <h3 className={styles.sectionTitle}>Home Info Bar</h3>
+                <h3 className={styles.sectionTitle}>Info Bar</h3>
             </div>
-            {/* Announcement */}
             <div className={`${styles.group} ${styles.toggleWrapper}`}>
                 <input type="hidden" name="announcement_active" value="false" />
                 <input
@@ -115,9 +116,7 @@ export function HomeTab({ settings, logoUrl, setLogoUrl, heroUrl, setHeroUrl, ho
                 <textarea name="announcement_text" defaultValue={settings.announcement_text} className={styles.textarea} />
             </div>
 
-            <div className={styles.fullWidth}>
-                <strong>Interface</strong>
-            </div>
+            <div className={styles.groupHeader}><strong>Interface</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Support</label>
                 <input name="home_support_label" defaultValue={settings.home_support_label} className={styles.input} />
@@ -154,7 +153,7 @@ export function HomeTab({ settings, logoUrl, setLogoUrl, heroUrl, setHeroUrl, ho
             {/* 4. RATES GRID */}
             <div className={styles.fullWidth}>
                 <hr className={styles.divider} />
-                <h3 className={styles.sectionTitle}>Home: Rates Grid</h3>
+                <h3 className={styles.sectionTitle}>Rates Grid</h3>
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Section Title</label>
@@ -164,8 +163,7 @@ export function HomeTab({ settings, logoUrl, setLogoUrl, heroUrl, setHeroUrl, ho
                 <label className={styles.label}>Description</label>
                 <textarea name="home_rates_desc" defaultValue={settings.home_rates_desc} className={styles.textarea} />
             </div>
-            {/* TABS & UNITS */}
-            <div className={styles.fullWidth}><strong>Tabs & Units</strong></div>
+            <div className={styles.groupHeader}><strong>Tabs & Units</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Tab 1</label>
                 <input name="home_rates_tab1_label" defaultValue={settings.home_rates_tab1_label} className={styles.input} placeholder="Save Tab" />
@@ -196,8 +194,8 @@ export function HomeTab({ settings, logoUrl, setLogoUrl, heroUrl, setHeroUrl, ho
                 <label className={styles.label}>Percent Symbol</label>
                 <input name="home_rates_percent_symbol" defaultValue={settings.home_rates_percent_symbol} className={styles.input} />
             </div>
-            {/* CARD 1: SAVINGS */}
-            <div className={styles.fullWidth}><strong>Card 1: Savings</strong></div>
+
+            <div className={styles.groupHeader}><strong>Card 1: Savings</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Badge</label>
                 <input name="home_rates_c1_badge" defaultValue={settings.home_rates_c1_badge} className={styles.input} />
@@ -234,8 +232,8 @@ export function HomeTab({ settings, logoUrl, setLogoUrl, heroUrl, setHeroUrl, ho
                     <input name="home_rates_c1_row2_value" defaultValue={settings.home_rates_c1_row2_value} className={styles.input} />
                 </div>
             </div>
-            {/* CARD 2: CD */}
-            <div className={styles.fullWidth}><strong>Card 2: CD</strong></div>
+
+            <div className={styles.groupHeader}><strong>Card 2: CD</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Title</label>
                 <input name="home_rates_c2_title" defaultValue={settings.home_rates_c2_title} className={styles.input} />
@@ -272,8 +270,8 @@ export function HomeTab({ settings, logoUrl, setLogoUrl, heroUrl, setHeroUrl, ho
                 <label className={styles.label}>Button Link</label>
                 <input name="home_rates_c2_btn_link" defaultValue={settings.home_rates_c2_btn_link} className={styles.input} />
             </div>
-            {/* CARD 3: CHECKING */}
-            <div className={styles.fullWidth}><strong>Card 3: Checking</strong></div>
+
+            <div className={styles.groupHeader}><strong>Card 3: Checking</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Title</label>
                 <input name="home_rates_c3_title" defaultValue={settings.home_rates_c3_title} className={styles.input} />
@@ -309,8 +307,8 @@ export function HomeTab({ settings, logoUrl, setLogoUrl, heroUrl, setHeroUrl, ho
                 <label className={styles.label}>Button Link</label>
                 <input name="home_rates_c3_btn_link" defaultValue={settings.home_rates_c3_btn_link} className={styles.input} />
             </div>
-            {/* CARD 4: MORTGAGE */}
-            <div className={styles.fullWidth}><strong>Card 4: Mortgage</strong></div>
+
+            <div className={styles.groupHeader}><strong>Card 4: Mortgage</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Title</label>
                 <input name="home_rates_c4_title" defaultValue={settings.home_rates_c4_title} className={styles.input} />
@@ -335,8 +333,8 @@ export function HomeTab({ settings, logoUrl, setLogoUrl, heroUrl, setHeroUrl, ho
                 <label className={styles.label}>Button Link</label>
                 <input name="home_rates_c4_btn_link" defaultValue={settings.home_rates_c4_btn_link} className={styles.input} />
             </div>
-            {/* CARD 5: AUTO */}
-            <div className={styles.fullWidth}><strong>Card 5: Auto</strong></div>
+
+            <div className={styles.groupHeader}><strong>Card 5: Auto</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Title</label>
                 <input name="home_rates_c5_title" defaultValue={settings.home_rates_c5_title} className={styles.input} />
@@ -367,8 +365,8 @@ export function HomeTab({ settings, logoUrl, setLogoUrl, heroUrl, setHeroUrl, ho
                 <label className={styles.label}>Button Link</label>
                 <input name="home_rates_c5_btn_link" defaultValue={settings.home_rates_c5_btn_link} className={styles.input} />
             </div>
-            {/* CARD 6: PERSONAL */}
-            <div className={styles.fullWidth}><strong>Card 6: Personal</strong></div>
+
+            <div className={styles.groupHeader}><strong>Card 6: Personal</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Title</label>
                 <input name="home_rates_c6_title" defaultValue={settings.home_rates_c6_title} className={styles.input} />
@@ -393,16 +391,17 @@ export function HomeTab({ settings, logoUrl, setLogoUrl, heroUrl, setHeroUrl, ho
                 <label className={styles.label}>Button Link</label>
                 <input name="home_rates_c6_btn_link" defaultValue={settings.home_rates_c6_btn_link} className={styles.input} />
             </div>
-            {/* DISCLAIMER */}
+
             <div className={`${styles.group} ${styles.fullWidth}`}>
                 <label className={styles.label}>Disclaimer</label>
                 <textarea name="home_rates_disclaimer" defaultValue={settings.home_rates_disclaimer} className={styles.textarea} />
             </div>
 
+
             {/* 5. CARD SHOWCASE */}
             <div className={styles.fullWidth}>
                 <hr className={styles.divider} />
-                <h3 className={styles.sectionTitle}>Home: Card Showcase</h3>
+                <h3 className={styles.sectionTitle}>Card Showcase</h3>
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Series Name</label>
@@ -428,36 +427,40 @@ export function HomeTab({ settings, logoUrl, setLogoUrl, heroUrl, setHeroUrl, ho
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Image Alt Text</label>
-                <input name="home_card_alt" defaultValue={settings.home_card_alt} className={styles.input} />
+                <textarea name="home_card_alt" defaultValue={settings.home_card_alt} className={styles.textarea} />
             </div>
-            <div className={styles.fullWidth}><strong>Feature 1</strong></div>
+
+            <div className={styles.groupHeader}><strong>Feature 1</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Title</label>
                 <input name="home_card_feat_1" defaultValue={settings.home_card_feat_1} className={styles.input} placeholder="Title" />
             </div>
-            <div className={styles.group}>
+            <div className={`${styles.group} ${styles.fullWidth}`}>
                 <label className={styles.label}>Description</label>
                 <textarea name="home_card_feat_1_desc" defaultValue={settings.home_card_feat_1_desc} className={styles.textarea} placeholder="Description" />
             </div>
-            <div className={styles.fullWidth}><strong>Feature 2</strong></div>
+
+            <div className={styles.groupHeader}><strong>Feature 2</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Title</label>
                 <input name="home_card_feat_2" defaultValue={settings.home_card_feat_2} className={styles.input} placeholder="Title" />
             </div>
-            <div className={styles.group}>
+            <div className={`${styles.group} ${styles.fullWidth}`}>
                 <label className={styles.label}>Description</label>
                 <textarea name="home_card_feat_2_desc" defaultValue={settings.home_card_feat_2_desc} className={styles.textarea} placeholder="Description" />
             </div>
-            <div className={styles.fullWidth}><strong>Feature 3</strong></div>
+
+            <div className={styles.groupHeader}><strong>Feature 3</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Title</label>
                 <input name="home_card_feat_3" defaultValue={settings.home_card_feat_3} className={styles.input} placeholder="Title" />
             </div>
-            <div className={styles.group}>
+            <div className={`${styles.group} ${styles.fullWidth}`}>
                 <label className={styles.label}>Description</label>
                 <textarea name="home_card_feat_3_desc" defaultValue={settings.home_card_feat_3_desc} className={styles.textarea} placeholder="Description" />
             </div>
-            <div className={styles.fullWidth}><strong>CTA</strong></div>
+
+            <div className={styles.groupHeader}><strong>CTA</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Button Text</label>
                 <input name="home_card_btn1_text" defaultValue={settings.home_card_btn1_text} className={styles.input} />
@@ -478,7 +481,7 @@ export function HomeTab({ settings, logoUrl, setLogoUrl, heroUrl, setHeroUrl, ho
             {/* 6. FINANCIAL GUIDANCE */}
             <div className={styles.fullWidth}>
                 <hr className={styles.divider} />
-                <h3 className={styles.sectionTitle}>Home: Financial Guidance</h3>
+                <h3 className={styles.sectionTitle}>Financial Guidance</h3>
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Section Title</label>
@@ -488,7 +491,7 @@ export function HomeTab({ settings, logoUrl, setLogoUrl, heroUrl, setHeroUrl, ho
                 <label className={styles.label}>Description</label>
                 <textarea name="home_guide_desc" defaultValue={settings.home_guide_desc} className={styles.textarea} />
             </div>
-            <div className={styles.fullWidth}></div>
+            <div className={styles.groupHeader}><strong>CTA</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Top Link Text</label>
                 <input name="home_guide_link_text" defaultValue={settings.home_guide_link_text} className={styles.input} />
@@ -497,15 +500,15 @@ export function HomeTab({ settings, logoUrl, setLogoUrl, heroUrl, setHeroUrl, ho
                 <label className={styles.label}>Top Link</label>
                 <input name="home_guide_link" defaultValue={settings.home_guide_link} className={styles.input} />
             </div>
-            {/* Article 1 */}
-            <div className={styles.fullWidth}><strong>Article 1</strong></div>
+
+            <div className={styles.groupHeader}><strong>Article 1</strong></div>
             <div className={styles.group}>
                 <ImageUploader label="Article 1 Image" value={guide1Url} onChange={setGuide1Url} />
                 <input type="hidden" name="guide_article_1_img" value={guide1Url} />
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Image Alt Text</label>
-                <input name="guide_article_1_alt" defaultValue={settings.guide_article_1_alt} className={styles.input} />
+                <textarea name="guide_article_1_alt" defaultValue={settings.guide_article_1_alt} className={styles.textarea} />
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Head</label>
@@ -517,7 +520,7 @@ export function HomeTab({ settings, logoUrl, setLogoUrl, heroUrl, setHeroUrl, ho
             </div>
             <div className={`${styles.group} ${styles.fullWidth}`}>
                 <label className={styles.label}>SubTitle</label>
-                <input name="guide_article_1_subtitle" defaultValue={settings.guide_article_1_subtitle} className={styles.input} />
+                <textarea name="guide_article_1_subtitle" defaultValue={settings.guide_article_1_subtitle} className={styles.textarea} />
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Link Text</label>
@@ -527,8 +530,8 @@ export function HomeTab({ settings, logoUrl, setLogoUrl, heroUrl, setHeroUrl, ho
                 <label className={styles.label}>Link</label>
                 <input name="guide_article_1_link" defaultValue={settings.guide_article_1_link} className={styles.input} />
             </div>
-            {/* Article 2 */}
-            <div className={styles.fullWidth}><strong>Article 2</strong></div>
+
+            <div className={styles.groupHeader}><strong>Article 2</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Head</label>
                 <input name="guide_article_2_head" defaultValue={settings.guide_article_2_head} className={styles.input} />
@@ -539,7 +542,7 @@ export function HomeTab({ settings, logoUrl, setLogoUrl, heroUrl, setHeroUrl, ho
             </div>
             <div className={`${styles.group} ${styles.fullWidth}`}>
                 <label className={styles.label}>SubTitle</label>
-                <input name="guide_article_2_subtitle" defaultValue={settings.guide_article_2_subtitle} className={styles.input} />
+                <textarea name="guide_article_2_subtitle" defaultValue={settings.guide_article_2_subtitle} className={styles.textarea} />
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Link Text</label>
@@ -549,15 +552,15 @@ export function HomeTab({ settings, logoUrl, setLogoUrl, heroUrl, setHeroUrl, ho
                 <label className={styles.label}>Link</label>
                 <input name="guide_guide_article_2_link" defaultValue={settings.guide_article_2_link} className={styles.input} />
             </div>
-            {/* Article 3 */}
-            <div className={styles.fullWidth}><strong>Article 3</strong></div>
+
+            <div className={styles.groupHeader}><strong>Article 3</strong></div>
             <div className={styles.group}>
                 <ImageUploader label="Article 3 Image" value={guide3Url} onChange={setGuide3Url} />
                 <input type="hidden" name="guide_article_3_img" value={guide3Url} />
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Image Alt Text</label>
-                <input name="guide_article_3_alt" defaultValue={settings.guide_article_3_alt} className={styles.input} />
+                <textarea name="guide_article_3_alt" defaultValue={settings.guide_article_3_alt} className={styles.textarea} />
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Head</label>
@@ -569,7 +572,7 @@ export function HomeTab({ settings, logoUrl, setLogoUrl, heroUrl, setHeroUrl, ho
             </div>
             <div className={`${styles.group} ${styles.fullWidth}`}>
                 <label className={styles.label}>SubTitle</label>
-                <input name="guide_article_3_subtitle" defaultValue={settings.guide_article_3_subtitle} className={styles.input} />
+                <textarea name="guide_article_3_subtitle" defaultValue={settings.guide_article_3_subtitle} className={styles.textarea} />
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Link Text</label>
@@ -579,8 +582,16 @@ export function HomeTab({ settings, logoUrl, setLogoUrl, heroUrl, setHeroUrl, ho
                 <label className={styles.label}>Link</label>
                 <input name="guide_article_3_link" defaultValue={settings.guide_article_3_link} className={styles.input} />
             </div>
-            {/* Article 4 */}
-            <div className={styles.fullWidth}><strong>Article 4</strong></div>
+
+            <div className={styles.groupHeader}><strong>Article 4</strong></div>
+            <div className={styles.group}>
+                <ImageUploader label="Article 4 Image" value={guide4Url} onChange={setGuide4Url} />
+                <input type="hidden" name="guide_article_4_img" value={guide4Url} />
+            </div>
+            <div className={styles.group}>
+                <label className={styles.label}>Image Alt Text</label>
+                <textarea name="guide_article_4_alt" defaultValue={settings.guide_article_4_alt} className={styles.textarea} />
+            </div>
             <div className={styles.group}>
                 <label className={styles.label}>Head</label>
                 <input name="guide_article_4_head" defaultValue={settings.guide_article_4_head} className={styles.input} />
@@ -591,15 +602,7 @@ export function HomeTab({ settings, logoUrl, setLogoUrl, heroUrl, setHeroUrl, ho
             </div>
             <div className={`${styles.group} ${styles.fullWidth}`}>
                 <label className={styles.label}>SubTitle</label>
-                <input name="guide_article_4_subtitle" defaultValue={settings.guide_article_4_subtitle} className={styles.input} />
-            </div>
-            <div className={styles.group}>
-                <ImageUploader label="Article 4 Image" value={guide4Url} onChange={setGuide4Url} />
-                <input type="hidden" name="guide_article_4_img" value={guide4Url} />
-            </div>
-            <div className={styles.group}>
-                <label className={styles.label}>Image Alt Text</label>
-                <input name="guide_article_4_alt" defaultValue={settings.guide_article_4_alt} className={styles.input} />
+                <textarea name="guide_article_4_subtitle" defaultValue={settings.guide_article_4_subtitle} className={styles.textarea} />
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Link Text</label>
@@ -613,7 +616,7 @@ export function HomeTab({ settings, logoUrl, setLogoUrl, heroUrl, setHeroUrl, ho
             {/* 7. LOAN SECTION */}
             <div className={styles.fullWidth}>
                 <hr className={styles.divider} />
-                <h3 className={styles.sectionTitle}>Home: Loan Section</h3>
+                <h3 className={styles.sectionTitle}>Loan Section</h3>
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Section Title</label>
@@ -623,26 +626,26 @@ export function HomeTab({ settings, logoUrl, setLogoUrl, heroUrl, setHeroUrl, ho
                 <label className={styles.label}>Description</label>
                 <textarea name="home_loan_desc" defaultValue={settings.home_loan_desc} className={styles.textarea} />
             </div>
-            {/* Category Labels */}
-            <div className={styles.fullWidth}><strong>Icon Labels</strong></div>
-                <div className={styles.group}>
-                    <label className={styles.label}>Category 1</label>
-                    <input name="home_loan_cat1_label" defaultValue={settings.home_loan_cat1_label} className={styles.input} placeholder="Home" />
-                </div>
-                <div className={styles.group}>
-                    <label className={styles.label}>Category 2</label>
-                    <input name="home_loan_cat2_label" defaultValue={settings.home_loan_cat2_label} className={styles.input} placeholder="Auto" />
-                </div>
-                <div className={styles.group}>
-                    <label className={styles.label}>Category 3</label>
-                    <input name="home_loan_cat3_label" defaultValue={settings.home_loan_cat3_label} className={styles.input} placeholder="Student" />
-                </div>
-                <div className={styles.group}>
-                    <label className={styles.label}>Category 4</label>
-                    <input name="home_loan_cat4_label" defaultValue={settings.home_loan_cat4_label} className={styles.input} placeholder="Business" />
-                </div>
-            {/* Card 1 */}
-            <div className={styles.fullWidth}><strong>Card 1</strong></div>
+
+            <div className={styles.groupHeader}><strong>Icon Labels</strong></div>
+            <div className={styles.group}>
+                <label className={styles.label}>Category 1</label>
+                <input name="home_loan_cat1_label" defaultValue={settings.home_loan_cat1_label} className={styles.input} placeholder="Home" />
+            </div>
+            <div className={styles.group}>
+                <label className={styles.label}>Category 2</label>
+                <input name="home_loan_cat2_label" defaultValue={settings.home_loan_cat2_label} className={styles.input} placeholder="Auto" />
+            </div>
+            <div className={styles.group}>
+                <label className={styles.label}>Category 3</label>
+                <input name="home_loan_cat3_label" defaultValue={settings.home_loan_cat3_label} className={styles.input} placeholder="Student" />
+            </div>
+            <div className={styles.group}>
+                <label className={styles.label}>Category 4</label>
+                <input name="home_loan_cat4_label" defaultValue={settings.home_loan_cat4_label} className={styles.input} placeholder="Business" />
+            </div>
+
+            <div className={styles.groupHeader}><strong>Card 1</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Title</label>
                 <input name="home_loan_card1_title" defaultValue={settings.home_loan_card1_title} className={styles.input} />
@@ -657,23 +660,23 @@ export function HomeTab({ settings, logoUrl, setLogoUrl, heroUrl, setHeroUrl, ho
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Image Alt Text</label>
-                <input name="home_loan_card1_alt" defaultValue={settings.home_loan_card1_alt} className={styles.input} />
+                <textarea name="home_loan_card1_alt" defaultValue={settings.home_loan_card1_alt} className={styles.textarea} />
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Stat 1 Label</label>
                 <input name="home_loan_card1_stat1_label" defaultValue={settings.home_loan_card1_stat1_label} className={styles.input} />
             </div>
             <div className={styles.row}>
-            <div className={styles.group}>
-                <label className={styles.label}>Stat 2 Label</label>
-                <input name="home_loan_card1_stat2_label" defaultValue={settings.home_loan_card1_stat2_label} className={styles.input} />
+                <div className={styles.group}>
+                    <label className={styles.label}>Stat 2 Label</label>
+                    <input name="home_loan_card1_stat2_label" defaultValue={settings.home_loan_card1_stat2_label} className={styles.input} />
+                </div>
+                <div className={styles.group}>
+                    <label className={styles.label}>Stat 2 Value</label>
+                    <input name="home_loan_card1_stat2_value" defaultValue={settings.home_loan_card1_stat2_value} className={styles.input} />
+                </div>
             </div>
-            <div className={styles.group}>
-                <label className={styles.label}>Stat 2 Value</label>
-                <input name="home_loan_card1_stat2_value" defaultValue={settings.home_loan_card1_stat2_value} className={styles.input} />
-            </div>
-            </div>
-            <div className={styles.fullWidth}><strong>Card 1 Buttons</strong></div>
+            <div className={styles.groupHeader}><strong>Card 1 Buttons</strong></div>
             <div className={styles.row}>
                 <div className={styles.group}>
                     <label className={styles.label}>Button 1 Text</label>
@@ -694,8 +697,8 @@ export function HomeTab({ settings, logoUrl, setLogoUrl, heroUrl, setHeroUrl, ho
                     <input name="home_loan_card1_btn2_link" defaultValue={settings.home_loan_card1_btn2_link} className={styles.input} />
                 </div>
             </div>
-            {/* Card 2 */}
-            <div className={styles.fullWidth}><strong>Card 2</strong></div>
+
+            <div className={styles.groupHeader}><strong>Card 2</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Title</label>
                 <input name="home_loan_card2_title" defaultValue={settings.home_loan_card2_title} className={styles.input} />
@@ -710,7 +713,7 @@ export function HomeTab({ settings, logoUrl, setLogoUrl, heroUrl, setHeroUrl, ho
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Image Alt Text</label>
-                <input name="home_loan_card2_alt" defaultValue={settings.home_loan_card2_alt} className={styles.input} />
+                <textarea name="home_loan_card2_alt" defaultValue={settings.home_loan_card2_alt} className={styles.textarea} />
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Rate Note Text</label>
@@ -728,7 +731,7 @@ export function HomeTab({ settings, logoUrl, setLogoUrl, heroUrl, setHeroUrl, ho
                 <label className={styles.label}>List 3</label>
                 <input name="home_loan_card2_list3" defaultValue={settings.home_loan_card2_list3} className={styles.input} placeholder="Checklist 3" />
             </div>
-            <div className={styles.fullWidth}><strong>Card 2 Buttons</strong></div>
+            <div className={styles.groupHeader}><strong>Card 2 Buttons</strong></div>
             <div className={styles.row}>
                 <div className={styles.group}>
                     <label className={styles.label}>Button 1 Text</label>
@@ -752,48 +755,55 @@ export function HomeTab({ settings, logoUrl, setLogoUrl, heroUrl, setHeroUrl, ho
 
             {/* TOOLS STRIP */}
             <div className={styles.fullWidth}>
-                <hr className={styles.divider} /><h3 className={styles.sectionTitle}>Home: Loan Tools</h3>
+                <hr className={styles.divider} />
+                <h3 className={styles.sectionTitle}>Loan Tools</h3>
             </div>
             {/* Tool 1 */}
-            <div className={`${styles.group} ${styles.fullWidth}`}>
+            <div className={styles.group}>
                 <label className={styles.label}>Tool 1 Title</label>
                 <input name="home_loan_tool1_title" defaultValue={settings.home_loan_tool1_title} className={styles.input} />
             </div>
-            <div className={styles.group}>
-                <label className={styles.label}>Tool 1 Text</label>
-                <input name="home_loan_tool1_text" defaultValue={settings.home_loan_tool1_text} className={styles.input} />
+            <div className={styles.row}>
+                <div className={styles.group}>
+                    <label className={styles.label}>Tool 1 Text</label>
+                    <input name="home_loan_tool1_text" defaultValue={settings.home_loan_tool1_text} className={styles.input} />
+                </div>
+                <div className={styles.group}>
+                    <label className={styles.label}>Tool 1 Link</label>
+                    <input name="home_loan_tool1_link" defaultValue={settings.home_loan_tool1_link} className={styles.input} />
+                </div>
             </div>
+
             <div className={styles.group}>
-                <label className={styles.label}>Tool 1 Link</label>
-                <input name="home_loan_tool1_link" defaultValue={settings.home_loan_tool1_link} className={styles.input} />
-            </div>
-            {/* Tool 2 */}
-            <div className={`${styles.group} ${styles.fullWidth}`}>
                 <label className={styles.label}>Tool 2 Title</label>
                 <input name="home_loan_tool2_title" defaultValue={settings.home_loan_tool2_title} className={styles.input} />
             </div>
-            <div className={styles.group}>
-                <label className={styles.label}>Tool 2 Text</label>
-                <input name="home_loan_tool2_text" defaultValue={settings.home_loan_tool2_text} className={styles.input} />
+            <div className={styles.row}>
+                <div className={styles.group}>
+                    <label className={styles.label}>Tool 2 Text</label>
+                    <input name="home_loan_tool2_text" defaultValue={settings.home_loan_tool2_text} className={styles.input} />
+                </div>
+                <div className={styles.group}>
+                    <label className={styles.label}>Tool 2 Link</label>
+                    <input name="home_loan_tool2_link" defaultValue={settings.home_loan_tool2_link} className={styles.input} />
+                </div>
             </div>
+
             <div className={styles.group}>
-                <label className={styles.label}>Tool 2 Link</label>
-                <input name="home_loan_tool2_link" defaultValue={settings.home_loan_tool2_link} className={styles.input} />
-            </div>
-            {/* Tool 3 */}
-            <div className={`${styles.group} ${styles.fullWidth}`}>
                 <label className={styles.label}>Tool 3 Title</label>
                 <input name="home_loan_tool3_title" defaultValue={settings.home_loan_tool3_title} className={styles.input} />
             </div>
-            <div className={styles.group}>
-                <label className={styles.label}>Tool 3 Text</label>
-                <input name="home_loan_tool3_text" defaultValue={settings.home_loan_tool3_text} className={styles.input} />
+            <div className={styles.row}>
+                <div className={styles.group}>
+                    <label className={styles.label}>Tool 3 Text</label>
+                    <input name="home_loan_tool3_text" defaultValue={settings.home_loan_tool3_text} className={styles.input} />
+                </div>
+                <div className={styles.group}>
+                    <label className={styles.label}>Tool 3 Link</label>
+                    <input name="home_loan_tool3_link" defaultValue={settings.home_loan_tool3_link} className={styles.input} />
+                </div>
             </div>
-            <div className={styles.group}>
-                <label className={styles.label}>Tool 3 Link</label>
-                <input name="home_loan_tool3_link" defaultValue={settings.home_loan_tool3_link} className={styles.input} />
-            </div>
-            <div className={styles.fullWidth}><strong>Symbols & Units</strong></div>
+            <div className={styles.groupHeader}><strong>Symbols & Units</strong></div>
             <div className={styles.row}>
                 <div className={styles.group}>
                     <label className={styles.label}>Percent Symbol</label>
@@ -812,7 +822,7 @@ export function HomeTab({ settings, logoUrl, setLogoUrl, heroUrl, setHeroUrl, ho
             {/* 8. INVESTMENT SECTION */}
             <div className={styles.fullWidth}>
                 <hr className={styles.divider} />
-                <h3 className={styles.sectionTitle}>Home: Investment Section</h3>
+                <h3 className={styles.sectionTitle}>Investment Section</h3>
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Title</label>
@@ -833,38 +843,40 @@ export function HomeTab({ settings, logoUrl, setLogoUrl, heroUrl, setHeroUrl, ho
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Image Alt Text</label>
-                <input name="home_invest_alt" defaultValue={settings.home_invest_alt} className={styles.input} />
+                <textarea name="home_invest_alt" defaultValue={settings.home_invest_alt} className={styles.textarea} />
             </div>
 
-            <div className={styles.fullWidth}><strong>Feature 1</strong></div>
+            <div className={styles.groupHeader}><strong>Feature 1</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Title</label>
                 <input name="home_invest_feat1" defaultValue={settings.home_invest_feat1} className={styles.input} placeholder="Title" />
             </div>
-            <div className={styles.group}>
+            <div className={`${styles.group} ${styles.fullWidth}`}>
                 <label className={styles.label}>Description</label>
                 <textarea name="home_invest_feat1_desc" defaultValue={settings.home_invest_feat1_desc} className={styles.textarea} placeholder="Description" />
             </div>
-            <div className={styles.fullWidth}><strong>Feature 2</strong></div>
+
+            <div className={styles.groupHeader}><strong>Feature 2</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Title</label>
                 <input name="home_invest_feat2" defaultValue={settings.home_invest_feat2} className={styles.input} placeholder="Title" />
             </div>
-            <div className={styles.group}>
+            <div className={`${styles.group} ${styles.fullWidth}`}>
                 <label className={styles.label}>Description</label>
                 <textarea name="home_invest_feat2_desc" defaultValue={settings.home_invest_feat2_desc} className={styles.textarea} placeholder="Description" />
             </div>
-            <div className={styles.fullWidth}><strong>Feature 3</strong></div>
+
+            <div className={styles.groupHeader}><strong>Feature 3</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Title</label>
                 <input name="home_invest_feat3" defaultValue={settings.home_invest_feat3} className={styles.input} placeholder="Title" />
             </div>
-            <div className={styles.group}>
+            <div className={`${styles.group} ${styles.fullWidth}`}>
                 <label className={styles.label}>Description</label>
                 <textarea name="home_invest_feat3_desc" defaultValue={settings.home_invest_feat3_desc} className={styles.textarea} placeholder="Description" />
             </div>
-            {/* BUTTONS & LINKS */}
-            <div className={styles.fullWidth}><strong>Buttons</strong></div>
+
+            <div className={styles.groupHeader}><strong>Buttons</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Primary Button Text</label>
                 <input name="home_invest_btn1_text" defaultValue={settings.home_invest_btn1_text} className={styles.input} />
@@ -881,27 +893,27 @@ export function HomeTab({ settings, logoUrl, setLogoUrl, heroUrl, setHeroUrl, ho
                 <label className={styles.label}>Secondary Button Link</label>
                 <input name="home_invest_btn2_link" defaultValue={settings.home_invest_btn2_link} className={styles.input} />
             </div>
-            {/* FLOATING CARDS */}
-            <div className={styles.fullWidth}><strong>Floating Visuals</strong></div>
+
+            <div className={styles.groupHeader}><strong>Floating Visuals</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Float 1 Label</label>
                 <input name="home_invest_float1_label" defaultValue={settings.home_invest_float1_label} className={styles.input} placeholder="e.g. Bitcoin" />
             </div>
             <div className={styles.row}>
-            <div className={styles.group}>
-                <label className={styles.label}>Float 2 Label</label>
-                <input name="home_invest_float2_label" defaultValue={settings.home_invest_float2_label} className={styles.input} placeholder="e.g. Auto-Invest" />
-            </div>
-            <div className={styles.group}>
-                <label className={styles.label}>Float 2 Value</label>
-                <input name="home_invest_float2_value" defaultValue={settings.home_invest_float2_value} className={styles.input} placeholder="e.g. $500/mo" />
-            </div>
+                <div className={styles.group}>
+                    <label className={styles.label}>Float 2 Label</label>
+                    <input name="home_invest_float2_label" defaultValue={settings.home_invest_float2_label} className={styles.input} placeholder="e.g. Auto-Invest" />
+                </div>
+                <div className={styles.group}>
+                    <label className={styles.label}>Float 2 Value</label>
+                    <input name="home_invest_float2_value" defaultValue={settings.home_invest_float2_value} className={styles.input} placeholder="e.g. $500/mo" />
+                </div>
             </div>
 
             {/* 9. GLOBAL REACH */}
             <div className={styles.fullWidth}>
                 <hr className={styles.divider} />
-                <h3 className={styles.sectionTitle}>Home: Global Reach</h3>
+                <h3 className={styles.sectionTitle}>Global Reach</h3>
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Title</label>
@@ -921,13 +933,14 @@ export function HomeTab({ settings, logoUrl, setLogoUrl, heroUrl, setHeroUrl, ho
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Image Alt Text</label>
-                <input name="home_global_alt" defaultValue={settings.home_global_alt} className={styles.input} />
+                <textarea name="home_global_alt" defaultValue={settings.home_global_alt} className={styles.textarea} />
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Hotspot Label</label>
                 <input name="home_global_hotspot" defaultValue={settings.home_global_hotspot} className={styles.input} />
             </div>
-            <div className={styles.fullWidth}><strong>Stats</strong></div>
+
+            <div className={styles.groupHeader}><strong>Stats</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Countries</label>
                 <input name="global_stat_countries" defaultValue={settings.global_stat_countries} className={styles.input} />
@@ -968,20 +981,21 @@ export function HomeTab({ settings, logoUrl, setLogoUrl, heroUrl, setHeroUrl, ho
             {/* 10. PARTNER LOGOS */}
             <div className={styles.fullWidth}>
                 <hr className={styles.divider} />
-                <h3 className={styles.sectionTitle}>Home: Partner Logos</h3>
-                <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>Upload transparent PNG logos (approx 200x80px).</p>
+                <h3 className={styles.sectionTitle}>Partner Logos</h3>
+                <p className={styles.subLabel}>Upload transparent PNG logos (approx 200x80px).</p>
             </div>
-            <div className={`${styles.group} ${styles.fullWidth}`}>
+            <div className={styles.group}>
                 <label className={styles.label}>Title</label>
                 <input name="home_partner_label" defaultValue={settings.home_partner_label} className={styles.input} />
             </div>
+            <div className={styles.groupHeader}><strong>Partners</strong></div>
             <div className={styles.group}>
                 <ImageUploader label="Partner 1" value={partner1} onChange={setPartner1} />
                 <input type="hidden" name="partner_img_1" value={partner1} />
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Image Alt Text</label>
-                <input name="partner_img_1_alt" defaultValue={settings.partner_img_1_alt} className={styles.input} />
+                <textarea name="partner_img_1_alt" defaultValue={settings.partner_img_1_alt} className={styles.textarea} />
             </div>
             <div className={styles.group}>
                 <ImageUploader label="Partner 2" value={partner2} onChange={setPartner2} />
@@ -989,7 +1003,7 @@ export function HomeTab({ settings, logoUrl, setLogoUrl, heroUrl, setHeroUrl, ho
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Image Alt Text</label>
-                <input name="partner_img_2_alt" defaultValue={settings.partner_img_2_alt} className={styles.input} />
+                <textarea name="partner_img_2_alt" defaultValue={settings.partner_img_2_alt} className={styles.textarea} />
             </div>
             <div className={styles.group}>
                 <ImageUploader label="Partner 3" value={partner3} onChange={setPartner3} />
@@ -997,7 +1011,7 @@ export function HomeTab({ settings, logoUrl, setLogoUrl, heroUrl, setHeroUrl, ho
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Image Alt Text</label>
-                <input name="partner_img_3_alt" defaultValue={settings.partner_img_3_alt} className={styles.input} />
+                <textarea name="partner_img_3_alt" defaultValue={settings.partner_img_3_alt} className={styles.textarea} />
             </div>
             <div className={styles.group}>
                 <ImageUploader label="Partner 4" value={partner4} onChange={setPartner4} />
@@ -1005,7 +1019,7 @@ export function HomeTab({ settings, logoUrl, setLogoUrl, heroUrl, setHeroUrl, ho
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Image Alt Text</label>
-                <input name="partner_img_4_alt" defaultValue={settings.partner_img_4_alt} className={styles.input} />
+                <textarea name="partner_img_4_alt" defaultValue={settings.partner_img_4_alt} className={styles.textarea} />
             </div>
             <div className={styles.group}>
                 <ImageUploader label="Partner 5" value={partner5} onChange={setPartner5} />
@@ -1013,7 +1027,7 @@ export function HomeTab({ settings, logoUrl, setLogoUrl, heroUrl, setHeroUrl, ho
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Image Alt Text</label>
-                <input name="partner_img_5_alt" defaultValue={settings.partner_img_5_alt} className={styles.input} />
+                <textarea name="partner_img_5_alt" defaultValue={settings.partner_img_5_alt} className={styles.textarea} />
             </div>
             <div className={styles.group}>
                 <ImageUploader label="Partner 6" value={partner6} onChange={setPartner6} />
@@ -1021,13 +1035,13 @@ export function HomeTab({ settings, logoUrl, setLogoUrl, heroUrl, setHeroUrl, ho
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Image Alt Text</label>
-                <input name="partner_img_6_alt" defaultValue={settings.partner_img_6_alt} className={styles.input} />
+                <textarea name="partner_img_6_alt" defaultValue={settings.partner_img_6_alt} className={styles.textarea} />
             </div>
 
             {/* 11. FINAL CTA */}
             <div className={styles.fullWidth}>
                 <hr className={styles.divider} />
-                <h3 className={styles.sectionTitle}>Home: Final CTA </h3>
+                <h3 className={styles.sectionTitle}>Final CTA </h3>
             </div>
             <div className={styles.fullWidth}></div>
             <div className={styles.group}>
@@ -1050,13 +1064,13 @@ export function HomeTab({ settings, logoUrl, setLogoUrl, heroUrl, setHeroUrl, ho
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Image Alt Text</label>
-                <input name="home_cta_alt" defaultValue={settings.home_cta_alt} className={styles.input} placeholder="e.g. Mobile app dashboard" />
+                <textarea name="home_cta_alt" defaultValue={settings.home_cta_alt} className={styles.textarea} placeholder="e.g. Mobile app dashboard" />
             </div>
             <div className={`${styles.group} ${styles.fullWidth}`}>
                 <label className={styles.label}>Description</label>
                 <textarea name="home_cta_desc" defaultValue={settings.home_cta_desc} className={styles.textarea} />
             </div>
-            <div className={styles.fullWidth}><strong>Benefits List</strong></div>
+            <div className={styles.groupHeader}><strong>Benefits List</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Benefit 1</label>
                 <input name="home_cta_benefit_1" defaultValue={settings.home_cta_benefit_1} className={styles.input} placeholder="Benefit 1" />
@@ -1069,33 +1083,37 @@ export function HomeTab({ settings, logoUrl, setLogoUrl, heroUrl, setHeroUrl, ho
                 <label className={styles.label}>Benefit 3</label>
                 <input name="home_cta_benefit_3" defaultValue={settings.home_cta_benefit_3} className={styles.input} placeholder="Benefit 3" />
             </div>
-            <div className={styles.fullWidth}><strong>Apple Store Button</strong></div>
+            <div className={styles.groupHeader}><strong>Apple Store Button</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Small Text</label>
                 <input name="home_cta_apple_small" defaultValue={settings.home_cta_apple_small} className={styles.input} />
             </div>
-            <div className={styles.group}>
-                <label className={styles.label}>Large Text</label>
-                <input name="home_cta_apple_large" defaultValue={settings.home_cta_apple_large} className={styles.input} />
+            <div className={styles.row}>
+                <div className={styles.group}>
+                    <label className={styles.label}>Large Text</label>
+                    <input name="home_cta_apple_large" defaultValue={settings.home_cta_apple_large} className={styles.input} />
+                </div>
+                <div className={styles.group}>
+                    <label className={styles.label}>Link</label>
+                    <input name="home_cta_apple_link" defaultValue={settings.home_cta_apple_link} className={styles.input} />
+                </div>
             </div>
-            <div className={styles.group}>
-                <label className={styles.label}>Link</label>
-                <input name="home_cta_apple_link" defaultValue={settings.home_cta_apple_link} className={styles.input} />
-            </div>
-            <div className={styles.fullWidth}><strong>Google Play Button</strong></div>
+            <div className={styles.groupHeader}><strong>Google Play Button</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Small Text</label>
                 <input name="home_cta_google_small" defaultValue={settings.home_cta_google_small} className={styles.input} />
             </div>
-            <div className={styles.group}>
-                <label className={styles.label}>Large Text</label>
-                <input name="home_cta_google_large" defaultValue={settings.home_cta_google_large} className={styles.input} />
+            <div className={styles.row}>
+                <div className={styles.group}>
+                    <label className={styles.label}>Large Text</label>
+                    <input name="home_cta_google_large" defaultValue={settings.home_cta_google_large} className={styles.input} />
+                </div>
+                <div className={styles.group}>
+                    <label className={styles.label}>Link</label>
+                    <input name="home_cta_google_link" defaultValue={settings.home_cta_google_link} className={styles.input} />
+                </div>
             </div>
-            <div className={styles.group}>
-                <label className={styles.label}>Link</label>
-                <input name="home_cta_google_link" defaultValue={settings.home_cta_google_link} className={styles.input} />
-            </div>
-            <div className={styles.fullWidth}><strong>Web Link</strong></div>
+                    <div className={styles.groupHeader}><strong>Web Link</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Text</label>
                 <input name="home_cta_web_text" defaultValue={settings.home_cta_web_text} className={styles.input} />
@@ -1104,6 +1122,6 @@ export function HomeTab({ settings, logoUrl, setLogoUrl, heroUrl, setHeroUrl, ho
                 <label className={styles.label}>Link</label>
                 <input name="home_cta_web_link" defaultValue={settings.home_cta_web_link} className={styles.input} />
             </div>
-        </div>
+        </div >
     );
 }

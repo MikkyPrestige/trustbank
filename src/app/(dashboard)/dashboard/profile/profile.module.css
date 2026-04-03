@@ -5,20 +5,11 @@
   animation: fadeIn 0.4s ease-out;
 }
 
-.textSuccess {
-    color: var(--success);
-}
-
-.textDanger {
-    color: var(--danger);
-}
-
-/* --- HEADER CARD --- */
 .headerCard {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 2.5rem;
+  background: var(--sub-bg);
+  border: 1px solid var(--border-subtle);
+  border-radius: 1rem;
+  padding: 1rem 2rem;
   margin-bottom: 2rem;
   box-shadow: var(--shadow-card);
   display: flex;
@@ -31,19 +22,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
-}
-
-.headerInfo {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   gap: 0.5rem;
 }
 
 .avatarLarge {
-  width: 110px;
-  height: 110px;
+  width: 10rem;
+  height: 10rem;
   border-radius: 50%;
   background: var(--bg-surface);
   border: 4px solid var(--bg-card);
@@ -62,7 +46,7 @@
 }
 
 .initials {
-  font-size: 2.5rem;
+  font-size: 5rem;
   font-weight: 700;
   color: var(--text-muted);
 }
@@ -71,29 +55,37 @@
   position: absolute;
   bottom: 0;
   right: 0;
-  background: var(--bg-card);
+  background: var(--bg-surface);
   border-radius: 50%;
-  padding: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  width: 2rem;
+  height: 2rem;
 }
 
 .iconVerified {
   color: var(--success);
-  fill: rgba(34, 197, 94, 0.1);
+  fill: rgba(var(--success-rgb), 0.1);
 }
 
 .iconUnverified {
   color: var(--accent);
-  fill: rgba(234, 179, 8, 0.1);
+  fill: rgba(var(--accent-rgb), 0.1);
+}
+
+.headerInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
 }
 
 .name {
   font-size: 2rem;
   font-weight: 800;
-  color: var(--text-main);
+  color: var(--text-body);
   margin: 0;
   letter-spacing: -0.5px;
 }
@@ -111,11 +103,10 @@
   margin: 0;
 }
 
-/* --- GRID LAYOUT --- */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  gap: 1.5rem;
+  gap: 2rem;
   align-items: start;
 }
 
@@ -125,24 +116,24 @@
 }
 
 .card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 2rem;
+  background: var(--sub-bg);
+  border: 1px solid var(--border-subtle);
+  border-radius: 1rem;
+  padding: 1rem;
   box-shadow: var(--shadow-card);
 }
 
 .cardSpacing {
-    margin-top: 1.5rem;
+  margin-top: 2rem;
 }
 
 .cardHeader {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 2rem;
+  gap: 1rem;
+  margin-bottom: 1rem;
   padding-bottom: 1rem;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 .cardIcon {
@@ -152,15 +143,14 @@
 .cardHeader h3 {
   font-size: 1.1rem;
   font-weight: 700;
-  color: var(--text-main);
+color: var(--text-body);
   margin: 0;
 }
 
-/* --- DETAILS LIST --- */
 .detailList {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1rem;
 }
 
 .subHeader {
@@ -169,8 +159,6 @@
   color: var(--primary);
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  margin-top: 0.5rem;
-  margin-bottom: 0.5rem;
 }
 
 .detailRow {
@@ -182,17 +170,11 @@
 .label {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.5rem;
   font-size: 0.85rem;
   font-weight: 600;
   color: var(--text-muted);
   text-transform: uppercase;
-}
-
-.pinStatus {
-    display: flex;
-    align-items: center;
-    gap: 4px;
 }
 
 .value {
@@ -200,15 +182,6 @@
   font-weight: 600;
   color: var(--text-main);
   text-align: right;
-}
-
-.valueHighlight {
-    font-weight: 600;
-    color: var(--primary);
-}
-
-.valueCapitalized {
-    text-transform: capitalize;
 }
 
 .valueMono {
@@ -219,26 +192,48 @@
   letter-spacing: 1px;
 }
 
-.limitWarning {
-    margin-top: 1rem;
-    font-size: 0.8rem;
-    color: var(--accent);
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.divider {
-  height: 1px;
-  background: var(--border);
-  margin: 0.5rem 0;
-  opacity: 0.5;
+.valueHighlight {
+  font-weight: 600;
+  color: var(--primary);
 }
 
 .emptyText {
   color: var(--text-muted);
   font-style: italic;
   font-size: 0.9rem;
+}
+
+.limitWarning {
+  font-size: 0.8rem;
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.divider {
+  height: 1px;
+  background: var(--border-subtle);
+  margin: 0.5rem 0;
+  opacity: 0.5;
+}
+
+.pinStatus {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.textSuccess {
+  color: var(--success);
+}
+
+.textDanger {
+  color: var(--danger);
+}
+
+.valueCapitalized {
+  text-transform: capitalize;
 }
 
 @keyframes fadeIn {

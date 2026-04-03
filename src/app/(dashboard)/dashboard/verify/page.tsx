@@ -20,7 +20,6 @@ export default async function VerifyPage() {
 
     if (!user) redirect("/login");
 
-    // Status Logic using Enums
     const isVerified = user.kycStatus === KycStatus.VERIFIED;
     const isPending = user.kycStatus === KycStatus.PENDING;
     const isFailed = user.kycStatus === KycStatus.FAILED;
@@ -31,7 +30,7 @@ export default async function VerifyPage() {
             <div className={styles.contentWrapper}>
                 <header className={styles.header}>
                     <div className={styles.iconBadge}>
-                        <ShieldCheck size={28} />
+                        <ShieldCheck size={30} />
                     </div>
                     <h1 className={styles.title}>Identity Verification</h1>
                     <p className={styles.subtitle}>
@@ -41,7 +40,6 @@ export default async function VerifyPage() {
                 </header>
 
                 <div className={styles.statusSection}>
-                    {/* 1. VERIFIED */}
                     {isVerified && (
                         <div className={`${styles.statusCard} ${styles.success}`}>
                             <div className={styles.statusIcon}><CheckCircle2 size={32} /></div>
@@ -52,7 +50,6 @@ export default async function VerifyPage() {
                         </div>
                     )}
 
-                    {/* 2. PENDING */}
                     {isPending && (
                         <div className={`${styles.statusCard} ${styles.pending}`}>
                             <div className={styles.statusIcon}><Clock size={32} /></div>
@@ -63,23 +60,21 @@ export default async function VerifyPage() {
                         </div>
                     )}
 
-                    {/* 3. FAILED (Dynamic Reason) */}
                     {isFailed && (
                         <div className={`${styles.statusCard} ${styles.error}`}>
                             <div className={styles.statusIcon}><XCircle size={32} /></div>
                             <div>
                                 <h3>Verification Rejected</h3>
-                                <p style={{ fontWeight: 500, color: '#b91c1c' }}>
+                                <p className={styles.errorReason}>
                                     Reason: {user.kycRejectionReason || "Documents were unclear or invalid."}
                                 </p>
-                                <p style={{ fontSize: '0.85rem', marginTop: '4px' }}>
+                                <p className={styles.errorSubtext}>
                                     Please correct the issue above and re-upload your documents.
                                 </p>
                             </div>
                         </div>
                     )}
 
-                    {/* 4. NOT SUBMITTED */}
                     {isNotSubmitted && (
                         <div className={`${styles.statusCard} ${styles.neutral}`}>
                             <div className={styles.statusIcon}><AlertTriangle size={32} /></div>

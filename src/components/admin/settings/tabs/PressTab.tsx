@@ -12,12 +12,10 @@ interface PressTabProps {
 export function PressTab({ settings, pressHeroUrl, setPressHeroUrl }: PressTabProps) {
     return (
         <div className={styles.grid}>
-            {/* --- 1. DATA MANAGEMENT LINK --- */}
             <div className={styles.fullWidth}>
-                <h3 className={styles.sectionTitle}>Newsroom Database</h3>
+                <h3 className={styles.sectionTitle}>Newsroom</h3>
                 <p className={styles.sectionSubtitle}>Manage press releases and company announcements.</p>
             </div>
-
             <Link href="/admin/press" className={styles.navCard}>
                 <div className={`${styles.navIcon} ${styles.iconPrimary}`}>
                     <Newspaper size={24} />
@@ -29,13 +27,10 @@ export function PressTab({ settings, pressHeroUrl, setPressHeroUrl }: PressTabPr
                 <ArrowRight size={16} className={styles.chevron} />
             </Link>
 
-            {/* --- 2. PRESS PAGE CONFIG --- */}
-            <div className={`${styles.fullWidth} ${styles.marginTop}`}>
+            <div className={styles.fullWidth}>
                 <hr className={styles.divider} />
-                <h3 className={styles.sectionTitle}>Press Page Configuration</h3>
-                <p className={styles.sectionSubtitle}>Manage newsroom headers and media kits.</p>
+                <h3 className={styles.sectionTitle}>HERO SECTION</h3>
             </div>
-
             <div className={styles.group}>
                 <label className={styles.label}>Hero Title</label>
                 <input name="press_hero_title" defaultValue={settings.press_hero_title} className={styles.input} />
@@ -58,12 +53,11 @@ export function PressTab({ settings, pressHeroUrl, setPressHeroUrl }: PressTabPr
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Image Alt Text</label>
-                <input name="press_hero_img_alt" defaultValue={settings.press_hero_img_alt} className={styles.input} />
+                <textarea name="press_hero_img_alt" defaultValue={settings.press_hero_img_alt} className={styles.textarea} />
             </div>
 
-            {/* Press Release */}
             <div className={styles.fullWidth}>
-                <h4 className={styles.subsectionTitle}>Press Release</h4>
+                <h4 className={styles.sectionTitle}>Press Release</h4>
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Title</label>
@@ -78,9 +72,8 @@ export function PressTab({ settings, pressHeroUrl, setPressHeroUrl }: PressTabPr
                 <textarea name="press_empty_state" defaultValue={settings.press_empty_state} className={styles.textarea} />
             </div>
 
-            {/* Media Kit */}
             <div className={styles.fullWidth}>
-                <h4 className={styles.subsectionTitle}>Media Kits</h4>
+                <h4 className={styles.sectionTitle}>Media Kits</h4>
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Title</label>
@@ -113,9 +106,8 @@ export function PressTab({ settings, pressHeroUrl, setPressHeroUrl }: PressTabPr
                 <input name="press_download_btn_text" defaultValue={settings.press_download_btn_text} className={styles.input} />
             </div>
 
-            {/* Sidebar Widget */}
             <div className={styles.fullWidth}>
-                <h4 className={styles.subsectionTitle}>Sidebar &quot;About&quot;</h4>
+                <h4 className={styles.sectionTitle}>Sidebar &quot;About&quot;</h4>
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Title</label>

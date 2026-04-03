@@ -22,9 +22,7 @@ export default async function FinancialGuidance() {
                     </Link>
                 </div>
 
-                {/* GRID LAYOUT */}
                 <div className={styles.guideGrid}>
-                    {/* CARD 1: Retirement/Planning */}
                     <div className={styles.guideCardLarge}>
                         <Image
                             src={settings.guide_article_1_img}
@@ -43,7 +41,6 @@ export default async function FinancialGuidance() {
                         </div>
                     </div>
 
-                    {/* CARD 2: SECURITY*/}
                     <div className={styles.guideCardGold}>
                         <div className={styles.securityContent}>
                             <div className={styles.iconCircleWhite}>
@@ -58,7 +55,6 @@ export default async function FinancialGuidance() {
                         </div>
                     </div>
 
-                    {/* CARD 3: HOME OWNERSHIP */}
                     <div className={styles.guideCardSmall}>
                         <Image
                             src={settings.guide_article_3_img}
@@ -77,7 +73,6 @@ export default async function FinancialGuidance() {
                         </div>
                     </div>
 
-                    {/* CARD 4: BUSINESS */}
                     <div className={styles.guideCardWide}>
                         <Image
                             src={settings.guide_article_4_img}

@@ -12,7 +12,7 @@ import {
   TransactionDirection
 } from "@prisma/client";
 
-// --- 1. FEE CALCULATOR (Base USD Logic) ---
+// --- FEE CALCULATOR (Base USD Logic) ---
 function calculateWireFee(amount: number): number {
     if (amount <= 5000) return 25.00;
     if (amount <= 50000) return 50.00;
@@ -34,7 +34,6 @@ const wireSchema = z.object({
 });
 
 export async function initiateWireTransfer(prevState: any, formData: FormData) {
-  // 1. GUARD
   const { success, message, user } = await getAuthenticatedUser();
    if (!success || !user) {
         return { success: false, message };
@@ -69,14 +68,10 @@ export async function initiateWireTransfer(prevState: any, formData: FormData) {
     swiftCode, country, saveBeneficiary, displayAmount, displayCurrency
   } = validated.data;
 
-  // 2. LOGIC & COMPLIANCE
-
-  // A. Routing/SWIFT Check
   if (!swiftCode) {
       return { message: "Please provide SWIFT Code of the destination bank" };
   }
 
-  // B. Internal Transfer Check
   const internalAccount = await db.account.findUnique({
       where: { accountNumber: accountNumber }
   });
@@ -84,11 +79,9 @@ export async function initiateWireTransfer(prevState: any, formData: FormData) {
       return { message: "TrustBank Account detected. Please use 'Local Transfer' for instant, fee-free transactions." };
   }
 
-  // C. Calculate Fee (On USD amount)
   const serviceFee = calculateWireFee(amount);
   const totalDeduction = amount + serviceFee;
 
-  // 3. SECURITY & LIMITS
   const pinValidation = await verifyPin(user.id, pin);
   if (!pinValidation.success) return { message: pinValidation.error };
 
@@ -104,7 +97,6 @@ const permission = await checkPermissions(user.id, 'TRANSFER_WIRE', amount);
     return { message: `🚫 Unverified Limit Exceeded. Max: $${UNVERIFIED_LIMIT.toLocaleString()}.` };
   }
 
-  // 4. BALANCE CHECK (Must cover Amount + Fee)
   const account = await db.account.findUnique({ where: { id: accountId } });
   if (!account) return { message: "Account not found." };
 
@@ -112,12 +104,10 @@ const permission = await checkPermissions(user.id, 'TRANSFER_WIRE', amount);
       return { message: `Insufficient funds. Balance needed: $${totalDeduction.toLocaleString()} (Includes service fee).` };
   }
 
-  // 5. THE TRANSACTION
   try {
     let transactionResult: any = null;
 
     await db.$transaction(async (tx) => {
-      // A. Create Wire Record
       const wire = await tx.wireTransfer.create({
         data: {
           userId: user.id,
@@ -134,13 +124,11 @@ const permission = await checkPermissions(user.id, 'TRANSFER_WIRE', amount);
         }
       });
 
-      // B. Deduct AVAILABLE Balance Only (The Lock)
       await tx.account.update({
         where: { id: accountId },
         data: { availableBalance: { decrement: totalDeduction } }
       });
 
-      // C. Ledger Entry: The Wire (ON HOLD)
       await tx.ledgerEntry.create({
         data: {
           accountId: accountId,
@@ -154,7 +142,6 @@ const permission = await checkPermissions(user.id, 'TRANSFER_WIRE', amount);
         }
       });
 
-      // D. Beneficiary
       if (saveBeneficiary === "on") {
         const existing = await tx.beneficiary.findFirst({
           where: { userId: user.id, accountNumber: accountNumber }
@@ -176,7 +163,6 @@ const permission = await checkPermissions(user.id, 'TRANSFER_WIRE', amount);
       transactionResult = wire;
     });
 
-    // 6. NOTIFICATIONS
     if (transactionResult) {
       const formattedAmount = (displayAmount && displayCurrency)
         ? `${displayCurrency} ${Number(displayAmount).toLocaleString()}`
@@ -250,7 +236,6 @@ export async function submitClearanceCode(prevState: any, formData: FormData) {
     let nextStage = "";
     let isFinalStage = false;
 
-    // Flow: TAA -> COT -> IMF -> IJY -> ADMIN REVIEW
     if (wire.currentStage === 'TAA') {
         requiredCode = wire.taaCode || "";
         nextStage = 'COT';
@@ -273,7 +258,6 @@ export async function submitClearanceCode(prevState: any, formData: FormData) {
 
             if (attempts >= 5) {
                 await db.$transaction(async (tx) => {
-                    // 1. MARK AS REVERSED (System Block)
                     await tx.wireTransfer.update({
                         where: { id: wireId },
                         data: {
@@ -282,7 +266,6 @@ export async function submitClearanceCode(prevState: any, formData: FormData) {
                         }
                     });
 
-                    // 2. REFUND MONEY
                     const totalRelease = Number(wire.amount) + Number(wire.fee || 0);
 
                     if (wire.accountId) {
@@ -291,7 +274,6 @@ export async function submitClearanceCode(prevState: any, formData: FormData) {
                             data: { availableBalance: { increment: totalRelease } }
                         });
 
-                        // 3. MARK LEDGER AS REVERSED
                         await tx.ledgerEntry.updateMany({
                             where: {
                                 referenceId: { contains: wire.id },
@@ -304,7 +286,6 @@ export async function submitClearanceCode(prevState: any, formData: FormData) {
                         });
                     }
 
-                    // 4. NOTIFY ADMIN
                     const admins = await tx.user.findMany({
                         where: { role: { in: ["ADMIN", "SUPER_ADMIN"] } },
                         select: { id: true }
@@ -323,7 +304,6 @@ export async function submitClearanceCode(prevState: any, formData: FormData) {
                         });
                     }
 
-                    // 5. NOTIFY USER (Optional but good UX)
                     await tx.notification.create({
                         data: {
                             userId: wire.userId,
@@ -348,7 +328,6 @@ export async function submitClearanceCode(prevState: any, formData: FormData) {
             }
 
         } else {
-            // --- SUCCESS FLOW (Unchanged) ---
             if (isFinalStage) {
                 await db.wireTransfer.update({
                     where: { id: wireId },
@@ -358,7 +337,6 @@ export async function submitClearanceCode(prevState: any, formData: FormData) {
                     }
                 });
 
-                // Notify Admins
                 const admins = await db.user.findMany({
                     where: { role: { in: ["ADMIN", "SUPER_ADMIN"] } },
                     select: { id: true }

@@ -33,7 +33,6 @@ export default async function TransferPage({
 
     if (!user) return null;
 
-    // 1. Determine Currency & Rate
     const currency = user.currency || "USD";
     const exchangeRate = currency === "USD"
         ? 1

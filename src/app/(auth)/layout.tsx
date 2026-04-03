@@ -7,7 +7,6 @@ export default async function AuthLayout({ children }: { children: React.ReactNo
     const settings = await getSiteSettings();
     return (
         <div className={styles.authLayout}>
-            {/* 1. MINIMAL HEADER  */}
             <header className={styles.minimalHeader}>
                 <Link href="/" className={styles.logoLink}>
                     <Image
@@ -19,12 +18,10 @@ export default async function AuthLayout({ children }: { children: React.ReactNo
                 </Link>
             </header>
 
-            {/* 2. MAIN CONTENT  */}
             <main className={styles.mainContent}>
                 {children}
             </main>
 
-            {/* 3. MINIMAL FOOTER */}
             <footer className={styles.minimalFooter}>
                 <div className={styles.footerLinks}>
                     <Link href="/privacy">Privacy Policy</Link>

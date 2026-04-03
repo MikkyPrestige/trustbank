@@ -23,7 +23,7 @@
 }
 
 .iconWrapper {
-  background: rgba(234, 179, 8, 0.1); /* Light Warning/Orange */
+  background: rgba(var(--accent-rgb), 0.1);
   width: 80px;
   height: 80px;
   border-radius: 50%;

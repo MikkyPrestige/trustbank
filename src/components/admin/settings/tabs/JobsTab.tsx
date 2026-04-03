@@ -12,13 +12,10 @@ interface JobsTabProps {
 export function JobsTab({ settings, careersHeroUrl, setCareersHeroUrl }: JobsTabProps) {
     return (
         <div className={styles.grid}>
-
-            {/* --- 1. DATA MANAGEMENT LINK --- */}
             <div className={styles.fullWidth}>
-                <h3 className={styles.sectionTitle}>Job Board Database</h3>
+                <h3 className={styles.sectionTitle}>Job Board</h3>
                 <p className={styles.sectionSubtitle}>Manage open positions and applications.</p>
             </div>
-
             <Link href="/admin/careers" className={styles.navCard}>
                 <div className={`${styles.navIcon} ${styles.iconPrimary}`}>
                     <Briefcase size={24} />
@@ -30,13 +27,10 @@ export function JobsTab({ settings, careersHeroUrl, setCareersHeroUrl }: JobsTab
                 <ArrowRight size={16} className={styles.chevron} />
             </Link>
 
-            {/* --- 2. CAREERS PAGE CONFIG --- */}
-            <div className={`${styles.fullWidth} ${styles.marginTop}`}>
+            <div className={styles.fullWidth}>
                 <hr className={styles.divider} />
-                <h3 className={styles.sectionTitle}>Careers Page Configuration</h3>
+                <h3 className={styles.sectionTitle}>HERO SECTION</h3>
             </div>
-
-            {/* Hero */}
             <div className={styles.group}>
                 <label className={styles.label}>Hero Title</label>
                 <input name="careers_hero_title" defaultValue={settings.careers_hero_title} className={styles.input} />
@@ -51,7 +45,7 @@ export function JobsTab({ settings, careersHeroUrl, setCareersHeroUrl }: JobsTab
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Image Alt Text</label>
-                <input name="careers_hero_img_alt" defaultValue={settings.careers_hero_img_alt} className={styles.input} />
+                <textarea name="careers_hero_img_alt" defaultValue={settings.careers_hero_img_alt} className={styles.textarea} />
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Hero Button Text</label>
@@ -62,9 +56,8 @@ export function JobsTab({ settings, careersHeroUrl, setCareersHeroUrl }: JobsTab
                 <input name="careers_hero_btn_link" defaultValue={settings.careers_hero_btn_link} className={styles.input} />
             </div>
 
-            {/* Values */}
             <div className={styles.fullWidth}>
-                <h4 className={styles.subsectionTitle}>Company Values</h4>
+                <h4 className={styles.sectionTitle}>Company Values</h4>
             </div>
             <div className={`${styles.group} ${styles.fullWidth}`}>
                 <div className={styles.row}>
@@ -107,9 +100,8 @@ export function JobsTab({ settings, careersHeroUrl, setCareersHeroUrl }: JobsTab
                 <textarea name="careers_val3_desc" defaultValue={settings.careers_val3_desc} className={styles.input} />
             </div>
 
-            {/* Job Board Labels */}
             <div className={styles.fullWidth}>
-                <h4 className={styles.subsectionTitle}>Job Board Interface</h4>
+                <h4 className={styles.sectionTitle}>Job Board Interface</h4>
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Board Title</label>

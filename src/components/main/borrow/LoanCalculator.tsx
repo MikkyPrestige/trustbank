@@ -10,7 +10,6 @@ interface LoanCalculatorProps {
 }
 
 export default function LoanCalculator({ defaultRate = 6.99, settings }: LoanCalculatorProps) {
-    // Destructure
     const minAmt = settings.borrow_calc_min_amt || 1000;
     const maxAmt = settings.borrow_calc_max_amt || 100000;
     const minTerm = settings.borrow_calc_min_term || 12;
@@ -43,7 +42,6 @@ export default function LoanCalculator({ defaultRate = 6.99, settings }: LoanCal
 
             <div className={styles.calcGrid}>
                 <div className={styles.controls}>
-                    {/* AMOUNT SLIDER */}
                     <div className={styles.inputGroup}>
                         <div className={styles.labelRow}>
                             <label><DollarSign size={16} />{settings.borrow_calc_label_amt}</label>
@@ -58,7 +56,6 @@ export default function LoanCalculator({ defaultRate = 6.99, settings }: LoanCal
                         />
                     </div>
 
-                    {/* TERM SLIDER */}
                     <div className={styles.inputGroup}>
                         <div className={styles.labelRow}>
                             <label><Calendar size={16} />{settings.borrow_calc_label_term}</label>
@@ -80,7 +77,6 @@ export default function LoanCalculator({ defaultRate = 6.99, settings }: LoanCal
                         </div>
                     </div>
 
-                    {/* INTEREST RATE */}
                     <div className={styles.inputGroup}>
                         <div className={styles.labelRow}>
                             <label><Percent size={16} /> {settings.borrow_calc_label_rate}</label>
@@ -96,7 +92,6 @@ export default function LoanCalculator({ defaultRate = 6.99, settings }: LoanCal
                     </div>
                 </div>
 
-                {/* RESULT BOX */}
                 <div className={styles.resultBox}>
                     <span className={styles.resultLabel}>{settings.borrow_calc_res_monthly}</span>
                     <div className={styles.resultAmount}>

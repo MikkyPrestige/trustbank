@@ -1,8 +1,9 @@
 'use client';
 
+import styles from "./receipt.module.css";
 import { Printer, Share2 } from "lucide-react";
 
-export default function ReceiptActions({ styles }: { styles: any }) {
+export default function ReceiptActions() {
 
     const handlePrint = () => {
         window.print();

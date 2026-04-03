@@ -10,9 +10,6 @@
   padding: 0 1.5rem;
 }
 
-/* =========================================
-   1. HERO SECTION
-   ========================================= */
 .heroBackground {
   position: relative;
   height: 70vh;
@@ -81,7 +78,6 @@
   line-height: 1.6;
 }
 
-/* Floating Widget */
 .heroWidget {
   position: absolute;
   right: 5%;
@@ -91,9 +87,6 @@
   width: 400px;
 }
 
-/* =========================================
-   2. ANCHOR SECTIONS
-   ========================================= */
 .productSection {
   padding: 6rem 0;
   border-bottom: 1px solid var(--border);
@@ -178,9 +171,6 @@
   box-shadow: var(--shadow-glow);
 }
 
-/* =========================================
-   3. SUPPLEMENTAL GRID
-   ========================================= */
 .suppSection {
   padding: 6rem 0;
   background: var(--bg-surface);
@@ -266,9 +256,6 @@
   color: var(--text-invert);
 }
 
-/* =========================================
-   4. UTILITY STRIP
-   ========================================= */
 .utilityStrip {
   background: var(--bg-surface);
   border-top: 1px solid var(--border);
@@ -316,13 +303,11 @@
   margin: 0;
 }
 
-/* Neon Icon */
 .iconNeon {
   color: var(--primary);
   filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.4));
 }
 
-/* Responsive */
 @media (max-width: 968px) {
   .heroBackground { height: auto; flex-direction: column; padding: 4rem 0; text-align: center; }
   .heroContent { margin-left: 0; margin-bottom: 3rem; }

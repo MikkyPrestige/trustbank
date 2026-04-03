@@ -18,7 +18,6 @@ export function LegalTab({ settings }: { settings: any }) {
         accessibility: settings.legal_accessibility_statement
     });
 
-    // Refs for manual DOM manipulation
     const privacyRef = useRef<HTMLTextAreaElement>(null);
     const termsRef = useRef<HTMLTextAreaElement>(null);
     const accessRef = useRef<HTMLTextAreaElement>(null);
@@ -50,12 +49,10 @@ export function LegalTab({ settings }: { settings: any }) {
                 <Info size={20} />
                 <p><strong>HTML Editor:</strong> Use <code>&lt;h2&gt;</code> for sections and <code>&lt;p&gt;</code> for text.</p>
             </div>
-
-            {/* --- PRIVACY POLICY SECTION --- */}
             <div className={styles.legalSectionWrapper}>
                 <div className={styles.legalHeader}>
                     <div className={styles.legalTitleGroup}>
-                        <label className={styles.label}>Privacy Policy</label>
+                        <label className={styles.legalTitle}>Privacy Policy</label>
                         <button type="button" className={styles.revertBtn} onClick={() => handleRevert('privacy', privacyRef, DEFAULT_PRIVACY)}>
                             <RefreshCcw size={12} /> Reset
                         </button>
@@ -78,11 +75,10 @@ export function LegalTab({ settings }: { settings: any }) {
                 </div>
             </div>
 
-            {/* --- TERMS OF SERVICE SECTION --- */}
             <div className={styles.legalSectionWrapper}>
                 <div className={styles.legalHeader}>
                     <div className={styles.legalTitleGroup}>
-                        <label className={styles.label}>Terms of Service</label>
+                        <label className={styles.legalTitle}>Terms of Service</label>
                         <button type="button" className={styles.revertBtn} onClick={() => handleRevert('terms', termsRef, DEFAULT_TERMS)}>
                             <RefreshCcw size={12} /> Reset
                         </button>
@@ -105,11 +101,10 @@ export function LegalTab({ settings }: { settings: any }) {
                 </div>
             </div>
 
-            {/* --- ACCESSIBILITY SECTION --- */}
             <div className={styles.legalSectionWrapper}>
                 <div className={styles.legalHeader}>
                     <div className={styles.legalTitleGroup}>
-                        <label className={styles.label}>Accessibility Statement</label>
+                        <label className={styles.legalTitle}>Accessibility Statement</label>
                         <button
                             type="button"
                             className={styles.revertBtn}
@@ -150,8 +145,7 @@ export function LegalTab({ settings }: { settings: any }) {
             <div className={styles.fullWidth}>
                 <h3 className={styles.sectionTitle}>Navigation Mapping</h3>
             </div>
-
-            <div className={styles.fullWidth}><strong className={styles.sectionSubtitle}>Privacy</strong></div>
+            <div className={styles.groupHeader}><strong>Privacy</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Label</label>
                 <input name="legal_nav_privacy_label" defaultValue={settings.legal_nav_privacy_label} className={styles.input} />
@@ -166,7 +160,7 @@ export function LegalTab({ settings }: { settings: any }) {
                     <input name="legal_nav_privacy_id" defaultValue={settings.legal_nav_privacy_id} className={styles.input} />
                 </div>
             </div>
-            <div className={styles.fullWidth}><strong className={styles.sectionSubtitle}>Terms</strong></div>
+            <div className={styles.groupHeader}><strong>Terms</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Label</label>
                 <input name="legal_nav_terms_label" defaultValue={settings.legal_nav_terms_label} className={styles.input} />
@@ -182,7 +176,7 @@ export function LegalTab({ settings }: { settings: any }) {
                 </div>
             </div>
 
-            <div className={styles.fullWidth}><strong className={styles.sectionSubtitle}>Accessibility</strong></div>
+            <div className={styles.groupHeader}><strong>Accessibility</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Label</label>
                 <input name="legal_nav_accessibility_label" defaultValue={settings.legal_nav_accessibility_label} className={styles.input} />
@@ -199,12 +193,11 @@ export function LegalTab({ settings }: { settings: any }) {
             </div>
 
             <div className={styles.fullWidth}>
-                <div className={styles.sectionHeaderLine}>
+                <div className={styles.divider}>
                     <h3 className={styles.sectionTitle}>Shared Layout Settings</h3>
                     <p className={styles.sectionSubtitle}>These labels apply to all three legal pages.</p>
                 </div>
             </div>
-            {/* --- SHARED SETTINGS --- */}
             <div className={styles.group}>
                 <label className={styles.label}>&quot;Last Updated&quot; Label</label>
                 <input

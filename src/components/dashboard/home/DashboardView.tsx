@@ -1,18 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import {
     ArrowUpRight, ArrowDownLeft, Send, Globe, CreditCard as CardIcon,
-    Plus, MoreHorizontal, Eye, EyeOff, Copy, Check, AlertTriangle, Wifi, Repeat, Banknote, Lock, X, UserCog, Landmark, XCircle, Activity
+    Plus, MoreHorizontal, Copy, Check, AlertTriangle, Wifi, Repeat, Banknote, Lock, X, UserCog, Landmark, XCircle, Activity
 } from "lucide-react";
 import toast from "react-hot-toast";
 import BalanceCard from "./BalanceCard";
+import NoActivity from "./NoActivity";
 import NotificationDropdown from "./NotificationDropdown";
 import DashboardBanner from "./DashboardBanner";
 import PromoSidebar from "./PromoSidebar";
+import SidebarFooter from "./SidebarFooter";
 import styles from "../dashboard.module.css";
 
 interface DashboardViewProps {
@@ -38,6 +40,18 @@ export default function DashboardView({
     const [isVisible, setIsVisible] = useState(true);
     const [copiedId, setCopiedId] = useState<string | null>(null);
     const [showMore, setShowMore] = useState(false);
+    const promoId = settings.dashboard_promo_id;
+
+    const [showFallback, setShowFallback] = useState(() => {
+        if (typeof window !== 'undefined') {
+            return !!localStorage.getItem(`promo_hide_${promoId}`);
+        }
+        return false;
+    });
+
+    const handlePromoDismiss = () => {
+        setShowFallback(true);
+    };
 
     const toggleVisibility = () => setIsVisible(!isVisible);
 
@@ -80,12 +94,7 @@ export default function DashboardView({
                     <h1>{greeting}, {user.fullName.split(' ')[0]}</h1>
                     <p>{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
                 </div>
-                <div className={styles.headerActions}>
-                    <button className={styles.iconBtn} onClick={toggleVisibility}>
-                        {isVisible ? <Eye size={20} /> : <EyeOff size={20} />}
-                    </button>
-                    <NotificationDropdown />
-                </div>
+                <NotificationDropdown />
             </header>
 
             {isFrozen && (
@@ -102,24 +111,28 @@ export default function DashboardView({
 
             <div className={styles.dashboardBanner}>
                 <DashboardBanner
-                    show={settings.dashboard_alert_show === "true"}
+                    show={settings.dashboard_alert_show}
                     type={settings.dashboard_alert_type}
                     message={settings.dashboard_alert_msg}
+                    phone={settings.dashboard_support_phone}
+                    email={settings.dashboard_support_email}
                 />
             </div>
 
             <div className={styles.mainGrid}>
                 <div className={styles.leftCol}>
                     <BalanceCard
+                        bankName={settings.site_name}
                         totalBalance={totalBalance}
                         accountName={user.fullName}
                         accountNumber={primaryAccount?.accountNumber || "N/A"}
                         routingNumber={primaryAccount?.routingNumber}
                         trend={trend}
                         status={user.status}
-                        bankName={settings.site_name}
                         currencyCode={currencyCode}
                         exchangeRate={exchangeRate}
+                        isVisible={isVisible}
+                        onToggleVisibility={toggleVisibility}
                     />
 
                     {/* ACCOUNTS LIST */}
@@ -173,7 +186,15 @@ export default function DashboardView({
                         <table className={styles.table}>
                             <tbody>
                                 {user.accounts.flatMap((a: any) => a.ledgerEntries).length === 0 ? (
-                                    <tr><td colSpan={3} className={styles.emptyState}>No recent activity</td></tr>
+                                    <tr><td colSpan={3}>
+                                        <NoActivity
+                                            bankName={settings.site_name}
+                                            accountName={user.fullName}
+                                            accountNumber={primaryAccount?.accountNumber || "N/A"}
+                                            routingNumber={primaryAccount?.routingNumber}
+                                        />
+                                    </td>
+                                    </tr>
                                 ) : (
                                     user.accounts.flatMap((a: any) => a.ledgerEntries)
                                         .sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
@@ -230,14 +251,7 @@ export default function DashboardView({
                     </div>
                 </div>
 
-                <div className={styles.rightCol}>
-                    <PromoSidebar
-                        title={settings.dashboard_promo_title}
-                        desc={settings.dashboard_promo_desc}
-                        rate={settings.rate_hysa_apy}
-                        btnLabel={settings.dashboard_promo_btn}
-                        href={settings.dashboard_promo_link}
-                    />
+                <aside className={styles.rightCol}>
                     <div className={styles.actionsGrid}>
                         <Link href="/dashboard/transfer" className={styles.quickAction}>
                             <div className={styles.actionIcon}><Send size={18} /></div>
@@ -302,7 +316,6 @@ export default function DashboardView({
                                 <Plus size={24} />
                             </Link>
                         )}
-
                         {beneficiaries.map(ben => (
                             <Link
                                 href={ben.swiftCode ? `/dashboard/wire?beneficiaryId=${ben.id}` : `/dashboard/transfer?beneficiaryId=${ben.id}`}
@@ -368,7 +381,19 @@ export default function DashboardView({
                             </div>
                         </Link>
                     )}
-                </div>
+
+                    {!showFallback ? (
+                        <PromoSidebar
+                            settings={settings}
+                            promoId={settings.dashboard_promo_id}
+                            onDismiss={handlePromoDismiss}
+                        />
+                    ) : (
+                        <div className={styles.fallbackFadeIn}>
+                            <SidebarFooter settings={settings} />
+                        </div>
+                    )}
+                </aside>
             </div>
         </div>
     );

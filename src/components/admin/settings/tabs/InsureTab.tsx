@@ -17,9 +17,8 @@ interface InsureTabProps {
 export function InsureTab({ settings, insureHeroUrl, setInsureHeroUrl, partner1, setPartner1, partner2, setPartner2, partner3, setPartner3, partner4, setPartner4, insureP1Url, setInsureP1Url, insureP2Url, setInsureP2Url, insureP3Url, setInsureP3Url, insureP4Url, setInsureP4Url }: InsureTabProps) {
     return (
         <div className={styles.grid}>
-            {/* --- HERO SECTION --- */}
             <div className={styles.fullWidth}>
-                <h3 className={styles.sectionTitle}>Insure: Hero</h3>
+                <h3 className={styles.sectionTitle}>HERO SECTION</h3>
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Badge</label>
@@ -45,10 +44,9 @@ export function InsureTab({ settings, insureHeroUrl, setInsureHeroUrl, partner1,
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Image Alt Text</label>
-                <input name="insure_hero_alt" defaultValue={settings.insure_hero_alt} className={styles.input} />
+                <textarea name="insure_hero_alt" defaultValue={settings.insure_hero_alt} className={styles.textarea} />
             </div>
 
-            {/* --- WIZARD LABELS --- */}
             <div className={styles.fullWidth}>
                 <hr className={styles.divider} />
                 <h3 className={styles.sectionTitle}>Coverage Wizard Settings</h3>
@@ -65,12 +63,13 @@ export function InsureTab({ settings, insureHeroUrl, setInsureHeroUrl, partner1,
                 <label className={styles.label}>Description</label>
                 <textarea name="insure_wiz_desc" defaultValue={settings.insure_wiz_desc} className={styles.textarea} />
             </div>
-            {/* Questions */}
-            <div className={styles.fullWidth}><strong>Questions</strong></div>
-            <div className={`${styles.group} ${styles.fullWidth}`}>
+
+            <div className={styles.groupHeader}><strong>Questions</strong></div>
+            <div className={styles.group}>
                 <label className={styles.label}>Question 1</label>
                 <input name="insure_wiz_step1" defaultValue={settings.insure_wiz_step1} className={styles.input} />
             </div>
+            <div className={styles.groupHeader}><strong>Options</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Option 1</label>
                 <input name="insure_wiz_step1_option1" defaultValue={settings.insure_wiz_step1_option1} className={styles.input} />
@@ -95,10 +94,12 @@ export function InsureTab({ settings, insureHeroUrl, setInsureHeroUrl, partner1,
                 <label className={styles.label}>Value 3</label>
                 <input name="insure_wiz_step1_option3Val" defaultValue={settings.insure_wiz_step1_option3Val} className={styles.input} />
             </div>
-            <div className={`${styles.group} ${styles.fullWidth}`}>
+
+            <div className={styles.group}>
                 <label className={styles.label}>Question 2</label>
                 <input name="insure_wiz_step2" defaultValue={settings.insure_wiz_step2} className={styles.input} />
             </div>
+            <div className={styles.groupHeader}><strong>Options</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Option 1</label>
                 <input name="insure_wiz_step2_option1" defaultValue={settings.insure_wiz_step2_option1} className={styles.input} />
@@ -123,9 +124,10 @@ export function InsureTab({ settings, insureHeroUrl, setInsureHeroUrl, partner1,
                 <label className={styles.label}>Value 3</label>
                 <input name="insure_wiz_step2_option3Val" defaultValue={settings.insure_wiz_step2_option3Val} className={styles.input} />
             </div>
-            {/* Buttons */}
+
+            <div className={styles.groupHeader}><strong>CTA</strong></div>
             <div className={styles.group}>
-                <label className={styles.label}>CTA Button Text</label>
+                <label className={styles.label}>Button Text</label>
                 <input name="insure_wiz_btn_view" defaultValue={settings.insure_wiz_btn_view} className={styles.input} />
             </div>
             <div className={styles.group}>
@@ -133,7 +135,7 @@ export function InsureTab({ settings, insureHeroUrl, setInsureHeroUrl, partner1,
                 <input name="insure_wiz_btn_reset" defaultValue={settings.insure_wiz_btn_reset} className={styles.input} />
             </div>
 
-            {/* --- PRODUCTS (ANCHORS) --- */}
+
             <div className={styles.fullWidth}>
                 <hr className={styles.divider} />
                 <h3 className={styles.sectionTitle}>Anchor Sections</h3>
@@ -146,8 +148,8 @@ export function InsureTab({ settings, insureHeroUrl, setInsureHeroUrl, partner1,
                 <label className={styles.label}>Description</label>
                 <textarea name="insure_products_desc" defaultValue={settings.insure_products_desc} className={styles.textarea} />
             </div>
-            {/* 1. Medicare */}
-            <div className={styles.fullWidth}><strong>1. Medicare</strong></div>
+
+            <div className={styles.groupHeader}><strong>1. Medicare</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Title</label>
                 <input name="insure_prod1_title" defaultValue={settings.insure_prod1_title} className={styles.input} />
@@ -173,10 +175,10 @@ export function InsureTab({ settings, insureHeroUrl, setInsureHeroUrl, partner1,
                 <input type="hidden" name="insure_prod1_img" value={insureP1Url} /></div>
             <div className={styles.group}>
                 <label className={styles.label}>Image Alt Text</label>
-                <input name="insure_prod1_img_alt" defaultValue={settings.insure_prod1_img_alt} className={styles.input} placeholder="Alt Text" />
+                <textarea name="insure_prod1_img_alt" defaultValue={settings.insure_prod1_img_alt} className={styles.textarea} placeholder="Alt Text" />
             </div>
-            {/* 2. Auto */}
-            <div className={styles.fullWidth}><strong>2. Auto</strong></div>
+
+            <div className={styles.groupHeader}><strong>2. Auto</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Title</label>
                 <input name="insure_prod2_title" defaultValue={settings.insure_prod2_title} className={styles.input} />
@@ -202,10 +204,10 @@ export function InsureTab({ settings, insureHeroUrl, setInsureHeroUrl, partner1,
                 <input type="hidden" name="insure_prod2_img" value={insureP2Url} /></div>
             <div className={styles.group}>
                 <label className={styles.label}>Image Alt Text</label>
-                <input name="insure_prod2_img_alt" defaultValue={settings.insure_prod2_img_alt} className={styles.input} placeholder="Alt Text" />
+                <textarea name="insure_prod2_img_alt" defaultValue={settings.insure_prod2_img_alt} className={styles.textarea} placeholder="Alt Text" />
             </div>
-            {/* 3. Home  */}
-            <div className={styles.fullWidth}><strong>3. Home</strong></div>
+
+            <div className={styles.groupHeader}><strong>3. Home</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Title</label>
                 <input name="insure_prod3_title" defaultValue={settings.insure_prod3_title} className={styles.input} />
@@ -232,10 +234,10 @@ export function InsureTab({ settings, insureHeroUrl, setInsureHeroUrl, partner1,
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Image Alt Text</label>
-                <input name="insure_prod3_img_alt" defaultValue={settings.insure_prod3_img_alt} className={styles.input} placeholder="Alt Text" />
+                <textarea name="insure_prod3_img_alt" defaultValue={settings.insure_prod3_img_alt} className={styles.textarea} placeholder="Alt Text" />
             </div>
-            {/* 4. Life */}
-            <div className={styles.fullWidth}><strong>4. Life</strong></div>
+
+            <div className={styles.groupHeader}><strong>4. Life</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Title</label>
                 <input name="insure_prod4_title" defaultValue={settings.insure_prod4_title} className={styles.input} />
@@ -262,10 +264,10 @@ export function InsureTab({ settings, insureHeroUrl, setInsureHeroUrl, partner1,
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Image Alt Text</label>
-                <input name="insure_prod4_img_alt" defaultValue={settings.insure_prod4_img_alt} className={styles.input} placeholder="Alt Text" />
+                <textarea name="insure_prod4_img_alt" defaultValue={settings.insure_prod4_img_alt} className={styles.textarea} placeholder="Alt Text" />
             </div>
 
-            {/* --- SUPPLEMENTAL GRID --- */}
+
             <div className={styles.fullWidth}>
                 <hr className={styles.divider} />
                 <h3 className={styles.sectionTitle}>Supplemental Grid</h3>
@@ -282,13 +284,13 @@ export function InsureTab({ settings, insureHeroUrl, setInsureHeroUrl, partner1,
                 <label className={styles.label}>Grid Description</label>
                 <textarea name="insure_supp_desc" defaultValue={settings.insure_supp_desc} className={styles.input} />
             </div>
-            {/* 5. Accident */}
-            <div className={styles.fullWidth}><strong>5. Accident</strong></div>
+
+            <div className={styles.groupHeader}><strong>5. Accident</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Title</label>
                 <input name="insure_prod5_title" defaultValue={settings.insure_prod5_title} className={styles.input} />
             </div>
-              <div className={styles.group}>
+            <div className={styles.group}>
                 <label className={styles.label}>Anchor ID</label>
                 <input name="insure_prod5_id" defaultValue={settings.insure_prod5_id} className={styles.input} />
             </div>
@@ -300,8 +302,8 @@ export function InsureTab({ settings, insureHeroUrl, setInsureHeroUrl, partner1,
                 <label className={styles.label}>Description</label>
                 <textarea name="insure_prod5_desc" defaultValue={settings.insure_prod5_desc} className={styles.textarea} />
             </div>
-            {/* 6. Business */}
-            <div className={styles.fullWidth}><strong>6. Business</strong></div>
+
+            <div className={styles.groupHeader}><strong>6. Business</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Title</label>
                 <input name="insure_prod6_title" defaultValue={settings.insure_prod6_title} className={styles.input} />
@@ -319,22 +321,23 @@ export function InsureTab({ settings, insureHeroUrl, setInsureHeroUrl, partner1,
                 <textarea name="insure_prod6_desc" defaultValue={settings.insure_prod6_desc} className={styles.textarea} />
             </div>
 
-            {/* --- PARTNERS --- */}
+
             <div className={styles.fullWidth}>
                 <hr className={styles.divider} />
                 <h3 className={styles.sectionTitle}>Partner Logos</h3>
             </div>
-            <div className={styles.fullWidth}>
+            <div className={styles.group}>
                 <label className={styles.label}>Title</label>
                 <input name="insure_partners_title" defaultValue={settings.insure_partners_title} className={styles.input} />
             </div>
+            <div className={styles.groupHeader}><strong>Partners</strong></div>
             <div className={styles.group}>
                 <ImageUploader label="Logo 1" value={partner1} onChange={setPartner1} />
                 <input type="hidden" name="insure_partner1_img" value={partner1} />
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Image Alt Text</label>
-                <input name="insure_partner1_img_alt" defaultValue={settings.insure_partner1_img_alt} className={styles.input} placeholder="Alt Text" />
+                <textarea name="insure_partner1_img_alt" defaultValue={settings.insure_partner1_img_alt} className={styles.textarea} placeholder="Alt Text" />
             </div>
             <div className={styles.group}>
                 <ImageUploader label="Logo 2" value={partner2} onChange={setPartner2} />
@@ -342,7 +345,7 @@ export function InsureTab({ settings, insureHeroUrl, setInsureHeroUrl, partner1,
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Image Alt Text</label>
-                <input name="insure_partner2_img_alt" defaultValue={settings.insure_partner2_img_alt} className={styles.input} placeholder="Alt Text" />
+                <textarea name="insure_partner2_img_alt" defaultValue={settings.insure_partner2_img_alt} className={styles.textarea} placeholder="Alt Text" />
             </div>
             <div className={styles.group}>
                 <ImageUploader label="Logo 3" value={partner3} onChange={setPartner3} />
@@ -350,7 +353,7 @@ export function InsureTab({ settings, insureHeroUrl, setInsureHeroUrl, partner1,
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Image Alt Text</label>
-                <input name="insure_partner3_img_alt" defaultValue={settings.insure_partner3_img_alt} className={styles.input} placeholder="Alt Text" />
+                <textarea name="insure_partner3_img_alt" defaultValue={settings.insure_partner3_img_alt} className={styles.textarea} placeholder="Alt Text" />
             </div>
             <div className={styles.group}>
                 <ImageUploader label="Logo 4" value={partner4} onChange={setPartner4} />
@@ -358,7 +361,7 @@ export function InsureTab({ settings, insureHeroUrl, setInsureHeroUrl, partner1,
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Image Alt Text</label>
-                <input name="insure_partner4_img_alt" defaultValue={settings.insure_partner4_img_alt} className={styles.input} placeholder="Alt Text" />
+                <textarea name="insure_partner4_img_alt" defaultValue={settings.insure_partner4_img_alt} className={styles.textarea} placeholder="Alt Text" />
             </div>
         </div>
     );

@@ -3,7 +3,6 @@
   background-color: var(--bg-surface);
 }
 
-/* HERO SECTION */
 .hero {
   position: relative;
   height: 400px;
@@ -59,7 +58,6 @@
   line-height: 1.6;
 }
 
-/* CONTAINER */
 .container {
   max-width: 1200px;
   margin: -5rem auto 0;
@@ -68,7 +66,6 @@
   z-index: 10;
 }
 
-/* GRID */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -113,7 +110,6 @@
   line-height: 1.6;
 }
 
-/* FRAUD SECTION */
 .fraudSection {
   margin-top: 4rem;
   text-align: center;
@@ -134,7 +130,8 @@
 }
 
 .fraudIconWrapper {
-  background: rgba(239, 68, 68, 0.1);
+  background: rgba(var(--danger-rgb), 0.1);
+  border: 1px solid rgba(var(--danger-rgb), 0.3);
   padding: 1rem;
   border-radius: 50%;
   color: var(--danger);
@@ -155,7 +152,6 @@
   color: var(--accent);
 }
 
-/* HELP LINK */
 .helpSection {
   text-align: center;
   margin-top: 2rem;
@@ -173,7 +169,6 @@
   text-decoration: underline;
 }
 
-/* MOBILE RESPONSIVE */
 @media (max-width: 768px) {
   .hero {
     height: 350px;

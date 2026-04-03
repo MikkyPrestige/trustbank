@@ -12,10 +12,8 @@ interface WealthTabProps {
 export function WealthTab({ settings, wealthHeroUrl, setWealthHeroUrl, wealthPcgUrl, setWealthPcgUrl, wealthRetUrl, setWealthRetUrl, wealthEstUrl, setWealthEstUrl }: WealthTabProps) {
     return (
         <div className={styles.grid}>
-
-            {/* --- HERO SECTION --- */}
             <div className={styles.fullWidth}>
-                <h3 className={styles.sectionTitle}>Wealth: Hero</h3>
+                <h3 className={styles.sectionTitle}>HERO SECTION</h3>
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Badge Text</label>
@@ -42,13 +40,12 @@ export function WealthTab({ settings, wealthHeroUrl, setWealthHeroUrl, wealthPcg
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Image Alt Text</label>
-                <input name="wealth_hero_alt" defaultValue={settings.wealth_hero_alt} className={styles.input} />
+                <textarea name="wealth_hero_alt" defaultValue={settings.wealth_hero_alt} className={styles.textarea} />
             </div>
 
-            {/* --- SIMULATOR LABELS --- */}
             <div className={styles.fullWidth}>
                 <hr className={styles.divider} />
-                <h3 className={styles.sectionTitle}>Wealth Simulator Settings</h3>
+                <h3 className={styles.sectionTitle}>Wealth Simulator</h3>
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Title</label>
@@ -59,7 +56,7 @@ export function WealthTab({ settings, wealthHeroUrl, setWealthHeroUrl, wealthPcg
                 <textarea name="wealth_sim_desc" defaultValue={settings.wealth_sim_desc} className={styles.textarea} />
             </div>
 
-            <div className={styles.fullWidth}><strong>Threshold Labels</strong></div>
+            <div className={styles.groupHeader}><strong>Threshold Labels</strong></div>
             <div className={styles.row}>
                 <div className={styles.group}>
                     <label className={styles.label}>Low Status</label>
@@ -88,29 +85,28 @@ export function WealthTab({ settings, wealthHeroUrl, setWealthHeroUrl, wealthPcg
                     <input name="wealth_sim_vol_high" defaultValue={settings.wealth_sim_vol_high} className={styles.input} />
                 </div>
             </div>
-
             <div className={styles.row}>
-            <div className={styles.group}>
-                <label className={styles.label}>&quot;Volatility&quot; Label</label>
-                <input name="wealth_sim_label_volatility" defaultValue={settings.wealth_sim_label_volatility} className={styles.input} />
-            </div>
-            <div className={styles.group}>
-                <label className={styles.label}>&quot;Allocation&quot; Label</label>
-                <input name="wealth_sim_label_allocation" defaultValue={settings.wealth_sim_label_allocation} className={styles.input} />
-            </div>
+                <div className={styles.group}>
+                    <label className={styles.label}>&quot;Volatility&quot; Label</label>
+                    <input name="wealth_sim_label_volatility" defaultValue={settings.wealth_sim_label_volatility} className={styles.input} />
+                </div>
+                <div className={styles.group}>
+                    <label className={styles.label}>&quot;Allocation&quot; Label</label>
+                    <input name="wealth_sim_label_allocation" defaultValue={settings.wealth_sim_label_allocation} className={styles.input} />
+                </div>
             </div>
             <div className={styles.row}>
-            <div className={styles.group}>
-                <label className={styles.label}>Risk Label</label>
-                <input name="wealth_sim_risk_label" defaultValue={settings.wealth_sim_risk_label} className={styles.input} />
-            </div>
-            <div className={styles.group}>
-                <label className={styles.label}>Return Label</label>
-                <input name="wealth_sim_return_label" defaultValue={settings.wealth_sim_return_label} className={styles.input} />
-            </div>
+                <div className={styles.group}>
+                    <label className={styles.label}>Risk Label</label>
+                    <input name="wealth_sim_risk_label" defaultValue={settings.wealth_sim_risk_label} className={styles.input} />
+                </div>
+                <div className={styles.group}>
+                    <label className={styles.label}>Return Label</label>
+                    <input name="wealth_sim_return_label" defaultValue={settings.wealth_sim_return_label} className={styles.input} />
+                </div>
             </div>
 
-            <div className={styles.fullWidth}><strong>Legend Items</strong></div>
+            <div className={styles.groupHeader}><strong>Legend Items</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Stocks</label>
                 <input name="wealth_sim_legend_stocks" defaultValue={settings.wealth_sim_legend_stocks} className={styles.input} />
@@ -127,13 +123,11 @@ export function WealthTab({ settings, wealthHeroUrl, setWealthHeroUrl, wealthPcg
                 <label className={styles.label}>Bonds</label>
                 <input name="wealth_sim_legend_bonds" defaultValue={settings.wealth_sim_legend_bonds} className={styles.input} />
             </div>
-
             <div className={`${styles.group} ${styles.fullWidth}`}>
                 <label className={styles.label}>Disclaimer Note</label>
                 <textarea name="wealth_sim_note" defaultValue={settings.wealth_sim_note} className={styles.textarea} />
             </div>
 
-            {/* --- SERVICES --- */}
             <div className={styles.fullWidth}>
                 <hr className={styles.divider} />
                 <h3 className={styles.sectionTitle}>Wealth Services</h3>
@@ -146,8 +140,8 @@ export function WealthTab({ settings, wealthHeroUrl, setWealthHeroUrl, wealthPcg
                 <label className={styles.label}>Description</label>
                 <textarea name="wealth_grid_desc" defaultValue={settings.wealth_grid_desc} className={styles.textarea} />
             </div>
-            {/* Service 1 */}
-            <div className={styles.fullWidth}><strong>1. Investment Advisory</strong></div>
+
+            <div className={styles.groupHeader}><strong>1. Investment Advisory</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Title</label>
                 <input name="wealth_service1_title" defaultValue={settings.wealth_service1_title} className={styles.input} />
@@ -166,8 +160,8 @@ export function WealthTab({ settings, wealthHeroUrl, setWealthHeroUrl, wealthPcg
                 <label className={styles.label}>Description</label>
                 <textarea name="wealth_service1_desc" defaultValue={settings.wealth_service1_desc} className={styles.textarea} />
             </div>
-            {/* Service 2 */}
-            <div className={styles.fullWidth}><strong>2. Estate & Trust</strong></div>
+
+            <div className={styles.groupHeader}><strong>2. Estate & Trust</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Title</label>
                 <input name="wealth_service2_title" defaultValue={settings.wealth_service2_title} className={styles.input} />
@@ -186,8 +180,8 @@ export function WealthTab({ settings, wealthHeroUrl, setWealthHeroUrl, wealthPcg
                 <label className={styles.label}>Description</label>
                 <textarea name="wealth_service2_desc" defaultValue={settings.wealth_service2_desc} className={styles.textarea} />
             </div>
-            {/* Service 3 */}
-            <div className={styles.fullWidth}><strong>3. Retirement Planning</strong></div>
+
+            <div className={styles.groupHeader}><strong>3. Retirement Planning</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Title</label>
                 <input name="wealth_service3_title" defaultValue={settings.wealth_service3_title} className={styles.input} />
@@ -207,7 +201,6 @@ export function WealthTab({ settings, wealthHeroUrl, setWealthHeroUrl, wealthPcg
                 <textarea name="wealth_service3_desc" defaultValue={settings.wealth_service3_desc} className={styles.textarea} />
             </div>
 
-            {/* --- ADVISOR  --- */}
             <div className={styles.fullWidth}>
                 <hr className={styles.divider} />
                 <h3 className={styles.sectionTitle}>Fiduciary</h3>
@@ -220,7 +213,7 @@ export function WealthTab({ settings, wealthHeroUrl, setWealthHeroUrl, wealthPcg
                 <label className={styles.label}>Description</label>
                 <textarea name="wealth_advisor_desc" defaultValue={settings.wealth_advisor_desc} className={styles.textarea} />
             </div>
-            <div className={styles.fullWidth}><strong>Checklist Items</strong></div>
+            <div className={styles.groupHeader}><strong>Checklist Items</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Item 1</label>
                 <input name="wealth_adv_item1" defaultValue={settings.wealth_adv_item1} className={styles.input} />
@@ -238,13 +231,12 @@ export function WealthTab({ settings, wealthHeroUrl, setWealthHeroUrl, wealthPcg
                 <input name="wealth_adv_btn" defaultValue={settings.wealth_adv_btn} className={styles.input} />
             </div>
 
-            {/* --- ANCHOR SECTIONS --- */}
             <div className={styles.fullWidth}>
                 <hr className={styles.divider} />
                 <h3 className={styles.sectionTitle}>Wealth Sections</h3>
             </div>
-            {/* 1. Private Client (#pcg) */}
-            <div className={styles.fullWidth}>
+
+            <div className={styles.groupHeader}>
                 <h4 className={styles.subsectionTitle}>1. Private Client</h4>
             </div>
             <div className={`${styles.group} ${styles.fullWidth}`}>
@@ -271,8 +263,8 @@ export function WealthTab({ settings, wealthHeroUrl, setWealthHeroUrl, wealthPcg
                 <label className={styles.label}>Anchor Link</label>
                 <input name="wealth_pcg_anchor" defaultValue={settings.wealth_pcg_anchor} className={styles.input} />
             </div>
-            {/* 2. Retirement (#retirement) */}
-            <div className={styles.fullWidth}>
+
+            <div className={styles.groupHeader}>
                 <h4 className={styles.subsectionTitle}>2. Retirement</h4>
             </div>
             <div className={`${styles.group} ${styles.fullWidth}`}>
@@ -299,8 +291,8 @@ export function WealthTab({ settings, wealthHeroUrl, setWealthHeroUrl, wealthPcg
                 <label className={styles.label}>Anchor Link</label>
                 <input name="wealth_ret_anchor" defaultValue={settings.wealth_ret_anchor} className={styles.input} />
             </div>
-            {/* 3. Estate (#estate) */}
-            <div className={styles.fullWidth}>
+
+            <div className={styles.groupHeader}>
                 <h4 className={styles.subsectionTitle}>3. Estate</h4>
             </div>
             <div className={`${styles.group} ${styles.fullWidth}`}>

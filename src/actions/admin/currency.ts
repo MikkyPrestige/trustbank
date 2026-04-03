@@ -9,7 +9,6 @@ interface ExchangeRateResponse {
     rates: Record<string, number>;
 }
 
-// 1. GET ALL RATES
 export async function getExchangeRates() {
     try {
         const rates = await db.exchangeRate.findMany({
@@ -21,22 +20,18 @@ export async function getExchangeRates() {
     }
 }
 
-// 2. REFRESH RATES (Fetches from Open API)
 export async function refreshLiveRates() {
     const { authorized } = await checkAdminAction();
     if (!authorized) return { success: false, message: "Unauthorized" };
 
     try {
-        // Fetching from a standard open exchange rate API (Base: USD)
         const res = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
         if (!res.ok) throw new Error("Failed to fetch external rates");
 
         const data: ExchangeRateResponse = await res.json();
 
-        // Currencies we want to support specifically
         const targetCurrencies = ["EUR", "GBP", "JPY", "CAD", "AUD", "CHF", "CNY", "INR", "ZAR"];
 
-        // Upsert each rate into the DB
         for (const currency of targetCurrencies) {
             if (data.rates[currency]) {
                 await db.exchangeRate.upsert({
@@ -59,7 +54,6 @@ export async function refreshLiveRates() {
     }
 }
 
-// 3. MANUAL UPDATE (If you want to set a custom rate)
 export async function updateManualRate(currency: string, newRate: number) {
     const { authorized } = await checkAdminAction();
     if (!authorized) return { success: false, message: "Unauthorized" };
@@ -78,7 +72,6 @@ export async function updateManualRate(currency: string, newRate: number) {
 }
 
 
-// --- CREATE ---
 export async function createCurrency(formData: FormData) {
     const auth = await checkAdminAction();
 
@@ -125,7 +118,6 @@ export async function createCurrency(formData: FormData) {
     }
 }
 
-// --- UPDATE RATE ---
 export async function updateCurrencyRate(id: string, rate: number) {
     const auth = await checkAdminAction();
 
@@ -159,7 +151,6 @@ export async function updateCurrencyRate(id: string, rate: number) {
     }
 }
 
-// --- DELETE ---
 export async function deleteCurrency(id: string) {
     const auth = await checkAdminAction();
 

@@ -32,15 +32,15 @@ export default async function TicketDetailPage({
 
     return (
         <div className={styles.container}>
-            <div style={{ marginBottom: '20px' }}>
-                <Link href="/admin/support" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-muted)', textDecoration: 'none' }}>
+            <div className={styles.headerActions}>
+                <Link href="/admin/support" className={styles.backBtn}>
                     <ArrowLeft size={16} /> Back to Tickets
                 </Link>
             </div>
 
-            <div style={{ marginBottom: '20px' }}>
+            <div className={styles.ticketHeader}>
                 <h1 className={styles.title}>{ticket.subject}</h1>
-                <p style={{ color: 'var(--text-muted)' }}>
+                <p className={styles.subtitle}>
                     Talking to: <strong>{ticket.user.fullName}</strong> ({ticket.user.email})
                 </p>
             </div>

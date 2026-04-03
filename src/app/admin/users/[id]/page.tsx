@@ -10,8 +10,7 @@ import KycReviewSection from "@/components/admin/users/[id]/KycReviewSection";
 import LocalTransferList from "@/components/admin/users/[id]/LocalTransferList";
 import ActivityLog from "@/components/admin/users/[id]/ActivityLog";
 import RevokeSessionButton from "@/components/admin/users/[id]/RevokeSessionButton";
-
-import { CreditCard, Activity, User, MapPin, HeartHandshake, History, Wallet, ArrowLeft, ArrowRightLeft, ShieldAlert, Lock, Mail, Phone, Briefcase, Calendar, Hash, AlertTriangle } from "lucide-react";
+import { CreditCard, Activity, User, MapPin, HeartHandshake, Heart, History, Wallet, ArrowLeft, ArrowRightLeft, ShieldAlert, Lock, Mail, Phone, Briefcase, Calendar, Hash, AlertTriangle } from "lucide-react";
 import { requireAdmin } from "@/lib/auth/admin-auth";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -23,7 +22,6 @@ export default async function UserDetailsPage({ params }: { params: Promise<{ id
     const settings = await getSiteSettings();
     const MAX_ATTEMPTS = settings.auth_login_limit || 5;
 
-    // 1. Fetch User & Notifications
     const user = await db.user.findUnique({
         where: { id },
         include: {
@@ -36,7 +34,6 @@ export default async function UserDetailsPage({ params }: { params: Promise<{ id
 
     if (!user) return notFound();
 
-    // 2. Fetch Exchange Rate for User's Currency
     const currency = user.currency || "USD";
     let exchangeRate = 1;
 
@@ -45,7 +42,6 @@ export default async function UserDetailsPage({ params }: { params: Promise<{ id
         if (rateData) exchangeRate = Number(rateData.rate);
     }
 
-    // 3. Fetch Security Logs (Spy Mode)
     const securityLogs = await db.adminLog.findMany({
         where: {
             targetId: user.email,
@@ -55,7 +51,6 @@ export default async function UserDetailsPage({ params }: { params: Promise<{ id
         take: 20
     });
 
-    // 4. Merge & Sort the Feed
     const unifiedFeed = [
         ...user.Notification.map(n => ({
             id: n.id,
@@ -103,7 +98,7 @@ export default async function UserDetailsPage({ params }: { params: Promise<{ id
             </Link>
 
             <header className={styles.detailHeader}>
-                <div>
+                <div className={styles.headerInfo}>
                     <div className={styles.headerTitleRow}>
                         <h1 className={styles.title}>{user.fullName}</h1>
                         <span className={`${styles.badge} ${styles[user.role]}`}>{user.role}</span>
@@ -115,8 +110,7 @@ export default async function UserDetailsPage({ params }: { params: Promise<{ id
                                 <Lock size={10} /> LOCKED
                             </span>
                         )}
-                        {/* Currency Tag */}
-                        <span className={`${styles.badge}`} style={{ backgroundColor: 'var(--bg-card)', color: 'var(--primary', border: '1px solid var(--border)' }}>
+                        <span className={`${styles.badge} ${styles.currencyBadge}`}>
                             {currency}
                         </span>
                     </div>
@@ -124,9 +118,8 @@ export default async function UserDetailsPage({ params }: { params: Promise<{ id
                     <p className={styles.subtitle}>Joined: {formatDate(user.createdAt)}</p>
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div className={styles.headerActions}>
                     <RevokeSessionButton userId={user.id} userName={user.fullName} />
-
                     <UserActions
                         userId={user.id}
                         status={user.status}
@@ -136,76 +129,74 @@ export default async function UserDetailsPage({ params }: { params: Promise<{ id
                 </div>
             </header>
 
-            {/* --- TOP ROW: IDENTITY & NEXT OF KIN --- */}
             <div className={styles.identityGrid}>
                 <div className={styles.section}>
-                    <h3 className={styles.secTitle}><User size={18} /> Client Profile</h3>
+                    <h3 className={styles.secTitle}><User size={20} className={styles.labelIcon} /> Client Profile</h3>
                     <div className={styles.profileGridDense}>
                         <div className={styles.field}>
-                            <label><Mail size={12} /> Email</label>
+                            <label><Mail size={16} className={styles.labelIcon} /> Email</label>
                             <input disabled defaultValue={user.email} className={styles.input} />
                         </div>
                         <div className={styles.field}>
-                            <label><Phone size={12} /> Phone</label>
+                            <label><Phone size={16} className={styles.labelIcon} /> Phone</label>
                             <input disabled defaultValue={user.phone || 'N/A'} className={styles.input} />
                         </div>
                         <div className={styles.field}>
-                            <label><Briefcase size={12} /> Occupation</label>
+                            <label><Briefcase size={16} className={styles.labelIcon} /> Occupation</label>
                             <input disabled defaultValue={user.occupation || 'N/A'} className={styles.input} />
                         </div>
                         <div className={styles.field}>
-                            <label><Calendar size={12} /> Date of Birth</label>
+                            <label><Calendar size={16} className={styles.labelIcon} /> Date of Birth</label>
                             <input disabled defaultValue={formatDate(user.dateOfBirth)} className={styles.input} />
                         </div>
                         <div className={styles.field}>
-                            <label><User size={12} /> Gender</label>
+                            <label><User size={16} className={styles.labelIcon} /> Gender</label>
                             <input disabled defaultValue={user.gender || 'N/A'} className={styles.input} />
                         </div>
                         <div className={styles.field}>
-                            <label><Hash size={12} /> Tax ID</label>
+                            <label><Hash size={16} className={styles.labelIcon} /> Tax ID</label>
                             <input disabled defaultValue={user.taxId || 'N/A'} className={styles.input} />
                         </div>
                     </div>
 
-                    <h4 className={styles.subHeader} style={{ marginTop: '1.5rem' }}><MapPin size={14} /> Address</h4>
+                    <h4 className={styles.subHeader} ><MapPin size={18} className={styles.labelIcon} /> Address</h4>
                     <div className={styles.addressBox}>
-                        {user.address || 'No street address provided'}<br />
-                        {user.city}, {user.state} {user.zipCode}<br />
-                        {user.country}
+                        <span><span className={styles.addressLabel}>Street Address:</span> {user.address || 'N/A'}</span><br />
+                        <span><span className={styles.addressLabel}>City:</span> {user.city || 'N/A'}</span>, {""}
+                        <span><span className={styles.addressLabel}>State:</span> {user.state || 'N/A'}</span><br />
+                        <span><span className={styles.addressLabel}>Zip Code:</span> {user.zipCode || 'N/A'}</span>, {""}
+                        <span><span className={styles.addressLabel}>Country:</span> {user.country || 'N/A'}</span>
                     </div>
                 </div>
 
-                {/* 2. Next of Kin */}
                 <div className={styles.section}>
-                    <h3 className={styles.secTitle}><HeartHandshake size={18} /> Next of Kin</h3>
+                    <h3 className={styles.secTitle}><HeartHandshake size={18} className={styles.labelIcon} /> Next of Kin</h3>
                     <div className={styles.profileGridDense}>
                         <div className={styles.field}>
-                            <label>Full Name</label>
+                            <label><User size={16} className={styles.labelIcon} /> Full Name</label>
                             <input disabled defaultValue={user.nokName || 'N/A'} className={styles.input} />
                         </div>
                         <div className={styles.field}>
-                            <label>Relationship</label>
+                            <label><Heart size={16} className={styles.labelIcon} /> Relationship</label>
                             <input disabled defaultValue={user.nokRelationship || 'N/A'} className={styles.input} />
                         </div>
                         <div className={styles.field}>
-                            <label>Phone</label>
+                            <label><Phone size={16} className={styles.labelIcon} /> Phone</label>
                             <input disabled defaultValue={user.nokPhone || 'N/A'} className={styles.input} />
                         </div>
                         <div className={styles.field}>
-                            <label>Email</label>
+                            <label><Mail size={16} className={styles.labelIcon} /> Email</label>
                             <input disabled defaultValue={user.nokEmail || 'N/A'} className={styles.input} />
                         </div>
                         <div className={styles.field} style={{ gridColumn: '1 / -1' }}>
-                            <label>Address</label>
+                            <label><MapPin size={16} className={styles.labelIcon} /> Address</label>
                             <input disabled defaultValue={user.nokAddress || 'N/A'} className={styles.input} />
                         </div>
                     </div>
                 </div>
             </div>
 
-            {/* --- BOTTOM ROW: DASHBOARD GRID --- */}
             <div className={styles.dashboardWrapper}>
-                {/* COL 1: FINANCIALS */}
                 <div className={styles.col}>
                     <div className={styles.section}>
                         <div className={styles.secHeaderRow}>
@@ -216,7 +207,6 @@ export default async function UserDetailsPage({ params }: { params: Promise<{ id
                         </div>
                         <div className={styles.accountsList}>
                             {user.accounts.map(acc => {
-                                // Conversion Logic
                                 const balanceUSD = Number(acc.availableBalance);
                                 const converted = balanceUSD * exchangeRate;
 
@@ -225,12 +215,10 @@ export default async function UserDetailsPage({ params }: { params: Promise<{ id
                                         <div className={styles.accInfo}>
                                             <h4>{acc.type.replace('_', ' ')} <span className={styles.tiny}>({acc.accountNumber})</span></h4>
                                             <div className={styles.accBal}>
-                                                {/* Main Converted Balance */}
                                                 {new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(converted)}
 
-                                                {/* Subtitle USD Balance */}
                                                 {currency !== "USD" && (
-                                                    <span style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 'normal' }}>
+                                                    <span className={styles.currencyNote}>
                                                         ≈ {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(balanceUSD)}
                                                     </span>
                                                 )}
@@ -255,7 +243,6 @@ export default async function UserDetailsPage({ params }: { params: Promise<{ id
                             rate={exchangeRate}
                         />
                     </div>
-
                     <div className={styles.section}>
                         <h3 className={styles.secTitle}><ArrowRightLeft size={18} /> Local Transfers</h3>
                         <LocalTransferList
@@ -266,10 +253,8 @@ export default async function UserDetailsPage({ params }: { params: Promise<{ id
                     </div>
                 </div>
 
-                {/* COL 2: SECURITY & ADMIN */}
                 <div className={styles.col}>
                     <KycReviewSection user={user} />
-
                     <div className={styles.section}>
                         <div className={styles.secHeaderRow}>
                             <h3 className={styles.secTitle}><CreditCard size={18} /> Cards</h3>
@@ -279,10 +264,10 @@ export default async function UserDetailsPage({ params }: { params: Promise<{ id
                             {user.cards.length === 0 ? <div className={styles.emptySmall}>No cards issued.</div> : user.cards.map(card => (
                                 <div key={card.id} className={styles.listItem}>
                                     <div className={styles.flexCenterGap}>
-                                        <CreditCard size={16} color="var(--text-muted)" />
+                                        <CreditCard size={16} className={styles.cardIcon} />
                                         <span>Visa ...<strong>{card.cardNumber.slice(-4)}</strong></span>
                                     </div>
-                                    <span className={card.status === 'ACTIVE' ? styles.badgeGreen : styles.badgeRed}>
+                                <span className={`${styles.badge} ${card.status === 'ACTIVE' ? styles.badgeGreen : styles.badgeRed}`}>
                                         {card.status}
                                     </span>
                                 </div>
@@ -293,11 +278,11 @@ export default async function UserDetailsPage({ params }: { params: Promise<{ id
                     <div className={`${styles.section} ${styles.fixedLogHeight}`}>
                         <div className={styles.secHeaderRow}>
                             <h3 className={styles.secTitle}>
-                                <ShieldAlert size={18} /> Security Feed
+                                <ShieldAlert size={20} /> Security Feed
                             </h3>
                             {isActiveNow ? (
                                 <span className={`${styles.liveBadge} ${styles.activeBadge}`}>
-                                    <AlertTriangle size={12} strokeWidth={3} /> ACTIVE NOW
+                                    <AlertTriangle size={16} strokeWidth={3} /> ACTIVE NOW
                                 </span>
                             ) : (
                                 <span className={styles.liveBadge}>IDLE</span>
@@ -311,6 +296,6 @@ export default async function UserDetailsPage({ params }: { params: Promise<{ id
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
     );
 }

@@ -23,12 +23,10 @@ export default function TicketChat({ ticket }: { ticket: Ticket }) {
     const formRef = useRef<HTMLFormElement>(null);
     const bottomRef = useRef<HTMLDivElement>(null);
 
-    // Scroll to bottom on load or new message
     useEffect(() => {
         bottomRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [ticket.messages]);
 
-    // Reset form on success
     useEffect(() => {
         if (state?.success) {
             formRef.current?.reset();
@@ -37,7 +35,6 @@ export default function TicketChat({ ticket }: { ticket: Ticket }) {
 
     return (
         <div className={styles.chatContainer}>
-            {/* MESSAGES AREA */}
             <div className={styles.messagesArea}>
                 {ticket.messages.map((msg) => {
                     const isMe = msg.sender === 'USER';
@@ -45,7 +42,7 @@ export default function TicketChat({ ticket }: { ticket: Ticket }) {
                         <div key={msg.id} className={`${styles.msgRow} ${isMe ? styles.msgRight : styles.msgLeft}`}>
                             {!isMe && (
                                 <div className={styles.avatarSmall}>
-                                    <ShieldCheck size={16} />
+                                    <ShieldCheck size={20} />
                                 </div>
                             )}
                             <div className={`${styles.bubble} ${isMe ? styles.bubbleMe : styles.bubbleAdmin}`}>
@@ -55,11 +52,11 @@ export default function TicketChat({ ticket }: { ticket: Ticket }) {
                                         {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                     </span>
                                 </div>
-                                <p>{msg.message}</p>
+                                <p className={styles.msgContent}>{msg.message}</p>
                             </div>
                             {isMe && (
-                                <div className={styles.avatarSmall} style={{ background: 'var(--bg-app)' }}>
-                                    <User size={16} />
+                                <div className={`${styles.avatarSmall} ${styles.avatarUser}`}>
+                                    <User size={20} />
                                 </div>
                             )}
                         </div>
@@ -68,7 +65,6 @@ export default function TicketChat({ ticket }: { ticket: Ticket }) {
                 <div ref={bottomRef} />
             </div>
 
-            {/* REPLY INPUT */}
             <div className={styles.inputArea}>
                 {ticket.status === 'CLOSED' ? (
                     <div className={styles.closedBanner}>

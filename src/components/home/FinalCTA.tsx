@@ -15,7 +15,6 @@ export default async function FinalCTA() {
                     <div className={styles.ctaMeshGradient}></div>
 
                     <div className={styles.ctaGrid}>
-                        {/* LEFT SIDE */}
                         <div className={styles.ctaContentLeft}>
                             <div className={styles.ctaBadge}>
                                 <Shield size={16} /> {settings.home_cta_badge}
@@ -63,7 +62,6 @@ export default async function FinalCTA() {
                             </Link>
                         </div>
 
-                        {/* RIGHT SIDE */}
                         <div className={styles.ctaVisualRight}>
                             <Image
                                 src={settings.home_cta_img}

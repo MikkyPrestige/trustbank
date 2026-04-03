@@ -4,7 +4,6 @@
   color: var(--text-main);
 }
 
-/* --- HERO SECTION  --- */
 .header {
   position: relative;
   min-height: 300px;
@@ -69,7 +68,6 @@
   line-height: 1.6;
 }
 
-/* --- MAIN CONTENT --- */
 .content {
   padding: 2.5rem 0;
 }
@@ -93,7 +91,6 @@
   padding-left: 1rem;
 }
 
-/* --- TABLES --- */
 .tableWrapper {
   background: var(--bg-card);
   border-radius: 1rem;
@@ -163,7 +160,6 @@
   transform: translateY(-1px);
 }
 
-/* View Links */
 .rateTable a {
   color: var(--primary);
   font-weight: 600;
@@ -180,7 +176,6 @@
   color: var(--text-invert);
 }
 
-/* --- DISCLAIMER --- */
 .disclaimerBox {
   background: var(--bg-surface);
   border: 1px solid var(--border);
@@ -206,7 +201,6 @@
   line-height: 1.6;
 }
 
-/* --- RESPONSIVE --- */
 @media (max-width: 768px) {
   .headerContent h1 {
     font-size: 2.5rem;

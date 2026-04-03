@@ -14,7 +14,6 @@ export default async function InvestorsPage() {
 
     return (
         <main className={styles.main}>
-            {/* HERO SECTION */}
             <section className={styles.hero}>
                 <div className={styles.heroImageWrapper}>
                     <Image
@@ -33,7 +32,6 @@ export default async function InvestorsPage() {
                 </div>
             </section>
 
-            {/* STOCK TICKER \\ */}
             <section className={styles.statsStrip}>
                 <div className={styles.container}>
                     <div className={styles.tickerContainer}>
@@ -55,7 +53,6 @@ export default async function InvestorsPage() {
                 </div>
             </section>
 
-            {/* FINANCIAL REPORTS GRID */}
             <div className={styles.container}>
                 <h2 className={styles.sectionTitle}>{settings.invest_reports_title}</h2>
 

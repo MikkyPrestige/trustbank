@@ -14,24 +14,12 @@
   font-size: 1.8rem;
   font-weight: 800;
   color: var(--text-main);
-  margin-bottom: 0.5rem;
   letter-spacing: -0.5px;
 }
 
 .subtitle {
   color: var(--text-muted);
   font-size: 1rem;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(5px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 .wrapper {
@@ -46,33 +34,41 @@
   }
 }
 
-/* --- SIDEBAR --- */
 .sidebar {
-  width: 250px;
+  width: 200px;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
 
+@media (max-width: 768px) {
+  .sidebar {
+    width: 100%;
+    flex-direction: row;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+  }
+}
+
 .tabBtn {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem 1rem;
+  gap: 0.5rem;
+  padding: 1rem;
   width: 100%;
   text-align: left;
   border: none;
   background: transparent;
   color: var(--text-muted);
   font-weight: 500;
-  border-radius: var(--radius);
+  border-radius: 0.5rem;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .tabBtn:hover {
-  background: var(--bg-surface);
+  background: var(--primary-light);
   color: var(--text-main);
 }
 
@@ -82,7 +78,6 @@
   box-shadow: var(--shadow-sm);
 }
 
-/* --- MAIN CONTENT --- */
 .main {
   flex: 1;
   width: 100%;
@@ -91,31 +86,32 @@
 .stack {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 2rem;
 }
 
 .card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 2rem;
+  background: var(--sub-bg);
+  border: 1px solid var(--sub-divider);
+  border-radius: 0.5rem;
+  padding: 1rem 2rem;
   box-shadow: var(--shadow-card);
-  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
 .cardHeader {
   display: flex;
   align-items: center;
   gap: 1rem;
-  margin-bottom: 2rem;
   padding-bottom: 1rem;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 .cardHeader h2,
 .cardHeader h3 {
   margin: 0;
-  font-size: 1.25rem;
+  font-size: 1.2rem;
   font-weight: 600;
   color: var(--text-main);
 }
@@ -126,18 +122,17 @@
   font-size: 0.9rem;
 }
 
-/* --- AVATAR SECTION --- */
 .avatarSection {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
-  margin-bottom: 2rem;
+  gap: 1rem;
+  margin-bottom: 1rem;
 }
 
 .avatarWrapper {
   position: relative;
-  width: 80px;
-  height: 80px;
+  width: 4rem;
+  height: 4rem;
 }
 
 .avatarImg {
@@ -145,7 +140,7 @@
   height: 100%;
   object-fit: cover;
   border-radius: 50%;
-  border: 2px solid var(--border);
+  border: 2px solid var(--border-subtle);
 }
 
 .avatarPlaceholder {
@@ -157,20 +152,20 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
+  font-size: 2rem;
   font-weight: 700;
-  border: 2px solid var(--border);
+  border: 2px solid var(--border-subtle);
 }
 
 .overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.5);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: var(--text-invert);
   opacity: 0;
   cursor: pointer;
   transition: opacity 0.2s;
@@ -187,23 +182,14 @@
 }
 
 .avatarText p {
-  margin: 4px 0 0 0;
   color: var(--text-muted);
   font-size: 0.9rem;
 }
 
-/* --- FORMS --- */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 1.5rem;
-}
-
-/* Helper to manage spacing for full width items outside grid */
-.topMargin {
-  margin-top: 1.5rem;
-  margin-bottom: 1.5rem;
+  gap: 2rem;
 }
 
 .group {
@@ -215,48 +201,7 @@
 .group label {
   font-size: 0.85rem;
   font-weight: 500;
-  color: var(--text-main);
-}
-
-.labelRow {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-}
-
-.labelRow label {
-  margin-bottom: 0;
-}
-
-.forgotLink {
-  font-size: 0.8rem;
-  color: Var(--primary);
-  text-decoration: none;
-  font-weight: 500;
-  transition: color 0.2s;
-}
-
-.forgotLink:hover {
-  color: var(--primary-hover);
-  text-decoration: underline;
-}
-
-.input,
-.inputDisabled {
-  padding: 0.75rem;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--bg-surface);
-  color: var(--text-main);
-  font-size: 0.95rem;
-  transition: border-color 0.2s;
-}
-
-.input:focus {
-  outline: none;
-  border-color: var(--primary);
-  background: var(--bg-card);
+  color: var(--text-body);
 }
 
 .inputDisabled {
@@ -266,7 +211,22 @@
   opacity: 0.8;
 }
 
-/* Divider */
+.input,
+.inputDisabled {
+  padding: 1rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: 0.5rem;
+  background: var(--bg-card);
+  color: var(--text-main);
+  font-size: 0.95rem;
+  transition: border-color 0.2s;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
 .divider {
   display: flex;
   align-items: center;
@@ -274,34 +234,34 @@
   font-weight: 600;
   color: var(--primary);
   background: var(--primary-light);
-  padding: 0.75rem 1rem;
-  border-radius: var(--radius);
-  margin: 2rem 0 1.5rem 0;
+  padding: 0.7rem;
+  border-radius: 0.5rem;
+  margin: 0.5rem 0;
 }
 
 .dividerIcon {
-  margin-right: 8px;
+  margin-right: 0.5rem;
 }
 
-/* Action Row */
 .actionRow {
   display: flex;
   justify-content: flex-end;
-  margin-top: 1rem;
+  margin-top: 0.5rem;
 }
 
 .saveBtn {
   background: var(--primary);
   color: var(--text-invert);
   border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: var(--radius);
+  padding: 1rem;
+  border-radius: 0.5rem;
   font-weight: 600;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 0.5rem;
   transition: background 0.2s;
+  align-self: flex-end;
 }
 
 .saveBtn:hover {
@@ -313,23 +273,13 @@
   cursor: not-allowed;
 }
 
-.spin {
-  animation: spin 1s linear infinite;
-}
-
-/* --- SECURITY TAB --- */
-.securityStack {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-}
-
 .iconBadge {
-  width: 48px;
-  height: 48px;
+  width: 3rem;
+  height: 3rem;
   border-radius: 50%;
-  background: rgba(245, 158, 11, 0.1);
+  background: rgba(var(--accent-rgb), 0.1);
   color: var(--accent);
+  border: 1px solid rgba(var(--accent-rgb), 0.3);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -339,11 +289,13 @@
 .iconBadgeBlue {
   background: var(--primary-light);
   color: var(--primary);
+  border: 1px solid rgba(0, 123, 255, 0.3);
 }
 
 .iconBadgeGreen {
-  background: rgba(16, 185, 129, 0.1);
+  background: rgba(var(--success-rgb), 0.1);
   color: var(--success);
+  border: 1px solid rgba(var(--success-rgb), 0.3);
 }
 
 .pinInput {
@@ -353,63 +305,94 @@
   font-size: 1.1rem;
 }
 
+.labelRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.labelRow label {
+  margin-bottom: 0;
+}
+
+.forgotLink {
+  font-size: 0.8rem;
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.forgotLink:hover {
+  color: var(--primary-hover);
+  text-decoration: underline;
+}
+
 .sessionBox {
-  padding: 1rem 0;
+  border: 1px solid var(--border-subtle);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  background: var(--bg-card);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .sessionText {
   font-size: 0.9rem;
   color: var(--text-muted);
-  margin-bottom: 1.25rem;
+  margin-bottom: 1rem;
   line-height: 1.5;
+  text-align: center;
 }
 
 .outlineBtn {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
-  border: 1px solid var(--sub-divider);
-  background: var(--sub-bg);
-  border-radius: 8px;
+  gap: 0.5rem;
+  padding: 1rem;
+  background: rgba(var(--danger-rgb), 0.1);
+  color: var(--danger);
+  border: 1px solid rgba(var(--danger-rgb), 0.3);
+  border-radius: 0.5rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .outlineBtn:hover {
-  background: transparent;
-  border-color: var(--sub-hover);
+  background: var(--danger);
+  color: var(--text-invert);
 }
 
-/* DANGER ZONE  */
 .dangerCard {
   background-color: color-mix(in srgb, var(--danger), transparent 95%);
-  border: 1px solid var(--danger);
-  border-radius: 12px;
-  padding: 1rem;
+  border: 1px solid rgba(var(--danger-rgb), 0.3);
+  border-radius: 1rem;
+  padding: 1rem 2rem;
 }
 
 .dangerHeader {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 1rem;
   margin-bottom: 1rem;
 }
 
 .dangerIconBadge {
-  width: 40px;
-  height: 40px;
+  width: 2.5rem;
+  height: 2.5rem;
   border-radius: 50%;
   background-color: color-mix(in srgb, var(--danger), transparent 85%);
   color: var(--danger);
+  border: 1px solid rgba(var(--danger-rgb), 0.3);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .dangerTitle {
-  font-size: 1.1rem;
+  font-size: 1.5rem;
   font-weight: 600;
   color: var(--danger);
   margin: 0;
@@ -418,28 +401,30 @@
 .dangerText {
   color: var(--text-body);
   font-size: 0.9rem;
-  line-height: 1.6;
-  margin-bottom: 1.5rem;
+  line-height: 1.5;
+  margin-bottom: 2rem;
 }
 
 .dangerGroup {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
 .dangerLabel {
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   font-weight: 600;
   color: var(--danger);
 }
 
 .dangerInput {
   width: 100%;
-  padding: 12px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  font-size: 0.95rem;
+  padding: 1rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: 0.8rem;
+  font-size: 0.9rem;
   background: var(--bg-card);
   color: var(--text-main);
   transition: all 0.2s;
@@ -452,24 +437,25 @@
 }
 
 .deleteBtn {
-  background-color: var(--danger);
-  color: var(--text-invert);
-  border: none;
-  padding: 12px 16px;
-  border-radius: 8px;
+  background: rgba(var(--danger-rgb), 0.1);
+  color: var(--danger);
+  border: 1px solid rgba(var(--danger-rgb), 0.3);
+  padding: 1rem;
+  border-radius: 0.5rem;
   font-weight: 600;
   font-size: 0.95rem;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  transition: opacity 0.2s;
-  margin-top: 0.5rem;
+  gap: 0.5rem;
+  transition: all 0.2s;
+  margin-top: 1rem;
 }
 
 .deleteBtn:hover {
-  opacity: 0.9;
+  background: var(--danger);
+  color: var(--text-invert);
 }
 
 .deleteBtn:disabled {
@@ -484,5 +470,16 @@
 @keyframes spin {
   to {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

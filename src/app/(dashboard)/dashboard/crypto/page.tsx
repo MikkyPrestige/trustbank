@@ -11,19 +11,21 @@ import { Lock, Wallet, TrendingUp, Ban, AlertTriangle } from "lucide-react";
 import { getLiveMarketData } from "@/lib/marketData";
 import { KycStatus } from "@prisma/client";
 import { getFeatureStatus } from "@/actions/admin/system-status";
+import Link from "next/link";
 
 const COIN_IMAGES: Record<string, string> = {
-    'USDT': '/coins/tether.png',
-    'BTC': '/coins/bitcoin.png',
-    'ETH': '/coins/ethereum.png',
-    'SOL': '/coins/solana.png',
-    'BNB': '/coins/binance.png',
-    'HYPE': '/coins/hyperliquid.png',
-    'XRP': '/coins/ripple.png',
-    'ADA': '/coins/cardano.png',
-    'DOGE': '/coins/dogecoin.png',
-    'DOT': '/coins/polkadot.png',
-    'LINK': '/coins/chainlink.png',
+    'USDT': '/assets/usdt.png',
+    'BTC': '/assets/btc.png',
+    'ETH': '/assets/eth.png',
+    'SOL': '/assets/sol.png',
+    'BNB': '/assets/bnb.png',
+    'HYPE': '/assets/hype.png',
+    'XRP': '/assets/xrp.png',
+    'ADA': '/assets/ada.png',
+    'DOGE': '/assets/doge.png',
+    'DOT': '/assets/dot.png',
+    'LINK': '/assets/link.png',
+    'LTC': '/assets/litecoin.png',
 };
 
 export default async function CryptoPage() {
@@ -43,16 +45,14 @@ export default async function CryptoPage() {
     if (!user) return null;
     const isVerified = user.kycStatus === KycStatus.VERIFIED;
 
-    // 1. Currency Context
     const currency = user.currency || "USD";
     const rate = currency === "USD" ? 1 : Number(rates.find(r => r.currency === currency)?.rate || 1);
 
-    const marketData = await getLiveMarketData();
+    const { assets: marketData } = await getLiveMarketData();
 
-    // 2. Map Prices to User Currency
     const priceMap = marketData.reduce((acc, item) => {
         acc[item.symbol] = {
-            price: item.price * rate, // Convert Price
+            price: item.price * rate,
             change: item.change
         };
         return acc;
@@ -78,11 +78,11 @@ export default async function CryptoPage() {
                     <div className={styles.lockIconBox}><Lock size={32} /></div>
                     <h2>Trading Disabled</h2>
                     <p>To access the crypto markets, please complete your Identity Verification (KYC).</p>
-                    <a href="/dashboard/verify" className={styles.verifyBtn}>Complete Verification</a>
+                    <Link href="/dashboard/verify" className={styles.verifyBtn}>Complete Verification</Link>
                 </div>
             ) : !features.crypto ? (
-                <div className={styles.lockedState} style={{ borderColor: 'var(--border)' }}>
-                    <div className={styles.lockIconBox} style={{ background: 'var(--bg-surface)', color: 'var(--text-muted)' }}>
+                <div className={styles.lockedState}>
+                    <div className={styles.lockIconBox}>
                         <Ban size={32} />
                     </div>
                     <h2>Crypto Trading Paused</h2>
@@ -94,14 +94,14 @@ export default async function CryptoPage() {
 
                         <div className={styles.portfolioCard}>
                             <div className={styles.sectionHeader}>
-                                <div className={styles.headerRow}><Wallet size={20} color='var(--success)' style={{ marginRight: '8px' }} /> Your Assets</div>
+                                <div className={styles.headerRow}><Wallet size={20} className={styles.headerRowIcon} /> Your Assets</div>
                                 <DepositModal />
                             </div>
 
                             {cleanAssets.length === 0 ? (
                                 <div className={styles.empty}>
                                     <p>Your portfolio is empty.</p>
-                                    <span style={{ fontSize: '0.8rem' }}>Use the widget to buy your first coin.</span>
+                                    <span>Use the widget to buy your first coin.</span>
                                 </div>
                             ) : (
                                 <div className={styles.assetList}>
@@ -110,7 +110,6 @@ export default async function CryptoPage() {
                                         const currentPrice = liveData?.price || 0;
                                         const qty = asset.quantity;
                                         const avgBuy = asset.avgBuyPrice * rate;
-
                                         const currentValue = qty * currentPrice;
                                         const costBasis = qty * avgBuy;
                                         const profit = currentValue - costBasis;
@@ -126,7 +125,7 @@ export default async function CryptoPage() {
 
                                                 <CryptoActionModal asset={asset} />
 
-                                                <div style={{ textAlign: 'right', minWidth: '100px' }}>
+                                                <div className={styles.assetDetails}>
                                                     <div className={styles.assetValue}>
                                                         {new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(currentValue)}
                                                     </div>
@@ -145,9 +144,9 @@ export default async function CryptoPage() {
 
                         <div className={styles.marketList}>
                             <div className={styles.sectionHeader}>
-                                <div className={styles.headerRow}><TrendingUp size={20} color='var(--success)' style={{ marginRight: '8px' }} /> Live Market</div>
+                                <div className={styles.headerRow}><TrendingUp size={20} className={styles.headerRowIcon} /> Live Market</div>
                             </div>
-                            {marketData.filter(item => item.isCrypto).map((coin) => {
+                            {Array.isArray(marketData) && marketData.filter(item => item.isCrypto).map((coin) => {
                                 const convertedPrice = coin.price * rate;
                                 return (
                                     <div key={coin.symbol} className={styles.tickerItem}>
@@ -162,11 +161,11 @@ export default async function CryptoPage() {
                                                 <span className={styles.tickerSym}>Token</span>
                                             </div>
                                         </div>
-                                        <div>
+                                        <div className={styles.priceRight}>
                                             <div className={coin.change >= 0 ? styles.priceUp : styles.priceDown}>
                                                 {new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(convertedPrice)}
                                             </div>
-                                            <div style={{ textAlign: 'right' }}>
+                                            <div>
                                                 <span className={styles.percentPill} style={{ color: coin.change >= 0 ? 'var(--success)' : 'var(--danger)' }}>
                                                     {coin.change >= 0 ? '+' : ''}{coin.change.toFixed(2)}%
                                                 </span>
@@ -187,7 +186,7 @@ export default async function CryptoPage() {
                                 rate={rate}
                             />
                             <div className={styles.riskNote}>
-                                <AlertTriangle size={16} style={{ minWidth: '16px' }} />
+                                <AlertTriangle size={20} className={styles.riskNoteIcon} />
                                 <p>Crypto markets are volatile. Prices update in real-time. Trade at your own risk.</p>
                             </div>
                             <CryptoTransactions

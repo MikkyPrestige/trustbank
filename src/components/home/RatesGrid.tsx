@@ -15,7 +15,6 @@ export default function RatesGrid({ settings }: RatesGridProps) {
     return (
         <section className={styles.ratesSection}>
             <div className={styles.container}>
-                {/* 1. HEADER WITH TABS */}
                 <div className={styles.ratesHeader}>
                     <div className={styles.headerText}>
                         <h2 className={styles.sectionTitleDark}>{settings.home_rates_title}</h2>
@@ -40,11 +39,9 @@ export default function RatesGrid({ settings }: RatesGridProps) {
                     </div>
                 </div>
 
-                {/* 2.  GRID */}
                 <div className={styles.ratesGrid}>
                     {activeTab === 'deposits' ? (
                         <>
-                            {/* CARD 1: SAVINGS */}
                             <div className={`${styles.rateCard} ${styles.featuredCard}`}>
                                 <div className={styles.badge}>
                                     <Flame size={14} fill="white" className={styles.badgeIcon} /> {settings.home_rates_c1_badge}
@@ -73,7 +70,6 @@ export default function RatesGrid({ settings }: RatesGridProps) {
                                 </Link>
                             </div>
 
-                            {/* CARD 2: CD */}
                             <div className={styles.rateCard}>
                                 <div className={styles.cardTop}>
                                     <h3 className={styles.rateTitle}>{settings.home_rates_c2_title}</h3>
@@ -99,7 +95,6 @@ export default function RatesGrid({ settings }: RatesGridProps) {
                                 </Link>
                             </div>
 
-                            {/* CARD 3: CHECKING */}
                             <div className={styles.rateCard}>
                                 <div className={styles.cardTop}>
                                     <h3 className={styles.rateTitle}>{settings.home_rates_c3_title}</h3>
@@ -127,7 +122,6 @@ export default function RatesGrid({ settings }: RatesGridProps) {
                         </>
                     ) : (
                         <>
-                            {/* CARD 4: MORTGAGE */}
                             <div className={styles.rateCard}>
                                 <div className={styles.cardTop}>
                                     <h3 className={styles.rateTitle}>{settings.home_rates_c4_title}</h3>
@@ -147,16 +141,15 @@ export default function RatesGrid({ settings }: RatesGridProps) {
                                 </Link>
                             </div>
 
-                            {/* CARD 5: AUTO */}
                             <div className={`${styles.rateCard} ${styles.featuredCard}`}>
                                 <div className={styles.badge}>
                                     <TrendingUp size={14} /> {settings.home_rates_c5_badge}
                                 </div>
                                 <div className={styles.cardTop}>
                                     <h3 className={styles.rateTitle}>{settings.home_rates_c5_title}</h3>
-                                        <div className={styles.rateValue}>
-                                            {settings.rate_auto_low}{settings.home_rates_percent_symbol} <small>{settings.home_rates_unit_apr}</small>
-                                        </div>
+                                    <div className={styles.rateValue}>
+                                        {settings.rate_auto_low}{settings.home_rates_percent_symbol} <small>{settings.home_rates_unit_apr}</small>
+                                    </div>
                                     <p className={styles.rateSub}>{settings.home_rates_c5_sub}</p>
                                 </div>
                                 <div className={styles.cardDetails}>
@@ -170,11 +163,10 @@ export default function RatesGrid({ settings }: RatesGridProps) {
                                 </Link>
                             </div>
 
-                            {/* CARD 6: PERSONAL */}
                             <div className={styles.rateCard}>
                                 <div className={styles.cardTop}>
                                     <h3 className={styles.rateTitle}>{settings.home_rates_c6_title}</h3>
-                                 <div className={styles.rateValue}>
+                                    <div className={styles.rateValue}>
                                         {settings.rate_personal_apr}{settings.home_rates_percent_symbol} <small>{settings.home_rates_unit_apr}</small>
                                     </div>
                                     <p className={styles.rateSub}>{settings.home_rates_c6_sub}</p>

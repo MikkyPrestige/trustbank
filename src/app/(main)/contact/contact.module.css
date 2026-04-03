@@ -4,7 +4,6 @@
   color: var(--text-main);
 }
 
-/* HERO SECTION */
 .hero {
   position: relative;
   height: 400px;
@@ -60,7 +59,6 @@
   line-height: 1.6;
 }
 
-/* CONTAINER */
 .container {
   max-width: 1200px;
   margin: -6rem auto 0;
@@ -69,7 +67,6 @@
   z-index: 10;
 }
 
-/* CONTACT GRID */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -129,7 +126,6 @@
   color: var(--text-muted);
 }
 
-/* FAQ TEASER SECTION */
 .faqTeaser {
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -171,7 +167,6 @@
   text-decoration: underline;
 }
 
-/* MOBILE RESPONSIVE */
 @media (max-width: 768px) {
   .hero {
     height: 350px;

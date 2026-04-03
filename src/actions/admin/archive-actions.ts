@@ -5,7 +5,6 @@ import { checkAdminAction } from "@/lib/auth/admin-auth";
 import { revalidatePath } from "next/cache";
 import { UserStatus } from "@prisma/client";
 
-// ♻️ RESTORE USER
 export async function restoreUser(userId: string) {
        const auth = await checkAdminAction();
 
@@ -14,7 +13,6 @@ export async function restoreUser(userId: string) {
         }
 
     try {
-        // Restore to ACTIVE status
        const user = await db.user.findUnique({
             where: { id: userId },
             select: { email: true }
@@ -22,7 +20,6 @@ export async function restoreUser(userId: string) {
 
         if (!user) return { success: false, message: "User not found." };
 
-        // 2. Clean the email
         let cleanEmail = user.email;
         if (cleanEmail.startsWith("deleted-")) {
             const parts = cleanEmail.split('_');
@@ -31,7 +28,6 @@ export async function restoreUser(userId: string) {
             }
         }
 
-        // 3. Check if the original email is taken
         const conflict = await db.user.findUnique({
             where: { email: cleanEmail }
         });
@@ -43,7 +39,6 @@ export async function restoreUser(userId: string) {
             };
         }
 
-        // 4. Restore Status AND Email
         await db.user.update({
             where: { id: userId },
             data: {
@@ -61,7 +56,6 @@ export async function restoreUser(userId: string) {
     }
 }
 
-// 💥 PERMANENT DELETE
 export async function deleteUserPermanently(userId: string) {
        const auth = await checkAdminAction();
 

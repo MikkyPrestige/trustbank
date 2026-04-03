@@ -1,38 +1,38 @@
 .container {
   background-color: var(--bg-app);
   border: 1px solid var(--border);
-  border-radius: 0.75rem;
-  padding: 1.5rem;
-  box-shadow: 0 1px 2px 0 var(--shadow-sm);
-  margin-bottom: 2rem;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  box-shadow: var(--shadow-sm);
 }
 
 .header {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 1rem;
   margin-bottom: 1rem;
 }
 
 .iconBox {
-  padding: 0.5rem;
-  background-color: var(--bg-app);
-  border-radius: 0.5rem;
+  background-color: rgba(0, 123, 255, 0.2);
+  border-radius: 50%;
   color: var(--primary);
+  width: 2.5rem;
+  height: 2.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .title {
-  font-size: 1.125rem;
+  font-size: 1rem;
   font-weight: 600;
   color: var(--text-body);
   margin: 0;
 }
 
 .subtitle {
-  font-size: 0.875rem;
+  font-size: 0.8rem;
   color: var(--text-muted);
   margin: 0;
 }
@@ -40,10 +40,9 @@
 .grid {
   display: grid;
   grid-template-columns: repeat(1, minmax(0, 1fr));
-  gap: 0.75rem;
+  gap: 1rem;
 }
 
-/* Responsive Grid */
 @media (min-width: 640px) {
   .grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -61,10 +60,10 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  padding: 0.75rem 1rem;
+  padding: 1rem;
   border-radius: 0.5rem;
   border: 1px solid var(--border);
-  background-color: var(--bg-card);
+  background-color: var(--sub-bg);
   text-align: left;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -73,7 +72,7 @@
 
 .card:hover:not(:disabled) {
   border-color: var(--border-hover);
-  background-color: var(--bg-surface);
+  background-color: var(--sub-hover);
 }
 
 .card:disabled {
@@ -81,7 +80,6 @@
   cursor: not-allowed;
 }
 
-/* Active State (Selected) */
 .cardActive {
   border-color: var(--primary);
   background-color: var(--bg-surface);
@@ -92,13 +90,13 @@
 .cardInfo {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.1rem;
 }
 
 .symbol {
   font-weight: 700;
   color: inherit;
-  width: 24px;
+  width: 2rem;
   text-align: center;
 }
 
@@ -116,8 +114,6 @@
   animation: spin 1s linear infinite;
 }
 
-
-/* Animations */
 @keyframes spin {
   from {
     transform: rotate(0deg);

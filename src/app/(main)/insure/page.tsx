@@ -13,7 +13,6 @@ export const metadata: Metadata = {
 export default async function InsurePage() {
     const settings = await getSiteSettings();
 
-    // Anchors
     const ANCHORS = [
         {
             id: settings.insure_prod1_id,
@@ -53,7 +52,6 @@ export default async function InsurePage() {
         },
     ];
 
-    // The Supplemental Grid
     const SUPPLEMENTAL = [
         {
             id: settings.insure_prod5_id,
@@ -71,7 +69,6 @@ export default async function InsurePage() {
         },
     ];
 
-    // Partners
     const PARTNERS = [
         { src: settings.insure_partner1_img, alt: settings.insure_partner1_img_alt },
         { src: settings.insure_partner2_img, alt: settings.insure_partner2_img_alt },
@@ -81,8 +78,6 @@ export default async function InsurePage() {
 
     return (
         <main className={styles.main}>
-
-            {/* HERO SECTION */}
             <section className={styles.heroBackground}>
                 <Image
                     src={settings.insure_hero_img}
@@ -105,18 +100,15 @@ export default async function InsurePage() {
                 </div>
             </section>
 
-            {/* WIZARD */}
             <section className={styles.wizardSection}>
                 <div className={styles.container}>
                     <CoverageWizard settings={settings} />
                 </div>
             </section>
 
-            {/* PRODUCTS SECTION */}
             <div className={styles.container}>
                 <h2 className={styles.sectionTitle}>{settings.insure_products_title}</h2>
                 <p className={styles.sectionSubTitle}>{settings.insure_products_desc}</p>
-                {/* ANCHOR */}
                 {ANCHORS.map((p, i) => (
                     <section key={p.id} id={p.id} className={`${styles.productSection} ${i % 2 !== 0 ? styles.bgAlt : ''}`}>
                         <div className={styles.container}>
@@ -136,7 +128,6 @@ export default async function InsurePage() {
                     </section>
                 ))}
 
-                {/* SUPPLEMENTAL GRID */}
                 <section id="supplemental" className={styles.suppSection}>
                     <div className={styles.container}>
                         <div className={styles.sectionHeader}>
@@ -157,7 +148,6 @@ export default async function InsurePage() {
                 </section>
             </div>
 
-            {/* PARTNER STRIP */}
             <section className={styles.partnerStrip}>
                 <div className={styles.container}>
                     <h3>{settings.insure_partners_title}</h3>

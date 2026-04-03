@@ -45,7 +45,6 @@ export default function NotificationDropdown() {
                     if (!isFirstLoadRef.current && unreadCount > prevCount) {
                         playSound();
                     }
-
                     previousCountRef.current = unreadCount;
                     isFirstLoadRef.current = false;
                 } else {
@@ -53,7 +52,6 @@ export default function NotificationDropdown() {
                     setLoading(false);
                 }
             } catch (err) {
-                // Silent fail
                 setLoading(false);
             }
         };
@@ -86,9 +84,9 @@ export default function NotificationDropdown() {
     const unreadCount = notifications.filter(n => !n.isRead).length;
 
     const getIcon = (type: string) => {
-        if (type === 'ERROR') return <AlertTriangle size={16} color="#ef4444" />;
-        if (type === 'SUCCESS') return <CheckCircle size={16} color="#22c55e" />;
-        return <Info size={16} color="#3b82f6" />;
+        if (type === 'ERROR') return <AlertTriangle size={16} color="var(--danger)" />;
+        if (type === 'SUCCESS') return <CheckCircle size={16} color="var(--success)" />;
+        return <Info size={16} color="var(--primary)" />;
     };
 
     function timeAgo(dateString: Date) {
@@ -113,7 +111,7 @@ export default function NotificationDropdown() {
                 className={`${styles.bellBtn} ${isOpen ? styles.active : ''}`}
                 onClick={() => setIsOpen(!isOpen)}
             >
-                <Bell size={20} />
+                <Bell size={18} />
                 {unreadCount > 0 && <span className={styles.badge}>{unreadCount}</span>}
             </button>
 
@@ -134,7 +132,7 @@ export default function NotificationDropdown() {
                             <div className={styles.empty}>Loading...</div>
                         ) : notifications.length === 0 ? (
                             <div className={styles.empty}>
-                                <Bell size={32} style={{ opacity: 0.2, marginBottom: '10px' }} />
+                                    <Bell size={32} className={styles.emptyBell} />
                                 <p>No notifications</p>
                             </div>
                         ) : (

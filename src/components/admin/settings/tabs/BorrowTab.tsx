@@ -16,9 +16,8 @@ interface BorrowTabProps {
 export function BorrowTab({ settings, borrowHeroUrl, setBorrowHeroUrl, borrowCCUrl, setBorrowCCUrl, borrowPLUrl, setBorrowPLUrl, borrowMTUrl, setBorrowMTUrl, borrowALUrl, setBorrowALUrl, borrowSLUrl, setBorrowSLUrl, borrowHeUrl, setBorrowHeUrl }: BorrowTabProps) {
     return (
         <div className={styles.grid}>
-            {/* --- HERO SECTION --- */}
             <div className={styles.fullWidth}>
-                <h3 className={styles.sectionTitle}>Borrow: Hero</h3>
+                <h3 className={styles.sectionTitle}>HERO SECTION</h3>
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Headline</label>
@@ -38,12 +37,10 @@ export function BorrowTab({ settings, borrowHeroUrl, setBorrowHeroUrl, borrowCCU
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Image Alt Text</label>
-                <input name="borrow_hero_alt" defaultValue={settings.borrow_hero_alt} className={styles.input} />
+                <textarea name="borrow_hero_alt" defaultValue={settings.borrow_hero_alt} className={styles.textarea} />
             </div>
-            {/* Stats */}
-            <div className={styles.fullWidth}>
-                <strong>Hero Stats</strong>
-            </div>
+
+            <div className={styles.groupHeader}><strong>Hero Stats</strong></div>
             <div className={styles.row}>
                 <div className={styles.group}>
                     <label className={styles.label}>Funded Stat</label>
@@ -75,10 +72,9 @@ export function BorrowTab({ settings, borrowHeroUrl, setBorrowHeroUrl, borrowCCU
                 </div>
             </div>
 
-            {/* --- CALCULATOR LABELS --- */}
             <div className={styles.fullWidth}>
                 <hr className={styles.divider} />
-                <h3 className={styles.sectionTitle}>Loan Calculator Configuration</h3>
+                <h3 className={styles.sectionTitle}>Loan Calculator</h3>
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Title</label>
@@ -102,8 +98,8 @@ export function BorrowTab({ settings, borrowHeroUrl, setBorrowHeroUrl, borrowCCU
                     <input name="borrow_calc_unit_mo" defaultValue={settings.borrow_calc_unit_mo} className={styles.input} placeholder="Months" />
                 </div>
             </div>
-            {/* SLIDER CONSTRAINTS */}
-            <div className={styles.fullWidth}><strong>Slider Constraints</strong></div>
+
+            <div className={styles.groupHeader}><strong>Slider Constraints</strong></div>
             <div className={styles.row}>
                 <div className={styles.group}>
                     <label className={styles.label}>Min Amount</label>
@@ -124,8 +120,8 @@ export function BorrowTab({ settings, borrowHeroUrl, setBorrowHeroUrl, borrowCCU
                     <input type="number" name="borrow_calc_max_term" defaultValue={settings.borrow_calc_max_term} className={styles.input} />
                 </div>
             </div>
-            {/* LABELS & CTA */}
-            <div className={styles.fullWidth}><strong>Labels & Buttons</strong></div>
+
+            <div className={styles.groupHeader}><strong>Labels & Buttons</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Amount Label</label>
                 <input name="borrow_calc_label_amt" defaultValue={settings.borrow_calc_label_amt} className={styles.input} />
@@ -162,13 +158,11 @@ export function BorrowTab({ settings, borrowHeroUrl, setBorrowHeroUrl, borrowCCU
                 <input name="borrow_calc_cta" defaultValue={settings.borrow_calc_cta} className={styles.input} />
             </div>
 
-            {/* --- PRODUCT SECTIONS (ANCHORS) --- */}
             <div className={styles.fullWidth}>
                 <hr className={styles.divider} />
                 <h3 className={styles.sectionTitle}>Product Sections</h3>
             </div>
-            {/* 1. Credit Cards */}
-            <div className={styles.fullWidth}>
+            <div className={styles.groupHeader}>
                 <h4 className={styles.subsectionTitle}>1. Credit Cards</h4>
             </div>
             <div className={styles.group}>
@@ -185,7 +179,7 @@ export function BorrowTab({ settings, borrowHeroUrl, setBorrowHeroUrl, borrowCCU
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Image Alt Text</label>
-                <input name="borrow_cc_img_alt" defaultValue={settings.borrow_cc_img_alt} className={styles.input} />
+                <textarea name="borrow_cc_img_alt" defaultValue={settings.borrow_cc_img_alt} className={styles.textarea} />
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Button Text</label>
@@ -195,8 +189,8 @@ export function BorrowTab({ settings, borrowHeroUrl, setBorrowHeroUrl, borrowCCU
                 <label className={styles.label}>Anchor Link</label>
                 <input name="borrow_cc_link" defaultValue={settings.borrow_cc_link} className={styles.input} />
             </div>
-            {/* 2. Personal Loans */}
-            <div className={styles.fullWidth}>
+
+            <div className={styles.groupHeader}>
                 <h4 className={styles.subsectionTitle}>2. Personal Loans</h4>
             </div>
             <div className={styles.group}>
@@ -213,7 +207,7 @@ export function BorrowTab({ settings, borrowHeroUrl, setBorrowHeroUrl, borrowCCU
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Image Alt Text</label>
-                <input name="borrow_pl_img_alt" defaultValue={settings.borrow_pl_img_alt} className={styles.input} />
+                <textarea name="borrow_pl_img_alt" defaultValue={settings.borrow_pl_img_alt} className={styles.textarea} />
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Button Text</label>
@@ -223,8 +217,8 @@ export function BorrowTab({ settings, borrowHeroUrl, setBorrowHeroUrl, borrowCCU
                 <label className={styles.label}>Anchor Link</label>
                 <input name="borrow_pl_link" defaultValue={settings.borrow_pl_link} className={styles.input} />
             </div>
-            {/* 3. Mortgages */}
-            <div className={styles.fullWidth}>
+
+            <div className={styles.groupHeader}>
                 <h4 className={styles.subsectionTitle}>3. Mortgages</h4>
             </div>
             <div className={styles.group}>
@@ -241,7 +235,7 @@ export function BorrowTab({ settings, borrowHeroUrl, setBorrowHeroUrl, borrowCCU
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Image Alt Text</label>
-                <input name="borrow_mt_img_alt" defaultValue={settings.borrow_mt_img_alt} className={styles.input} />
+                <textarea name="borrow_mt_img_alt" defaultValue={settings.borrow_mt_img_alt} className={styles.textarea} />
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Button Text</label>
@@ -251,8 +245,8 @@ export function BorrowTab({ settings, borrowHeroUrl, setBorrowHeroUrl, borrowCCU
                 <label className={styles.label}>Anchor Link</label>
                 <input name="borrow_mt_link" defaultValue={settings.borrow_mt_link} className={styles.input} />
             </div>
-            {/* 4. Auto Loans */}
-            <div className={styles.fullWidth}>
+
+            <div className={styles.groupHeader}>
                 <h4 className={styles.subsectionTitle}>4. Auto Loans</h4>
             </div>
             <div className={styles.group}>
@@ -269,7 +263,7 @@ export function BorrowTab({ settings, borrowHeroUrl, setBorrowHeroUrl, borrowCCU
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Image Alt Text</label>
-                <input name="borrow_al_img_alt" defaultValue={settings.borrow_al_img_alt} className={styles.input} />
+                <textarea name="borrow_al_img_alt" defaultValue={settings.borrow_al_img_alt} className={styles.textarea} />
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Button Text</label>
@@ -279,8 +273,8 @@ export function BorrowTab({ settings, borrowHeroUrl, setBorrowHeroUrl, borrowCCU
                 <label className={styles.label}>Anchor Link</label>
                 <input name="borrow_al_link" defaultValue={settings.borrow_al_link} className={styles.input} />
             </div>
-            {/* 5. Student Loans */}
-            <div className={styles.fullWidth}>
+
+            <div className={styles.groupHeader}>
                 <h4 className={styles.subsectionTitle}>5. Student Loans</h4>
             </div>
             <div className={styles.group}>
@@ -297,7 +291,7 @@ export function BorrowTab({ settings, borrowHeroUrl, setBorrowHeroUrl, borrowCCU
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Image Alt Text</label>
-                <input name="borrow_sl_img_alt" defaultValue={settings.borrow_sl_img_alt} className={styles.input} />
+                <textarea name="borrow_sl_img_alt" defaultValue={settings.borrow_sl_img_alt} className={styles.textarea} />
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Button Text</label>
@@ -307,8 +301,8 @@ export function BorrowTab({ settings, borrowHeroUrl, setBorrowHeroUrl, borrowCCU
                 <label className={styles.label}>Anchor Link</label>
                 <input name="borrow_sl_link" defaultValue={settings.borrow_sl_link} className={styles.input} />
             </div>
-            {/* 6. Home Equity */}
-            <div className={styles.fullWidth}>
+
+            <div className={styles.groupHeader}>
                 <h4 className={styles.subsectionTitle}>6. Home Equity</h4>
             </div>
             <div className={styles.group}>
@@ -325,7 +319,7 @@ export function BorrowTab({ settings, borrowHeroUrl, setBorrowHeroUrl, borrowCCU
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Image Alt Text</label>
-                <input name="borrow_he_alt" defaultValue={settings.borrow_he_alt} className={styles.input} />
+                <textarea name="borrow_he_alt" defaultValue={settings.borrow_he_alt} className={styles.textarea} />
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Button Text</label>
@@ -336,7 +330,6 @@ export function BorrowTab({ settings, borrowHeroUrl, setBorrowHeroUrl, borrowCCU
                 <input name="borrow_he_link" defaultValue={settings.borrow_he_link} className={styles.input} />
             </div>
 
-            {/* --- LOAN GRID CONFIG --- */}
             <div className={styles.fullWidth}>
                 <hr className={styles.divider} />
                 <h3 className={styles.sectionTitle}>Loan Grid Section</h3>
@@ -349,7 +342,7 @@ export function BorrowTab({ settings, borrowHeroUrl, setBorrowHeroUrl, borrowCCU
                 <label className={styles.label}>Description</label>
                 <textarea name="borrow_grid_desc" defaultValue={settings.borrow_grid_desc} className={styles.textarea} />
             </div>
-            <div className={styles.fullWidth}>
+            <div className={styles.groupHeader}>
                 <h4 className={styles.subsectionTitle}>Global Button Text</h4>
             </div>
             <div className={styles.group}>
@@ -357,7 +350,7 @@ export function BorrowTab({ settings, borrowHeroUrl, setBorrowHeroUrl, borrowCCU
                 <input name="borrow_prod_btn_text" defaultValue={settings.borrow_prod_btn_text} className={styles.input} placeholder="e.g. Check Rates" />
             </div>
 
-            <div className={styles.fullWidth}>
+            <div className={styles.groupHeader}>
                 <h4 className={styles.subsectionTitle}>Rates APR</h4>
             </div>
             <div className={styles.group}>
@@ -385,7 +378,7 @@ export function BorrowTab({ settings, borrowHeroUrl, setBorrowHeroUrl, borrowCCU
                 <input name="rate_home_equity_label" defaultValue={settings.rate_home_equity_label} className={styles.input} />
             </div>
             {/* Prod 1 */}
-            <div className={styles.fullWidth}><strong>1. Personal Loans</strong></div>
+            <div className={styles.groupHeader}><strong>1. Personal Loans</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Title</label>
                 <input name="borrow_prod1_title" defaultValue={settings.borrow_prod1_title} className={styles.input} />
@@ -399,7 +392,7 @@ export function BorrowTab({ settings, borrowHeroUrl, setBorrowHeroUrl, borrowCCU
                 <textarea name="borrow_prod1_desc" defaultValue={settings.borrow_prod1_desc} className={styles.textarea} />
             </div>
             {/* Prod 2 */}
-            <div className={styles.fullWidth}><strong>2. Mortgages</strong></div>
+            <div className={styles.groupHeader}><strong>2. Mortgages</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Title</label>
                 <input name="borrow_prod2_title" defaultValue={settings.borrow_prod2_title} className={styles.input} />
@@ -413,7 +406,7 @@ export function BorrowTab({ settings, borrowHeroUrl, setBorrowHeroUrl, borrowCCU
                 <textarea name="borrow_prod2_desc" defaultValue={settings.borrow_prod2_desc} className={styles.textarea} />
             </div>
             {/* Prod 3 */}
-            <div className={styles.fullWidth}><strong>3. Auto Loans</strong></div>
+            <div className={styles.groupHeader}><strong>3. Auto Loans</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Title</label>
                 <input name="borrow_prod3_title" defaultValue={settings.borrow_prod3_title} className={styles.input} />
@@ -427,7 +420,7 @@ export function BorrowTab({ settings, borrowHeroUrl, setBorrowHeroUrl, borrowCCU
                 <textarea name="borrow_prod3_desc" defaultValue={settings.borrow_prod3_desc} className={styles.textarea} />
             </div>
             {/* Prod 4 */}
-            <div className={styles.fullWidth}><strong>4. Student Loans</strong></div>
+            <div className={styles.groupHeader}><strong>4. Student Loans</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Title</label>
                 <input name="borrow_prod4_title" defaultValue={settings.borrow_prod4_title} className={styles.input} />
@@ -441,7 +434,7 @@ export function BorrowTab({ settings, borrowHeroUrl, setBorrowHeroUrl, borrowCCU
                 <textarea name="borrow_prod4_desc" defaultValue={settings.borrow_prod4_desc} className={styles.textarea} />
             </div>
             {/* Prod 5 */}
-            <div className={styles.fullWidth}><strong>5. Credit Cards</strong></div>
+            <div className={styles.groupHeader}><strong>5. Credit Cards</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Title</label>
                 <input name="borrow_prod5_title" defaultValue={settings.borrow_prod5_title} className={styles.input} />
@@ -455,7 +448,7 @@ export function BorrowTab({ settings, borrowHeroUrl, setBorrowHeroUrl, borrowCCU
                 <textarea name="borrow_prod5_desc" defaultValue={settings.borrow_prod5_desc} className={styles.textarea} />
             </div>
             {/* Prod 6 */}
-            <div className={styles.fullWidth}><strong>6. Home Equity</strong></div>
+            <div className={styles.groupHeader}><strong>6. Home Equity</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Title</label>
                 <input name="borrow_prod6_title" defaultValue={settings.borrow_prod6_title} className={styles.input} />
@@ -469,7 +462,6 @@ export function BorrowTab({ settings, borrowHeroUrl, setBorrowHeroUrl, borrowCCU
                 <textarea name="borrow_prod6_desc" defaultValue={settings.borrow_prod6_desc} className={styles.textarea} />
             </div>
 
-            {/* --- TRUST SECTION CONFIG --- */}
             <div className={styles.fullWidth}>
                 <hr className={styles.divider} />
                 <h3 className={styles.sectionTitle}>Trust Section</h3>

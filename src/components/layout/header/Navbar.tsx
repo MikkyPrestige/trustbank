@@ -15,7 +15,7 @@ import styles from "./Navbar.module.css";
 interface NavbarProps {
     settings: any;
     menus: any;
-    topNav?: Array<{ label: string; href: string; icon?: string }>;
+    // topNav?: Array<{ label: string; href: string; icon?: string }>;
     user?: {
         name?: string | null;
         email?: string | null;
@@ -30,13 +30,12 @@ declare global {
     }
 }
 
-export default function Navbar({ settings, menus, topNav, user }: NavbarProps) {
+export default function Navbar({ settings, menus, user }: NavbarProps) {
     const [isMobileOpen, setIsMobileOpen] = useState(false);
     const [isLoginOpen, setIsLoginOpen] = useState(false);
     const [isRegisterOpen, setIsRegisterOpen] = useState(false);
     const [isProfileOpen, setIsProfileOpen] = useState(false);
 
-    // Google Translate Logic
     const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const lang = e.target.value;
         const googleSelect = document.querySelector('.goog-te-combo') as HTMLSelectElement;
@@ -94,28 +93,38 @@ export default function Navbar({ settings, menus, topNav, user }: NavbarProps) {
                         </Link>
 
                         <div className={styles.topActions}>
-                            {topNav?.map((item, idx) => (
+                            {/* {topNav?.map((item, idx) => (
                                 <Link key={idx} href={item.href} className={styles.topLink}>
                                     {item.label === "Rates" && <TrendingUp size={16} className={styles.linkIcon} />}
                                     {item.label === "Locations" && <MapPin size={16} className={styles.linkIcon} />}
                                     {item.label}
                                 </Link>
-                            ))}
+                            ))} */}
 
-                            {/* SUPPORT PHONE */}
                             {settings.contact_phone && (
+                                <a href={`tel:${settings.contact_phone}`} className={styles.phoneLink}>
+                                    <div className={styles.linkContent}>
+                                        <Phone size={18} />
+                                        <span className={styles.phoneText}>Support</span>
+                                    </div>
+                                </a>
+                            )}
+                            {/* {settings.contact_phone && (
                                 <a href={`tel:${settings.contact_phone}`} className={styles.mobileLink}>
                                     <div className={styles.linkContent}>
                                         <Phone size={20} />
                                         <span>{settings.contact_phone}</span>
                                     </div>
                                 </a>
-                            )}
+                            )} */}
 
-                            {/* Translator */}
                             <div className={styles.langSelector}>
-                                <Globe size={16} />
-                                <select onChange={handleLanguageChange} className={styles.nativeSelect}>
+                                <Globe size={26} />
+                                <select
+                                    onChange={handleLanguageChange}
+                                    className={`${styles.nativeSelect} ${styles.hiddenSelect}`}
+                                    aria-label="Select Language"
+                                >
                                     <option value="en">English</option>
                                     <option value="es">Spanish</option>
                                     <option value="fr">French</option>
@@ -136,9 +145,9 @@ export default function Navbar({ settings, menus, topNav, user }: NavbarProps) {
                                             {user.image ? (
                                                 <Image src={user.image} alt={user.name || "User"} width={32} height={32} className={styles.avatarImg} />
                                             ) : (
-                                                    <div className={styles.avatarPlaceholder}>
-                                                        <User size={24} />
-                                                    </div>
+                                                <div className={styles.avatarPlaceholder}>
+                                                    <User size={24} />
+                                                </div>
                                             )}
                                         </div>
                                         <span className={styles.userName}>{displayName}</span>

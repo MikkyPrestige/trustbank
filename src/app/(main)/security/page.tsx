@@ -8,7 +8,6 @@ export default async function SecurityPage() {
 
     return (
         <main className={styles.main}>
-            {/* HERO SECTION */}
             <section className={styles.hero}>
                 <div className={styles.heroImageWrapper}>
                     <Image
@@ -20,7 +19,6 @@ export default async function SecurityPage() {
                     />
                     <div className={styles.heroOverlay} />
                 </div>
-                {/* Hero Content */}
                 <div className={styles.heroContent}>
                     <h1 className={styles.heroTitle}>
                         {settings.security_hero_title}

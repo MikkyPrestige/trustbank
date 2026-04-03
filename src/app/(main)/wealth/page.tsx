@@ -33,8 +33,6 @@ export default async function WealthPage() {
 
     return (
         <main className={styles.main}>
-
-            {/* 1. HERO SECTION */}
             <section className={styles.heroBackground}>
                 <Image
                     src={settings.wealth_hero_img}
@@ -57,14 +55,12 @@ export default async function WealthPage() {
                 </div>
             </section>
 
-            {/* 2. SIMULATOR SECTION */}
             <section className={styles.simSection}>
                 <div className={styles.container}>
                     <WealthSimulator settings={settings} />
                 </div>
             </section>
 
-            {/* 3. SERVICES GRID */}
             <section className={styles.servicesSection}>
                 <div className={styles.container}>
                     <div className={styles.sectionHeader}>
@@ -86,7 +82,6 @@ export default async function WealthPage() {
                 </div>
             </section>
 
-            {/* 4. ADVISOR */}
             <section id="advisor" className={styles.advisorSection}>
                 <div className={styles.container}>
                     <div className={styles.advisorBox}>
@@ -109,7 +104,6 @@ export default async function WealthPage() {
                 </div>
             </section>
 
-            {/* 5. PRIVATE CLIENT */}
             <section id="pcg" className={styles.productSection}>
                 <div className={styles.container}>
                     <div className={styles.productGrid}>
@@ -127,7 +121,6 @@ export default async function WealthPage() {
                 </div>
             </section>
 
-            {/* 6. RETIREMENT */}
             <section id="retirement" className={`${styles.productSection} ${styles.bgAlt}`}>
                 <div className={styles.container}>
                     <div className={`${styles.productGrid} ${styles.reverseGrid}`}>
@@ -145,7 +138,6 @@ export default async function WealthPage() {
                 </div>
             </section>
 
-            {/* 7. ESTATE */}
             <section id="estate" className={styles.productSection}>
                 <div className={styles.container}>
                     <div className={styles.productGrid}>

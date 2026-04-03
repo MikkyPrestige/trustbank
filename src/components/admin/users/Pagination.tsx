@@ -27,14 +27,14 @@ export default function Pagination({ totalPages }: { totalPages: number }) {
                     className={`${styles.pageBtn} ${currentPage <= 1 ? styles.disabled : ''}`}
                     aria-disabled={currentPage <= 1}
                 >
-                    <ChevronLeft size={16} /> Prev
+                    <ChevronLeft size={18} /> Prev
                 </Link>
                 <Link
                     href={createPageURL(currentPage + 1)}
                     className={`${styles.pageBtn} ${currentPage >= totalPages ? styles.disabled : ''}`}
                     aria-disabled={currentPage >= totalPages}
                 >
-                    Next <ChevronRight size={16} />
+                    Next <ChevronRight size={18} />
                 </Link>
             </div>
         </div>

@@ -1,4 +1,5 @@
 .container {
+  width: 100%;
   max-width: 1100px;
   margin: 0 auto;
   padding: 2rem;
@@ -6,66 +7,68 @@
 }
 
 .header {
-  margin-bottom: 3rem;
+  margin-bottom: 2rem;
   text-align: center;
 }
 
 .title {
-  font-size: 2.2rem;
+  font-size: 2rem;
   font-weight: 800;
-  margin-bottom: 0.5rem;
   background: var(--gradient-primary);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .subtitle {
+  font-size: 1rem;
   color: var(--text-muted);
 }
 
-/* LAYOUT GRID */
 .grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: 3rem;
   align-items: flex-start;
-  padding-bottom: 4rem;
+  padding-bottom: 2rem;
   border-bottom: 1px dashed var(--border);
-  margin-bottom: 4rem;
 }
 
 @media (min-width: 900px) {
   .grid {
-    grid-template-columns: 400px 1fr; /* Fixed Card Width + Flexible Controls */
+    grid-template-columns: 400px 1fr;
     gap: 4rem;
   }
 }
 
-/* --- THE PREMIUM CARD --- */
 .cardColumn {
   position: sticky;
   top: 2rem;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  width: 100%;
 }
 
 .visaCard {
   width: 100%;
-  aspect-ratio: 1.586; /* Standard Credit Card Ratio */
+  aspect-ratio: 1.586;
   background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-  border-radius: 20px;
+  border-radius: 1rem;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2rem 4rem -1rem rgba(0, 0, 0, 0.3);
   color: var(--text-invert);
   transition:
     transform 0.3s ease,
     filter 0.3s ease;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--border-subtle);
 }
 
-/* Shiny Glass Effect */
+.frozenCard {
+  filter: grayscale(100%) opacity(0.8);
+  transform: scale(0.98);
+}
+
 .cardShine {
   position: absolute;
   top: 0;
@@ -92,13 +95,29 @@
   pointer-events: none;
 }
 
-.frozenCard {
-  filter: grayscale(100%) opacity(0.8);
-  transform: scale(0.98);
+.eyeBtn {
+  position: absolute;
+  top: 0;
+  right: 1rem;
+  z-index: 10;
+  background: rgba(0, 0, 0, 0.3);
+  border: none;
+  color: var(--text-invert);
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+.eyeBtn:hover {
+  background: rgba(0, 0, 0, 0.5);
 }
 
 .cardContent {
-  padding: 24px;
+  padding: 2rem 1rem 1rem 1rem;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -130,14 +149,13 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 10px;
 }
 
 .chip {
-  width: 45px;
-  height: 32px;
-  background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
-  border-radius: 6px;
+  width: 3rem;
+  height: 2rem;
+  background: linear-gradient(135deg, var(--accent) 0%, #d97706 100%);
+  border-radius: 0.5rem;
   position: relative;
   overflow: hidden;
 }
@@ -162,8 +180,7 @@
 .cardNumberWrapper {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin: 10px 0;
+  gap: 1rem;
 }
 
 .cardNumber {
@@ -179,8 +196,8 @@
   border: none;
   color: rgba(255, 255, 255, 0.6);
   cursor: pointer;
-  padding: 4px;
-  border-radius: 4px;
+  padding: 0.4rem;
+  border-radius: 0.5rem;
   transition: all 0.2s;
 }
 
@@ -214,58 +231,56 @@
   text-transform: uppercase;
 }
 
-.eyeBtn {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  z-index: 10;
-  background: rgba(0, 0, 0, 0.3);
-  border: none;
-  color: var(--text-invert);
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  cursor: pointer;
+.statusWrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: -1rem;
+  position: relative;
+  z-index: 2;
+}
+
+.statusPill {
+  padding: 0.2rem 0.7rem;
+  border-radius: 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 600;
   display: flex;
   align-items: center;
-  justify-content: center;
-  transition: background 0.2s;
-}
-.eyeBtn:hover {
-  background: rgba(0, 0, 0, 0.5);
-}
-
-/* --- CONTROLS --- */
-.controlsWrapper {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 2rem;
-  box-shadow: var(--shadow-card);
+  gap: 0.5rem;
+  backdrop-filter: blur(4px);
+  border: 1px solid transparent;
+  transition: all 0.3s ease;
 }
 
-.sectionHeader {
-  margin-bottom: 2rem;
-}
-.sectionHeader h3 {
-  margin: 0 0 5px 0;
-}
-.sectionHeader p {
-  margin: 0;
-  color: var(--text-muted);
-  font-size: 0.9rem;
+.activePill {
+  background: rgba(var(--success-rgb), 0.1);
+  color: var(--success);
+  border: 1px solid rgba(var(--success-rgb), 0.3);
 }
 
-.controlGrid {
-  display: grid;
-  gap: 1rem;
+.frozenPill {
+  background: rgba(var(--danger-rgb), 0.1);
+  color: var(--danger);
+  border: 1px solid rgba(var(--danger-rgb), 0.3);
+}
+
+.statusDot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.activePill .statusDot {
+  box-shadow: 0 0 8px currentColor;
+  animation: pulse 2s infinite;
 }
 
 .controlCard {
   background: var(--bg-surface);
-  border: 1px solid var(--border);
-  padding: 1.5rem;
-  border-radius: 12px;
+  border: 1px solid var(--border-subtle);
+  padding: 1rem;
+  border-radius: 1rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -278,8 +293,8 @@
 }
 
 .activeFreeze {
-  border-color: var(--danger);
-  background: rgba(239, 68, 68, 0.05);
+  border-color: rgba(var(--danger-rgb), 0.3);
+  background: rgba(var(--danger-rgb), 0.1);
 }
 
 .controlHeader {
@@ -288,31 +303,41 @@
   align-items: center;
 }
 
+.flexGap {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
 .iconBox {
-  width: 42px;
-  height: 42px;
-  border-radius: 10px;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 1rem;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
+.controlInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
 .controlInfo h4 {
-  margin: 0 0 4px 0;
   font-size: 1rem;
 }
+
 .controlInfo p {
-  margin: 0;
   font-size: 0.85rem;
   color: var(--text-muted);
 }
 
-/* TOGGLE SWITCH */
 .switch {
   position: relative;
   display: inline-block;
-  width: 48px;
-  height: 26px;
+  width: 3rem;
+  height: 1.2rem;
 }
 
 .switch input {
@@ -328,18 +353,18 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: var(--border);
+  background-color: var(--ui-bg-med);
   transition: 0.4s;
-  border-radius: 34px;
+  border-radius: 3rem;
 }
 
 .slider:before {
   position: absolute;
   content: "";
-  height: 20px;
-  width: 20px;
-  left: 3px;
-  bottom: 3px;
+  height: 1.5rem;
+  width: 1.5rem;
+  left: 0.1rem;
+  bottom: -0.1rem;
   background-color: var(--text-invert);
   transition: 0.4s;
   border-radius: 50%;
@@ -354,18 +379,44 @@ input:checked + .slider:before {
   transform: translateX(22px);
 }
 
-/* LOCKED STATE */
+.controlsWrapper {
+  background: var(--sub-bg);
+  border: 1px solid var(--border-subtle);
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: var(--shadow-card);
+}
+
+.sectionHeader {
+  margin-bottom: 1rem;
+}
+
+.sectionHeader h3 {
+  margin: 0 0 1px 0;
+}
+.sectionHeader p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.controlGrid {
+  display: grid;
+  gap: 2rem;
+}
+
 .lockedState {
   text-align: center;
-  padding: 4rem 2rem;
-  background: var(--bg-card);
-  border-radius: 16px;
-  border: 1px dashed var(--border);
+  padding: 2rem;
+  background: var(--sub-bg);
+  border-radius: 1rem;
+  border: 1px dashed var(--border-subtle);
 }
+
 .lockIconBox {
   background: var(--bg-surface);
-  width: 60px;
-  height: 60px;
+  width: 4rem;
+  height: 4rem;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -373,15 +424,29 @@ input:checked + .slider:before {
   margin: 0 auto 1.5rem;
   color: var(--text-muted);
 }
+.lockedState h2 {
+  font-size: 1.5rem;
+  color: var(--text-main);
+}
+
+.lockedState p {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
 .verifyBtn {
   display: inline-block;
   margin-top: 1.5rem;
   background: var(--primary);
   color: var(--text-invert);
-  padding: 0.8rem 1.5rem;
-  border-radius: 8px;
+  padding: 0.5rem 0.8rem;
+  border-radius: 0.5rem;
   text-decoration: none;
   font-weight: 600;
+}
+
+.verifyBtn:hover {
+  background: var(--primary-hover);
 }
 
 .emptyState {
@@ -393,70 +458,6 @@ input:checked + .slider:before {
 .emptyIcon {
   margin-bottom: 1rem;
   opacity: 0.5;
-}
-
-/* --- STATUS PILL STYLES --- */
-.statusWrapper {
-  display: flex;
-  justify-content: center;
-  margin-top: -10px; /* Pulls it slightly up towards the card */
-  position: relative;
-  z-index: 2;
-}
-
-.statusPill {
-  padding: 6px 14px;
-  border-radius: 20px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  backdrop-filter: blur(4px);
-  border: 1px solid transparent;
-  transition: all 0.3s ease;
-}
-
-.activePill {
-  background: rgba(34, 197, 94, 0.1);
-  color: #22c55e;
-  border-color: rgba(34, 197, 94, 0.2);
-}
-
-.frozenPill {
-  background: rgba(239, 68, 68, 0.1);
-  color: #ef4444;
-  border-color: rgba(239, 68, 68, 0.2);
-}
-
-.statusDot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: currentColor;
-}
-
-/* Add a glow effect specifically for the active dot */
-.activePill .statusDot {
-  box-shadow: 0 0 8px currentColor;
-  animation: pulse 2s infinite;
-}
-
-/* Add this to your existing CSS file */
-.flexGap {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-/* Ensure the left column stretches its items to fill width */
-.cardColumn {
-  position: sticky;
-  top: 2rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  width: 100%; /* Ensures the Freeze box fills the column width */
 }
 
 @keyframes pulse {

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import ImageUploader from "@/components/admin/media/ImageUploader";
+import { X } from "lucide-react";
 import styles from "../settings.module.css";
 
 interface ManagedAsset {
@@ -42,10 +43,9 @@ export function CryptoTab({ settings, cryptoHeroUrl, setCryptoHeroUrl, initialMa
 
     return (
         <div className={styles.grid}>
-            {/* --- HERO SECTION --- */}
             <div className={styles.fullWidth}>
                 <hr className={styles.divider} />
-                <h3 className={styles.sectionTitle}>Crypto: Hero</h3>
+                <h3 className={styles.sectionTitle}>HERO SECTION</h3>
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Badge</label>
@@ -72,7 +72,7 @@ export function CryptoTab({ settings, cryptoHeroUrl, setCryptoHeroUrl, initialMa
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Image Alt Text</label>
-                <input name="crypto_hero_alt" defaultValue={settings.crypto_hero_alt} className={styles.input} />
+                <textarea name="crypto_hero_alt" defaultValue={settings.crypto_hero_alt} className={styles.textarea} />
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Primary Button</label>
@@ -91,28 +91,27 @@ export function CryptoTab({ settings, cryptoHeroUrl, setCryptoHeroUrl, initialMa
                 <input name="crypto_hero_btn_secondary_link" defaultValue={settings.crypto_hero_btn_secondary_link} className={styles.input} />
             </div>
 
-            {/* --- ASSET MANAGEMENT --- */}
             <div className={styles.fullWidth}>
                 <hr className={styles.divider} />
                 <h3 className={styles.sectionTitle}>Live Asset Configuration</h3>
             </div>
-
-            <div className={styles.fullWidth}>
-                <table className={styles.adminTable}>
+            <div className={styles.groupTable}>
+                <div className={styles.table}>
+                    <table className={styles.cryptoTable}>
                     <thead>
                         <tr>
                             <th>Name</th>
-                            <th>Symbol (Icon)</th>
+                            <th>Icon</th>
+                            <th>Symbol</th>
                             <th>API ID</th>
                             <th>Type</th>
                             <th>Active</th>
-                            <th></th>
+                            <th>Delete</th>
                         </tr>
                     </thead>
                     <tbody>
                         {assets.map((asset: any, i: number) => (
                             <tr key={asset.id || i}>
-                                {/* Hidden inputs */}
                                 <input type="hidden" name={`asset_id_${i}`} value={asset.id || ''} />
                                 <input type="hidden" name={`asset_icon_url_${i}`} value={asset.iconUrl || ''} />
                                 <input type="hidden" name="deleted_asset_ids" value={deletedIds.join(',')} />
@@ -121,17 +120,19 @@ export function CryptoTab({ settings, cryptoHeroUrl, setCryptoHeroUrl, initialMa
                                     <input name={`asset_name_${i}`} defaultValue={asset.name} className={styles.input} placeholder="Asset" />
                                 </td>
                                 <td>
-                                    <div className={styles.symbolCell}>
-                                        <div className={styles.miniUploaderWrapper}>
-                                            <ImageUploader
-                                                value={asset.iconUrl}
-                                                onChange={(url) => {
-                                                    const newAssets = [...assets];
-                                                    newAssets[i].iconUrl = url;
-                                                    setAssets(newAssets);
-                                                }}
-                                            />
-                                        </div>
+                                    <div className={styles.miniUploaderWrapper}>
+                                        <ImageUploader
+                                            value={asset.iconUrl}
+                                            onChange={(url) => {
+                                                const newAssets = [...assets];
+                                                newAssets[i].iconUrl = url;
+                                                setAssets(newAssets);
+                                            }}
+                                        />
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
                                         <input name={`asset_symbol_${i}`} defaultValue={asset.symbol} className={styles.input} placeholder="BTC" />
                                     </div>
                                 </td>
@@ -144,11 +145,11 @@ export function CryptoTab({ settings, cryptoHeroUrl, setCryptoHeroUrl, initialMa
                                         <option value="STOCK">Stock</option>
                                     </select>
                                 </td>
-                                <td>
-                                    <input type="checkbox" name={`asset_active_${i}`} defaultChecked={asset.isActive} />
+                                <td className={styles.activeCell}>
+                                    <input type="checkbox" name={`asset_active_${i}`} defaultChecked={asset.isActive} className={styles.checkbox} />
                                 </td>
                                 <td>
-                                    <button type="button" onClick={() => removeAsset(i)} className={styles.deleteBtn}>✕</button>
+                                    <button type="button" onClick={() => removeAsset(i)} className={styles.deleteBtn}><X size={20} /></button>
                                 </td>
                             </tr>
                         ))}
@@ -162,9 +163,9 @@ export function CryptoTab({ settings, cryptoHeroUrl, setCryptoHeroUrl, initialMa
                         + Add Stock
                     </button>
                 </div>
+                </div>
             </div>
 
-            {/* --- TABLE SECTION --- */}
             <div className={styles.fullWidth}>
                 <hr className={styles.divider} />
                 <h3 className={styles.sectionTitle}>Market Table</h3>
@@ -177,7 +178,8 @@ export function CryptoTab({ settings, cryptoHeroUrl, setCryptoHeroUrl, initialMa
                 <label className={styles.label}>SubTitle</label>
                 <input name="crypto_table_subtitle" defaultValue={settings.crypto_table_subtitle} className={styles.input} />
             </div>
-            <div className={styles.fullWidth}><strong>Table Heads</strong></div>
+
+            <div className={styles.groupHeader}><strong>Table Heads</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>1</label>
                 <input name="crypto_th1" defaultValue={settings.crypto_th1} className={styles.input} />
@@ -199,8 +201,7 @@ export function CryptoTab({ settings, cryptoHeroUrl, setCryptoHeroUrl, initialMa
                 <input name="crypto_th5" defaultValue={settings.crypto_th5} className={styles.input} />
             </div>
 
-            <div className={styles.fullWidth}><strong>Table Body</strong></div>
-            <div className={styles.row}>
+            <div className={styles.groupHeader}><strong>Table Body</strong></div>
                 <div className={styles.group}>
                     <label className={styles.label}>Link</label>
                     <input name="crypto_tb_link" defaultValue={settings.crypto_tb_link} className={styles.input} />
@@ -209,9 +210,7 @@ export function CryptoTab({ settings, cryptoHeroUrl, setCryptoHeroUrl, initialMa
                     <label className={styles.label}>Link Text</label>
                     <input name="crypto_tb_link_text" defaultValue={settings.crypto_tb_link_text} className={styles.input} />
                 </div>
-            </div>
 
-            {/* --- FEATURES SECTION --- */}
             <div className={styles.fullWidth}>
                 <hr className={styles.divider} />
                 <h3 className={styles.sectionTitle}>Security Features</h3>
@@ -224,8 +223,8 @@ export function CryptoTab({ settings, cryptoHeroUrl, setCryptoHeroUrl, initialMa
                 <label className={styles.label}>Description</label>
                 <textarea name="crypto_sec_desc" defaultValue={settings.crypto_sec_desc} className={styles.textarea} />
             </div>
-            {/* Feature 1 */}
-            <div className={styles.fullWidth}><strong>1. Cold Storage</strong></div>
+
+            <div className={styles.groupHeader}><strong>1. Cold Storage</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Title</label>
                 <input name="crypto_feat1_title" defaultValue={settings.crypto_feat1_title} className={styles.input} />
@@ -234,8 +233,8 @@ export function CryptoTab({ settings, cryptoHeroUrl, setCryptoHeroUrl, initialMa
                 <label className={styles.label}>Description</label>
                 <textarea name="crypto_feat1_desc" defaultValue={settings.crypto_feat1_desc} className={styles.textarea} />
             </div>
-            {/* Feature 2 */}
-            <div className={styles.fullWidth}><strong>2. Insurance</strong></div>
+
+            <div className={styles.groupHeader}><strong>2. Insurance</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Title</label>
                 <input name="crypto_feat2_title" defaultValue={settings.crypto_feat2_title} className={styles.input} />
@@ -244,8 +243,8 @@ export function CryptoTab({ settings, cryptoHeroUrl, setCryptoHeroUrl, initialMa
                 <label className={styles.label}>Description</label>
                 <textarea name="crypto_feat2_desc" defaultValue={settings.crypto_feat2_desc} className={styles.textarea} />
             </div>
-            {/* Feature 3 */}
-            <div className={styles.fullWidth}><strong>3. Liquidity</strong></div>
+
+            <div className={styles.groupHeader}><strong>3. Liquidity</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Title</label>
                 <input name="crypto_feat3_title" defaultValue={settings.crypto_feat3_title} className={styles.input} />
@@ -254,6 +253,6 @@ export function CryptoTab({ settings, cryptoHeroUrl, setCryptoHeroUrl, initialMa
                 <label className={styles.label}>Description</label>
                 <textarea name="crypto_feat3_desc" defaultValue={settings.crypto_feat3_desc} className={styles.textarea} />
             </div>
-        </div>
+        </div >
     );
 }

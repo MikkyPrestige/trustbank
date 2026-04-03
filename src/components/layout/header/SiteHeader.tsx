@@ -6,7 +6,7 @@ import Navbar from "./Navbar";
 export default async function SiteHeader({ settings }: { settings: any }) {
     const session = await auth();
 
-    // 1. Initialize Menus
+    // Initialize Menus
     let dynamicMenus;
     try {
         dynamicMenus = settings.nav_structure_json?.trim()
@@ -17,7 +17,7 @@ export default async function SiteHeader({ settings }: { settings: any }) {
         dynamicMenus = JSON.parse(JSON.stringify(MEGA_MENUS));
     }
 
-    // 2.  Map CMS keys to Menu keys
+    // Map CMS keys to Menu keys
     const menuKeys = [
         { key: 'BANK', prefix: 'nav_bank' },
         { key: 'BORROW', prefix: 'nav_borrow' },
@@ -40,10 +40,10 @@ export default async function SiteHeader({ settings }: { settings: any }) {
             settings={settings}
             menus={dynamicMenus}
             user={session?.user}
-            topNav={[
-                { label: settings.nav_rates_label, href: settings.nav_rates_link },
-                { label: settings.nav_locations_label, href: settings.nav_locations_link }
-            ]}
+            // topNav={[
+            //     { label: settings.nav_rates_label, href: settings.nav_rates_link },
+            //     { label: settings.nav_locations_label, href: settings.nav_locations_link }
+            // ]}
         />
     );
 }

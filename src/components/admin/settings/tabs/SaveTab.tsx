@@ -18,9 +18,8 @@ export function SaveTab({
 }: SaveTabProps) {
     return (
         <div className={styles.grid}>
-            {/* --- HERO SECTION --- */}
             <div className={styles.fullWidth}>
-                <h3 className={styles.sectionTitle}>Save: Hero</h3>
+                <h3 className={styles.sectionTitle}>HERO SECTION</h3>
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Headline</label>
@@ -51,21 +50,20 @@ export function SaveTab({
                 <input name="rate_cd_apy_percent" defaultValue={settings.rate_cd_apy_percent} className={styles.input} />
             </div>
 
-            {/* --- CALCULATOR --- */}
             <div className={styles.fullWidth}>
                 <hr className={styles.divider} />
-                <h3 className={styles.sectionTitle}>Savings Calculator Configuration</h3>
+                <h3 className={styles.sectionTitle}>Savings Calculator</h3>
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Title</label>
                 <input name="save_calc_title" defaultValue={settings.save_calc_title} className={styles.input} />
             </div>
-            <div className={styles.group}>
+            <div className={`${styles.group} ${styles.fullWidth}`}>
                 <label className={styles.label}>Description Prefix</label>
-                <input name="save_calc_desc_prefix" defaultValue={settings.save_calc_desc_prefix} className={styles.input} />
+                <textarea name="save_calc_desc_prefix" defaultValue={settings.save_calc_desc_prefix} className={styles.textarea} />
             </div>
-            {/* CONSTRAINTS & DEFAULTS */}
-            <div className={styles.fullWidth}><strong>Slider & Math Logic</strong></div>
+
+            <div className={styles.groupHeader}><strong>Slider & Math Logic</strong></div>
             <div className={styles.row}>
                 <div className={styles.group}>
                     <label className={styles.label}>Max Deposit</label>
@@ -80,8 +78,8 @@ export function SaveTab({
                     <input type="number" step="0.01" name="save_calc_default_apy" defaultValue={settings.save_calc_default_apy} className={styles.input} />
                 </div>
             </div>
-            {/* INPUT LABELS */}
-            <div className={styles.fullWidth}><strong>Input Field Labels</strong></div>
+
+            <div className={styles.groupHeader}><strong>Input Field Labels</strong></div>
             <div className={styles.row}>
                 <div className={styles.group}>
                     <label className={styles.label}>Initial Deposit</label>
@@ -102,8 +100,8 @@ export function SaveTab({
                     <input name="save_calc_label_apy" defaultValue={settings.save_calc_label_apy} className={styles.input} />
                 </div>
             </div>
-            {/* RESULTS & LEGEND */}
-            <div className={styles.fullWidth}><strong>Result Section Labels</strong></div>
+
+            <div className={styles.groupHeader}><strong>Result Section Labels</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Result Title</label>
                 <input name="save_calc_label_res" defaultValue={settings.save_calc_label_res} className={styles.input} />
@@ -124,13 +122,11 @@ export function SaveTab({
                 <input name="save_calc_cta" defaultValue={settings.save_calc_cta} className={styles.input} />
             </div>
 
-            {/* --- ANCHOR SECTIONS --- */}
             <div className={styles.fullWidth}>
                 <hr className={styles.divider} />
                 <h3 className={styles.sectionTitle}>Featured Sections</h3>
             </div>
-            {/* 1. CDs */}
-            <div className={styles.fullWidth}>
+            <div className={styles.groupHeader}>
                 <h4 className={styles.subsectionTitle}>1. Certificates (CDs)</h4>
             </div>
             <div className={styles.group}>
@@ -157,8 +153,8 @@ export function SaveTab({
                 <label className={styles.label}>Anchor Link</label>
                 <input name="save_cds_link" defaultValue={settings.save_cds_link} className={styles.input} />
             </div>
-            {/* 2. MMA */}
-            <div className={styles.fullWidth}>
+
+            <div className={styles.groupHeader}>
                 <h4 className={styles.subsectionTitle}>2. Money Market (MMA)</h4>
             </div>
             <div className={styles.group}>
@@ -185,8 +181,8 @@ export function SaveTab({
                 <label className={styles.label}>Anchor Link</label>
                 <input name="save_mma_link" defaultValue={settings.save_mma_link} className={styles.input} />
             </div>
-            {/* 3. Kids */}
-            <div className={styles.fullWidth}>
+
+            <div className={styles.groupHeader}>
                 <h4 className={styles.subsectionTitle}>3. Kids Club</h4>
             </div>
             <div className={styles.group}>
@@ -214,7 +210,6 @@ export function SaveTab({
                 <input name="save_kids_link" defaultValue={settings.save_kids_link} className={styles.input} />
             </div>
 
-            {/* --- SUPPLEMENTAL GRID --- */}
             <div className={styles.fullWidth}>
                 <hr className={styles.divider} />
                 <h3 className={styles.sectionTitle}>More Options</h3>
@@ -228,7 +223,7 @@ export function SaveTab({
                 <textarea name="save_prod_subtitle" defaultValue={settings.save_prod_subtitle} className={styles.textarea} />
             </div>
 
-            <div className={styles.fullWidth}><strong>1. High Yield Savings</strong></div>
+            <div className={styles.groupHeader}><strong>1. High Yield Savings</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Title</label>
                 <input name="save_prod1_title" defaultValue={settings.save_prod1_title} className={styles.input} />
@@ -245,7 +240,8 @@ export function SaveTab({
                 <label className={styles.label}>Anchor Link</label>
                 <input name="save_prod1_anchorLink" defaultValue={settings.save_prod1_anchorLink} className={styles.input} />
             </div>
-            <div className={styles.fullWidth}><strong>2. Business Savings</strong></div>
+
+            <div className={styles.groupHeader}><strong>2. Business Savings</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Title</label>
                 <input name="save_prod2_title" defaultValue={settings.save_prod2_title} className={styles.input} />
@@ -260,7 +256,8 @@ export function SaveTab({
             <div className={styles.group}>
                 <label className={styles.label}>Anchor Link</label><input name="save_prod2_anchorLink" defaultValue={settings.save_prod2_anchorLink} className={styles.input} />
             </div>
-            <div className={styles.fullWidth}><strong>3. Retirement IRA</strong></div>
+
+            <div className={styles.groupHeader}><strong>3. Retirement IRA</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Title</label>
                 <input name="save_prod3_title" defaultValue={settings.save_prod3_title} className={styles.input} />
@@ -277,9 +274,9 @@ export function SaveTab({
                 <label className={styles.label}>Anchor Link</label><input name="save_prod3_anchorLink" defaultValue={settings.save_prod3_anchorLink} className={styles.input} />
             </div>
 
-            {/* --- TRUST BADGES --- */}
             <div className={styles.fullWidth}>
-                <hr className={styles.divider} /><h3 className={styles.sectionTitle}>Trust Section</h3>
+                <hr className={styles.divider} />
+                <h3 className={styles.sectionTitle}>Trust Section</h3>
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Title</label>

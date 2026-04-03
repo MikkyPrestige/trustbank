@@ -33,8 +33,6 @@ export default function CreateUserForm() {
     return (
         <div className={styles.card}>
             <form action={handleSubmit} className={styles.form}>
-
-                {/* SECTION 1: ACCOUNT CREDENTIALS (REQUIRED) */}
                 <h3 className={styles.sectionTitle}>Login Credentials</h3>
                 <div className={styles.grid}>
                     <div className={styles.formGroup}>
@@ -53,7 +51,7 @@ export default function CreateUserForm() {
                         </div>
                     </div>
 
-                    <div className={styles.formGroup} style={{ gridColumn: '1 / -1' }}>
+                    <div className={styles.formGroup}>
                         <label>Initial Password <span className={styles.req}>*</span></label>
                         <div className={styles.inputWrapper}>
                             <Lock size={18} className={styles.icon} />
@@ -64,7 +62,6 @@ export default function CreateUserForm() {
 
                 <hr className={styles.divider} />
 
-                {/* SECTION 2: IDENTITY DETAILS (REQUIRED) */}
                 <h3 className={styles.sectionTitle}>Identity Details</h3>
                 <div className={styles.grid}>
                     <div className={styles.formGroup}>
@@ -93,67 +90,72 @@ export default function CreateUserForm() {
                             </select>
                         </div>
                     </div>
+
+                    <div className={styles.formGroup}>
+                        <label>Tax ID / SSN</label>
+                        <div className={styles.inputWrapper}>
+                            <input name="taxId" placeholder="XXX-XX-XXXX" className={styles.inputPadded} />
+                        </div>
+                    </div>
                 </div>
 
-                <hr className={styles.divider} />
+                    <hr className={styles.divider} />
 
-                {/* SECTION 3: CONTACT & WORK (OPTIONAL) */}
-                <h3 className={styles.sectionTitle}>Contact & Work (Optional)</h3>
-                <div className={styles.grid}>
-
-                    <div className={styles.formGroup}>
-                        <label>Phone Number</label>
-                        <div className={styles.inputWrapper}>
-                            <Phone size={18} className={styles.icon} />
-                            <input name="phone" type="text" placeholder="+1 (555) 000-0000" className={styles.input} />
+                    <h3 className={styles.sectionTitle}>Contact & Work (Optional)</h3>
+                    <div className={styles.grid}>
+                        <div className={styles.formGroup}>
+                            <label>Phone Number</label>
+                            <div className={styles.inputWrapper}>
+                                <Phone size={18} className={styles.icon} />
+                                <input name="phone" type="text" placeholder="+1 (555) 000-0000" className={styles.input} />
+                            </div>
                         </div>
+
+                        <div className={styles.formGroup}>
+                            <label>Occupation</label>
+                            <div className={styles.inputWrapper}>
+                                <Briefcase size={18} className={styles.icon} />
+                                <input name="occupation" type="text" placeholder="Software Engineer" className={styles.input} />
+                            </div>
+                        </div>
+
+                        <div className={styles.formGroup}>
+                            <label>Street Address</label>
+                            <div className={styles.inputWrapper}>
+                                <MapPin size={18} className={styles.icon} />
+                                <input name="address" type="text" placeholder="123 Main St" className={styles.input} />
+                            </div>
+                        </div>
+
+                        <div className={styles.formGroup}>
+                            <label>City</label>
+                            <div className={styles.inputWrapper}>
+                                <input name="city" type="text" placeholder="New York" className={styles.inputPadded} />
+                            </div>
+                        </div>
+
+                        <div className={styles.formGroup}>
+                            <label>Country</label>
+                            <div className={styles.inputWrapper}>
+                                <Globe size={18} className={styles.icon} />
+                                <input name="country" type="text" placeholder="United States" className={styles.input} />
+                            </div>
+                        </div>
+
+                        <div className={styles.formGroup}>
+                            <label>Zip Code</label>
+                            <div className={styles.inputWrapper}>
+                                <input name="zipCode" type="text" placeholder="10001" className={styles.inputPadded} />
+                            </div>
+                        </div>
+
                     </div>
 
-                    <div className={styles.formGroup}>
-                        <label>Occupation</label>
-                        <div className={styles.inputWrapper}>
-                            <Briefcase size={18} className={styles.icon} />
-                            <input name="occupation" type="text" placeholder="Software Engineer" className={styles.input} />
-                        </div>
+                    <div className={styles.actions}>
+                        <button type="submit" className={styles.submitBtn} disabled={loading}>
+                            <Save size={18} /> {loading ? 'Creating Account...' : 'Create Account'}
+                        </button>
                     </div>
-
-                    <div className={styles.formGroup}>
-                        <label>Street Address</label>
-                        <div className={styles.inputWrapper}>
-                            <MapPin size={18} className={styles.icon} />
-                            <input name="address" type="text" placeholder="123 Main St" className={styles.input} />
-                        </div>
-                    </div>
-
-                    <div className={styles.formGroup}>
-                        <label>City</label>
-                        <div className={styles.inputWrapper}>
-                            <input name="city" type="text" placeholder="New York" className={styles.inputPadded} />
-                        </div>
-                    </div>
-
-                    <div className={styles.formGroup}>
-                        <label>Country</label>
-                        <div className={styles.inputWrapper}>
-                            <Globe size={18} className={styles.icon} />
-                            <input name="country" type="text" placeholder="United States" className={styles.input} />
-                        </div>
-                    </div>
-
-                    <div className={styles.formGroup}>
-                        <label>Zip Code</label>
-                        <div className={styles.inputWrapper}>
-                            <input name="zipCode" type="text" placeholder="10001" className={styles.inputPadded} />
-                        </div>
-                    </div>
-
-                </div>
-
-                <div className={styles.actions}>
-                    <button type="submit" className={styles.submitBtn} disabled={loading}>
-                        <Save size={18} /> {loading ? 'Creating Account...' : 'Create Account'}
-                    </button>
-                </div>
             </form>
         </div>
     );

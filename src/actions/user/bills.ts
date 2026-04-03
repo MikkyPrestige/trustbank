@@ -22,20 +22,16 @@ export async function payBill(prevState: any, formData: FormData) {
         return { message };
     }
 
-    // amount is USD (Converted by Client)
     const amount = Number(formData.get("amount"));
     const provider = formData.get("provider") as string;
     const rawPin = formData.get("pin") as string;
     const accountNumber = formData.get("accountNumber") as string;
-
-    // Display info
     const displayAmount = formData.get("displayAmount") as string;
     const displayCurrency = formData.get("displayCurrency") as string;
 
     if (!amount || amount <= 0) return { success: false, message: "Invalid amount" };
 
     try {
-        // 1. Fetch REAL user
         const dbUser = await db.user.findUnique({
             where: { id: sessionUser.id }
         });
@@ -46,14 +42,12 @@ export async function payBill(prevState: any, formData: FormData) {
             return { success: false, message: "Transaction PIN not set." };
         }
 
-        // 2.  VERIFY PIN (Compare Hash)
         const isPinValid = await bcrypt.compare(rawPin, dbUser.transactionPin);
 
         if (!isPinValid) {
             return { success: false, message: "Invalid PIN" };
         }
 
-        // 3. EXECUTE PAYMENT
         const billTxId = await db.$transaction(async (tx) => {
             const account = await tx.account.findFirst({
                 where: { userId: dbUser.id },
@@ -64,7 +58,6 @@ export async function payBill(prevState: any, formData: FormData) {
                 throw new Error("Insufficient funds");
             }
 
-            // Deduct
             await tx.account.update({
                 where: { id: account.id },
                 data: {
@@ -73,7 +66,6 @@ export async function payBill(prevState: any, formData: FormData) {
                 }
             });
 
-            // Ledger
             const billTx = await tx.ledgerEntry.create({
                 data: {
                     accountId: account.id,
@@ -90,7 +82,6 @@ export async function payBill(prevState: any, formData: FormData) {
             return billTx.id;
         });
 
-        // 4. Notify
         const formatStr = (displayAmount && displayCurrency)
             ? `${displayCurrency} ${Number(displayAmount).toLocaleString()}`
             : `$${amount.toLocaleString()}`;

@@ -1,10 +1,9 @@
 
 .main {
-height: 100vh,
+height: 100vh;
 background: var(--bg-app);
 }
 
-/* --- HERO SECTION --- */
 .hero {
     position: relative;
     padding: 5rem 2rem;
@@ -46,7 +45,6 @@ background: var(--bg-app);
     position: relative; z-index: 2;
 }
 
-/* --- SEARCH BAR --- */
 .searchWrapper {
    max-width: 600px;
    margin: 0 auto;
@@ -83,7 +81,6 @@ background: var(--bg-app);
     box-shadow: 0 1rem 4rem -.5rem rgba(99, 102, 241, 0.2);
 }
 
-/* --- QUICK ACTIONS GRID --- */
 .container {
     /* max-width: 1000px; */
     margin: 0 auto;
@@ -145,7 +142,6 @@ background: var(--bg-app);
     line-height: 1.5;
 }
 
-/* --- FAQ ACCORDION --- */
 .faqSection {
     max-width: 800px;
     margin: 0 auto;
@@ -228,7 +224,6 @@ background: var(--bg-app);
     padding-bottom: 1rem;
 }
 
-/* --- CONTACT STRIP --- */
 .contactStrip {
     margin-top: 3rem;
     background: var(--bg-surface);

@@ -10,18 +10,15 @@ interface FooterTabProps {
 export function FooterTab({ settings, footerLinks }: FooterTabProps) {
     return (
         <div className={styles.grid}>
-
-            {/* --- LINK MANAGER --- */}
             <div className={styles.fullWidth}>
                 <h3 className={styles.sectionTitle}>Footer Links Manager</h3>
                 <p className={styles.sectionSubtitle}>Add or remove links from the footer columns.</p>
                 <FooterLinkManager initialLinks={footerLinks} />
             </div>
 
-            {/* Contact Strip Labels */}
             <div className={styles.fullWidth}>
                 <hr className={styles.divider} />
-                <h3 className={styles.sectionTitle}>Contact Strip Labels</h3>
+                <h3 className={styles.sectionTitle}>Contact Strip</h3>
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Support Label</label>
@@ -48,12 +45,10 @@ export function FooterTab({ settings, footerLinks }: FooterTabProps) {
                 <input name="footer_val_video" defaultValue={settings.footer_val_video} className={styles.input} />
             </div>
 
-            {/* --- TEXT SETTINGS --- */}
             <div className={styles.fullWidth}>
                 <hr className={styles.divider} />
                 <h3 className={styles.sectionTitle}>Footer Content</h3>
             </div>
-            {/* Mission Statement */}
             <div className={styles.group}>
                 <label className={styles.label}>Mission Title</label>
                 <input name="footer_mission_title" defaultValue={settings.footer_mission_title} className={styles.input} />
@@ -67,8 +62,7 @@ export function FooterTab({ settings, footerLinks }: FooterTabProps) {
                 <textarea name="footer_mission_text" defaultValue={settings.footer_mission_text} className={styles.textarea} />
             </div>
 
-            {/* Column Titles */}
-            <div className={styles.fullWidth}><strong>Columns</strong></div>
+            <div className={styles.groupHeader}><strong>Columns</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Header 1</label>
                 <input name="footer_col1_title" defaultValue={settings.footer_col1_title} className={styles.input} />
@@ -78,8 +72,7 @@ export function FooterTab({ settings, footerLinks }: FooterTabProps) {
                 <input name="footer_col2_title" defaultValue={settings.footer_col2_title} className={styles.input} />
             </div>
 
-            {/* Side Widget */}
-            <div className={styles.fullWidth}><strong>Side Widget</strong></div>
+            <div className={styles.groupHeader}><strong>Side Widget</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Headquarters Label</label>
                 <input name="footer_lbl_headquarters" defaultValue={settings.footer_lbl_headquarters} className={styles.input} />
@@ -97,8 +90,7 @@ export function FooterTab({ settings, footerLinks }: FooterTabProps) {
                 <input name="footer_lbl_locate_link" defaultValue={settings.footer_lbl_locate_link} className={styles.input} />
             </div>
 
-            { }
-            <div className={styles.fullWidth}><strong>Badges</strong></div>
+            <div className={styles.groupHeader}><strong>Badges</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>1</label>
                 <input name="footer_badge1" defaultValue={settings.footer_badge1} className={styles.input} />
@@ -116,7 +108,6 @@ export function FooterTab({ settings, footerLinks }: FooterTabProps) {
                     <input name="footer_badge4" defaultValue={settings.footer_badge4} className={styles.input} />
             </div>
 
-            {/* Social Media */}
             <div className={styles.fullWidth}>
                 <hr className={styles.divider} />
                 <h3 className={styles.sectionTitle}>Social Media Links</h3>

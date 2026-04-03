@@ -39,26 +39,26 @@ export default function QuickActions({ userId, currentStatus }: { userId: string
                 disabled={loading}
                 title="Quick Actions"
             >
-                {loading ? <div className={styles.spinner} /> : <MoreHorizontal size={16} />}
+                {loading ? <div className={styles.spinner} /> : <MoreHorizontal size={20} />}
             </button>
 
             {isOpen && (
                 <div className={styles.dropdownMenu}>
                     {currentStatus !== 'ACTIVE' && (
                         <button onClick={() => handleStatusChange('ACTIVE')} className={styles.menuItem}>
-                            <CheckCircle size={14} color="#22c55e" /> Activate
+                            <CheckCircle size={14} color="var(--success)" /> Activate
                         </button>
                     )}
 
                     {currentStatus !== 'SUSPENDED' && (
                         <button onClick={() => handleStatusChange('SUSPENDED')} className={styles.menuItem}>
-                            <Ban size={14} color="#ef4444" /> Suspend
+                            <Ban size={14} color="var(--danger)" /> Suspend
                         </button>
                     )}
 
                     {currentStatus !== 'FROZEN' && (
                         <button onClick={() => handleStatusChange('FROZEN')} className={styles.menuItem}>
-                            <Lock size={14} color="#3b82f6" /> Freeze
+                            <Lock size={14} color="var(--primary)" /> Freeze
                         </button>
                     )}
                 </div>

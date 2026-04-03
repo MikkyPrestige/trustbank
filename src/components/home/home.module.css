@@ -12,7 +12,6 @@
   width: 100%;
 }
 
-/* --- 1. HERO SECTION --- */
 .hero {
   position: relative;
   height: 500px;
@@ -104,7 +103,7 @@
 .btnPrimary:hover {
   transform: translateY(-2px);
   background: var(--accent);
-  box-shadow: 0 1rem 2rem rgba(251, 191, 36, 0.3);
+  box-shadow: 0 1rem 2rem rgba(var(--accent-rgb), 0.3);
 }
 
 .btnOutline {
@@ -127,8 +126,6 @@
   color: var(--primary);
 }
 
-/* --- 2. INFO SECTION --- */
-/* --- ANNOUNCEMENT BANNER --- */
 .announcementBanner {
   background-color: var(--accent);
   color: var(--text-dark);
@@ -168,7 +165,6 @@
   line-height: 1.4;
 }
 
-/* ---  INFO BAR --- */
 .infoBarSection {
   position: relative;
   z-index: 10;
@@ -215,7 +211,6 @@
   color: var(--text-muted);
 }
 
-/* HYBRID COLORS  */
 .blueBlock {
   background-color: var(--primary);
   color: var(--text-invert);
@@ -264,7 +259,6 @@
   margin-top: 4px;
 }
 
-/* --- 3. RATES SECTION --- */
 .ratesSection {
   padding: 3rem 0;
 }
@@ -315,7 +309,6 @@
   /* max-width: 500px; */
 }
 
-/* THE TABS */
 .rateTabs {
   display: inline-flex;
   background: var(--bg-surface);
@@ -348,7 +341,6 @@
   font-weight: 700;
 }
 
-/* THE GRID */
 .ratesGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -356,7 +348,6 @@
   align-items: stretch;
 }
 
-/* CARD DESIGN */
 .rateCard {
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -378,13 +369,11 @@
   border-color: var(--primary-light);
 }
 
-/* FEATURED CARD  */
 .featuredCard {
   border: 2px solid var(--primary);
   background: linear-gradient(180deg, rgba(37, 99, 235, 0.03) 0%, white 100%);
 }
 
-/* Badge Layout */
 .badge {
   position: absolute;
   top: 5px;
@@ -408,7 +397,6 @@
   display: block;
 }
 
-/* Card Content */
 .cardTop {
   margin-bottom: 1.5rem;
   text-align: center;
@@ -448,7 +436,6 @@
   font-weight: 600;
 }
 
-/* Details Table inside Card */
 .cardDetails {
   background: var(--bg-app);
   border-radius: 0.5rem;
@@ -479,7 +466,6 @@
   color: var(--text-main);
 }
 
-/* Buttons */
 .btnFull {
   width: 100%;
   background: var(--primary);
@@ -520,7 +506,6 @@
   background: var(--text-invert);
 }
 
-/* Disclaimer Footer */
 .disclaimer {
   margin-top: 2rem;
   font-size: 0.75rem;
@@ -537,7 +522,6 @@
   text-decoration: underline;
 }
 
-/* --- 4. CARD SHOWCASE  --- */
 .cardSection {
   padding: 2rem 0;
   background-color: var(--bg-surface);
@@ -546,7 +530,6 @@
   overflow: hidden;
 }
 
-/* Background Texture */
 .cardSection::before {
   content: "";
   position: absolute;
@@ -574,7 +557,6 @@
   }
 }
 
-/* LEFT CONTENT */
 .cardContent {
   display: flex;
   flex-direction: column;
@@ -594,7 +576,7 @@
 .taglineLine {
   width: 5rem;
   height: 0.5rem;
-  background: var(--accent);
+  background: rgba(var(--accent-rgb), 0.1);
 }
 
 .tagline span {
@@ -624,7 +606,6 @@
   /* max-width: 500px; */
 }
 
-/* FEATURES LIST */
 .cardFeatures {
   display: flex;
   flex-direction: column;
@@ -655,7 +636,6 @@
   margin: 0;
 }
 
-/* ACTIONS */
 .cardActions {
   display: flex;
   align-items: center;
@@ -663,8 +643,8 @@
 }
 
 .btnGold {
-  background: var(--accent);
-  color: #0f172a;
+  background: rgba(var(--accent-rgb), 0.1);
+  color: var(--text-dark);
   padding: 1rem 2rem;
   font-weight: 700;
   border-radius: 6px;
@@ -676,7 +656,7 @@
 .btnGold:hover {
   background: var(--accent);
   transform: translateY(-2px);
-  box-shadow: 0 1rem 2rem rgba(245, 158, 11, 0.2);
+  box-shadow: 0 1rem 2rem rgba(var(--accent-rgb), 0.2);
 }
 
 .linkWhite {
@@ -694,7 +674,6 @@
   gap: 10px;
 }
 
-/* RIGHT VISUAL (Floating Card) */
 .cardVisual {
   position: relative;
   display: flex;
@@ -707,7 +686,7 @@
   position: absolute;
   width: 300px;
   height: 300px;
-  background: var(--accent);
+  background: rgba(var(--success-rgb), 0.1);
   border-radius: 50%;
   filter: blur(80px);
   opacity: 0.2;
@@ -726,7 +705,6 @@
   transform: rotateY(0deg) rotateX(0deg) scale(1.05);
 }
 
-/* --- 5. FINANCIAL GUIDANCE --- */
 .guideSection {
   padding: 2rem 0;
   background: var(--bg-app);
@@ -745,7 +723,7 @@
   color: var(--primary);
   font-weight: 700;
   text-decoration: none;
-  border-bottom: 2px solid var(--primary);
+  border-bottom: 2px solid rgba(59, 130, 246, 0.3);
   padding-bottom: 4px;
   display: flex;
   align-items: center;
@@ -758,7 +736,6 @@
   opacity: 0.8;
 }
 
-/* GRID LAYOUT */
 .guideGrid {
   display: grid;
   grid-template-columns: 1fr;
@@ -772,19 +749,17 @@
   }
 }
 
-/* CARD STYLES */
 .guideCardLarge {
   position: relative;
   border-radius: 1rem;
   overflow: hidden;
-  background: #0f172a;
+  background: var(--text-dark);
   grid-row: span 2;
   min-height: 400px;
 }
 
-/* Gold Security Card */
 .guideCardGold {
-  background: var(--accent);
+  background: rgba(var(--accent-rgb), 0.1);
   border-radius: 1rem;
   padding: 2rem;
   display: flex;
@@ -793,7 +768,6 @@
   overflow: hidden;
 }
 
-/* Small Image Card */
 .guideCardSmall {
   position: relative;
   border-radius: 1rem;
@@ -801,7 +775,6 @@
   background: #1e293b;
 }
 
-/* 4. Wide Business Card */
 .guideCardWide {
   position: relative;
   border-radius: 1rem;
@@ -810,7 +783,6 @@
   grid-column: span 2;
 }
 
-/* IMAGES & OVERLAYS */
 .cardBgImage {
   object-fit: cover;
   transition: transform 0.5s ease;
@@ -868,7 +840,6 @@
   align-items: flex-start;
 }
 
-/* TEXT & BUTTONS */
 .guideCardLarge h3 {
   font-size: 1.8rem;
   font-weight: 800;
@@ -902,7 +873,6 @@
   max-width: 300px;
 }
 
-/* TAGS */
 .tagBlue {
   background: var(--primary);
   color: var(--text-invert);
@@ -944,7 +914,6 @@
   margin-bottom: 1.5rem;
 }
 
-/* BUTTONS */
 .btnGlass {
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(10px);
@@ -962,8 +931,8 @@
 }
 
 .btnGlass:hover {
-  background: white;
-  color: #0f172a;
+  background: var(--text-invert);
+  color: var(--text-dark);
 }
 
 .btnGlassSmall {
@@ -1014,7 +983,6 @@
   fill: var(--accent);
 }
 
-/* --- 6. LOAN SECTION --- */
 .loanSection {
   padding: 2rem 0;
   background: var(--bg-surface);
@@ -1034,7 +1002,6 @@
   /* max-width: 500px; */
 }
 
-/* Icon Navigation */
 .loanIcons {
   display: flex;
   gap: 3rem;
@@ -1060,7 +1027,6 @@
   font-size: 0.9rem;
 }
 
-/* GRID LAYOUT */
 .loanGrid {
   display: grid;
   grid-template-columns: 1fr;
@@ -1074,7 +1040,6 @@
   }
 }
 
-/* CARD COMMON STYLES */
 .loanCardBlue,
 .loanCardGrey {
   display: flex;
@@ -1091,7 +1056,6 @@
   }
 }
 
-/* CARD 1:  */
 .loanCardBlue {
   background: var(--primary);
   color: var(--text-invert);
@@ -1122,7 +1086,6 @@
   transform: scale(1.05);
 }
 
-/* Typography & Elements */
 .iconBoxWhite {
   width: 3rem;
   height: 3rem;
@@ -1167,7 +1130,7 @@
 .loanStatRow {
   display: flex;
   gap: 2rem;
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--sub-bg);
   padding: 1.5rem;
   border-radius: 8px;
   margin-bottom: 2rem;
@@ -1192,7 +1155,7 @@
 
 .verticalDivider {
   width: 1px;
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--sub-divider);
 }
 
 .loanActions {
@@ -1227,7 +1190,6 @@
   text-decoration: underline;
 }
 
-/* CARD 2 */
 .loanCardGrey {
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -1283,7 +1245,7 @@
 }
 
 .btnBlueOutline {
-  border: 2px solid var(--primary);
+  border: 2px solid rgba(59, 130, 246, 0.3);
   color: var(--primary);
   padding: 0.7rem 1.2rem;
   border-radius: 6px;
@@ -1309,7 +1271,6 @@
   color: var(--primary);
 }
 
-/* TOOLS STRIP */
 .toolsStrip {
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -1370,14 +1331,12 @@
   }
 }
 
-/* --- 7. INVESTMENT SECTION --- */
 .investSection {
   background: var(--bg-app);
   position: relative;
   overflow: hidden;
 }
 
-/* TICKER STRIP */
 .tickerStrip {
   background: var(--bg-card);
   border-top: 1px solid var(--border);
@@ -1443,7 +1402,6 @@
   }
 }
 
-/* MAIN GRID */
 .investGrid {
   display: grid;
   grid-template-columns: 1fr;
@@ -1466,7 +1424,6 @@
   z-index: 5;
 }
 
-/* LEFT CONTENT */
 .investHeader {
   margin-bottom: 2rem;
 }
@@ -1531,7 +1488,6 @@
   gap: 24px;
 }
 
-/* RIGHT VISUAL */
 .investVisual {
   position: relative;
   display: flex;
@@ -1575,7 +1531,6 @@
   border-radius: 5rem;
 }
 
-/* FLOATING CARDS  */
 .floatCardTop,
 .floatCardBottom {
   position: absolute;
@@ -1629,7 +1584,7 @@
 .floatIconGold {
   width: 2.5rem;
   height: 2.5rem;
-  background: rgba(251, 191, 36, 0.15);
+  background: rgba(var(--accent-rgb), 0.15);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -1662,7 +1617,6 @@
   font-weight: 800;
 }
 
-/* --- 8. GLOBAL REACH --- */
 .globalSection {
   padding: 2rem 0;
   background: var(--bg-surface);
@@ -1670,7 +1624,6 @@
   overflow: hidden;
 }
 
-/* Background Grid  */
 .globalSection::before {
   content: "";
   position: absolute;
@@ -1705,7 +1658,6 @@
   line-height: 1.6;
 }
 
-/* MAP CONTAINER */
 .mapWrapper {
   position: relative;
   width: 100%;
@@ -1720,7 +1672,6 @@
   opacity: 0.6;
 }
 
-/* HOTSPOTS */
 .hotspot {
   position: absolute;
   width: 2rem;
@@ -1736,7 +1687,7 @@
 .hotspotDot {
   width: 1rem;
   height: 1rem;
-  background: var(--primary);
+  background: rgba(59, 130, 246, 0.15);
   border-radius: 50%;
   box-shadow: 0 0 10px var(--primary);
   position: relative;
@@ -1765,7 +1716,6 @@
   }
 }
 
-/* TOOLTIP */
 .hotspotTooltip {
   position: absolute;
   bottom: 2rem;
@@ -1804,7 +1754,6 @@
   letter-spacing: 1px;
 }
 
-/* STATS STRIP */
 .statsStrip {
   display: flex;
   justify-content: center;
@@ -1855,7 +1804,6 @@
   }
 }
 
-/* --- 9. PARTNER STRIP --- */
 .partnerSection {
   padding: 2rem 0;
   background: var(--bg-app);
@@ -1879,7 +1827,6 @@
   margin-bottom: 2rem;
 }
 
-/* MARQUEE MASK  */
 .marqueeMask {
   position: relative;
   width: 100%;
@@ -1949,7 +1896,6 @@
   }
 }
 
-/* --- 10. FINAL CTA --- */
 .ctaSection {
   padding: 2rem 0;
   background: var(--bg-surface);
@@ -1989,7 +1935,6 @@
   min-height: 500px;
 }
 
-/* LEFT CONTENT */
 .ctaContentLeft {
   padding: 2rem;
   color: var(--text-invert);
@@ -1999,8 +1944,8 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: var(--sub-bg);
+  border: 1px solid var(--sub-divider);
   padding: 0.5rem 1rem;
   border-radius: 2rem;
   font-size: 0.85rem;
@@ -2046,7 +1991,6 @@
   color: var(--success);
 }
 
-/* BUTTONS */
 .ctaButtonRow {
   display: flex;
   gap: 2rem;
@@ -2054,7 +1998,6 @@
   flex-wrap: wrap;
 }
 
-/* Store Button Styles */
 .appStoreBtn,
 .googlePlayBtn {
   display: flex;
@@ -2074,9 +2017,9 @@
 }
 
 .googlePlayBtn {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--sub-bg);
   color: var(--text-invert);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--sub-divider);
   backdrop-filter: blur(1rem);
 }
 
@@ -2102,7 +2045,7 @@
 }
 
 .ctaWebLink {
-  color: #93c5fd;
+  color: var(--primary-hover);
   text-decoration: none;
   display: inline-flex;
   align-items: center;
@@ -2115,7 +2058,6 @@
   color: var(--text-invert);
 }
 
-/* RIGHT VISUAL */
 .ctaVisualRight {
   height: 100%;
   display: flex;
@@ -2140,7 +2082,6 @@
   }
 }
 
-/* RESPONSIVE */
 @media (max-width: 992px) {
   .ctaGrid {
     grid-template-columns: 1fr;

@@ -30,36 +30,36 @@ export default function AdminTicketList({ tickets }: { tickets: Ticket[] }) {
                 <tbody>
                     {tickets.length === 0 ? (
                         <tr>
-                            <td colSpan={5} style={{ textAlign: 'center', padding: '2rem' }}>
-                                No tickets found.
-                            </td>
+                            <td colSpan={5} className={styles.noTickets}>
+                            No tickets found.
+                        </td>
                         </tr>
-                    ) : (
+                ) : (
                         tickets.map((t) => (
-                            <tr key={t.id}>
-                                <td>
-                                    <div className={styles.userCell}>
-                                        <span>{t.user.fullName}</span>
-                                        <span className={styles.userEmail}>{t.user.email}</span>
-                                    </div>
-                                </td>
-                                <td>{t.subject}</td>
-                                <td>
-                                    <span className={`${styles.statusBadge} ${styles[t.status.toLowerCase()] || ''}`}>
-                                        {t.status}
-                                    </span>
-                                </td>
-                                <td>{new Date(t.createdAt).toLocaleDateString()}</td>
-                                <td>
-                                    <Link href={`/admin/support/${t.id}`} className={styles.viewBtn}>
-                                        Manage
-                                    </Link>
-                                </td>
-                            </tr>
-                        ))
+                <tr key={t.id}>
+                    <td>
+                        <div className={styles.userCell}>
+                            <span className={styles.userFullName}>{t.user.fullName}</span>
+                            <span className={styles.userEmail}>{t.user.email}</span>
+                        </div>
+                    </td>
+                    <td className={styles.subjectCell}>{t.subject}</td>
+                    <td>
+                        <span className={`${styles.statusBadge} ${styles[t.status.toLowerCase()] || ''}`}>
+                            {t.status}
+                        </span>
+                    </td>
+                    <td className={styles.dateCell}>{new Date(t.createdAt).toLocaleDateString()}</td>
+                    <td>
+                        <Link href={`/admin/support/${t.id}`} className={styles.viewBtn}>
+                            Manage
+                        </Link>
+                    </td>
+                </tr>
+                ))
                     )}
-                </tbody>
-            </table>
-        </div>
+            </tbody>
+        </table >
+        </div >
     );
 }

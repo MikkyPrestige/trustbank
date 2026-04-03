@@ -48,7 +48,6 @@ export default function DebitCard3D({ settings }: DebitCard3DProps) {
                     transform: `perspective(1000px) rotateX(${rotate.x}deg) rotateY(${rotate.y}deg) scale3d(1, 1, 1)`
                 }}
             >
-                {/* GLOSS EFFECT */}
                 <div
                     className={styles.gloss}
                     style={{
@@ -57,7 +56,6 @@ export default function DebitCard3D({ settings }: DebitCard3DProps) {
                     }}
                 ></div>
 
-                {/* CARD CONTENT */}
                 <div className={styles.cardContent}>
                     <div className={styles.cardTop}>
                         <span className={styles.bankName}>{bankName}</span>
@@ -86,7 +84,6 @@ export default function DebitCard3D({ settings }: DebitCard3DProps) {
                     </div>
                 </div>
 
-                {/* CARD TEXTURE */}
                 <div className={styles.texture}></div>
             </div>
         </div>

@@ -26,18 +26,18 @@ export default function CurrencySelector({ currentCurrency }: { currentCurrency:
     const router = useRouter();
 
     const handleSelect = (code: string) => {
-        if (code === active) return; // Prevent unnecessary calls
+        if (code === active) return;
 
-        setActive(code); // Optimistic update
+        setActive(code);
 
         startTransition(async () => {
             const res = await updateUserCurrency(code);
             if (res.success) {
                 toast.success(res.message);
-                router.refresh(); // Refresh server data
+                router.refresh();
             } else {
                 toast.error(res.message);
-                setActive(currentCurrency); // Revert on fail
+                setActive(currentCurrency);
             }
         });
     };
@@ -73,9 +73,9 @@ export default function CurrencySelector({ currentCurrency }: { currentCurrency:
                         {active === c.code && (
                             <div className={styles.statusIcon}>
                                 {isPending ? (
-                                    <Loader2 size={16} className={styles.spin} />
+                                    <Loader2 size={18} className={styles.spin} />
                                 ) : (
-                                    <Check size={16} strokeWidth={3} />
+                                    <Check size={18} strokeWidth={3} />
                                 )}
                             </div>
                         )}

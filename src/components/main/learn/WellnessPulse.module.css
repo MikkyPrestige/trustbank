@@ -16,8 +16,9 @@
 }
 
 .iconBox {
-  background: rgba(245, 158, 11, 0.1);
+  background: rgba(var(--accent-rgb), 0.1);
   color: var(--accent);
+  border: 1px solid rgba(var(--accent-rgb), 0.3);
   padding: 1rem;
   border-radius: 1rem;
 }
@@ -32,7 +33,6 @@
   font-size: 0.9rem;
 }
 
-/* SLIDERS */
 .slidersBox {
   display: flex;
   flex-direction: column;
@@ -65,14 +65,14 @@
   -webkit-appearance: none;
   width: 1.2rem;
   height: 1.2rem;
-  background: var(--accent);
+  background: rgba(var(--accent-rgb), 0.1);
   border-radius: 50%;
   cursor: pointer;
   transition: 0.2s;
 }
 .range::-webkit-slider-thumb:hover {
   transform: scale(1.2);
-  box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+  box-shadow: 0 0 10px rgba(var(--accent-rgb), 0.5);
 }
 
 .valueDisplay {
@@ -85,22 +85,22 @@
 }
 
 .analyzeBtn {
-  background: var(--accent);
+  background: rgba(var(--accent-rgb), 0.1);
   color: var(--text-dark);
   padding: 1rem;
   border-radius: 0.8rem;
-  border: none;
+  border: 1px solid rgba(var(--accent-rgb), 0.3);
   font-weight: 700;
   cursor: pointer;
   margin-top: 1rem;
   transition: 0.2s;
 }
 .analyzeBtn:hover {
-  background: #d97706;
+  background: rgba(var(--accent-rgb), 0.3);
+  border: 1px solid rgba(var(--accent-rgb), 0.1);
   transform: translateY(-2px);
 }
 
-/* RESULTS */
 .resultBox {
   text-align: center;
   animation: slideUp 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -109,7 +109,7 @@
   width: 7rem;
   height: 7rem;
   border-radius: 50%;
-  border: 6px solid var(--accent);
+  border: 6px solid rgba(var(--accent-rgb), 0.3);
   margin: 0 auto 1rem auto;
   display: flex;
   flex-direction: column;
@@ -151,7 +151,7 @@
   font-weight: 600;
 }
 .resetBtn:hover {
-  border-color: var(--accent);
+  border-color: rgba(var(--accent-rgb), 0.3);
   color: var(--accent);
 }
 

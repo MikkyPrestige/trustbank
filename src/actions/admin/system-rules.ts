@@ -9,37 +9,28 @@ import { canPerform } from "@/lib/auth/permissions";
 import { SYSTEM_DEFINITIONS } from "@/lib/system-definitions";
 
 export async function updateSystemRules(prevState: any, formData: FormData) {
-    // 1. Security Check
     const { authorized, session } = await checkAdminAction();
     if (!authorized || !session || !session.user) return { success: false, message: "Unauthorized" };
 
-    // Strict Check: Only Super Admins should touch these rules
     if (!canPerform(session.user.role as UserRole, 'ADMIN_MGMT')) {
         return { success: false, message: "Restricted: Super Admin access required." };
     }
 
     let changesCount = 0;
 
-    // 2. Loop through our definitions and grab values from FormData
     for (const [key, schema] of Object.entries(SYSTEM_DEFINITIONS)) {
         const rawValue = formData.get(key);
         let finalValue = rawValue as string;
 
-        // Special handling for checkboxes (Boolean)
         if (schema.type === 'BOOLEAN') {
-            // Checkboxes send "on" if checked, or null if unchecked
             const isChecked = rawValue === 'on' || rawValue === 'true';
             finalValue = isChecked ? "true" : "false";
         }
 
-        // Only update if value is present
         if (finalValue !== null && finalValue !== undefined) {
 
-            // 🚨 SPECIAL INTERCEPTOR: Auth Login Limit
-            // This field lives in the 'SiteSettings' table as an INT, not the KV table.
             if (key === 'auth_login_limit') {
                 try {
-                    // Update the singleton row in SiteSettings
                     await db.siteSettings.updateMany({
                         data: { auth_login_limit: parseInt(finalValue, 10) }
                     });
@@ -47,10 +38,9 @@ export async function updateSystemRules(prevState: any, formData: FormData) {
                 } catch (err) {
                     console.error("Failed to update auth_login_limit", err);
                 }
-                continue; // 👈 Skip the standard KV upsert below
+                continue;
             }
 
-            // 3. Standard Update for SystemSettings (Key-Value Store)
             await db.systemSettings.upsert({
                 where: { key: key },
                 update: {
@@ -70,7 +60,6 @@ export async function updateSystemRules(prevState: any, formData: FormData) {
     }
 
     try {
-        // 4. Log the Critical Action
         await logAdminAction(
             "SYSTEM_SETTINGS_UPDATE",
             "GLOBAL_RULES",

@@ -15,7 +15,6 @@ export default function GeneratorForm({ accounts, rateMap }: GeneratorFormProps)
     const [state, action, isPending] = useActionState(generateTransactions, undefined);
     const [selectedAccountId, setSelectedAccountId] = useState("");
 
-    // Get current currency context
     const currentContext = selectedAccountId ? rateMap[selectedAccountId] : { currency: "USD", rate: 1 };
 
     useEffect(() => {
@@ -25,22 +24,16 @@ export default function GeneratorForm({ accounts, rateMap }: GeneratorFormProps)
         }
     }, [state]);
 
-    // Intercept form submission to handle conversion
     const handleSubmit = (formData: FormData) => {
         const rawAmount = parseFloat(formData.get("totalAmount") as string);
 
         if (!isNaN(rawAmount) && currentContext.rate !== 1) {
-            // Calculate USD equivalent
             const usdAmount = rawAmount / currentContext.rate;
 
-            // Overwrite the amount sent to server with the USD value
             formData.set("totalAmount", usdAmount.toString());
-
-            // Add metadata for notifications
             formData.append("displayAmount", rawAmount.toString());
             formData.append("displayCurrency", currentContext.currency);
         } else {
-            // Even if USD, send these for consistency
             formData.append("displayAmount", rawAmount.toString());
             formData.append("displayCurrency", "USD");
         }
@@ -50,7 +43,6 @@ export default function GeneratorForm({ accounts, rateMap }: GeneratorFormProps)
 
     return (
         <form action={handleSubmit} className={styles.card}>
-            {/* 1. SELECT ACCOUNT */}
             <div className={styles.group}>
                 <label className={styles.label}>Target Account</label>
                 <select
@@ -60,28 +52,29 @@ export default function GeneratorForm({ accounts, rateMap }: GeneratorFormProps)
                     defaultValue=""
                     onChange={(e) => setSelectedAccountId(e.target.value)}
                 >
-                    <option value="" disabled>-- Select User Account --</option>
+                    <option value="" disabled className={styles.option}>
+                        -- Select User Account --
+                    </option>
                     {accounts.map(acc => (
-                        <option key={acc.id} value={acc.id}>
+                        <option key={acc.id} value={acc.id} className={styles.option}>
                             {acc.user.fullName} ({acc.type}) - {acc.accountNumber}
                         </option>
                     ))}
                 </select>
             </div>
 
-            {/* 2. CONFIGURATION ROW */}
             <div className={styles.grid}>
-                <div>
+                <div className={styles.transaction}>
                     <label className={styles.label}>Transaction Mode</label>
                     <div className={styles.selectWrapper}>
                         <select name="type" className={styles.select}>
-                            <option value="MIXED">Mixed (Realistic)</option>
-                            <option value="CREDIT">Credit Only (Deposits)</option>
-                            <option value="DEBIT">Debit Only (Spends)</option>
+                            <option value="MIXED" className={styles.option}>Mixed (Realistic)</option>
+                            <option value="CREDIT" className={styles.option}>Credit Only (Deposits)</option>
+                            <option value="DEBIT" className={styles.option}>Debit Only (Spends)</option>
                         </select>
                     </div>
                 </div>
-                <div>
+                <div className={styles.transaction}>
                     <label className={styles.label}>Transaction Count</label>
                     <input
                         name="count"
@@ -94,7 +87,6 @@ export default function GeneratorForm({ accounts, rateMap }: GeneratorFormProps)
                 </div>
             </div>
 
-            {/* 3. AMOUNT & DATES */}
             <div className={styles.group}>
                 <label className={styles.label}>Net Amount Change ({currentContext.currency})</label>
                 <div className={styles.currency}>
@@ -106,8 +98,9 @@ export default function GeneratorForm({ accounts, rateMap }: GeneratorFormProps)
                         type="number"
                         placeholder="e.g. 5000"
                         required
-                        className={styles.input}
-                        style={{ paddingLeft: '3.5rem' }}
+                        className={`${styles.input} ${selectedAccountId ? '' : styles.inputDisabled}`}
+                        style={{ paddingLeft: '3rem' }}
+                        disabled={!selectedAccountId || isPending}
                     />
                 </div>
                 <p className={styles.hint}>
@@ -116,17 +109,16 @@ export default function GeneratorForm({ accounts, rateMap }: GeneratorFormProps)
             </div>
 
             <div className={styles.grid}>
-                <div>
+                <div className={styles.date}>
                     <label className={styles.label}>Start Date</label>
                     <input name="startDate" type="date" className={styles.input} />
                 </div>
-                <div>
+                <div className={styles.date}>
                     <label className={styles.label}>End Date</label>
                     <input name="endDate" type="date" className={styles.input} />
                 </div>
             </div>
 
-            {/* 4. CUSTOM NOTE */}
             <div className={styles.group}>
                 <label className={styles.label}>Custom Tag / Note (Optional)</label>
                 <input
@@ -140,7 +132,6 @@ export default function GeneratorForm({ accounts, rateMap }: GeneratorFormProps)
                 </p>
             </div>
 
-            {/* 5. SUBMIT BUTTON */}
             <button disabled={isPending || !selectedAccountId} className={styles.button}>
                 {isPending ? <Loader2 className={styles.spin} size={20} /> : <Wand2 size={20} />}
                 {isPending ? "Generating..." : "Generate History"}

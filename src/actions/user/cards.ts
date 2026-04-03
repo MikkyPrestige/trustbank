@@ -20,17 +20,14 @@ export async function toggleCardFreeze(cardId: string, currentStatus: string) {
     let newStatus: CardStatus;
 
     try {
-        // KYC GATEKEEPER
         if (user.kycStatus !== KycStatus.VERIFIED) {
             return { success: false, message: "Action denied. Identity verification required." };
         }
 
-        // Toggle logic
         const isActive = currentStatus === CardStatus.ACTIVE;
         newStatus = isActive ? CardStatus.BLOCKED : CardStatus.ACTIVE;
 
         await db.$transaction(async (tx) => {
-            // A. Update Card Status
             await tx.card.update({
                 where: {
                     id: cardId,
@@ -39,7 +36,6 @@ export async function toggleCardFreeze(cardId: string, currentStatus: string) {
                 data: { status: newStatus }
             });
 
-            // NOTIFY ADMINS IF CARD IS FROZEN (BLOCKED)
             if (newStatus === CardStatus.BLOCKED) {
                 const admins = await tx.user.findMany({
                     where: { role: { in: ["ADMIN", "SUPER_ADMIN"] } },

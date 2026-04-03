@@ -10,8 +10,6 @@ export default async function LoanSection() {
     return (
         <section className={styles.loanSection}>
             <div className={styles.container}>
-
-                {/* 1. HEADER & CATEGORIES */}
                 <div className={styles.loanHeader}>
                     <div className={styles.headerContent}>
                         <h2 className={styles.sectionTitleDark}>{settings.home_loan_title}</h2>
@@ -27,9 +25,7 @@ export default async function LoanSection() {
                     </div>
                 </div>
 
-                {/* 2. SPLIT FEATURE CARDS */}
                 <div className={styles.loanGrid}>
-                    {/* CARD 1: MORTGAGE*/}
                     <div className={styles.loanCardBlue}>
                         <div className={styles.loanTextContent}>
                             <div className={styles.iconBoxWhite}>
@@ -62,7 +58,6 @@ export default async function LoanSection() {
                             </div>
                         </div>
 
-                        {/* Image Side */}
                         <div className={styles.loanImageWrapper}>
                             <Image
                                 src={settings.home_loan_card1_img}
@@ -73,7 +68,6 @@ export default async function LoanSection() {
                         </div>
                     </div>
 
-                    {/* CARD 2: AUTO */}
                     <div className={styles.loanCardGrey}>
                         <div className={styles.loanTextContent}>
                             <div className={styles.iconBoxBlue}>
@@ -101,7 +95,6 @@ export default async function LoanSection() {
                             </div>
                         </div>
 
-                        {/* Image Side */}
                         <div className={styles.loanImageWrapper}>
                             <Image
                                 src={settings.home_loan_card2_img}
@@ -114,9 +107,7 @@ export default async function LoanSection() {
 
                 </div>
 
-                {/* 3. CALCULATOR STRIP */}
                 <div className={styles.toolsStrip}>
-                    {/* Tool 1 */}
                     <div className={styles.toolItem}>
                         <Calculator size={20} className={styles.toolIcon} />
                         <div>
@@ -128,7 +119,6 @@ export default async function LoanSection() {
                     </div>
                     <div className={styles.toolDivider}></div>
 
-                    {/* Tool 2 */}
                     <div className={styles.toolItem}>
                         <Percent size={20} className={styles.toolIcon} />
                         <div>
@@ -140,7 +130,6 @@ export default async function LoanSection() {
                     </div>
                     <div className={styles.toolDivider}></div>
 
-                    {/* Tool 3 */}
                     <div className={styles.toolItem}>
                         <Briefcase size={20} className={styles.toolIcon} />
                         <div>
@@ -151,7 +140,6 @@ export default async function LoanSection() {
                         </div>
                     </div>
                 </div>
-
             </div>
         </section>
     );

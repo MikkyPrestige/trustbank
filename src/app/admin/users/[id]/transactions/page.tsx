@@ -18,7 +18,6 @@ export default async function AdminUserTransactionsPage({ params }: { params: Pr
 
     if (!user) return notFound();
 
-    // 1. Fetch Exchange Rate
     const currency = user.currency || "USD";
     let exchangeRate = 1;
     if (currency !== "USD") {
@@ -26,7 +25,6 @@ export default async function AdminUserTransactionsPage({ params }: { params: Pr
         if (rateData) exchangeRate = Number(rateData.rate);
     }
 
-    // 2. Fetch Transactions
     const transactions = await db.ledgerEntry.findMany({
         where: {
             account: { userId: id }
@@ -42,9 +40,11 @@ export default async function AdminUserTransactionsPage({ params }: { params: Pr
             <div className={styles.header}>
                 <div>
                     <Link href={`/admin/users/${id}`} className={styles.backLink}>
-                        <ChevronLeft size={14} /> Back to User Profile
+                        <ChevronLeft size={16} /> Back to User Profile
                     </Link>
-                    <h1 className={styles.title}>History: {user.fullName}</h1>
+                    <div className={styles.title}>
+                        History: <span className={styles.fullName}>{user.fullName}</span>
+                    </div>
                     <div className={styles.currencyContainer}>
                         <p className={styles.subtitle}>{user.email}</p>
                         {currency !== "USD" && (

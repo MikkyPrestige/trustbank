@@ -58,7 +58,6 @@ export async function resendOtp(email: string) {
             return { error: "This email is already verified. Please log in." };
         }
 
-        // 1. Generate New Code
         const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
         const otpExpires = new Date(Date.now() + 15 * 60 * 1000); // 15 mins
 
@@ -67,7 +66,6 @@ export async function resendOtp(email: string) {
             data: { otpCode, otpExpires }
         });
 
-        // 3. Send Email
         const settings = await getSiteSettings();
         const siteName = settings.site_name;
 

@@ -5,7 +5,6 @@ import { revalidatePath } from "next/cache";
 import { checkAdminAction } from "@/lib/auth/admin-auth";
 import { logAdminAction } from "@/lib/utils/admin-logger";
 
-// --- CREATE ---
 export async function createBranch(formData: FormData) {
     const auth = await checkAdminAction();
 
@@ -55,7 +54,6 @@ export async function createBranch(formData: FormData) {
     }
 }
 
-// --- UPDATE ---
 export async function updateBranch(id: string, formData: FormData) {
     const auth = await checkAdminAction();
 
@@ -102,7 +100,6 @@ export async function updateBranch(id: string, formData: FormData) {
     }
 }
 
-// --- DELETE ---
 export async function deleteBranch(id: string) {
     const auth = await checkAdminAction();
 
@@ -135,7 +132,6 @@ export async function deleteBranch(id: string) {
     }
 }
 
-// --- TOGGLE STATUS ---
 export async function toggleBranchStatus(id: string, currentStatus: boolean) {
     const auth = await checkAdminAction();
 
@@ -169,7 +165,6 @@ export async function toggleBranchStatus(id: string, currentStatus: boolean) {
     }
 }
 
-// --- Geo Location ---
 export async function getGeocodeAction(address: string) {
     try {
         const response = await fetch(

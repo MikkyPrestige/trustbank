@@ -4,7 +4,7 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: var(--bg-app);
+  background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(8px);
   z-index: 9999;
   display: flex;
@@ -17,7 +17,7 @@
   background: var(--bg-card);
   color: var(--text-main);
   padding: 2rem;
-  border-radius: 16px;
+  border-radius: 1rem;
   width: 90%;
   max-width: 400px;
   text-align: center;
@@ -26,22 +26,23 @@
 }
 
 .iconBox {
-  width: 60px;
-  height: 60px;
-  background: rgba(245, 158, 11, 0.1);
+  width: 3.5rem;
+  height: 3.5rem;
+  background: rgba(var(--accent-rgb), 0.1);
   color: var(--accent);
+  border: 1px solid rgba(var(--accent-rgb), 0.3);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 1.5rem auto;
+  margin: 0 auto 2rem auto;
 }
 
 .title {
   font-size: 1.25rem;
   font-weight: 700;
   color: var(--text-main);
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.3rem;
 }
 
 .text {
@@ -62,7 +63,7 @@
   color: var(--text-invert);
   border: none;
   padding: 0.75rem;
-  border-radius: 8px;
+  border-radius: 0.5rem;
   font-weight: 600;
   cursor: pointer;
   transition:
@@ -77,24 +78,24 @@
 }
 
 .secondaryBtn {
-  background: transparent;
-  color: var(--text-muted);
-  border: 1px solid var(--border);
+  background: var(--sub-bg);
+  color: var(--text-main);
+  border: 1px solid var(--border-subtle);
   padding: 0.75rem;
-  border-radius: 8px;
-  font-weight: 600;
+  border-radius: 0.5rem;
+  font-weight: 800;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 0.5rem;
   transition: all 0.2s;
 }
 
 .secondaryBtn:hover {
-  background: var(--bg-surface);
-  color: var(--text-main);
-  border-color: var(--border-hover);
+  background: var(--sub-hover);
+  color: var(--text-body);
+  border-color: var(--sub-divider);
 }
 
 @keyframes fadeIn {

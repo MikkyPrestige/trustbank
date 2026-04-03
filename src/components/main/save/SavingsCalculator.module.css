@@ -13,7 +13,7 @@
   margin-bottom: 2.5rem;
 }
 .iconBox {
-  background: rgba(34, 197, 94, 0.1);
+  background: rgba(var(--success-rgb), 0.1);
   color: var(--success);
   padding: 12px;
   border-radius: 12px;
@@ -36,7 +36,6 @@
   align-items: center;
 }
 
-/* INPUTS */
 .inputGroup {
   margin-bottom: 1.5rem;
 }
@@ -79,7 +78,6 @@
   font-size: 1rem;
 }
 
-/* Range Slider */
 .range {
   -webkit-appearance: none;
   width: 100%;
@@ -95,7 +93,7 @@
   height: 16px;
   width: 16px;
   border-radius: 50%;
-  background: #fff;
+  background: var(--text-invert);
   cursor: pointer;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 }
@@ -105,7 +103,6 @@
   gap: 20px;
 }
 
-/* RESULTS */
 .results {
   background: var(--bg-surface);
   padding: 2rem;
@@ -128,21 +125,20 @@
   letter-spacing: -1px;
 }
 
-/* Visual Bar */
 .breakdownBar {
   display: flex;
   height: 12px;
   border-radius: 6px;
   overflow: hidden;
   margin-bottom: 1.5rem;
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--sub-bg);
 }
 .barInvested {
-  background: #3b82f6;
-} /* Blue */
+  background: var(--primary);
+}
 .barInterest {
-  background: #22c55e;
-} /* Green */
+  background: var(--success);
+}
 
 .legend {
   display: flex;
@@ -159,13 +155,13 @@
 .dotInvested {
   width: 8px;
   height: 8px;
-  background: #3b82f6;
+  background: var(--primary);
   border-radius: 50%;
 }
 .dotInterest {
   width: 8px;
   height: 8px;
-  background: #22c55e;
+  background: var(--success);
   border-radius: 50%;
 }
 .legendItem strong {
@@ -174,8 +170,8 @@
 
 .ctaBtn {
   width: 100%;
-  background: #22c55e;
-  color: #000;
+  background: var(--success);
+  color: var(--text-dark);
   font-weight: 700;
   padding: 16px;
   border-radius: 12px;

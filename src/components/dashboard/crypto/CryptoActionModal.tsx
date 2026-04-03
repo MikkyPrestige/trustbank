@@ -67,7 +67,7 @@ export default function CryptoActionModal({ asset }: { asset: Asset }) {
         <div className={styles.modalOverlay}>
             <div className={styles.modalContent}>
                 <div className={styles.modalHeader}>
-                    <h3 style={{ margin: 0 }}>
+                    <h3 className={styles.modalTitle}>
                         {mode === 'SEND' ? `Send ${asset.symbol}` : `Receive ${asset.symbol}`}
                     </h3>
                     <button onClick={() => setMode(null)} className={styles.closeBtn}>
@@ -106,11 +106,11 @@ export default function CryptoActionModal({ asset }: { asset: Asset }) {
                             <input name="recipient" required placeholder={`Enter ${asset.symbol} Address`} className={styles.input} />
                         </div>
                         <div className={styles.group}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                            <div className={styles.maxBtnContainer}>
                                 <label>Amount ({asset.symbol})</label>
                                 <span
                                     onClick={handleMaxSend}
-                                    style={{ fontSize: '0.75rem', color: 'var(--primary)', cursor: 'pointer', fontWeight: 600 }}
+                                    className={styles.maxBtn}
                                 >
                                     Max
                                 </span>

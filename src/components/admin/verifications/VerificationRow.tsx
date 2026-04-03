@@ -50,7 +50,6 @@ export default function VerificationRow({ user }: { user: User }) {
         setLoading(false);
     };
 
-    // Helper to get a valid image source or placeholder
     const getImageSrc = (url: string | null, type: string) => {
         if (url && url.startsWith('http')) return url;
         return `https://ui-avatars.com/api/?name=${type}&background=random&size=400`;
@@ -67,7 +66,7 @@ export default function VerificationRow({ user }: { user: User }) {
                 <td><span className={styles.badge}>Pending Review</span></td>
                 <td>
                     <button onClick={() => setExpanded(!expanded)} className={styles.viewBtn}>
-                        {expanded ? <ChevronUp size={16} /> : <Eye size={16} />}
+                        {expanded ? <ChevronUp size={18} /> : <Eye size={16} />}
                         {expanded ? 'Hide Docs' : 'View Docs'}
                     </button>
                 </td>
@@ -83,10 +82,10 @@ export default function VerificationRow({ user }: { user: User }) {
                                     autoFocus
                                 />
                                 <button onClick={handleReject} disabled={loading} className={styles.confirmRejectBtn} title="Confirm Reject">
-                                    {loading ? <Loader2 className={styles.spin} size={14} /> : <Check size={14} />}
+                                    {loading ? <Loader2 className={styles.spin} size={18} /> : <Check size={18} />}
                                 </button>
                                 <button onClick={() => setShowRejectInput(false)} className={styles.cancelBtn} title="Cancel">
-                                    <X size={14} />
+                                    <X size={18} />
                                 </button>
                             </div>
                         ) : (
@@ -103,14 +102,12 @@ export default function VerificationRow({ user }: { user: User }) {
                 </td>
             </tr>
 
-            {/* EXPANDED DOCUMENT VIEW */}
             {expanded && (
                 <tr className={styles.expandedRow}>
                     <td colSpan={5}>
                         <div className={styles.docGrid}>
-                            {/* PASSPORT */}
                             <div className={styles.docItem}>
-                                <h4 className={styles.docTitle}><FileText size={14} /> Passport Photograph</h4>
+                                <h4 className={styles.docTitle}><FileText size={18} className={styles.docIcon} /> Passport Photograph</h4>
                                 <div className={styles.imgWrapper}>
                                     <img
                                         src={getImageSrc(user.passportUrl, "Passport")}
@@ -123,9 +120,8 @@ export default function VerificationRow({ user }: { user: User }) {
                                 </a>
                             </div>
 
-                            {/* ID CARD */}
                             <div className={styles.docItem}>
-                                <h4 className={styles.docTitle}><FileText size={14} /> Government ID</h4>
+                                <h4 className={styles.docTitle}><FileText size={18} className={styles.docIcon} /> Government ID</h4>
                                 <div className={styles.imgWrapper}>
                                     <img
                                         src={getImageSrc(user.idCardUrl, "ID+Card")}
@@ -138,7 +134,6 @@ export default function VerificationRow({ user }: { user: User }) {
                                 </a>
                             </div>
 
-                            {/* USER DETAILS (Summary) */}
                             <div className={styles.infoSummary}>
                                 <h4>Submitted Data</h4>
                                 <div className={styles.dataRow}>

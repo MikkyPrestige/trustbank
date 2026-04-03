@@ -90,7 +90,6 @@ export default function RegisterModal({ isOpen, onClose, onSwitchToLogin, siteNa
 
                 {!isLoading && (
                     <form onSubmit={handleContinue} className={`${styles.form} ${isLoading ? styles.formFadeOut : ''}`}>
-                        {/* Full Name */}
                         <div className={`${styles.inputGroup} ${focusedField === 'name' || name ? styles.focused : ''}`}>
                             <div className={styles.iconBox}><User size={18} /></div>
                             <div className={styles.fieldWrapper}>
@@ -110,7 +109,6 @@ export default function RegisterModal({ isOpen, onClose, onSwitchToLogin, siteNa
                             </div>
                         </div>
 
-                        {/* Email */}
                         <div className={`${styles.inputGroup} ${focusedField === 'email' || email ? styles.focused : ''}`}>
                             <div className={styles.iconBox}><Mail size={18} /></div>
                             <div className={styles.fieldWrapper}>

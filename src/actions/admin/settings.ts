@@ -9,24 +9,19 @@ import { logAdminAction } from "@/lib/utils/admin-logger";
  * METADATA MAPPING
  */
 const SETTING_METADATA: Record<string, { group: string, type: string }> = {
-    // Security
-    auth_login_limit: { group: 'AUTH', type: 'INT' },
+    auth_login_limit:    { group: 'AUTH', type: 'INT' },
 
-    // Banking Identity
-    routingNumber:    { group: 'ACCOUNT', type: 'STRING'},
-    swiftCode:        { group: 'ACCOUNT', type: 'STRING'},
+    routingNumber:       { group: 'ACCOUNT', type: 'STRING'},
+    swiftCode:           { group: 'ACCOUNT', type: 'STRING'},
 
-    // --- 1. BRAND & CONTACT ---
-    site_name:          { group: 'BRAND', type: 'STRING' },
-    site_logo:          { group: 'BRAND', type: 'IMAGE' },
-    site_logo_alt:      { group: 'BRAND', type: 'STRING' },
-    contact_email:      { group: 'CONTACT', type: 'STRING' },
-    contact_phone:      { group: 'CONTACT', type: 'STRING' },
-    address_main:       { group: 'CONTACT', type: 'STRING' },
+    site_name:           { group: 'BRAND', type: 'STRING' },
+    site_logo:           { group: 'BRAND', type: 'IMAGE' },
+    site_logo_alt:       { group: 'BRAND', type: 'STRING' },
+    contact_email:       { group: 'CONTACT', type: 'STRING' },
+    contact_phone:       { group: 'CONTACT', type: 'STRING' },
+    address_main:        { group: 'CONTACT', type: 'STRING' },
 
-       // --- 2. NAV BAR ---
-    nav_structure_json: { group: 'NAV', type: 'JSON' },
-    // TOP BAR CONFIG
+    nav_structure_json:  { group: 'NAV', type: 'JSON' },
     nav_dashboard_label: { group: 'NAV', type: 'STRING' },
     nav_dashboard_link:  { group: 'NAV', type: 'STRING' },
     nav_rates_label:     { group: 'NAV', type: 'STRING' },
@@ -36,29 +31,26 @@ const SETTING_METADATA: Record<string, { group: string, type: string }> = {
     nav_login_label:     { group: 'NAV', type: 'STRING' },
     nav_register_label:  { group: 'NAV', type: 'STRING' },
     nav_logout_label:    { group: 'NAV', type: 'STRING' },
-    // Nav Promos
-    nav_bank_title:     { group: 'NAV', type: 'STRING' },
-    nav_bank_desc:      { group: 'NAV', type: 'STRING' },
-    nav_bank_link:      { group: 'NAV', type: 'STRING' },
-    nav_borrow_title:   { group: 'NAV', type: 'STRING' },
-    nav_borrow_desc:    { group: 'NAV', type: 'STRING' },
-    nav_borrow_link:    { group: 'NAV', type: 'STRING' },
-    nav_wealth_title:   { group: 'NAV', type: 'STRING' },
-    nav_wealth_desc:    { group: 'NAV', type: 'STRING' },
-    nav_wealth_link:    { group: 'NAV', type: 'STRING' },
-    nav_insure_title:   { group: 'NAV', type: 'STRING' },
-    nav_insure_desc:    { group: 'NAV', type: 'STRING' },
-    nav_insure_link:    { group: 'NAV', type: 'STRING' },
-    nav_learn_title:    { group: 'NAV', type: 'STRING' },
-    nav_learn_desc:     { group: 'NAV', type: 'STRING' },
-    nav_learn_link:     { group: 'NAV', type: 'STRING' },
+    nav_bank_title:      { group: 'NAV', type: 'STRING' },
+    nav_bank_desc:       { group: 'NAV', type: 'STRING' },
+    nav_bank_link:       { group: 'NAV', type: 'STRING' },
+    nav_borrow_title:    { group: 'NAV', type: 'STRING' },
+    nav_borrow_desc:     { group: 'NAV', type: 'STRING' },
+    nav_borrow_link:     { group: 'NAV', type: 'STRING' },
+    nav_wealth_title:    { group: 'NAV', type: 'STRING' },
+    nav_wealth_desc:     { group: 'NAV', type: 'STRING' },
+    nav_wealth_link:     { group: 'NAV', type: 'STRING' },
+    nav_insure_title:    { group: 'NAV', type: 'STRING' },
+    nav_insure_desc:     { group: 'NAV', type: 'STRING' },
+    nav_insure_link:     { group: 'NAV', type: 'STRING' },
+    nav_learn_title:     { group: 'NAV', type: 'STRING' },
+    nav_learn_desc:      { group: 'NAV', type: 'STRING' },
+    nav_learn_link:      { group: 'NAV', type: 'STRING' },
 
-    // --- 3. ANNOUNCEMENT SETTINGS ---
     announcement_active:        { group: 'ANNOUNCEMENT', type: 'BOOLEAN' },
     announcement_text:          { group: 'ANNOUNCEMENT', type: 'STRING' },
     announcement_contact_phone: { group: 'ANNOUNCEMENT', type: 'STRING' },
 
-      // --- 4. GLOBAL RATES  ---
     rate_hysa_apy:          { group: 'RATES', type: 'STRING' },
     rate_cd_apy:            { group: 'RATES', type: 'STRING' },
     rate_cd_apy_percent:    { group: 'RATES', type: 'STRING' },
@@ -101,26 +93,21 @@ const SETTING_METADATA: Record<string, { group: string, type: string }> = {
     rate_credit_intro_apr:  { group: 'RATES', type: 'STRING' },
     rate_home_equity_label: { group: 'RATES', type: 'STRING' },
 
-    // --- 5. HOME PAGE HERO ---
-    hero_badge:              { group: 'HOME', type: 'STRING' },
-    hero_title:              { group: 'HOME', type: 'STRING' },
-    hero_subtitle:           { group: 'HOME', type: 'STRING' },
-    hero_cta_text:           { group: 'HOME', type: 'STRING' },
-    hero_cta_link:           { group: 'HOME', type: 'STRING' },
-    hero_cta1_text:          { group: 'HOME', type: 'STRING' },
-    hero_cta1_link:          { group: 'HOME', type: 'STRING' },
-    home_hero_img:           { group: 'HOME', type: 'IMAGE' },
-    home_hero_alt:           { group: 'HOME', type: 'STRING' },
-    // Info Section
-    home_support_label:      { group: 'HOME', type: 'STRING' },
-    home_hours_label:        { group: 'HOME', type: 'STRING' },
-    home_routing_label:      { group: 'HOME', type: 'STRING' },
-    home_swift_label:        { group: 'HOME', type: 'STRING' },
-    home_location_link_text: { group: 'HOME', type: 'STRING' },
-    home_location_link_url:  { group: 'HOME', type: 'STRING' },
-
-    // --- 6. HOME SECTIONS ---
-    // Rates Section
+    hero_badge:                 { group: 'HOME', type: 'STRING' },
+    hero_title:                 { group: 'HOME', type: 'STRING' },
+    hero_subtitle:              { group: 'HOME', type: 'STRING' },
+    hero_cta_text:              { group: 'HOME', type: 'STRING' },
+    hero_cta_link:              { group: 'HOME', type: 'STRING' },
+    hero_cta1_text:             { group: 'HOME', type: 'STRING' },
+    hero_cta1_link:             { group: 'HOME', type: 'STRING' },
+    home_hero_img:              { group: 'HOME', type: 'IMAGE' },
+    home_hero_alt:              { group: 'HOME', type: 'STRING' },
+    home_support_label:         { group: 'HOME', type: 'STRING' },
+    home_hours_label:           { group: 'HOME', type: 'STRING' },
+    home_routing_label:         { group: 'HOME', type: 'STRING' },
+    home_swift_label:           { group: 'HOME', type: 'STRING' },
+    home_location_link_text:    { group: 'HOME', type: 'STRING' },
+    home_location_link_url:     { group: 'HOME', type: 'STRING' },
     home_rates_title:           { group: 'HOME', type: 'STRING' },
     home_rates_desc:            { group: 'HOME', type: 'STRING' },
     home_rates_tab1_label:      { group: 'HOME', type: 'STRING' },
@@ -175,79 +162,71 @@ const SETTING_METADATA: Record<string, { group: string, type: string }> = {
     home_rates_c6_btn_link:     { group: 'HOME', type: 'STRING' },
     home_rates_currency_symbol: { group: 'HOME', type: 'STRING' },
     home_rates_percent_symbol:  { group: 'HOME', type: 'STRING' },
-
-    // Card
-    home_card_img:         { group: 'HOME', type: 'IMAGE' },
-    home_card_alt:         { group: 'HOME', type: 'STRING' },
-    home_card_series:      { group: 'HOME', type: 'STRING' },
-    home_card_title:       { group: 'HOME', type: 'STRING' },
-    home_card_highlight:   { group: 'HOME', type: 'STRING' },
-    home_card_desc:        { group: 'HOME', type: 'STRING' },
-    home_card_feat_1:      { group: 'HOME', type: 'STRING' },
-    home_card_feat_1_desc: { group: 'HOME', type: 'STRING' },
-    home_card_feat_2:      { group: 'HOME', type: 'STRING' },
-    home_card_feat_2_desc: { group: 'HOME', type: 'STRING' },
-    home_card_feat_3:      { group: 'HOME', type: 'STRING' },
-    home_card_feat_3_desc: { group: 'HOME', type: 'STRING' },
-    home_card_btn1_text:   { group: 'HOME', type: 'STRING' },
-    home_card_btn1_link:   { group: 'HOME', type: 'STRING' },
-    home_card_btn2_text:   { group: 'HOME', type: 'STRING' },
-    home_card_btn2_link:   { group: 'HOME', type: 'STRING' },
-
-    // Guide
-    home_guide_title:          { group: 'HOME', type: 'STRING' },
-    home_guide_desc:           { group: 'HOME', type: 'STRING' },
-    home_guide_link:           { group: 'HOME', type: 'STRING' },
-    home_guide_link_text:      { group: 'HOME', type: 'STRING' },
-    home_guide_head:           { group: 'HOME', type: 'STRING' },
-    guide_article_1_head:      { group: 'HOME', type: 'STRING' },
-    guide_article_1_title:     { group: 'HOME', type: 'STRING' },
-    guide_article_1_subtitle:  { group: 'HOME', type: 'STRING' },
-    guide_article_1_img:       { group: 'HOME', type: 'IMAGE' },
-    guide_article_1_alt:       { group: 'HOME', type: 'STRING' },
-    guide_article_1_link:      { group: 'HOME', type: 'STRING' },
-    guide_article_1_link_text: { group: 'HOME', type: 'STRING' },
-    guide_article_2_head:      { group: 'HOME', type: 'STRING' },
-    guide_article_2_title:     { group: 'HOME', type: 'STRING' },
-    guide_article_2_subtitle:  { group: 'HOME', type: 'STRING' },
-    guide_article_2_link:      { group: 'HOME', type: 'STRING' },
-    guide_article_2_link_text: { group: 'HOME', type: 'STRING' },
-    guide_article_3_head:      { group: 'HOME', type: 'STRING' },
-    guide_article_3_title:     { group: 'HOME', type: 'STRING' },
-    guide_article_3_subtitle:  { group: 'HOME', type: 'STRING' },
-    guide_article_3_img:       { group: 'HOME', type: 'IMAGE' },
-    guide_article_3_alt:       { group: 'HOME', type: 'STRING' },
-    guide_article_3_link:      { group: 'HOME', type: 'STRING' },
-    guide_article_3_link_text: { group: 'HOME', type: 'STRING' },
-    guide_article_4_head:      { group: 'HOME', type: 'STRING' },
-    guide_article_4_title:     { group: 'HOME', type: 'STRING' },
-    guide_article_4_subtitle:  { group: 'HOME', type: 'STRING' },
-    guide_article_4_img:       { group: 'HOME', type: 'IMAGE' },
-    guide_article_4_alt:       { group: 'HOME', type: 'STRING' },
-    guide_article_4_link:      { group: 'HOME', type: 'STRING' },
-    guide_article_4_link_text: { group: 'HOME', type: 'STRING' },
-
-    // Investment
-    home_invest_title:        { group: 'HOME', type: 'STRING' },
-    home_invest_highlight:    { group: 'HOME', type: 'STRING' },
-    home_invest_desc:         { group: 'HOME', type: 'STRING' },
-    home_invest_img:          { group: 'HOME', type: 'IMAGE' },
-    home_invest_alt:          { group: 'HOME', type: 'STRING' },
-    home_invest_feat1:        { group: 'HOME', type: 'STRING' },
-    home_invest_feat1_desc:   { group: 'HOME', type: 'STRING' },
-    home_invest_feat2:        { group: 'HOME', type: 'STRING' },
-    home_invest_feat2_desc:   { group: 'HOME', type: 'STRING' },
-    home_invest_feat3:        { group: 'HOME', type: 'STRING' },
-    home_invest_feat3_desc:   { group: 'HOME', type: 'STRING' },
-    home_invest_btn1_text:    { group: 'HOME', type: 'STRING' },
-    home_invest_btn1_link:    { group: 'HOME', type: 'STRING' },
-    home_invest_btn2_text:    { group: 'HOME', type: 'STRING' },
-    home_invest_btn2_link:    { group: 'HOME', type: 'STRING' },
-    home_invest_float1_label: { group: 'HOME', type: 'STRING' },
-    home_invest_float2_label: { group: 'HOME', type: 'STRING' },
-    home_invest_float2_value: { group: 'HOME', type: 'STRING' },
-
-    // Loan
+    home_card_img:              { group: 'HOME', type: 'IMAGE' },
+    home_card_alt:              { group: 'HOME', type: 'STRING' },
+    home_card_series:           { group: 'HOME', type: 'STRING' },
+    home_card_title:            { group: 'HOME', type: 'STRING' },
+    home_card_highlight:        { group: 'HOME', type: 'STRING' },
+    home_card_desc:             { group: 'HOME', type: 'STRING' },
+    home_card_feat_1:           { group: 'HOME', type: 'STRING' },
+    home_card_feat_1_desc:      { group: 'HOME', type: 'STRING' },
+    home_card_feat_2:           { group: 'HOME', type: 'STRING' },
+    home_card_feat_2_desc:      { group: 'HOME', type: 'STRING' },
+    home_card_feat_3:           { group: 'HOME', type: 'STRING' },
+    home_card_feat_3_desc:      { group: 'HOME', type: 'STRING' },
+    home_card_btn1_text:        { group: 'HOME', type: 'STRING' },
+    home_card_btn1_link:        { group: 'HOME', type: 'STRING' },
+    home_card_btn2_text:        { group: 'HOME', type: 'STRING' },
+    home_card_btn2_link:        { group: 'HOME', type: 'STRING' },
+    home_guide_title:           { group: 'HOME', type: 'STRING' },
+    home_guide_desc:            { group: 'HOME', type: 'STRING' },
+    home_guide_link:            { group: 'HOME', type: 'STRING' },
+    home_guide_link_text:       { group: 'HOME', type: 'STRING' },
+    home_guide_head:            { group: 'HOME', type: 'STRING' },
+    guide_article_1_head:       { group: 'HOME', type: 'STRING' },
+    guide_article_1_title:      { group: 'HOME', type: 'STRING' },
+    guide_article_1_subtitle:   { group: 'HOME', type: 'STRING' },
+    guide_article_1_img:        { group: 'HOME', type: 'IMAGE' },
+    guide_article_1_alt:        { group: 'HOME', type: 'STRING' },
+    guide_article_1_link:       { group: 'HOME', type: 'STRING' },
+    guide_article_1_link_text:  { group: 'HOME', type: 'STRING' },
+    guide_article_2_head:       { group: 'HOME', type: 'STRING' },
+    guide_article_2_title:      { group: 'HOME', type: 'STRING' },
+    guide_article_2_subtitle:   { group: 'HOME', type: 'STRING' },
+    guide_article_2_link:       { group: 'HOME', type: 'STRING' },
+    guide_article_2_link_text:  { group: 'HOME', type: 'STRING' },
+    guide_article_3_head:       { group: 'HOME', type: 'STRING' },
+    guide_article_3_title:      { group: 'HOME', type: 'STRING' },
+    guide_article_3_subtitle:   { group: 'HOME', type: 'STRING' },
+    guide_article_3_img:        { group: 'HOME', type: 'IMAGE' },
+    guide_article_3_alt:        { group: 'HOME', type: 'STRING' },
+    guide_article_3_link:       { group: 'HOME', type: 'STRING' },
+    guide_article_3_link_text:  { group: 'HOME', type: 'STRING' },
+    guide_article_4_head:       { group: 'HOME', type: 'STRING' },
+    guide_article_4_title:      { group: 'HOME', type: 'STRING' },
+    guide_article_4_subtitle:   { group: 'HOME', type: 'STRING' },
+    guide_article_4_img:        { group: 'HOME', type: 'IMAGE' },
+    guide_article_4_alt:        { group: 'HOME', type: 'STRING' },
+    guide_article_4_link:       { group: 'HOME', type: 'STRING' },
+    guide_article_4_link_text:  { group: 'HOME', type: 'STRING' },
+    home_invest_title:          { group: 'HOME', type: 'STRING' },
+    home_invest_highlight:      { group: 'HOME', type: 'STRING' },
+    home_invest_desc:           { group: 'HOME', type: 'STRING' },
+    home_invest_img:            { group: 'HOME', type: 'IMAGE' },
+    home_invest_alt:            { group: 'HOME', type: 'STRING' },
+    home_invest_feat1:          { group: 'HOME', type: 'STRING' },
+    home_invest_feat1_desc:     { group: 'HOME', type: 'STRING' },
+    home_invest_feat2:          { group: 'HOME', type: 'STRING' },
+    home_invest_feat2_desc:     { group: 'HOME', type: 'STRING' },
+    home_invest_feat3:          { group: 'HOME', type: 'STRING' },
+    home_invest_feat3_desc:     { group: 'HOME', type: 'STRING' },
+    home_invest_btn1_text:      { group: 'HOME', type: 'STRING' },
+    home_invest_btn1_link:      { group: 'HOME', type: 'STRING' },
+    home_invest_btn2_text:      { group: 'HOME', type: 'STRING' },
+    home_invest_btn2_link:      { group: 'HOME', type: 'STRING' },
+    home_invest_float1_label:   { group: 'HOME', type: 'STRING' },
+    home_invest_float2_label:   { group: 'HOME', type: 'STRING' },
+    home_invest_float2_value:   { group: 'HOME', type: 'STRING' },
     home_loan_cat1_label:        { group: 'HOME', type: 'STRING' },
     home_loan_cat2_label:        { group: 'HOME', type: 'STRING' },
     home_loan_cat3_label:        { group: 'HOME', type: 'STRING' },
@@ -289,8 +268,6 @@ const SETTING_METADATA: Record<string, { group: string, type: string }> = {
     home_loan_percent_symbol:    { group: 'HOME', type: 'STRING' },
     home_loan_apr_text:          { group: 'HOME', type: 'STRING' },
     home_loan_arrow_symbol:      { group: 'HOME', type: 'STRING' },
-
-    // Globe
     home_global_title:             { group: 'HOME', type: 'STRING' },
     home_global_highlight:         { group: 'HOME', type: 'STRING' },
     home_global_desc:              { group: 'HOME', type: 'STRING' },
@@ -306,8 +283,6 @@ const SETTING_METADATA: Record<string, { group: string, type: string }> = {
     global_stat_title:             { group: 'HOME', type: 'STRING' },
     global_stat_fraud:             { group: 'HOME', type: 'STRING' },
     global_stat_fraud_text:        { group: 'HOME', type: 'STRING' },
-
-    // Partners
     home_partner_label: { group: 'HOME', type: 'STRING' },
     partner_img_1:      { group: 'HOME', type: 'IMAGE' },
     partner_img_1_alt:  { group: 'HOME', type: 'STRING' },
@@ -321,8 +296,6 @@ const SETTING_METADATA: Record<string, { group: string, type: string }> = {
     partner_img_5_alt:  { group: 'HOME', type: 'STRING' },
     partner_img_6:      { group: 'HOME', type: 'IMAGE' },
     partner_img_6_alt:  { group: 'HOME', type: 'STRING' },
-
-    // Final CTA
     home_cta_badge:         { group: 'HOME', type: 'STRING' },
     home_cta_img:           { group: 'HOME', type: 'IMAGE' },
     home_cta_alt:           { group: 'HOME', type: 'STRING' },
@@ -340,8 +313,6 @@ const SETTING_METADATA: Record<string, { group: string, type: string }> = {
     home_cta_web_text:      { group: 'HOME', type: 'STRING' },
     home_cta_web_link:      { group: 'HOME', type: 'STRING' },
 
-    // --- 7. PRODUCT PAGES ---
-    // BANK
     bank_hero_img:                { group: 'BANKING', type: 'IMAGE' },
     bank_hero_alt:                { group: 'BANKING', type: 'STRING' },
     bank_hero_title_1:            { group: 'BANKING', type: 'STRING' },
@@ -400,7 +371,6 @@ const SETTING_METADATA: Record<string, { group: string, type: string }> = {
     bank_compare_col_1:           { group: 'BANKING', type: 'STRING' },
     bank_compare_col_2:           { group: 'BANKING', type: 'STRING' },
 
-    // SAVE
     save_fdic_badge:          { group: 'SAVE', type: 'STRING' },
     save_hero_title:          { group: 'SAVE', type: 'STRING' },
     save_hero_highlight:      { group: 'SAVE', type: 'STRING' },
@@ -457,7 +427,6 @@ const SETTING_METADATA: Record<string, { group: string, type: string }> = {
     save_trust_badge_1:       { group: 'SAVE', type: 'STRING' },
     save_trust_badge_2:       { group: 'SAVE', type: 'STRING' },
 
-    // BORROW
     borrow_hero_title:       { group: 'BORROW', type: 'STRING' },
     borrow_hero_highlight:   { group: 'BORROW', type: 'STRING' },
     borrow_hero_desc:        { group: 'BORROW', type: 'STRING' },
@@ -548,7 +517,6 @@ const SETTING_METADATA: Record<string, { group: string, type: string }> = {
     borrow_trust2_title:     { group: 'BORROW', type: 'STRING' },
     borrow_trust2_desc:      { group: 'BORROW', type: 'STRING' },
 
-    // WEALTH
     wealth_hero_badge:           { group: 'WEALTH', type: 'STRING' },
     wealth_hero_title:           { group: 'WEALTH', type: 'STRING' },
     wealth_hero_highlight:       { group: 'WEALTH', type: 'STRING' },
@@ -611,7 +579,6 @@ const SETTING_METADATA: Record<string, { group: string, type: string }> = {
     wealth_est_img:              { group: 'WEALTH', type: 'IMAGE' },
     wealth_est_img_alt:          { group: 'WEALTH', type: 'STRING' },
 
-    // INSURE
     insure_hero_badge:              { group: 'INSURE', type: 'STRING' },
     insure_hero_title:              { group: 'INSURE', type: 'STRING' },
     insure_hero_highlight:          { group: 'INSURE', type: 'STRING' },
@@ -688,7 +655,6 @@ const SETTING_METADATA: Record<string, { group: string, type: string }> = {
     insure_partner4_img:            { group: 'INSURE', type: 'IMAGE' },
     insure_partner4_img_alt:        { group: 'INSURE', type: 'STRING' },
 
-    // PAYMENTS
     payments_hero_badge:       { group: 'PAYMENTS', type: 'STRING' },
     payments_hero_title:       { group: 'PAYMENTS', type: 'STRING' },
     payments_hero_highlight:   { group: 'PAYMENTS', type: 'STRING' },
@@ -749,7 +715,6 @@ const SETTING_METADATA: Record<string, { group: string, type: string }> = {
     payments_util3_title:      { group: 'PAYMENTS', type: 'STRING' },
     payments_util3_desc:       { group: 'PAYMENTS', type: 'STRING' },
 
-    // CRYPTO
     crypto_hero_badge:              { group: 'CRYPTO', type: 'STRING' },
     crypto_hero_title:              { group: 'CRYPTO', type: 'STRING' },
     crypto_hero_highlight:          { group: 'CRYPTO', type: 'STRING' },
@@ -779,7 +744,6 @@ const SETTING_METADATA: Record<string, { group: string, type: string }> = {
     crypto_feat3_title:             { group: 'CRYPTO', type: 'STRING' },
     crypto_feat3_desc:              { group: 'CRYPTO', type: 'STRING' },
 
-    // LEARN
     learn_hero_badge:         { group: 'LEARN', type: 'STRING' },
     learn_hero_title:         { group: 'LEARN', type: 'STRING' },
     learn_hero_highlight:     { group: 'LEARN', type: 'STRING' },
@@ -831,7 +795,6 @@ const SETTING_METADATA: Record<string, { group: string, type: string }> = {
     learn_cat4_title:         { group: 'LEARN', type: 'STRING' },
     learn_cat4_desc:          { group: 'LEARN', type: 'STRING' },
 
-    // ABOUT
     about_hero_title:          { group: 'ABOUT', type: 'STRING' },
     about_hero_desc:           { group: 'ABOUT', type: 'STRING' },
     about_hero_img:            { group: 'ABOUT', type: 'IMAGE' },
@@ -852,7 +815,6 @@ const SETTING_METADATA: Record<string, { group: string, type: string }> = {
     about_mission3_title:      { group: 'ABOUT', type: 'STRING' },
     about_mission3_desc:       { group: 'ABOUT', type: 'STRING' },
 
-    // SUPPORT
     support_hero_title:    { group: 'SUPPORT', type: 'STRING' },
     support_hero_desc:     { group: 'SUPPORT', type: 'STRING' },
     support_hero_img:      { group: 'SUPPORT', type: 'IMAGE' },
@@ -872,7 +834,6 @@ const SETTING_METADATA: Record<string, { group: string, type: string }> = {
     support_faq_linkText:  { group: 'SUPPORT', type: 'STRING' },
     support_faq_linkArrow: { group: 'SUPPORT', type: 'STRING' },
 
-    // --- RATES  ---
     rates_hero_title:       { group: 'RATES', type: 'STRING' },
     rates_hero_highlight:   { group: 'RATES', type: 'STRING' },
     rates_hero_desc:        { group: 'RATES', type: 'STRING' },
@@ -894,7 +855,6 @@ const SETTING_METADATA: Record<string, { group: string, type: string }> = {
     rates_disclaimer_title: { group: 'RATES', type: 'STRING' },
     rates_disclaimer:       { group: 'RATES', type: 'STRING' },
 
-  // --- SECURITY ---
     security_hero_title:         { group: 'SECURITY', type: 'STRING' },
     security_hero_desc:          { group: 'SECURITY', type: 'STRING' },
     security_hero_img:           { group: 'SECURITY', type: 'IMAGE' },
@@ -912,7 +872,6 @@ const SETTING_METADATA: Record<string, { group: string, type: string }> = {
     security_help:               { group: 'SECURITY', type: 'STRING' },
     security_help_linkText:      { group: 'SECURITY', type: 'STRING' },
 
-    // ---  HELP ---
     help_hero_title:        { group: 'HELP', type: 'STRING' },
     help_hero_desc:         { group: 'HELP', type: 'STRING' },
     help_contact_title:     { group: 'HELP', type: 'STRING' },
@@ -935,7 +894,6 @@ const SETTING_METADATA: Record<string, { group: string, type: string }> = {
     help_action4_link:      { group: 'HELP', type: 'STRING' },
     help_faq_title:         { group: 'HELP', type: 'STRING' },
 
-    // --- CAREERS ---
     careers_hero_title:      { group: 'CAREERS', type: 'STRING' },
     careers_hero_desc:       { group: 'CAREERS', type: 'STRING' },
     careers_hero_img:        { group: 'CAREERS', type: 'IMAGE' },
@@ -956,7 +914,6 @@ const SETTING_METADATA: Record<string, { group: string, type: string }> = {
     careers_jobs_btn_text:   { group: 'CAREERS', type: 'STRING' },
     careers_jobs_email_text: { group: 'CAREERS', type: 'STRING' },
 
-    // --- LOCATIONS ---
     locations_hero_title:          { group: 'LOCATIONS', type: 'STRING' },
     locations_search_placeholder:  { group: 'LOCATIONS', type: 'STRING' },
     locations_search_btn_text:     { group: 'LOCATIONS', type: 'STRING' },
@@ -969,7 +926,6 @@ const SETTING_METADATA: Record<string, { group: string, type: string }> = {
     locations_tag_notary:          { group: 'LOCATIONS', type: 'STRING' },
     locations_directions_btn_text: { group: 'LOCATIONS', type: 'STRING' },
 
-    // --- PRESS ---
     press_hero_title:        { group: 'PRESS', type: 'STRING' },
     press_hero_desc:         { group: 'PRESS', type: 'STRING' },
     press_contact:           { group: 'PRESS', type: 'STRING' },
@@ -989,7 +945,6 @@ const SETTING_METADATA: Record<string, { group: string, type: string }> = {
     press_about_title:       { group: 'PRESS', type: 'STRING' },
     press_about_desc:        { group: 'PRESS', type: 'STRING' },
 
-    // --- INVESTORS ---
     invest_hero_title:        { group: 'INVESTORS', type: 'STRING' },
     invest_hero_desc:         { group: 'INVESTORS', type: 'STRING' },
     invest_hero_img:          { group: 'INVESTORS', type: 'IMAGE' },
@@ -1003,18 +958,27 @@ const SETTING_METADATA: Record<string, { group: string, type: string }> = {
     invest_reports_title:     { group: 'INVESTORS', type: 'STRING' },
     invest_reports_empty:     { group: 'INVESTORS', type: 'STRING' },
 
-    // --- DASHBOARD SETTINGS ---
-    dashboard_alert_show:    { group: 'DASHBOARD', type: 'BOOLEAN' },
-    dashboard_alert_type:    { group: 'DASHBOARD', type: 'STRING' },
-    dashboard_alert_msg:     { group: 'DASHBOARD', type: 'STRING' },
-    dashboard_promo_title:   { group: 'DASHBOARD', type: 'STRING' },
-    dashboard_promo_desc:    { group: 'DASHBOARD', type: 'STRING' },
-    dashboard_promo_btn:     { group: 'DASHBOARD', type: 'STRING' },
-    dashboard_promo_link:    { group: 'DASHBOARD', type: 'STRING' },
-    dashboard_support_phone: { group: 'DASHBOARD', type: 'STRING' },
-    dashboard_support_email: { group: 'DASHBOARD', type: 'STRING' },
+    dashboard_alert_show:              { group: 'DASHBOARD', type: 'BOOLEAN' },
+    dashboard_alert_type:              { group: 'DASHBOARD', type: 'STRING' },
+    dashboard_alert_msg:               { group: 'DASHBOARD', type: 'STRING' },
+    dashboard_support_phone:           { group: 'DASHBOARD', type: 'STRING' },
+    dashboard_support_email:           { group: 'DASHBOARD', type: 'STRING' },
+    dashboard_promo_title:             { group: 'DASHBOARD', type: 'STRING' },
+    dashboard_promo_desc:              { group: 'DASHBOARD', type: 'STRING' },
+    dashboard_promo_rate:              { group: 'DASHBOARD', type: 'STRING' },
+    dashboard_promo_id:                { group: 'DASHBOARD', type: 'STRING' },
+    dashboard_promo_btn:               { group: 'DASHBOARD', type: 'STRING' },
+    dashboard_promo_link:              { group: 'DASHBOARD', type: 'STRING' },
+    dashboard_sidebar_security_msg:    { group: 'DASHBOARD', type: 'STRING' },
+    dashboard_sidebar_support_msg:     { group: 'DASHBOARD', type: 'STRING' },
+    dashboard_sidebar_res_title:       { group: 'DASHBOARD', type: 'STRING' },
+    dashboard_sidebar_res_label1:      { group: 'DASHBOARD', type: 'STRING' },
+    dashboard_sidebar_res_link1:       { group: 'DASHBOARD', type: 'STRING' },
+    dashboard_sidebar_res_label2:      { group: 'DASHBOARD', type: 'STRING' },
+    dashboard_sidebar_res_link2:       { group: 'DASHBOARD', type: 'STRING' },
+    dashboard_sidebar_res_label3:      { group: 'DASHBOARD', type: 'STRING' },
+    dashboard_sidebar_res_link3:       { group: 'DASHBOARD', type: 'STRING' },
 
-    // --- LEGAL ---
     legal_privacy_policy:          { group: 'LEGAL', type: 'RICH_TEXT' },
     legal_privacy_content:         { group: 'LEGAL', type: 'RICH_TEXT' },
     legal_privacy_updated:         { group: 'LEGAL', type: 'RICH_TEXT' },
@@ -1040,7 +1004,6 @@ const SETTING_METADATA: Record<string, { group: string, type: string }> = {
     legal_accessibility_slug:      { group: 'LEGAL', type: 'STRING' },
     legal_nav_accessibility_id:    { group: 'LEGAL', type: 'STRING' },
 
-    // --- FOOTER ---
     footer_mission_title:    { group: 'FOOTER', type: 'STRING' },
     footer_mission_text:     { group: 'FOOTER', type: 'STRING' },
     footer_lbl_support:      { group: 'FOOTER', type: 'STRING' },
@@ -1079,7 +1042,6 @@ export async function updateSiteSettings(formData: FormData) {
     const featureUpdates: any = {};
     const assetEntries: Record<number, any> = {};
 
-    // 1. Process FormData
     for (const [key, value] of formData.entries()) {
         const stringValue = value as string;
 
@@ -1092,7 +1054,6 @@ export async function updateSiteSettings(formData: FormData) {
             if (field === 'icon_url') {
                    field = 'iconUrl';
                  }
-            // if (field === 'api_id') field = 'api_id';
 
             if (!assetEntries[index]) assetEntries[index] = {};
             if (field === 'active') {
@@ -1140,7 +1101,6 @@ export async function updateSiteSettings(formData: FormData) {
         }
     }
 
-    // 2. Database Operations
     const assetsToSync = Object.values(assetEntries).filter(a => a.symbol && a.api_id);
     const deletedIdsString = formData.get('deleted_asset_ids') as string;
     const deletedIds = deletedIdsString ? deletedIdsString.split(',').filter(Boolean) : [];
@@ -1171,7 +1131,6 @@ export async function updateSiteSettings(formData: FormData) {
 for (const asset of assetsToSync) {
     if (!asset.symbol) continue;
 
-    // MUST use the existing ID if it exists
    const symbolUpper = asset.symbol.toUpperCase();
 
     await tx.managedAsset.upsert({
@@ -1199,7 +1158,6 @@ for (const asset of assetsToSync) {
 }
     );
 
-        // 3. Log and Revalidate
         await logAdminAction("SYSTEM_SETTINGS_UPDATE", existing.id, {
             action: "Full Settings & Asset Sync",
             admin: session.user.email

@@ -36,7 +36,6 @@ export default async function SavePage() {
 
     return (
         <main className={styles.main}>
-            {/* 1. HERO */}
             <section className={styles.heroBackground}>
                 <Image
                     src={settings.save_hero_img}
@@ -57,14 +56,12 @@ export default async function SavePage() {
                 </div>
             </section>
 
-            {/* 2. CALCULATOR */}
             <section className={styles.calcSection}>
                 <div className={styles.container}>
                     <SavingsCalculator settings={settings} />
                 </div>
             </section>
 
-            {/* 3. CDS SECTION */}
             <section id="cds" className={styles.productSection}>
                 <div className={styles.container}>
                     <div className={styles.productGrid}>
@@ -83,7 +80,6 @@ export default async function SavePage() {
                 </div>
             </section>
 
-            {/* 4. MMA SECTION (#mma) */}
             <section id="mma" className={`${styles.productSection} ${styles.bgAlt}`}>
                 <div className={styles.container}>
                     <div className={`${styles.productGrid} ${styles.reverseGrid}`}>
@@ -102,7 +98,6 @@ export default async function SavePage() {
                 </div>
             </section>
 
-            {/* 5. KIDS CLUB SECTION (#kids) */}
             <section id="kids" className={styles.productSection}>
                 <div className={styles.container}>
                     <div className={styles.productGrid}>
@@ -121,7 +116,6 @@ export default async function SavePage() {
                 </div>
             </section>
 
-            {/* 6. MORE PRODUCTS GRID  */}
             <section className={styles.suppSection}>
                 <div className={styles.container}>
                     <div className={styles.sectionHeader}>
@@ -147,7 +141,6 @@ export default async function SavePage() {
                 </div>
             </section>
 
-            {/* 7. TRUST SECTION */}
             <section className={styles.trustStrip}>
                 <div className={styles.container}>
                     <div className={styles.trustContent}>

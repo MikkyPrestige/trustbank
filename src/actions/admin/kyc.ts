@@ -33,7 +33,6 @@ export async function processKyc(userId: string, decision: 'APPROVE' | 'REJECT',
                 });
             });
 
-            // Notify User
             await db.notification.create({
                 data: {
                     userId: userId,
@@ -57,7 +56,6 @@ export async function processKyc(userId: string, decision: 'APPROVE' | 'REJECT',
             );
 
         } else {
-            // --- REJECTION LOGIC ---
             if (!reason) return { success: false, message: "Rejection reason is required." };
 
             await db.$transaction(async (tx) => {
@@ -70,7 +68,6 @@ export async function processKyc(userId: string, decision: 'APPROVE' | 'REJECT',
                 });
             });
 
-            // SIDE EFFECTS
             await db.notification.create({
                 data: {
                     userId: userId,

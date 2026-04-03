@@ -50,19 +50,16 @@ export async function processTransfer(prevState: any, formData: FormData) {
         displayAmount, displayCurrency
     } = validated.data;
 
-    // 1. SECURITY: Verify PIN
     const pinValidation = await verifyPin(user.id, pin);
     if (!pinValidation.success) {
         return { message: pinValidation.error };
     }
 
-    // 2. SECURITY: Role & Action Permissions (Sender Limits)
     const permission = await checkPermissions(user.id, 'TRANSFER_INTERNAL', amount);
     if (!permission.allowed) {
         return { message: `🚫 ${permission.error}` };
     }
 
-    // 3. PRE-TRANSACTION CHECKS
     const isVerified = user.kycStatus === KycStatus.VERIFIED;
     const UNVERIFIED_LIMIT = 2000;
 
@@ -82,7 +79,6 @@ export async function processTransfer(prevState: any, formData: FormData) {
         where: { accountNumber: accountNumber }
     });
 
-    // 4. INBOUND LIMIT CHECK
     if (destinationAccount) {
         const inboundCheck = await checkInboundLimit(destinationAccount.userId, amount);
         if (!inboundCheck.allowed) {
@@ -90,7 +86,6 @@ export async function processTransfer(prevState: any, formData: FormData) {
         }
     }
 
-    // 5. THE TRANSACTION
     try {
         type TxResult = {
             senderTxId: string;
@@ -100,7 +95,6 @@ export async function processTransfer(prevState: any, formData: FormData) {
 
         const result: TxResult = await db.$transaction(async (tx) => {
 
-            // A. DEDUCT FROM SENDER
             await tx.account.update({
                 where: { id: sourceAccountId },
                 data: {
@@ -128,7 +122,6 @@ export async function processTransfer(prevState: any, formData: FormData) {
             let receiverTxId: string | undefined;
             let destUserId: string | undefined;
 
-            // B. CREDIT RECEIVER (If Internal)
             if (destinationAccount) {
                 destUserId = destinationAccount.userId;
 
@@ -158,7 +151,6 @@ export async function processTransfer(prevState: any, formData: FormData) {
                 receiverTxId = receiverTx.id;
             }
 
-            // C. SAVE BENEFICIARY
             if (saveBeneficiary === "on") {
                 const existing = await tx.beneficiary.findFirst({
                     where: { userId: user.id, accountNumber: accountNumber }
@@ -184,12 +176,10 @@ export async function processTransfer(prevState: any, formData: FormData) {
             };
         });
 
-        // 6. NOTIFICATIONS
         const notificationAmount = (displayAmount && displayCurrency)
             ? `${displayCurrency} ${Number(displayAmount).toLocaleString()}`
             : `$${amount.toLocaleString()}`;
 
-        // A. Notify Sender
         await db.notification.create({
             data: {
                 userId: user.id,
@@ -201,7 +191,6 @@ export async function processTransfer(prevState: any, formData: FormData) {
             }
         });
 
-        // B. Notify Receiver
         if (result.destUserId && result.receiverTxId && result.destUserId !== user.id) {
             await db.notification.create({
                 data: {
@@ -215,7 +204,6 @@ export async function processTransfer(prevState: any, formData: FormData) {
             });
         }
 
-        // C. Notify Admins
         const admins = await db.user.findMany({
             where: { role: { in: ["ADMIN", "SUPER_ADMIN"] } },
             select: { id: true }

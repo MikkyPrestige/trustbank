@@ -34,11 +34,11 @@ export default function DashboardError({
                     onClick={() => reset()}
                     className={styles.retryBtn}
                 >
-                    <RefreshCcw size={18} /> Try Again
+                    <RefreshCcw size={20} /> Try Again
                 </button>
 
                 <Link href="/dashboard" className={styles.homeBtn}>
-                    <Home size={18} className={styles.btnIcon} />
+                    <Home size={20} className={styles.btnIcon} />
                     Dashboard Home
                 </Link>
             </div>

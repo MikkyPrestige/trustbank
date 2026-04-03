@@ -48,7 +48,6 @@ const findBeneficiaryData = (list: Beneficiary[], id?: string) => {
     return emptyState;
 };
 
-// Fee Logic (Keep aligned with Server)
 function calculateWireFeeUSD(amountUSD: number): number {
     if (amountUSD <= 5000) return 25.00;
     if (amountUSD <= 50000) return 50.00;
@@ -76,10 +75,8 @@ export default function WireForm({
     const [formData, setFormData] = useState(() => findBeneficiaryData(beneficiaries, preSelectedId));
     const [amount, setAmount] = useState("");
 
-    // Limit check in User Currency
     const limitInUserCurrency = limit === Infinity ? Infinity : limit * rate;
 
-    // Handlers
     const handleBeneficiaryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const id = e.target.value;
         setSelectedBen(id);
@@ -92,25 +89,22 @@ export default function WireForm({
         if (selectedBen) setSelectedBen("");
     };
 
-    // Helper: Format USD balance to User Currency
     const formatBalance = (usdAmount: number) => {
         const converted = usdAmount * rate;
         return new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(converted);
     };
 
     const handleFormSubmit = (formData: FormData) => {
-        const inputAmount = Number(formData.get("amount")); // In User Currency
+        const inputAmount = Number(formData.get("amount"));
 
         if (limitInUserCurrency !== Infinity && inputAmount > limitInUserCurrency) {
             toast.error(`Amount exceeds your daily limit of ${formatBalance(limit)}`);
             return;
         }
 
-        // 1. Convert to USD for System
         const usdAmount = inputAmount / rate;
         formData.set("amount", usdAmount.toString());
 
-        // 2. Pass Display Data for Notifications
         formData.set("displayAmount", inputAmount.toString());
         formData.set("displayCurrency", currency);
 
@@ -123,9 +117,8 @@ export default function WireForm({
         }
     }, [state]);
 
-    // Calculate Estimated Fee for Display
     const currentInput = Number(amount);
-    const estimatedFeeUSD = calculateWireFeeUSD(currentInput / rate); // Calculate fee based on USD value
+    const estimatedFeeUSD = calculateWireFeeUSD(currentInput / rate);
     const estimatedFeeNative = estimatedFeeUSD * rate;
     const totalDeductionNative = currentInput + estimatedFeeNative;
 
@@ -164,7 +157,6 @@ export default function WireForm({
 
     return (
         <form action={handleFormSubmit} className={styles.card}>
-            {/* 1. SOURCE ACCOUNT */}
             <div className={styles.group}>
                 <label className={styles.label}>Source Account</label>
                 <select name="accountId" className={styles.select} required defaultValue="">
@@ -177,7 +169,6 @@ export default function WireForm({
                 </select>
             </div>
 
-            {/* 2. QUICK FILL */}
             {beneficiaries.length > 0 && (
                 <div className={styles.quickFillGroup}>
                     <label className={`${styles.label} ${styles.quickFillLabel}`}>
@@ -187,7 +178,7 @@ export default function WireForm({
                         value={selectedBen}
                         onChange={handleBeneficiaryChange}
                         className={styles.select}
-                        style={{ borderColor: selectedBen ? 'var(--primary)' : 'var(--border)' }}
+                        style={{ borderColor: selectedBen ? 'var(--primary)' : 'var(--border-subtle)' }}
                     >
                         <option value="">-- Select Saved Beneficiary --</option>
                         {beneficiaries.map(b => (
@@ -197,7 +188,6 @@ export default function WireForm({
                 </div>
             )}
 
-            {/* 3. ACCOUNT NAME */}
             <div className={styles.group}>
                 <label className={styles.label}>
                     <User size={16} className={styles.iconLeft} /> Beneficiary Name
@@ -212,7 +202,6 @@ export default function WireForm({
                 />
             </div>
 
-            {/* 4. BANK DETAILS */}
             <div className={styles.row}>
                 <div className={styles.group}>
                     <label className={styles.label}>
@@ -232,7 +221,6 @@ export default function WireForm({
                 </div>
             </div>
 
-            {/* 5. ACCOUNT NUMBER */}
             <div className={styles.group}>
                 <label className={styles.label}>
                     <Hash size={16} className={styles.iconLeft} /> IBAN / Account Number
@@ -240,7 +228,6 @@ export default function WireForm({
                 <input name="accountNumber" value={formData.accountNumber} onChange={handleInputChange} required className={styles.input} placeholder="GB29 BARC 2020..." />
             </div>
 
-            {/* 6. SWIFT CODE  */}
             <div className={styles.group}>
                 <label className={styles.label}>SWIFT / BIC Code</label>
                 <input
@@ -253,47 +240,35 @@ export default function WireForm({
                 />
             </div>
 
-            {/* 7. AMOUNT */}
             <div className={styles.group}>
                 <label className={styles.label}>Amount ({currency})</label>
-                <div style={{ position: 'relative' }}>
-                    <span style={{
-                        position: 'absolute',
-                        left: '12px',
-                        top: '50%',
-                        transform: 'translateY(-50%)',
-                        fontWeight: 'bold',
-                        fontSize: '0.9rem',
-                        color: 'var(--text-muted)'
-                    }}>
+                <div className={styles.amountWrapper}>
+                    <span className={styles.currencyPrefix}>
                         {currency}
                     </span>
                     <input
                         name="amount"
                         type="number"
                         required
-                        className={styles.input}
-                        style={{ paddingLeft: '3.5rem' }}
+                        className={`${styles.input} ${styles.inputPrefix}`}
                         placeholder="0.00"
                         value={amount}
                         onChange={(e) => setAmount(e.target.value)}
-                        // Limit check logic handles user currency
                         max={limitInUserCurrency === Infinity ? undefined : limitInUserCurrency}
                     />
                 </div>
 
-                {/* Real-time Fee Calculation Display */}
                 {amount && !isNaN(Number(amount)) && (
-                    <div style={{ marginTop: '0.5rem', fontSize: '0.8rem', color: 'var(--text-muted)', padding: '0.75rem', background: 'var(--bg-secondary)', borderRadius: '6px' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
+                    <div className={styles.feeBreakdown}>
+                        <div className={styles.feeRow}>
                             <span>Transfer Amount:</span>
                             <span>{new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(Number(amount))}</span>
                         </div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                        <div className={styles.feeRow}>
                             <span>Service Fee (Est.):</span>
                             <span>{new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(estimatedFeeNative)}</span>
                         </div>
-                        <div style={{ borderTop: '1px dashed var(--border)', paddingTop: '4px', display: 'flex', justifyContent: 'space-between', fontWeight: 600 }}>
+                        <div className={`${styles.feeRow} ${styles.totalRow}`}>
                             <span>Total Deduction:</span>
                             <span>{new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(totalDeductionNative)}</span>
                         </div>
@@ -301,7 +276,6 @@ export default function WireForm({
                 )}
             </div>
 
-            {/* 8. PIN */}
             <div className={styles.securityBox}>
                 <label className={`${styles.label} ${styles.pinLabel}`}>
                     <Lock size={16} className={styles.iconLeft} /> Authorize Transaction
@@ -312,19 +286,20 @@ export default function WireForm({
                 </p>
             </div>
 
-            {/* 9. SAVE */}
             {!selectedBen && (
                 <div className={styles.checkboxWrapper}>
                     <input type="checkbox" id="saveWireBen" name="saveBeneficiary" className={styles.checkbox} />
                     <label htmlFor="saveWireBen" className={styles.checkboxLabel}>
-                        <Save size={14} /> Save to my beneficiaries
+                        Save to my beneficiaries
                     </label>
                 </div>
             )}
 
+            <div className={styles.buttonWrapper}>
             <button disabled={isPending} className={styles.button}>
                 {isPending ? <><Loader2 className={styles.spin} size={20} /> Processing SWIFT...</> : 'Initiate Wire Transfer'}
             </button>
+            </div>
         </form>
     );
 }

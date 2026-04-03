@@ -4,10 +4,8 @@ import styles from "./rates.module.css";
 import { requireAdmin } from "@/lib/auth/admin-auth";
 
 export default async function AdminRatesPage() {
-    // 1. Secure the page
   await requireAdmin();
 
-    // 2. Fetch Data
     const { data: rates } = await getExchangeRates();
 
     return (
@@ -18,7 +16,6 @@ export default async function AdminRatesPage() {
                     <p className={styles.subtitle}>Manage global currency conversion rates (Base: USD).</p>
                 </div>
 
-                {/* REFRESH BUTTON FORM */}
                 <form
                     action={async () => {
                         "use server";
@@ -32,7 +29,6 @@ export default async function AdminRatesPage() {
             </header>
 
             <div className={styles.grid}>
-                {/* CARD FOR EACH CURRENCY */}
                 {rates?.map((item) => (
                     <div key={item.id} className={styles.card}>
                         <div className={styles.cardHeader}>
@@ -44,7 +40,6 @@ export default async function AdminRatesPage() {
                             <label className={styles.label}>1 USD =</label>
                             <div className={styles.inputWrapper}>
                                 <span className={styles.symbol}>{item.currency}</span>
-                                {/* Read-only for now, can be made editable easily */}
                                 <input
                                     type="number"
                                     defaultValue={Number(item.rate)}

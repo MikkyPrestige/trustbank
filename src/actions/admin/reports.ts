@@ -5,7 +5,6 @@ import { revalidatePath } from "next/cache";
 import { checkAdminAction } from "@/lib/auth/admin-auth";
 import { logAdminAction } from "@/lib/utils/admin-logger";
 
-// --- CREATE ---
 export async function createReport(formData: FormData) {
     const { authorized, session } = await checkAdminAction();
     if (!authorized || !session || !session.user) return { success: false, message: "Unauthorized" };
@@ -42,7 +41,6 @@ export async function createReport(formData: FormData) {
     }
 }
 
-// --- UPDATE ---
 export async function updateReport(id: string, formData: FormData) {
     const { authorized, session } = await checkAdminAction();
     if (!authorized || !session || !session.user) return { success: false, message: "Unauthorized" };
@@ -89,7 +87,6 @@ export async function updateReport(id: string, formData: FormData) {
     }
 }
 
-// --- DELETE ---
 export async function deleteReport(id: string) {
     const { authorized, session } = await checkAdminAction();
     if (!authorized || !session || !session.user) return { success: false, message: "Unauthorized" };
@@ -99,7 +96,6 @@ export async function deleteReport(id: string) {
 
         if (!report) return { success: false, message: "Report not found" };
 
-        // 2. Delete
         await db.financialReport.delete({ where: { id } });
 
         await logAdminAction(

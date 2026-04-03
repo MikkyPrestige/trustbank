@@ -43,7 +43,6 @@ export default async function ProfilePage() {
         return status === AccountStatus.ACTIVE ? styles.textSuccess : styles.textDanger;
     };
 
-    // --- LOGIC: DYNAMIC LIMITS BASED ON KYC ---
     const limits = isVerified ? {
         transfer: "Unlimited",
         wire: "Unlimited",
@@ -54,9 +53,14 @@ export default async function ProfilePage() {
         crypto: "Disabled"
     };
 
+    const statusColor = (status: string) => {
+        if (status === "VERIFIED") return styles.textSuccess;
+        if (status === "UNVERIFIED") return styles.textDanger;
+        return "";
+    };
+
     return (
         <div className={styles.container}>
-            {/* --- HEADER --- */}
             <div className={styles.headerCard}>
                 <div className={styles.profileHeader}>
                     <div className={styles.avatarLarge}>
@@ -85,7 +89,11 @@ export default async function ProfilePage() {
                     <div className={styles.headerInfo}>
                         <h1 className={styles.name}>{user.fullName}</h1>
                         <p className={styles.status}>
-                            {isVerified ? "Verified Identity" : "Unverified Account"}
+                            {isVerified ? (
+                                <span className={statusColor("VERIFIED")}>Verified Identity</span>
+                            ) : (
+                                <span className={statusColor("UNVERIFIED")}>Unverified Account</span>
+                            )}
                         </p>
                         <p className={styles.joined}>Member since {joinedDate}</p>
                     </div>
@@ -93,10 +101,7 @@ export default async function ProfilePage() {
             </div>
 
             <div className={styles.grid}>
-                {/* --- LEFT COLUMN --- */}
                 <div className={styles.column}>
-
-                    {/* 1. BANKING IDENTITY */}
                     <div className={styles.card}>
                         <div className={styles.cardHeader}>
                             <Building2 className={styles.cardIcon} />
@@ -122,7 +127,6 @@ export default async function ProfilePage() {
 
                             <div className={styles.divider}></div>
 
-                            {/* SAVINGS */}
                             {savingsAcc && (
                                 <>
                                     <div className={styles.subHeader}>Savings Account</div>
@@ -144,7 +148,6 @@ export default async function ProfilePage() {
                                 </>
                             )}
 
-                            {/* CHECKING */}
                             {checkingAcc && (
                                 <>
                                     <div className={styles.subHeader}>Checking Account</div>
@@ -170,7 +173,6 @@ export default async function ProfilePage() {
                         </div>
                     </div>
 
-                    {/* 2. ACCOUNT LIMITS  */}
                     <div className={`${styles.card} ${styles.cardSpacing}`}>
                         <div className={styles.cardHeader}>
                             <TrendingUp className={styles.cardIcon} />
@@ -199,10 +201,7 @@ export default async function ProfilePage() {
                     </div>
                 </div>
 
-                {/* --- RIGHT COLUMN --- */}
                 <div className={styles.column}>
-
-                    {/* 3. PERSONAL DETAILS */}
                     <div className={styles.card}>
                         <div className={styles.cardHeader}>
                             <User className={styles.cardIcon} />
@@ -256,7 +255,6 @@ export default async function ProfilePage() {
                         </div>
                     </div>
 
-                    {/* 4. RESIDENTIAL ADDRESS */}
                     <div className={`${styles.card} ${styles.cardSpacing}`}>
                         <div className={styles.cardHeader}>
                             <MapPin className={styles.cardIcon} />
@@ -278,7 +276,6 @@ export default async function ProfilePage() {
                         </div>
                     </div>
 
-                    {/* 5. NEXT OF KIN */}
                     <div className={`${styles.card} ${styles.cardSpacing}`}>
                         <div className={styles.cardHeader}>
                             <HeartHandshake className={styles.cardIcon} />
@@ -303,7 +300,6 @@ export default async function ProfilePage() {
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>

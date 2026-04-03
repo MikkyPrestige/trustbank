@@ -6,7 +6,7 @@ export const getUserCurrencyData = cache(async () => {
     const session = await auth();
     if (!session?.user?.id) return null;
 
-    // 1. Get User's Preferred Currency
+    // Get User's Preferred Currency
     const user = await db.user.findUnique({
         where: { id: session.user.id },
         select: { currency: true }
@@ -14,12 +14,12 @@ export const getUserCurrencyData = cache(async () => {
 
     const currencyCode = user?.currency || "USD";
 
-    // 2. If USD, no conversion needed
+    // If USD, no conversion needed
     if (currencyCode === "USD") {
         return { currency: "USD", rate: 1 };
     }
 
-    // 3. If other, get the exchange rate
+    // If other, get the exchange rate
     const rateData = await db.exchangeRate.findUnique({
         where: { currency: currencyCode }
     });

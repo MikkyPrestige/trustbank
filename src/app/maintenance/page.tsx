@@ -5,7 +5,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { AlertTriangle, ArrowLeft, Clock } from "lucide-react";
 
-// fetch string settings easily
 async function getTextSetting(key: string, fallback: string) {
     const setting = await db.systemSettings.findUnique({ where: { key } });
     return setting?.value || fallback;
@@ -23,7 +22,6 @@ export default async function MaintenancePage() {
         <div className={styles.container}>
             <div className={styles.card}>
 
-                {/* Dynamic Logo */}
                 <div>
                     <Image
                         src={cms.site_logo || "/logo.png"}
@@ -38,15 +36,12 @@ export default async function MaintenancePage() {
                     <AlertTriangle size={48} className={styles.icon} />
                 </div>
 
-                {/* Dynamic Title */}
                 <h1 className={styles.title}>{title}</h1>
 
-                {/* Dynamic Message */}
                 <p className={styles.description}>
                     {message}
                 </p>
 
-                {/* Dynamic Duration */}
                 <div className={styles.infoBox}>
                     <Clock size={18} className={styles.infoIcon} />
                     <span>Expected duration: {duration}</span>
@@ -59,7 +54,7 @@ export default async function MaintenancePage() {
             </div>
 
             <p className={styles.footer}>
-                {cms.site_name || "TrustBank"} Operations • Ref: SYS-MAINT-{new Date().getFullYear()}
+                {cms.site_name || "Trust Bank"} Operations • Ref: SYS-MAINT-{new Date().getFullYear()}
             </p>
         </div>
     );

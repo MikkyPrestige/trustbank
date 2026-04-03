@@ -11,7 +11,6 @@ interface FaqItem {
     category: string;
 }
 
-// get icons based on category
 const getCategoryIcon = (category: string) => {
     switch (category.toLowerCase()) {
         case 'security': return <Shield size={18} className={styles.catIcon} />;
@@ -28,7 +27,6 @@ export default function FaqList({ faqs, settings }: { faqs: FaqItem[], settings:
         setOpenId(openId === id ? null : id);
     };
 
-    // 2. Group FAQs by Category
     const groupedFaqs = faqs.reduce((groups, faq) => {
         const category = faq.category || 'General';
         if (!groups[category]) {
@@ -40,7 +38,6 @@ export default function FaqList({ faqs, settings }: { faqs: FaqItem[], settings:
 
     const sortOrder = ['Transfers', 'Security', 'Account & Cards', 'General'];
 
-    // Sort the keys based on preferred order
     const sortedCategories = Object.keys(groupedFaqs).sort((a, b) => {
         const indexA = sortOrder.indexOf(a);
         const indexB = sortOrder.indexOf(b);
@@ -53,16 +50,13 @@ export default function FaqList({ faqs, settings }: { faqs: FaqItem[], settings:
     return (
         <div className={styles.faqSection}>
             <h2 className={styles.sectionTitle}>{settings.help_faq_title}</h2>
-
             {sortedCategories.map((category) => (
                 <div key={category} className={styles.categoryGroup}>
-                    {/* Category Header */}
                     <div className={styles.catHeader}>
                         {getCategoryIcon(category)}
                         <span>{category}</span>
                     </div>
 
-                    {/* Questions in this category */}
                     <div className={styles.groupList}>
                         {groupedFaqs[category].map((faq) => (
                             <div key={faq.id} className={styles.faqItem}>

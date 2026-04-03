@@ -10,13 +10,10 @@ interface RatesTabProps {
 export function RatesTab({ settings, RatesHeroURL, setRatesHeroURL }: RatesTabProps) {
     return (
         <div className={styles.grid}>
-
             <div className={styles.fullWidth}>
-                <h3 className={styles.sectionTitle}>Rates Page Configuration</h3>
-                <p className={styles.sectionSubtitle}>Manage all text, headers, and rate values on the Rates page.</p>
+                <h3 className={styles.sectionTitle}>HERO SECTION</h3>
             </div>
 
-            {/* HERO SECTION */}
             <div className={styles.group}>
                 <label className={styles.label}>Hero Title</label>
                 <input name="rates_hero_title" defaultValue={settings.rates_hero_title} className={styles.input} />
@@ -29,9 +26,6 @@ export function RatesTab({ settings, RatesHeroURL, setRatesHeroURL }: RatesTabPr
                 <label className={styles.label}>Hero Description</label>
                 <textarea name="rates_hero_desc" defaultValue={settings.rates_hero_desc} className={styles.textarea} />
             </div>
-            <div className={styles.fullWidth}>
-                <h4 className={styles.sectionSubtitle}>Background Image</h4>
-            </div>
             <div className={styles.group}>
                 <ImageUploader
                     label="Hero Background Image"
@@ -42,18 +36,17 @@ export function RatesTab({ settings, RatesHeroURL, setRatesHeroURL }: RatesTabPr
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Image Alt Text</label>
-                <input
+                <textarea
                     name="Hero Alt"
                     defaultValue={settings.rates_hero_alt}
-                    className={styles.input}
+                    className={styles.textarea}
                     placeholder="e.g. Graph showing rising interest rates"
                 />
             </div>
 
-            {/* --- DEPOSIT SECTION CONFIG --- */}
             <div className={styles.fullWidth}>
                 <hr className={styles.divider} />
-                <h3 className={styles.sectionTitle}>Deposit Section Layout</h3>
+                <h3 className={styles.sectionTitle}>Deposit Section</h3>
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Section Title</label>
@@ -70,7 +63,6 @@ export function RatesTab({ settings, RatesHeroURL, setRatesHeroURL }: RatesTabPr
             </div>
             </div>
 
-            {/* Deposit Table Headers */}
             <div className={styles.group}>
                 <label className={styles.label}>Col 1 Header</label>
                 <input name="rates_dep_head_prod" defaultValue={settings.rates_dep_head_prod} className={styles.input} />
@@ -88,11 +80,9 @@ export function RatesTab({ settings, RatesHeroURL, setRatesHeroURL }: RatesTabPr
                 <input name="rates_dep_head_min" defaultValue={settings.rates_dep_head_min} className={styles.input} />
             </div>
 
-            {/* --- DEPOSIT PRODUCTS --- */}
             <div className={styles.fullWidth}>
-                <h3 className={styles.sectionTitle}>Deposit Products</h3>
+                <h3 className={styles.sectionTitle}>Products</h3>
             </div>
-            {/* HYSA */}
             <div className={styles.group}>
                 <label className={styles.label}>Product 1 Name</label>
                 <input name="rate_hysa_name" defaultValue={settings.rate_hysa_name} className={styles.input} />
@@ -109,7 +99,7 @@ export function RatesTab({ settings, RatesHeroURL, setRatesHeroURL }: RatesTabPr
                 <label className={styles.label}>Min Balance</label>
                 <input name="rate_hysa_min" defaultValue={settings.rate_hysa_min} className={styles.input} />
             </div>
-            {/* MMA */}
+
             <div className={styles.group}>
                 <label className={styles.label}>Product 2 Name</label>
                 <input name="rate_mma_name" defaultValue={settings.rate_mma_name} className={styles.input} />
@@ -126,7 +116,7 @@ export function RatesTab({ settings, RatesHeroURL, setRatesHeroURL }: RatesTabPr
                 <label className={styles.label}>Min Balance</label>
                 <input name="rate_mma_min" defaultValue={settings.rate_mma_min} className={styles.input} />
             </div>
-            {/* CD */}
+
             <div className={styles.group}>
                 <label className={styles.label}>Product 3 Name</label>
                 <input name="rate_cd_name" defaultValue={settings.rate_cd_name} className={styles.input} />
@@ -143,7 +133,7 @@ export function RatesTab({ settings, RatesHeroURL, setRatesHeroURL }: RatesTabPr
                 <label className={styles.label}>Min Balance</label>
                 <input name="rate_cd_min" defaultValue={settings.rate_cd_min} className={styles.input} />
             </div>
-            {/* KIDS CLUB */}
+
             <div className={styles.group}>
                 <label className={styles.label}>Product 4 Name</label>
                 <input name="rate_kids_name" defaultValue={settings.rate_kids_name} className={styles.input} />
@@ -161,10 +151,9 @@ export function RatesTab({ settings, RatesHeroURL, setRatesHeroURL }: RatesTabPr
                 <input name="rate_kids_min" defaultValue={settings.rate_kids_min} className={styles.input} />
             </div>
 
-            {/* --- BORROW SECTION CONFIG --- */}
             <div className={styles.fullWidth}>
                 <hr className={styles.divider} />
-                <h3 className={styles.sectionTitle}>Borrow Section Layout</h3>
+                <h3 className={styles.sectionTitle}>Loan Section</h3>
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Section Title</label>
@@ -174,7 +163,6 @@ export function RatesTab({ settings, RatesHeroURL, setRatesHeroURL }: RatesTabPr
                 <label className={styles.label}>&quot;Link&quot; Button Text</label>
                 <input name="rates_btn_view" defaultValue={settings.rates_btn_view} className={styles.input} />
             </div>
-            {/* Borrow Table Headers */}
             <div className={styles.group}>
                 <label className={styles.label}>Col 1 Header</label>
                 <input name="rates_loan_head_type" defaultValue={settings.rates_loan_head_type} className={styles.input} />
@@ -192,11 +180,9 @@ export function RatesTab({ settings, RatesHeroURL, setRatesHeroURL }: RatesTabPr
                 <input name="rates_loan_head_detail" defaultValue={settings.rates_loan_head_detail} className={styles.input} />
             </div>
 
-            {/* --- BORROW PRODUCTS --- */}
             <div className={styles.fullWidth}>
-                <h3 className={styles.sectionTitle}>Loan Products</h3>
+                <h3 className={styles.sectionTitle}>Products</h3>
             </div>
-            {/* Auto */}
             <div className={styles.group}>
                 <label className={styles.label}>Loan 1 Name</label>
                 <input name="rate_auto_name" defaultValue={settings.rate_auto_name} className={styles.input} />
@@ -213,7 +199,7 @@ export function RatesTab({ settings, RatesHeroURL, setRatesHeroURL }: RatesTabPr
                 <label className={styles.label}>Link</label>
                 <input name="rate_auto_apr_link" defaultValue={settings.rate_auto_apr_link} className={styles.input} />
             </div>
-            {/* Personal */}
+
             <div className={styles.group}>
                 <label className={styles.label}>Loan 2 Name</label>
                 <input name="rate_personal_name" defaultValue={settings.rate_personal_name} className={styles.input} />
@@ -230,7 +216,7 @@ export function RatesTab({ settings, RatesHeroURL, setRatesHeroURL }: RatesTabPr
                 <label className={styles.label}>Link</label>
                 <input name="rate_personal_link" defaultValue={settings.rate_personal_link} className={styles.input} />
             </div>
-            {/* Mortgage */}
+
             <div className={styles.group}>
                 <label className={styles.label}>Loan 3 Name</label>
                 <input name="rate_mortgage_name" defaultValue={settings.rate_mortgage_name} className={styles.input} />
@@ -247,7 +233,7 @@ export function RatesTab({ settings, RatesHeroURL, setRatesHeroURL }: RatesTabPr
                 <label className={styles.label}>Link</label>
                 <input name="rate_mortgage_link" defaultValue={settings.rate_mortgage_link} className={styles.input} />
             </div>
-            {/* CREDIT CARD */}
+
             <div className={styles.group}>
                 <label className={styles.label}>Loan 4 Name</label>
                 <input name="rate_cc_name" defaultValue={settings.rate_cc_name} className={styles.input} />
@@ -265,10 +251,9 @@ export function RatesTab({ settings, RatesHeroURL, setRatesHeroURL }: RatesTabPr
                 <input name="rate_cc_link" defaultValue={settings.rate_cc_link} className={styles.input} />
             </div>
 
-            {/* --- DISCLAIMER --- */}
             <div className={styles.fullWidth}>
                 <hr className={styles.divider} />
-                <h3 className={styles.sectionTitle}>Footer Disclaimer</h3>
+                <h3 className={styles.sectionTitle}>Disclaimer</h3>
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Disclaimer Title</label>

@@ -26,7 +26,6 @@ export default async function AdminWiresPage() {
         db.exchangeRate.findMany()
     ]);
 
-    // Rate Map
     const rateMap = new Map(rates.map(r => [r.currency, Number(r.rate)]));
 
     return (
@@ -37,11 +36,11 @@ export default async function AdminWiresPage() {
                     <p className={styles.subtitle}>Manage international transfers and codes</p>
                 </div>
 
-                <div className={styles.headerActions}>
+                {/* <div className={styles.headerActions}>
                     <Link href="/admin" className={styles.backBtn}>
-                        <ArrowLeft size={16} /> Dashboard
+                        <ArrowLeft size={18} /> Dashboard
                     </Link>
-                </div>
+                </div> */}
             </header>
 
             <div className={styles.tableCard}>

@@ -911,15 +911,27 @@ model ContentSettings {
   invest_view_link_text    String @default("View External")
 
   // --- DASHBOARD ALERTS ---
-  dashboard_alert_show    String @default("false")
-  dashboard_alert_type    String @default("info")
-  dashboard_alert_msg     String @default("Scheduled maintenance: Services will be unavailable Sunday 2 AM - 4 AM EST.")
-  dashboard_promo_title   String @default("Make your money work harder")
-  dashboard_promo_desc    String @default("Open a High Yield Savings account today.")
-  dashboard_promo_btn     String @default("Start Saving")
-  dashboard_promo_link    String @default("/dashboard")
-  dashboard_support_phone String @default("+1 (555) 000-HELP")
-  dashboard_support_email String @default("vip@trustbank.com")
+  dashboard_alert_show            Boolean @default(false)
+  dashboard_alert_type            String @default("info")
+  dashboard_alert_msg             String @default("Scheduled maintenance: Services will be unavailable Sunday 2 AM - 4 AM EST.")
+  dashboard_support_phone         String @default("+1 (555) 000-HELP")
+  dashboard_support_email         String @default("vip@trustbank.com")
+  dashboard_promo_title           String @default("Make your money work harder")
+  dashboard_promo_desc            String @default("Open a High Yield Savings account today.")
+  dashboard_promo_rate            String @default("4.5")
+  dashboard_promo_id              String @default("global_savings_2024")
+  dashboard_promo_btn             String @default("Start Saving")
+  dashboard_promo_link            String @default("/dashboard")
+  dashboard_sidebar_security_msg  String @default("SECURED BY 256-BIT ENCRYPTION")
+  dashboard_sidebar_support_msg   String @default("24/7 PRIORITY SUPPORT")
+  dashboard_sidebar_res_title     String @default("Resources")
+  dashboard_sidebar_res_label1    String @default("Download Statements")
+  dashboard_sidebar_res_link1     String @default("/dashboard/statements")
+  dashboard_sidebar_res_label2    String @default("Privacy Policy")
+  dashboard_sidebar_res_link2     String @default("/dashboard/privacy")
+  dashboard_sidebar_res_label3    String @default("Find ATM")
+  dashboard_sidebar_res_link3     String @default("/dashboard/locations")
+
 
   // --- LEGAL PAGES ---
   legal_privacy_policy          String @default("<p>Privacy Policy content...</p>") @db.Text

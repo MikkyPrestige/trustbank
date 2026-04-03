@@ -36,7 +36,6 @@ export default async function DashboardLayout({
 
     if (!user) redirect("/login");
 
-    // 2. MAINTENANCE MODE CHECK (The "Bouncer")
     if (isMaintenance) {
         const allowedRoles: UserRole[] = [UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.SUPPORT];
 

@@ -31,7 +31,6 @@
   font-size: 0.9rem;
 }
 
-/* CONVERTER UI */
 .converterBox {
   background: var(--bg-surface);
   border: 1px solid var(--border);
@@ -82,7 +81,6 @@
   font-size: 1rem;
 }
 
-/* CONNECTOR */
 .connector {
   display: flex;
   align-items: center;
@@ -111,7 +109,6 @@
   transition: opacity 0.2s;
 }
 
-/* INFO GRID */
 .infoGrid {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;

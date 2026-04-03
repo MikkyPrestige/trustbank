@@ -33,7 +33,7 @@ export default async function WirePage({
 
     if (!user) return null;
 
-    // 1. Determine Currency Context
+    // Currency Context
     const currency = user.currency || "USD";
     const exchangeRate = currency === "USD"
         ? 1
@@ -80,7 +80,6 @@ export default async function WirePage({
                 </div>
             </div>
 
-            {/* FEATURE CHECK */}
             {!features.wire ? (
                 <div className={styles.lockedState}>
                     <div className={styles.lockIconBox}>

@@ -12,7 +12,6 @@ export default async function SecurityDashboard() {
 
     return (
         <div className={styles.container}>
-            {/* HEADER */}
             <div className={styles.header}>
                 <div>
                     <h1 className={styles.title}>
@@ -22,13 +21,11 @@ export default async function SecurityDashboard() {
                     <p className={styles.subtitle}>System health, threat monitoring, and audit trails.</p>
                 </div>
                 <Link href="/admin/logs" className={styles.logsBtn}>
-                    View Full Audit Logs <ExternalLink size={16} />
+                    View Full Audit Logs <ExternalLink size={18} />
                 </Link>
             </div>
 
-            {/* METRICS GRID */}
             <div className={styles.grid}>
-                {/* Card 1: System Status */}
                 <div className={styles.card}>
                     <div className={styles.cardHeader}>
                         <span className={styles.cardTitle}>System Status</span>
@@ -38,7 +35,6 @@ export default async function SecurityDashboard() {
                     <p className={styles.cardSub}>All systems operational</p>
                 </div>
 
-                {/* Card 2: Critical Alerts */}
                 <div className={`${styles.card} ${stats.criticalEvents > 0 ? styles.cardAlert : ''}`}>
                     <div className={styles.cardHeader}>
                         <span className={styles.cardTitle}>Critical Alerts (24h)</span>
@@ -48,7 +44,6 @@ export default async function SecurityDashboard() {
                     <p className={styles.cardSub}>Requires immediate attention</p>
                 </div>
 
-                {/* Card 3: Warnings */}
                 <div className={styles.card}>
                     <div className={styles.cardHeader}>
                         <span className={styles.cardTitle}>Warnings (24h)</span>
@@ -58,7 +53,6 @@ export default async function SecurityDashboard() {
                     <p className={styles.cardSub}>Suspicious activities detected</p>
                 </div>
 
-                {/* Card 4: Total Volume */}
                 <div className={styles.card}>
                     <div className={styles.cardHeader}>
                         <span className={styles.cardTitle}>Total Events Logged</span>
@@ -69,7 +63,6 @@ export default async function SecurityDashboard() {
                 </div>
             </div>
 
-            {/* RECENT ACTIVITY FEED */}
             <div className={styles.feedSection}>
                 <h2 className={styles.sectionTitle}>Live Activity Feed</h2>
                 <div className={styles.feed}>

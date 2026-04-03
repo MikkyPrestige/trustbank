@@ -38,12 +38,10 @@ export async function adjustUserBalance(
         ? description
         : (type === 'CREDIT' ? "Bank Deposit" : "Bank Withdrawal");
 
-    // Formatter for the notification message
     const formattedMoney = (displayAmount && displayCurrency)
         ? `${displayCurrency} ${displayAmount.toLocaleString()}`
         : `$${amount.toLocaleString()}`;
 
-    // 1. SAFETY CHECK
     if (type === 'DEBIT') {
         const account = await db.account.findUnique({ where: { id: accountId } });
         if (!account) return { success: false, message: "Account not found" };
@@ -56,7 +54,6 @@ export async function adjustUserBalance(
         }
     }
 
-    // 2. EXECUTE TRANSACTION
     let userIdForNotification = "";
     let finalBalance = 0;
 
@@ -76,7 +73,6 @@ export async function adjustUserBalance(
 
             finalBalance = newBal;
 
-            // Update Account
             await tx.account.update({
                 where: { id: accountId },
                 data: {
@@ -85,7 +81,6 @@ export async function adjustUserBalance(
                 }
             });
 
-            // Create Ledger Entry
             await tx.ledgerEntry.create({
                 data: {
                     accountId: accountId,
@@ -105,7 +100,6 @@ export async function adjustUserBalance(
             });
         });
 
-        // 3. NOTIFICATION
         if (userIdForNotification) {
             await db.notification.create({
                 data: {
@@ -121,7 +115,6 @@ export async function adjustUserBalance(
             });
         }
 
-        // 4. LOG ACTION
         await logAdminAction(
             type === 'CREDIT' ? "MANUAL_CREDIT" : "MANUAL_DEBIT",
             accountId,

@@ -33,17 +33,17 @@ export default async function LocalTransferList({ userId, currency = "USD", rate
                     <div key={tx.id} className={styles.listItem}>
                         <div className={styles.flexCenterGap}>
                             <div className={`${styles.iconBox} ${isCredit ? styles.iconGreen : styles.iconRed}`}>
-                                {isCredit ? <ArrowDownLeft size={16} /> : <ArrowUpRight size={16} />}
+                                {isCredit ? <ArrowDownLeft size={20} /> : <ArrowUpRight size={16} />}
                             </div>
                             <div>
-                                <div style={{ fontSize: '0.9rem', fontWeight: 500 }}>
+                                <div className={styles.textBold}>
                                     {isCredit ? "Received" : "Sent"}
                                 </div>
                                 <div className={styles.tiny}>{new Date(tx.createdAt).toLocaleDateString()}</div>
                             </div>
                         </div>
-                        <div style={{ textAlign: 'right' }}>
-                            <div className={isCredit ? styles.textGreen : styles.textRed} style={{ fontWeight: 600 }}>
+                        <div className={styles.textRight}>
+                            <div className={isCredit ? styles.textGreen : styles.textRed}>
                                 {isCredit ? '+' : '-'}
                                 {new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(displayAmount)}
                             </div>

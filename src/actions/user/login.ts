@@ -26,7 +26,6 @@ export async function login(prevState: any, formData: FormData) {
   const siteName = settings.site_name;
   const MAX_ATTEMPTS = settings.auth_login_limit || 5;
 
-  // 1. Validate Input
   const validated = loginSchema.safeParse(rawData);
   if (!validated.success) {
     return { message: validated.error.issues[0].message };
@@ -37,7 +36,6 @@ export async function login(prevState: any, formData: FormData) {
   const ip = headersList.get("x-forwarded-for") || "Unknown IP";
   const userAgent = headersList.get("user-agent") || "";
 
-  // 2. ACTIVE DEFENSE (IP Rate Limit)
   const security = await getSecurityStatus(ip);
   if (security.isBlocked) {
       await logAdminAction("IP_BLOCKED", email, { reason: "Rate Limit Exceeded", ip }, "CRITICAL", "BLOCKED");
@@ -46,7 +44,6 @@ export async function login(prevState: any, formData: FormData) {
       };
   }
 
-  // 3. MAINTENANCE CHECK
   const isMaintenance = await checkMaintenanceMode();
   if (isMaintenance) {
       const existingUser = await db.user.findUnique({
@@ -59,7 +56,6 @@ export async function login(prevState: any, formData: FormData) {
       if (!existingUser) return { message: "System is currently under maintenance." };
   }
 
-  // 4. PRE-CHECK & NOTIFICATION (User verification & Password check)
   try {
       const user = await db.user.findUnique({ where: { email } });
 
@@ -78,13 +74,11 @@ export async function login(prevState: any, formData: FormData) {
       }
 
       if (user && user.passwordHash && (await compare(password, user.passwordHash))) {
-          // Reset Failed Attempts
           await db.user.update({
               where: { email },
               data: { failedLoginAttempts: 0 }
           });
 
-          // Security NOTIFICATION
           const parser = new UAParser(userAgent);
           const result = parser.getResult();
           const device = `${result.browser.name || 'Web'} on ${result.os.name || 'Unknown OS'}`;
@@ -104,7 +98,6 @@ export async function login(prevState: any, formData: FormData) {
       console.error("Login Pre-Check Error:", err);
   }
 
-  // 5. ATTEMPT SIGN IN
   try {
     await signIn("credentials", {
       email,

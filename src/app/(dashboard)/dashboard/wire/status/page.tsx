@@ -18,7 +18,6 @@ export default async function WireStatusPage({
     const params = await searchParams;
     const selectedId = params?.id;
 
-    // Fetch User Currency settings
     const [user, rates] = await Promise.all([
         db.user.findUnique({ where: { id: session.user.id }, select: { currency: true } }),
         db.exchangeRate.findMany()
@@ -27,11 +26,9 @@ export default async function WireStatusPage({
     const currency = user?.currency || "USD";
     const rate = currency === "USD" ? 1 : Number(rates.find(r => r.currency === currency)?.rate || 1);
 
-    // PAGINATION SETTINGS
     const currentPage = Number(params?.page) || 1;
     const PAGE_SIZE = 5;
 
-    // Helper: Display Formatter
     const formatMoney = (usdAmount: number) => {
         return new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(usdAmount * rate);
     };
@@ -143,8 +140,6 @@ export default async function WireStatusPage({
                     </div>
 
                     <div className={isReversed ? `${styles.rejectedCard} ${styles.reversedCard}` : styles.rejectedCard}>
-
-                        {/* Icon Wrapper */}
                         <div className={isReversed ? styles.reversedIconWrapper : styles.rejectedIcon}>
                             {isReversed ? (
                                 <ShieldAlert size={48} strokeWidth={2} />
@@ -263,11 +258,9 @@ export default async function WireStatusPage({
         status: { in: [TransactionStatus.ON_HOLD, TransactionStatus.PENDING_AUTH, TransactionStatus.REVERSED, TransactionStatus.FAILED] }
     };
 
-    // Calculate pagination values
     const totalCount = await db.wireTransfer.count({ where: whereClause });
     const totalPages = Math.ceil(totalCount / PAGE_SIZE);
 
-    // Ensure page is within valid range
     const validPage = Math.max(1, Math.min(currentPage, totalPages || 1));
     const skip = (validPage - 1) * PAGE_SIZE;
 
@@ -332,7 +325,6 @@ export default async function WireStatusPage({
                         })}
                     </div>
 
-                    {/* PAGINATION CONTROLS */}
                     {totalPages > 1 && (
                         <div className={styles.pagination}>
                             <Link

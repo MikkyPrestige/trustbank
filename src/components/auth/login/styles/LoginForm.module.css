@@ -1,4 +1,3 @@
-/* PAGE LAYOUT */
 .pageWrapper {
   min-height: 100vh;
   width: 100%;
@@ -11,29 +10,26 @@
   background-color: var(--bg-app);
 }
 
-/* AMBIENT BACKGROUND */
 .ambientMesh {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   background:
     radial-gradient(
-      circle at 15% 50%,
-      var(--primary-light, rgba(59, 130, 246, 0.15)),
-      transparent 25%
+      circle at 10% 20%,
+      var(--mesh-color-1),
+      transparent var(--mesh-size)
     ),
     radial-gradient(
-      circle at 85% 30%,
-      var(--success-light, rgba(34, 197, 94, 0.15)),
-      transparent 25%
+      circle at 90% 80%,
+      var(--mesh-color-2),
+      transparent var(--mesh-size)
     );
   z-index: 0;
+  filter: blur(5rem);
   pointer-events: none;
+  animation: pulseMesh 15s ease-in-out infinite;
 }
 
-/* CONTAINER */
 .formContainer {
   width: 100%;
   max-width: 500px;
@@ -42,7 +38,6 @@
   animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* HEADER */
 .header {
   text-align: center;
   margin-top: 2.5rem;
@@ -61,25 +56,23 @@
   font-size: 1rem;
 }
 
-/* GLASS FORM CARD */
 .glassForm {
   background: var(--bg-card);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(1rem);
+  -webkit-backdrop-filter: blur(1rem);
   border: 1px solid var(--border);
   border-radius: 2rem;
   padding: 2rem;
-  box-shadow: var(--shadow-card, 0 25px 50px -12px rgba(0, 0, 0, 0.5));
+  box-shadow: var(--shadow-card, 0 2rem 5rem -1rem rgba(0, 0, 0, 0.5));
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
 }
 
-/* ERROR BANNER */
 .errorBanner {
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.2);
+  background: rgba(var(--danger-rgb), 0.1);
   color: var(--danger);
+  border: 1px solid rgba(var(--danger-rgb), 0.3);
   padding: 1rem;
   border-radius: 1rem;
   font-size: 0.9rem;
@@ -88,7 +81,6 @@
   animation: fadeIn 0.3s ease-out;
 }
 
-/* INPUTS */
 .inputWrapper {
   display: flex;
   flex-direction: column;
@@ -97,28 +89,16 @@
 }
 
 .inputWrapper label {
-  font-size: 0.85rem;
+  font-size: 1rem;
   font-weight: 600;
-  color: var(--text-muted);
-  margin-left: 4px;
+  color: var(--text-body);
+  text-transform: uppercase;
 }
 
 .labelRow {
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-
-.forgotLink {
-  font-size: 0.8rem;
-  color: var(--primary);
-  text-decoration: none;
-  font-weight: 600;
-}
-
-.forgotLink:hover {
-  text-decoration: underline;
-  opacity: 0.8;
 }
 
 .inputIconBox {
@@ -133,8 +113,8 @@
 .inputWrapper input {
   width: 100%;
   background: var(--bg-surface);
-  border: 1px solid var(--border);
-  border-radius: 1rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: 0.5rem;
   padding: 1rem 1rem 1rem 3rem;
   color: var(--text-main);
   font-size: 1rem;
@@ -147,7 +127,7 @@
 .inputWrapper input:focus {
   background: var(--bg-card);
   border-color: var(--primary);
-  box-shadow: 0 0 0 1px var(--primary);
+  box-shadow: 0 0 0 1px var(--primary-rgb);
 }
 
 .inputWrapper input::placeholder {
@@ -155,7 +135,6 @@
   opacity: 0.5;
 }
 
-/* EYE BUTTON */
 .eyeBtn {
   position: absolute;
   bottom: -0.3rem;
@@ -176,7 +155,18 @@
   color: var(--text-main);
 }
 
-/* FOOTER / SUBMIT */
+.forgotLink {
+  font-size: 0.8rem;
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.forgotLink:hover {
+  text-decoration: underline;
+  color: var(--primary-hover)
+}
+
 .footer {
   margin-top: 0.5rem;
   display: flex;
@@ -188,8 +178,8 @@
   background: var(--primary);
   color: var(--text-invert);
   border: none;
-  padding: 1rem;
-  border-radius: 1rem;
+  padding: 0.85rem;
+  border-radius: 0.5rem;
   font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
@@ -202,7 +192,7 @@
 }
 
 .primaryBtn:hover:not(:disabled) {
-  opacity: 0.9;
+   color: var(--primary-hover);
   transform: translateY(-1px);
 }
 
@@ -235,11 +225,21 @@
   font-style: italic;
 }
 
-/* ANIMATIONS */
 .spin {
   animation: spin 1s linear infinite;
 }
 
+@keyframes pulseMesh {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+}
 @keyframes spin {
   100% {
     transform: rotate(360deg);

@@ -17,7 +17,7 @@ export default function ImageUploader({ value, onChange, label = "Upload Image" 
     const [isDragging, setIsDragging] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    // Shared upload logic for both Click and Drop
+    // upload logic for both Click and Drop
     const processUpload = async (file: File) => {
         if (!file) return;
         setIsLoading(true);
@@ -85,7 +85,7 @@ export default function ImageUploader({ value, onChange, label = "Upload Image" 
                         onClick={() => onChange("")}
                         className={styles.removeBtn}
                     >
-                        <X size={14} />
+                        <X size={20} />
                     </button>
                 </div>
             ) : (

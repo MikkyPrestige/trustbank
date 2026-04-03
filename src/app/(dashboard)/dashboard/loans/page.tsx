@@ -7,6 +7,7 @@ import RepaymentModal from "@/components/dashboard/loans/RepaymentModal";
 import styles from "../../../../components/dashboard/loans/loans.module.css";
 import { TrendingUp, PieChart, CheckCircle, Lock, History, Ban } from "lucide-react";
 import { KycStatus } from "@prisma/client";
+import Link from "next/link";
 
 export default async function LoansPage() {
     const session = await auth();
@@ -24,7 +25,6 @@ export default async function LoansPage() {
 
     const isVerified = user?.kycStatus === KycStatus.VERIFIED;
 
-    // 1. Determine Currency Context
     const currency = user?.currency || "USD";
     const rate = currency === "USD"
         ? 1
@@ -50,7 +50,6 @@ export default async function LoansPage() {
 
     const remainingDebt = totalBorrowed - totalRepaid;
 
-    // Convert Loans for Display
     const loans = rawLoans.map(loan => ({
         ...loan,
         amount: Number(loan.amount),
@@ -66,7 +65,6 @@ export default async function LoansPage() {
                 <p className={styles.subtitle}>Instant approval. Competitive rates. Flexible terms.</p>
             </header>
 
-            {/* SUMMARY STATS (Converted) */}
             <div className={styles.statsGrid}>
                 <div className={styles.statCard}>
                     <div className={`${styles.iconBox} ${styles.iconRed}`}>
@@ -104,7 +102,6 @@ export default async function LoansPage() {
             </div>
 
             <div className={styles.grid}>
-                {/* LEFT: APPLICATION FORM */}
                 <div className={styles.glassCard}>
                     {!isVerified ? (
                         <div className={styles.lockedState}>
@@ -113,9 +110,9 @@ export default async function LoansPage() {
                             </div>
                             <h2>Loan Access Locked</h2>
                             <p>To ensure security and compliance, you must complete your Identity Verification (KYC) before applying for credit.</p>
-                            <a href="/dashboard/verify" className={styles.verifyLink}>
+                            <Link href="/dashboard/verify" className={styles.verifyLink}>
                                 Verify Identity Now
-                            </a>
+                            </Link>
                         </div>
                     ) : (
                         <>
@@ -143,7 +140,6 @@ export default async function LoansPage() {
                     )}
                 </div>
 
-                {/* RIGHT: HISTORY */}
                 <div className={styles.glassCard}>
                     <h2 className={styles.cardHeader}>
                         <History size={20} color="var(--text-muted)" />
@@ -173,7 +169,6 @@ export default async function LoansPage() {
                                     ? Math.min(100, (loan.repaidAmount / loan.totalRepayment) * 100)
                                     : 0;
 
-                                // Convert Values for Display
                                 const amountNative = loan.amount * rate;
                                 const repaidNative = loan.repaidAmount * rate;
                                 const totalRepayNative = loan.totalRepayment * rate;
@@ -187,7 +182,6 @@ export default async function LoansPage() {
                                             <span className={`${styles.badge} ${styles[loan.status]}`}>{loan.status}</span>
                                         </div>
 
-                                        {/* PROGRESS BAR */}
                                         {(loan.status === 'APPROVED' || loan.status === 'PAID') && (
                                             <div className={styles.progressWrapper}>
                                                 <div className={styles.progressStats}>
@@ -205,7 +199,6 @@ export default async function LoansPage() {
 
                                         <div className={styles.loanFooter}>
                                             <span className={styles.loanDetails}>{loan.termMonths} Months • {loan.reason}</span>
-                                            {/* 2. BUTTON */}
                                             {loan.status === 'APPROVED' && (
                                                 features.repay ? (
                                                     <RepaymentModal

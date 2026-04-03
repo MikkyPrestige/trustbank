@@ -21,7 +21,6 @@ export default function TransferEstimator({ settings, currencies = [] }: Estimat
     const [selectedCode, setSelectedCode] = useState(currencies[0]?.code || 'EUR');
     const [converting, setConverting] = useState(false);
 
-    // Find the current currency data from the list
     const currentCurrency = currencies.find(c => c.code === selectedCode) || { rate: 1, flag: '🌐' };
 
     const numericAmount = parseFloat(amount) || 0;

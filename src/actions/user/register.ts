@@ -54,7 +54,6 @@ export type RegisterState = {
   callbackUrl?: string;
 };
 
-// --- HELPER GENERATORS ---
 async function generateAccountNumber(prefix: string): Promise<string> {
   let isUnique = false;
   let accountNumber = "";
@@ -103,7 +102,6 @@ export async function registerUser(prevState: RegisterState, formData: FormData)
   const settings = await getSiteSettings();
   const siteName = settings.site_name;
 
-  // 1. Feature Flag & Maintenance Check
   const isRegistrationEnabled = await getBooleanSetting('feature_register_enabled', true);
   if (!isRegistrationEnabled) {
         return {
@@ -116,7 +114,6 @@ export async function registerUser(prevState: RegisterState, formData: FormData)
         return { success: false, message: "System is currently under maintenance. Please try again later." };
     }
 
-  // 2. Validation
   const validated = registerSchema.safeParse(rawData);
   if (!validated.success) {
     const fieldErrors: Record<string, string[]> = {};
@@ -131,12 +128,10 @@ export async function registerUser(prevState: RegisterState, formData: FormData)
   const data = validated.data;
   const callbackUrl = data.callbackUrl || "/dashboard";
 
-  // 3. File Upload Handling
   const idFrontFile = formData.get("idDocumentFront") as File;
   const idBackFile = formData.get("idDocumentBack") as File;
   const passportFile = formData.get("passportPhoto") as File;
 
-  // --- KYC CHECK ---
   const hasFront = idFrontFile && idFrontFile.size > 0;
   const hasBack = idBackFile && idBackFile.size > 0;
 
@@ -144,7 +139,6 @@ export async function registerUser(prevState: RegisterState, formData: FormData)
       return { message: "Incomplete ID Upload. You must upload BOTH front and back images, or neither." };
   }
 
-  // SIZE CHECKS
   if (hasFront && idFrontFile.size > MAX_INDIVIDUAL_SIZE) return { message: "ID Front is too large (Max 10MB)." };
   if (hasBack && idBackFile.size > MAX_INDIVIDUAL_SIZE) return { message: "ID Back is too large (Max 10MB)." };
   if (passportFile && passportFile.size > MAX_INDIVIDUAL_SIZE) return { message: "Passport Photo is too large (Max 10MB)." };
@@ -189,7 +183,6 @@ export async function registerUser(prevState: RegisterState, formData: FormData)
           }
       }
 
-    // 4. Generators & Hashing
     const hashedPassword = await bcrypt.hash(data.password, 10);
     const hashedPin = await hashPin(data.pin);
 
@@ -198,11 +191,9 @@ export async function registerUser(prevState: RegisterState, formData: FormData)
     const routingNum = generateRoutingNumber();
     const cardDetails = await generateCardDetails();
 
-    // OTP Generation
     const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
     const otpExpires = new Date(Date.now() + 15 * 60 * 1000);
 
-    // 5. CRITICAL DB TRANSACTION
     const newUserId = await db.$transaction(async (tx) => {
         const newUser = await tx.user.create({
             data: {
@@ -239,7 +230,6 @@ export async function registerUser(prevState: RegisterState, formData: FormData)
             select: { id: true, email: true }
         });
 
-        // Savings
         await tx.account.create({
             data: {
                 userId: newUser.id,
@@ -252,7 +242,6 @@ export async function registerUser(prevState: RegisterState, formData: FormData)
             }
         });
 
-        //  Checking
         await tx.account.create({
             data: {
                 userId: newUser.id,
@@ -265,7 +254,6 @@ export async function registerUser(prevState: RegisterState, formData: FormData)
             }
         });
 
-        // Card
         await tx.card.create({
             data: {
                 userId: newUser.id,
@@ -285,7 +273,6 @@ export async function registerUser(prevState: RegisterState, formData: FormData)
         timeout: 10000
     });
 
-    // 6. NOTIFICATION & EMAIL
     if (newUserId) {
        await sendVerificationEmail(data.email, otpCode, siteName);
 

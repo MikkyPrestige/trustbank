@@ -42,7 +42,6 @@ export async function processLoan(loanId: string, decision: 'APPROVED' | 'REJECT
              return { success: false, message: `Action Denied: User status is ${loan.user.status}` };
         }
 
-        // Fetch Rate for Notification Accuracy
         let currency = loan.user.currency || "USD";
         let rate = 1;
         if (currency !== "USD") {
@@ -50,11 +49,9 @@ export async function processLoan(loanId: string, decision: 'APPROVED' | 'REJECT
             if (r) rate = Number(r.rate);
         }
 
-        // Format Amount for User Notification
         const userAmount = Number(loan.amount) * rate;
         const formattedAmount = new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(userAmount);
 
-        // --- BRANCH 1: REJECTION ---
         if (decision === 'REJECTED') {
             await db.$transaction(async (tx) => {
                 await tx.loan.update({
@@ -63,7 +60,6 @@ export async function processLoan(loanId: string, decision: 'APPROVED' | 'REJECT
                 });
             });
 
-            // Notify User
             await db.notification.create({
                 data: {
                     userId: loan.userId,
@@ -88,10 +84,8 @@ export async function processLoan(loanId: string, decision: 'APPROVED' | 'REJECT
             );
         }
 
-        // --- BRANCH 2: APPROVAL ---
         else {
             await db.$transaction(async (tx) => {
-                // A. Update Loan Status
                 await tx.loan.update({
                     where: { id: loanId },
                     data: {
@@ -100,7 +94,6 @@ export async function processLoan(loanId: string, decision: 'APPROVED' | 'REJECT
                     }
                 });
 
-                // B. Find User's Primary Account
                 const account = await tx.account.findFirst({
                     where: { userId: loan.userId },
                     orderBy: { isPrimary: 'desc' }
@@ -112,7 +105,6 @@ export async function processLoan(loanId: string, decision: 'APPROVED' | 'REJECT
                 const currentBal = Number(account.currentBalance);
                 const newBal = currentBal + loanAmount;
 
-                // C. Credit the Account
                 await tx.account.update({
                     where: { id: account.id },
                     data: {
@@ -121,7 +113,6 @@ export async function processLoan(loanId: string, decision: 'APPROVED' | 'REJECT
                     }
                 });
 
-                // D. Create Ledger Entry
                 await tx.ledgerEntry.create({
                     data: {
                         accountId: account.id,
@@ -141,7 +132,6 @@ export async function processLoan(loanId: string, decision: 'APPROVED' | 'REJECT
                 });
             });
 
-            // Notifications
             await db.notification.create({
                 data: {
                     userId: loan.userId,

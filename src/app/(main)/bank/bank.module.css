@@ -10,7 +10,6 @@
   padding: 0 20px;
 }
 
-/* HERO */
 .heroBackground {
   position: relative;
   width: 100%;
@@ -52,13 +51,13 @@
   margin-bottom: 24px;
 }
 .highlight {
-  background: linear-gradient(to right, #38bdf8, #2563eb);
+  background: linear-gradient(to right, #38bdf8, var(--primary));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 .heroDesc {
   font-size: 1.25rem;
-  color: #cbd5e1;
+  color: var(--text-muted);
   margin-bottom: 40px;
   line-height: 1.6;
 }
@@ -68,7 +67,7 @@
   gap: 20px;
 }
 .primaryBtn {
-  background: #2563eb;
+  background: var(--primary);
   color: var(--text-invert);
   padding: 14px 32px;
   border-radius: 50px;
@@ -87,16 +86,15 @@
   padding: 14px 32px;
   border-radius: 50px;
   font-weight: 700;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid var(--sub-bg);
   cursor: pointer;
   transition: 0.2s;
 }
 .secondaryBtn:hover {
-  background: white;
-  color: black;
+  background: var(--text-invert);
+  color: var(--text-dark);
 }
 
-/* CARD SHOWCASE */
 .cardSection {
   padding: 100px 0;
   background: var(--bg-surface);
@@ -110,7 +108,7 @@
 .badge {
   display: inline-block;
   background: rgba(59, 130, 246, 0.1);
-  color: #3b82f6;
+  color: var(--primary);
   padding: 6px 12px;
   border-radius: 20px;
   font-size: 0.85rem;
@@ -130,14 +128,13 @@
   line-height: 1.6;
 }
 
-/* --- PRODUCT SECTIONS  --- */
 .productSection {
   padding: 6rem 0;
   border-bottom: 1px solid var(--border);
 }
 
 .bgAlt {
-  background: var(--bg-surface-secondary);
+  background: var(--bg-surface);
 }
 
 .productGrid {
@@ -211,7 +208,6 @@
   text-decoration: underline;
 }
 
-/* MOBILE RESPONSIVE */
 @media (max-width: 900px) {
   .productGrid {
     grid-template-columns: 1fr;
@@ -228,7 +224,6 @@
   }
 }
 
-/* FEATURES GRID */
 .featureList {
   list-style: none;
   padding: 0;
@@ -242,7 +237,7 @@
   margin-bottom: 12px;
 }
 .check {
-  color: #22c55e;
+  color: var(--success);
 }
 .featureSection {
   padding: 100px 0;
@@ -262,13 +257,13 @@
 }
 .featureItem:hover {
   transform: translateY(-10px);
-  border-color: #3b82f6;
+  border-color: var(--primary);
 }
 .iconBox {
   width: 60px;
   height: 60px;
   background: rgba(59, 130, 246, 0.1);
-  color: #3b82f6;
+  color: var(--primary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -285,7 +280,6 @@
   line-height: 1.6;
 }
 
-/* COMPARE TABLE */
 .compareSection {
   padding: 100px 0;
   background: var(--bg-surface);
@@ -331,12 +325,12 @@
   color: var(--text-main);
 }
 .thTrust {
-  color: #3b82f6 !important;
+  color: var(--primary) !important;
   font-weight: 800;
   font-size: 1.1rem !important;
 }
 .tdTrust {
-  color: #3b82f6 !important;
+  color: var(--primary) !important;
   font-weight: 700;
   background: rgba(59, 130, 246, 0.05);
 }

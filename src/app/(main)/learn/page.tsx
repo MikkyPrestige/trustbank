@@ -48,8 +48,6 @@ export default async function LearnPage() {
 
     return (
         <main className={styles.main}>
-
-            {/* 1. HERO SECTION */}
             <section className={styles.heroBackground}>
                 <Image
                     src={settings.learn_hero_img}
@@ -78,7 +76,6 @@ export default async function LearnPage() {
                 </div>
             </section>
 
-            {/* 2. FEATURED GUIDES */}
             <section className={styles.contentSection}>
                 <div className={styles.container}>
                     <div className={styles.sectionHeader}>
@@ -111,28 +108,26 @@ export default async function LearnPage() {
                 </div>
             </section>
 
-            {/* 3. CATEGORY STRIP */}
             <section className={styles.categoryStrip}>
                 <div className={styles.container}>
-                    {/* Item 1 */}
                     <div className={styles.categoryItem}>
                         <BookOpen size={32} className={styles.catIcon} />
                         <h3>{settings.learn_cat1_title}</h3>
                         <p>{settings.learn_cat1_desc}</p>
                     </div>
-                    {/* Item 2 */}
+
                     <div className={styles.categoryItem}>
                         <TrendingUp size={32} className={styles.catIcon} />
                         <h3>{settings.learn_cat2_title}</h3>
                         <p>{settings.learn_cat2_desc}</p>
                     </div>
-                    {/* Item 3 */}
+
                     <div className={styles.categoryItem}>
                         <Lightbulb size={32} className={styles.catIcon} />
                         <h3>{settings.learn_cat3_title}</h3>
                         <p>{settings.learn_cat3_desc}</p>
                     </div>
-                    {/* Item 4 */}
+
                     <div className={styles.categoryItem}>
                         <PlayCircle size={32} className={styles.catIcon} />
                         <h3>{settings.learn_cat4_title}</h3>
@@ -140,7 +135,6 @@ export default async function LearnPage() {
                     </div>
                 </div>
             </section>
-
         </main>
     );
 }

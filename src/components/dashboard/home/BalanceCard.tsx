@@ -3,17 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
-    Plus,
-    ArrowUpRight,
-    ArrowDownRight,
-    Minus,
-    Send,
-    Copy,
-    Check,
-    X,
-    Wallet,
-    AlertCircle,
-    Lock
+    Plus, ArrowUpRight, ArrowDownRight, Minus, Send, Copy, Check, X, Wallet, AlertCircle, Lock, Eye, EyeOff
 } from 'lucide-react';
 import styles from './styles/balanceCard.module.css';
 
@@ -27,6 +17,8 @@ interface BalanceCardProps {
     status: string;
     currencyCode?: string;
     exchangeRate?: number;
+    isVisible: boolean;
+    onToggleVisibility: () => void;
 }
 
 export default function BalanceCard({
@@ -38,19 +30,18 @@ export default function BalanceCard({
     trend,
     status,
     currencyCode = "USD",
-    exchangeRate = 1
+    exchangeRate = 1,
+    isVisible,
+    onToggleVisibility
 }: BalanceCardProps) {
     const router = useRouter();
-    const [isVisible, setIsVisible] = useState(true);
     const [showDepositModal, setShowDepositModal] = useState(false);
     const [copied, setCopied] = useState(false);
 
-    const toggleVisibility = () => setIsVisible(!isVisible);
-
-    // --- CURRENCY LOGIC ---
     const convertedBalance = totalBalance * exchangeRate;
 
     const displayMoney = (amount: number, currency: string) => {
+        if (!isVisible) return "••••••";
         return new Intl.NumberFormat('en-US', {
             style: 'currency',
             currency: currency,
@@ -59,7 +50,6 @@ export default function BalanceCard({
         }).format(amount);
     };
 
-    // --- STATUS LOGIC ---
     const isFrozen = status === 'FROZEN' || status === 'SUSPENDED';
 
     const getStatusConfig = () => {
@@ -95,19 +85,30 @@ export default function BalanceCard({
                 )}
 
                 <div className={styles.cardTop}>
-                    <div className={styles.cardLabel}>TOTAL LIQUIDITY</div>
+                    <div className={styles.cardLabelGroup}>
+                        <div className={styles.cardLabel}>TOTAL LIQUIDITY</div>
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onToggleVisibility();
+                            }}
+                            className={styles.eyeToggle}
+                        >
+                            {isVisible ? <Eye size={18} /> : <EyeOff size={18} />}
+                        </button>
+                    </div>
                     <div className={`${styles.liveIndicator} ${statusConfig.style}`}>
                         {statusConfig.icon ? statusConfig.icon : <div className={styles.dot}></div>}
                         {statusConfig.label}
                     </div>
                 </div>
 
-                <div className={styles.balanceRow} onClick={toggleVisibility}>
-                    <div className={isVisible ? styles.balanceAmount : styles.hiddenBalance}>
+                <div className={styles.balanceRow}>
+                    <div className={styles.balanceAmount}>
                         {displayMoney(convertedBalance, currencyCode)}
 
                         {currencyCode !== "USD" && isVisible && (
-                            <div style={{ fontSize: '0.8rem', opacity: 0.7, marginTop: '4px', fontWeight: 400 }}>
+                            <div className={styles.totalBalance}>
                                 ≈ {displayMoney(totalBalance, 'USD')}
                             </div>
                         )}
@@ -139,7 +140,7 @@ export default function BalanceCard({
                 </div>
             </div>
 
-            {/* --- DEPOSIT MODAL (Unchanged) --- */}
+            {/* --- DEPOSIT MODAL --- */}
             {showDepositModal && (
                 <div className={styles.modalOverlay}>
                     <div className={styles.modalContent}>

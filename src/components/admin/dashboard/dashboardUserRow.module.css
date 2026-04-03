@@ -1,0 +1,75 @@
+.clickableRow {
+  cursor: pointer;
+}
+
+.userInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.userName {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.userDate {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.userEmail {
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.statusBadge {
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.3rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.statusActive {
+  background-color: rgba(var(--success-rgb), 0.1);
+  color: var(--success);
+}
+
+.statusInactive {
+  background-color: rgba(var(--danger-rgb), 0.1);
+  color: var(--danger);
+}
+
+.kycCell {
+  text-align: left;
+}
+
+.kycVerified {
+  color: var(--success);
+}
+
+.kycPending {
+  color: var(--accent);
+}
+
+.kycFailed {
+  color: var(--danger);
+  opacity: 0.5;
+}
+
+.balanceContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1.2;
+}
+
+.balancePrimary {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.balanceSecondary {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  font-weight: normal;
+}

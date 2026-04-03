@@ -11,7 +11,6 @@ export default async function CardShowcase() {
         <section className={styles.cardSection}>
             <div className={styles.container}>
                 <div className={styles.cardGrid}>
-                    {/* Left: Content */}
                     <div className={styles.cardContent}>
                         <div className={styles.tagline}>
                             <div className={styles.taglineLine}></div>
@@ -26,7 +25,6 @@ export default async function CardShowcase() {
                         </p>
 
                         <div className={styles.cardFeatures}>
-                            {/* FEATURE 1 */}
                             <div className={styles.featureItem}>
                                 <Globe size={24} className={styles.goldIcon} />
                                 <div>
@@ -34,7 +32,7 @@ export default async function CardShowcase() {
                                     <p>{settings.home_card_feat_1_desc}</p>
                                 </div>
                             </div>
-                            {/* FEATURE 2 */}
+
                             <div className={styles.featureItem}>
                                 <ShieldCheck size={24} className={styles.goldIcon} />
                                 <div>
@@ -42,7 +40,7 @@ export default async function CardShowcase() {
                                     <p>{settings.home_card_feat_2_desc}</p>
                                 </div>
                             </div>
-                            {/* FEATURE 3 */}
+
                             <div className={styles.featureItem}>
                                 <Zap size={24} className={styles.goldIcon} />
                                 <div>
@@ -62,7 +60,6 @@ export default async function CardShowcase() {
                         </div>
                     </div>
 
-                    {/* Right: Floating Card Visual */}
                     <div className={styles.cardVisual}>
                         <div className={styles.goldGlow}></div>
                         <Image

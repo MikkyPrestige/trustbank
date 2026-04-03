@@ -11,7 +11,7 @@ export function SupportTab({ settings, supportHeroUrl, setSupportHeroUrl }: Supp
     return (
         <div className={styles.grid}>
             <div className={styles.fullWidth}>
-                <h3 className={styles.sectionTitle}>Contact Page Settings</h3>
+                <h3 className={styles.sectionTitle}>HERO SECTION</h3>
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Hero Title</label>
@@ -31,11 +31,13 @@ export function SupportTab({ settings, supportHeroUrl, setSupportHeroUrl }: Supp
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Image Alt Text</label>
-                <input name="support_hero_alt" defaultValue={settings.support_hero_alt} className={styles.input} placeholder="e.g. support hero image" />
+                <textarea name="support_hero_alt" defaultValue={settings.support_hero_alt} className={styles.textarea} placeholder="e.g. support hero image" />
             </div>
 
-            <div className={styles.fullWidth}><hr className={styles.divider} /><h3 className={styles.sectionTitle}>Contact Details</h3></div>
-
+            <div className={styles.fullWidth}>
+                <hr className={styles.divider} />
+                <h3 className={styles.sectionTitle}>Contact Details</h3>
+            </div>
             <div className={styles.group}>
                 <label className={styles.label}>Phone Title</label>
                 <input name="support_phone_title" defaultValue={settings.support_phone_title} className={styles.input} />
@@ -75,7 +77,6 @@ export function SupportTab({ settings, supportHeroUrl, setSupportHeroUrl }: Supp
                 <input name="support_address" defaultValue={settings.support_address} className={styles.input} />
             </div>
 
-            {/* FAQ SECTION */}
             <div className={styles.fullWidth}>
                 <hr className={styles.divider} />
                 <h3 className={styles.sectionTitle}>FAQ Section</h3>

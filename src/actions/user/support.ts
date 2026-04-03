@@ -18,7 +18,6 @@ const replySchema = z.object({
     message: z.string().min(1, "Message cannot be empty"),
 });
 
-// 1. CREATE TICKET
 export async function createTicket(prevState: any, formData: FormData) {
  const { success, message, user } = await getAuthenticatedUser();
 
@@ -86,7 +85,6 @@ export async function createTicket(prevState: any, formData: FormData) {
   return { success: true, message: "Ticket created successfully!" };
 }
 
-// 2. REPLY TO TICKET
 export async function replyToTicket(prevState: any, formData: FormData) {
    const { success, message, user } = await getAuthenticatedUser();
 
@@ -106,7 +104,6 @@ export async function replyToTicket(prevState: any, formData: FormData) {
     const { ticketId, message: replyMessage } = validated.data;
 
     try {
-        // 1. Verify ownership
         const ticket = await db.ticket.findUnique({
             where: { id: ticketId, userId: user.id }
         });

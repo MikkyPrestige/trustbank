@@ -91,7 +91,7 @@ interface CoinGeckoResponse {
     };
 }
 
-// Helper for Stock API (Alpha Vantage)
+// Stock API (Alpha Vantage)
 async function getLiveStock(apiId: string, symbol: string) {
     const API_KEY = process.env.ALPHA_VANTAGE_KEY;
     const fallback = FALLBACK_STOCKS[symbol as keyof typeof FALLBACK_STOCKS];
@@ -105,7 +105,7 @@ async function getLiveStock(apiId: string, symbol: string) {
         const quote = data["Global Quote"];
 
        if (!quote || !quote["05. price"]) {
-            console.warn(`⚠️ Alpha Vantage limit or invalid ID for ${symbol}`);
+            console.warn(`Alpha Vantage limit or invalid ID for ${symbol}`);
             return { symbol, price: null, change: null, isLive: false };
         }
 
@@ -125,20 +125,20 @@ async function getLiveStock(apiId: string, symbol: string) {
 }
 
 export async function getLiveMarketData() {
-    // 1. Fetch intended assets
+    //  Fetch intended assets
     const managedAssets = await db.managedAsset.findMany({
         where: { isActive: true },
         orderBy: { sortOrder: 'asc' }
     });
 
-    // 2. Prep Crypto Batch
+    // Prep Crypto Batch
     const cryptoAssets = managedAssets.filter(a => a.type === 'CRYPTO');
     const cryptoIds = cryptoAssets.map(a => a.api_id).join(',');
 
-    // 3. Prep Stock Individual Requests
+    // Prep Stock Individual Requests
     const stockAssets = managedAssets.filter(a => a.type === 'STOCK');
 
-    // 4. Execute API Calls
+    // Execute API Calls
     const cryptoRes = await fetch(
         `https://api.coingecko.com/api/v3/simple/price?ids=${cryptoIds}&vs_currencies=usd&include_24hr_change=true&include_7d_sparkline=true`,
         { next: { revalidate: 60 } }
@@ -158,13 +158,12 @@ export async function getLiveMarketData() {
         })
     );
 
- // 5. Final Mapping & DB Sync
 const finalData = await Promise.all(managedAssets.map(async (asset) => {
     let currentPrice = asset.last_good_price ?? 0;
     let currentChange = 0;
     let isLive = false;
 
-    // 1. Get Price/Change
+    // Get Price/Change
     if (asset.type === 'CRYPTO') {
         const live = cryptoData?.[asset.api_id];
         if (live) {
@@ -181,7 +180,7 @@ const finalData = await Promise.all(managedAssets.map(async (asset) => {
         }
     }
 
-    // 2. THE SPARKLINE "KILL SWITCH"
+    // THE SPARKLINE "KILL SWITCH"
     let spark = (asset.sparkline as number[]) || [];
 
     if (spark.length < 5 || spark.every(v => v === spark[0])) {
@@ -227,139 +226,3 @@ const finalData = await Promise.all(managedAssets.map(async (asset) => {
         lastUpdated: lastUpdateAttempt
     };
 }
-
-// async function getLiveStock(apiId: string, symbol: string) {
-//     const API_KEY = process.env.ALPHA_VANTAGE_KEY;
-//     const fallback = FALLBACK_STOCKS[symbol as keyof typeof FALLBACK_STOCKS];
-
-//     // If no API key is set, go straight to fallback
-//     if (!API_KEY) return { ...fallback, isLive: false };
-
-//     try {
-//         const res = await fetch(
-//             `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${API_KEY}`,
-//             { next: { revalidate: 3600 } } // Cache for 1 hour
-//         );
-
-//         const data = await res.json();
-//         const quote = data["Global Quote"];
-
-//         // if (!quote) throw new Error("No data");
-//         // If API limit reached or symbol not found, use fallback
-//         if (!quote || !quote["05. price"]) {
-//             return { ...fallback, isLive: false };
-//         }
-
-//         return {
-//             symbol,
-//             price: parseFloat(quote["05. price"]),
-//             change: parseFloat(quote["10. change percent"].replace('%', '')),
-//             sparkline: fallback?.sparkline || [],
-//             isLive: true
-//         };
-//     } catch (error) {
-//         return { ...fallback, symbol, isLive: false };
-//     }
-// }
-
-
-// export async function getLiveMarketData() {
-//     // 1. Get the list from Postgres
-//     const managedAssets = await db.managedAsset.findMany({
-//         where: { isActive: true },
-//         orderBy: { sortOrder: 'asc' }
-//     });
-
-//     // 2. Separate them for the APIs
-//     const cryptoIds = managedAssets.filter(a => a.type === 'CRYPTO').map(a => a.api_id).join(',');
-//     const stockAssets = managedAssets.filter(a => a.type === 'STOCK');
-
-//     // 3. Fetch Crypto Data (CoinGecko) using the dynamic list
-//    const cryptoRes = await fetch(
-//         `https://api.coingecko.com/api/v3/simple/price?ids=${cryptoIds}&vs_currencies=usd&include_24hr_change=true`,
-//         { next: { revalidate: 60 } }
-//     );
-//     const cryptoData = cryptoRes.ok ? await cryptoRes.json() : null;
-
-//     // 4. Fetch Stock Data (Alpha Vantage) in parallel
-//     const stockData = await Promise.all(
-//         stockAssets.map(stock => getLiveStock(stock.api_id, stock.symbol))
-//     );
-
-//     // 5. Combine and Map
-//     return managedAssets.map(asset => {
-//         if (asset.type === 'CRYPTO') {
-//             const liveData = cryptoData[asset.api_id];
-//             const staticFallback = FALLBACK_CRYPTO[asset.symbol as keyof typeof FALLBACK_CRYPTO];
-//             return {
-//                 ...asset,
-//                price: liveData?.usd ?? staticFallback?.usd ?? 0,
-//             change: liveData?.usd_24h_change ?? staticFallback?.usd_24h_change ?? 0,
-//             sparkline: liveData?.sparkline_7d?.price ?? staticFallback?.sparkline ?? [],
-//             isCrypto: true
-//             };
-//         } else {
-//             const data = stockData.find(s => s.symbol === asset.symbol);
-//             return {
-//                 ...asset,
-//                 price: data?.price ?? 0,
-//                 change: data?.change ?? 0,
-//                 isCrypto: false
-//             };
-//         }
-//     });
-// }
-
-// export async function getLiveMarketData() {
-//     try {
-//         // 1. Fetch Crypto
-//         const coinIds = "tether,bitcoin,ethereum,solana,binance,hyperliquid,ripple,cardano,dogecoin,polkadot,chainlink";
-//         const cryptoRes = await fetch(
-//             `https://api.coingecko.com/api/v3/simple/price?ids=${coinIds}&vs_currencies=usd&include_24hr_change=true&include_7d_sparkline=true`,
-//             { next: { revalidate: 60 } }
-//         );
-
-//         let cryptoData: CoinGeckoResponse = {};
-//         if (cryptoRes.ok) cryptoData = await cryptoRes.json();
-
-//         // 2. Fetch Stocks in Parallel
-//         const [sp500, nasdaq, dow, gold] = await Promise.all([
-//             getLiveStock('SPY', 'sp500'),
-//             getLiveStock('QQQ', 'nasdaq'),
-//             getLiveStock('DIA', 'dow'),
-//             getLiveStock('GLD', 'gold'),
-//         ]);
-
-//         const getCoin = (id: string, key: keyof typeof FALLBACK_CRYPTO) => {
-//             const live = cryptoData[id];
-//             const fallback = FALLBACK_CRYPTO[key];
-//             return {
-//                 price: live?.usd ?? fallback.usd,
-//                 change: live?.usd_24h_change ?? fallback.usd_24h_change,
-//                 sparkline: live?.sparkline_7d?.price ?? fallback.sparkline
-//             };
-//         };
-
-//         return [
-//             { symbol: "USDT", name: "Tether", ...getCoin('tether', 'tether'), isCrypto: true },
-//             { symbol: "S&P 500", name: "S&P 500 Index", ...sp500, isCrypto: false },
-//             { symbol: "BTC", name: "Bitcoin", ...getCoin('bitcoin', 'bitcoin'), isCrypto: true },
-//             { symbol: "ETH", name: "Ethereum", ...getCoin('ethereum', 'ethereum'), isCrypto: true },
-//             { symbol: "NSDQ", name: "Nasdaq 100", ...nasdaq, isCrypto: false },
-//             { symbol: "SOL", name: "Solana", ...getCoin('solana', 'solana'), isCrypto: true },
-//             { symbol: "BNB", name: "Binance", ...getCoin('binance', 'binance'), isCrypto: true },
-//             { symbol: "DOW", name: "Dow Jones", ...dow, isCrypto: false },
-//             { symbol: "HYPE", name: "Hyperliquid", ...getCoin('hyperliquid', 'hyperliquid'), isCrypto: true },
-//             { symbol: "XRP", name: "Ripple", ...getCoin('ripple', 'ripple'), isCrypto: true },
-//             { symbol: "GOLD", name: "Gold Spot", ...gold, isCrypto: false },
-//             { symbol: "ADA", name: "Cardano", ...getCoin('cardano', 'cardano'), isCrypto: true },
-//             { symbol: "DOGE", name: "Dogecoin", ...getCoin('dogecoin', 'dogecoin'), isCrypto: true },
-//             { symbol: "DOT", name: "polkadot", ...getCoin('polkadot', 'polkadot'), isCrypto: true },
-//             { symbol: "LINK", name: "Chainlink", ...getCoin('chainlink', 'chainlink'), isCrypto: true },
-//         ];
-
-//     } catch (error) {
-//         console.error("Market Data Error:", error);
-//         return [];
-//     }
-// }

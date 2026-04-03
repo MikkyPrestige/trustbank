@@ -1,14 +1,6 @@
 'use client';
 
-import {
-    ShieldAlert,
-    ShieldCheck,
-    Key,
-    LogIn,
-    AlertTriangle,
-    Bell,
-    CreditCard
-} from 'lucide-react';
+import { ShieldAlert, ShieldCheck, Key, LogIn, AlertTriangle, Bell, CircleX, CircleAlert } from 'lucide-react';
 import styles from './users.module.css';
 
 interface ActivityLogProps {
@@ -18,12 +10,14 @@ interface ActivityLogProps {
 export default function ActivityLog({ logs }: ActivityLogProps) {
 
     const getIcon = (type: string, title: string) => {
-        if (type === 'SECURITY' || title.includes('Login')) return <LogIn size={14} />;
-        if (title.includes('Locked')) return <ShieldAlert size={14} color="#ef4444" />;
-        if (title.includes('PIN') || title.includes('Password')) return <Key size={14} />;
-        if (type === 'WARNING') return <AlertTriangle size={14} color="#f59e0b" />;
-        if (type === 'SUCCESS') return <ShieldCheck size={14} color="#22c55e" />;
-        return <Bell size={14} />;
+        if (type === 'SECURITY' || title.includes('Login')) return <LogIn size={16} />;
+        if (title.includes('Locked')) return <ShieldAlert size={16} color="var(--danger)" />;
+        if (title.includes('PIN') || title.includes('Password')) return <Key size={16} />;
+        if (type === 'WARNING') return <AlertTriangle size={16} color="var(--accent)" />;
+        if (type === 'SUCCESS') return <ShieldCheck size={16} color="var(--success)" />;
+        if (type === 'INFO') return <CircleAlert size={16} color="var(--primary)" />;
+        if (type === 'ERROR') return <CircleX size={16} color="var(--danger)" />;
+        return <Bell size={16} />;
     };
 
     if (logs.length === 0) {

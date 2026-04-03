@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-// Import the updateReport action you just created
 import { createReport, deleteReport, updateReport } from '@/actions/admin/reports';
 import { Plus, Trash2, X, Loader2, FileText, ArrowLeft, Link as LinkIcon, Edit2 } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -19,15 +18,12 @@ export default function ReportClientManager({ initialReports }: Props) {
     const [loading, setLoading] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingId, setEditingId] = useState<string | null>(null);
-
-    // Form States
     const [title, setTitle] = useState('');
     const [summary, setSummary] = useState('');
     const [fileUrl, setFileUrl] = useState('');
     const [type, setType] = useState('PDF');
     const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
 
-    // Handle opening modal for a new report
     const openAddModal = () => {
         setEditingId(null);
         setTitle('');
@@ -38,7 +34,6 @@ export default function ReportClientManager({ initialReports }: Props) {
         setIsModalOpen(true);
     };
 
-    // Handle opening modal for editing
     const startEdit = (report: FinancialReport) => {
         setEditingId(report.id);
         setTitle(report.title);
@@ -73,7 +68,6 @@ export default function ReportClientManager({ initialReports }: Props) {
         formData.append("type", type);
         formData.append("date", date);
 
-        // Switch between Create and Update actions
         const res = editingId
             ? await updateReport(editingId, formData)
             : await createReport(formData);
@@ -82,7 +76,6 @@ export default function ReportClientManager({ initialReports }: Props) {
             toast.success(res.message);
             setIsModalOpen(false);
             router.refresh();
-            // Reset form
             setEditingId(null);
             setTitle(''); setSummary(''); setFileUrl('');
         } else {
@@ -93,17 +86,17 @@ export default function ReportClientManager({ initialReports }: Props) {
 
     return (
         <div className={styles.container}>
+            <div className={styles.backLinkContainer}>
             <Link href="/admin/settings" className={styles.backLink}>
                 <ArrowLeft size={18} /> Back to Settings
             </Link>
-
+            </div>
             <div className={styles.header}>
                 <h1 className={styles.title}>Financial Reports</h1>
                 <button onClick={openAddModal} className={styles.addBtn}>
                     <Plus size={18} /> Add Report
                 </button>
             </div>
-
             <div className={styles.list}>
                 {initialReports.map((report) => (
                     <div key={report.id} className={styles.card}>
@@ -133,31 +126,31 @@ export default function ReportClientManager({ initialReports }: Props) {
                 <div className={styles.modalOverlay}>
                     <div className={styles.modal}>
                         <div className={styles.modalHeader}>
-                            <h2>{editingId ? "Edit Report" : "Publish Report"}</h2>
-                            <button onClick={() => setIsModalOpen(false)}><X /></button>
+                            <h2 className={styles.modalTitle}>{editingId ? "Edit Report" : "Publish Report"}</h2>
+                            <button onClick={() => setIsModalOpen(false)} className={styles.closeModalBtn}><X size={20} /></button>
                         </div>
                         <form onSubmit={handleSubmit}>
                             <div className={styles.formGroup}>
-                                <label>Report Title</label>
+                                <label className={styles.label}>Report Title</label>
                                 <input value={title} onChange={e => setTitle(e.target.value)} required className={styles.input} placeholder="e.g. Q4 2024 Earnings" />
                             </div>
                             <div className={styles.formGroup}>
-                                <label>Date</label>
+                                <label className={styles.label}>Date</label>
                                 <input type="date" value={date} onChange={e => setDate(e.target.value)} required className={styles.input} />
                             </div>
                             <div className={styles.formGroup}>
-                                <label>Type</label>
-                                <select value={type} onChange={e => setType(e.target.value)} className={styles.input}>
+                                <label className={styles.label}>Type</label>
+                                <select value={type} onChange={e => setType(e.target.value)} className={styles.select}>
                                     <option value="PDF">PDF Document</option>
                                     <option value="LINK">External Link</option>
                                 </select>
                             </div>
                             <div className={styles.formGroup}>
-                                <label>File URL (or Link)</label>
+                                <label className={styles.label}>File URL (or Link)</label>
                                 <input value={fileUrl} onChange={e => setFileUrl(e.target.value)} required className={styles.input} placeholder="https://..." />
                             </div>
                             <div className={styles.formGroup}>
-                                <label>Summary (Optional)</label>
+                                <label className={styles.label}>Summary (Optional)</label>
                                 <textarea value={summary} onChange={e => setSummary(e.target.value)} className={styles.textarea} />
                             </div>
 

@@ -173,7 +173,6 @@
   color: var(--text-main);
 }
 
-/* Status Banners */
 .errorBanner,
 .successBanner {
   width: 100%;

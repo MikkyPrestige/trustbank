@@ -20,10 +20,8 @@ export default function KycReviewSection({ user }: { user: any }) {
 
     if (isNotSubmitted) return null;
 
-    // HELPER: Render Image or PDF Button
     const renderPreview = (url: string | null, alt: string) => {
         if (!url) return <div className={styles.placeholderBox}>No Document</div>;
-        // Check for PDF
         if (url.toLowerCase().includes('.pdf')) {
             return (
                 <div className={styles.pdfPreview}>
@@ -35,7 +33,7 @@ export default function KycReviewSection({ user }: { user: any }) {
                         rel="noopener noreferrer"
                         className={styles.viewPdfBtn}
                     >
-                        Open PDF <ExternalLink size={12} />
+                        Open PDF <ExternalLink size={16} />
                     </a>
                 </div>
             );
@@ -74,9 +72,9 @@ export default function KycReviewSection({ user }: { user: any }) {
         <div className={styles.kycContainer}>
             <div className={styles.kycHeader}>
                 <h3 className={styles.kycTitle}>
-                    {isPending && <><AlertTriangle size={20} />KYC Review</>}
-                    {isVerified && <><ShieldCheck size={20} className="textGreen" /> KYC Documents</>}
-                    {isFailed && <><Ban size={20} className="textRed" /> Rejected Documents</>}
+                    {isPending && <><AlertTriangle size={20} className={styles.textYellow} />KYC Review</>}
+                    {isVerified && <><ShieldCheck size={20} className={styles.textGreen} /> KYC Documents</>}
+                    {isFailed && <><Ban size={20} className={styles.textRed} /> Rejected Documents</>}
                 </h3>
 
                 <span className={`${styles.kycBadge} ${styles[user.kycStatus]}`}>
@@ -85,8 +83,6 @@ export default function KycReviewSection({ user }: { user: any }) {
             </div>
 
             <div className={styles.kycGrid}>
-
-                {/* 1. PASSPORT (Always Image) */}
                 <div className={styles.kycCard}>
                     <p className={styles.kycLabel}>Passport</p>
                     <div className={styles.imgBox}>
@@ -105,7 +101,6 @@ export default function KycReviewSection({ user }: { user: any }) {
                     </div>
                 </div>
 
-                {/* 2. ID FRONT (Image OR PDF) */}
                 <div className={styles.kycCard}>
                     <p className={styles.kycLabel}>ID Front</p>
                     <div className={styles.imgBox}>
@@ -113,7 +108,6 @@ export default function KycReviewSection({ user }: { user: any }) {
                     </div>
                 </div>
 
-                {/* 3. ID BACK (Image OR PDF) */}
                 <div className={styles.kycCard}>
                     <p className={styles.kycLabel}>ID Back</p>
                     <div className={styles.imgBox}>
@@ -122,7 +116,6 @@ export default function KycReviewSection({ user }: { user: any }) {
                 </div>
             </div>
 
-            {/* ACTIONS */}
             {isPending && (
                 <>
                     {showRejectInput && (
@@ -141,21 +134,21 @@ export default function KycReviewSection({ user }: { user: any }) {
                             onClick={() => handleAction('APPROVE')}
                             disabled={loading}
                         >
-                            <Check size={18} /> Approve
+                            <Check size={20} /> Approve
                         </button>
                         <button
                             className={`${styles.btnReject} ${loading ? styles.btnDisabled : ''}`}
                             onClick={() => handleAction('REJECT')}
                             disabled={loading}
                         >
-                            <X size={18} /> Reject
+                            <X size={20} /> Reject
                         </button>
                     </div>
                 </>
             )}
 
             {isFailed && user.kycRejectionReason && (
-                <div className={styles.kycInput} style={{ background: '#fef2f2', borderColor: '#fecaca', color: '#b91c1c' }}>
+                <div className={styles.rejectionReason} >
                     <strong>Rejection Reason:</strong> {user.kycRejectionReason}
                 </div>
             )}

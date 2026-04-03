@@ -4,7 +4,6 @@
   color: var(--text-main);
 }
 
-/* --- HERO SECTION --- */
 .hero {
   position: relative;
   height: 300px;
@@ -58,14 +57,12 @@
   line-height: 1.6;
 }
 
-/* --- CONTAINERS --- */
 .container {
   /* max-width: 1100px; */
   margin: 0 auto;
   padding: 2rem;
 }
 
-/* --- STOCK TICKER STRIP --- */
 .statsStrip {
   background: var(--bg-card);
   border-bottom: 1px solid var(--border);
@@ -126,7 +123,6 @@
   color: var(--text-muted);
 }
 
-/* --- FINANCIAL REPORTS GRID --- */
 .sectionTitle {
   font-size: 1.8rem;
   font-weight: 700;
@@ -183,7 +179,6 @@
   flex-grow: 1;
 }
 
-/* --- DOWNLOAD LINKS --- */
 .downloadLink {
   color: var(--primary);
   font-weight: 600;
@@ -215,7 +210,6 @@
   color: var(--text-muted);
 }
 
-/* --- MOBILE RESPONSIVE --- */
 @media (max-width: 600px) {
   .tickerContainer {
     flex-direction: column;

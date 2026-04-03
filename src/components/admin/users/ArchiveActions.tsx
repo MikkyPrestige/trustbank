@@ -28,24 +28,22 @@ export default function ArchiveActions({ userId }: { userId: string }) {
 
     return (
         <div className={styles.flexGap}>
-            {/*  Restore Button */}
             <button
                 onClick={handleRestore}
                 disabled={!!loading}
                 className={styles.restoreBtn}
                 title="Restore User"
             >
-                {loading === 'RESTORE' ? <Loader2 size={16} className={styles.spin} /> : <RotateCcw size={16} />}
+                {loading === 'RESTORE' ? <Loader2 size={16} className={styles.spin} /> : <RotateCcw size={18} />}
             </button>
 
-            {/*  Delete Button */}
             <button
                 onClick={handleDelete}
                 disabled={!!loading}
                 className={styles.deleteBtn}
                 title="Delete Forever"
             >
-                {loading === 'DELETE' ? <Loader2 size={16} className={styles.spin} /> : <Trash2 size={16} />}
+                {loading === 'DELETE' ? <Loader2 size={16} className={styles.spin} /> : <Trash2 size={18} />}
             </button>
         </div>
     );

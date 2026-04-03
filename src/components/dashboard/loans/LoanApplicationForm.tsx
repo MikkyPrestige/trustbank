@@ -8,7 +8,6 @@ import { Loader2 } from 'lucide-react';
 export default function LoanApplicationForm({ currency, rate }: { currency: string, rate: number }) {
     const [state, action, isPending] = useActionState(applyForLoan, undefined);
 
-    // Initial state in User Currency (approx 5000 USD converted)
     const initialAmount = Math.floor(5000 * rate);
     const [amount, setAmount] = useState(initialAmount);
     const [months, setMonths] = useState(12);
@@ -17,16 +16,14 @@ export default function LoanApplicationForm({ currency, rate }: { currency: stri
     const totalRepayment = amount + (amount * interestRate);
     const monthlyPayment = totalRepayment / months;
 
-    // Constraints in User Currency
+    // Constraint User Currency
     const minAmount = Math.ceil(1000 * rate);
     const maxAmount = Math.floor(50000 * rate);
 
     const handleFormSubmit = (formData: FormData) => {
-        // 1. Convert Input (User Currency) -> USD (System)
         const usdAmount = amount / rate;
         formData.set("amount", usdAmount.toString());
 
-        // 2. Add Display Info for Notifications
         formData.set("displayAmount", amount.toString());
         formData.set("displayCurrency", currency);
 
@@ -41,7 +38,6 @@ export default function LoanApplicationForm({ currency, rate }: { currency: stri
                 </div>
             )}
 
-            {/* AMOUNT SLIDER */}
             <div className={styles.group}>
                 <label className={styles.label}>I want to borrow</label>
                 <div className={styles.amountInputWrapper}>
@@ -68,7 +64,6 @@ export default function LoanApplicationForm({ currency, rate }: { currency: stri
             </div>
 
             <div className={styles.flexRow}>
-                {/* TERM SELECT */}
                 <div className={`${styles.group} ${styles.flexItem}`}>
                     <label className={styles.label}>Duration</label>
                     <select
@@ -84,7 +79,6 @@ export default function LoanApplicationForm({ currency, rate }: { currency: stri
                     </select>
                 </div>
 
-                {/* REASON SELECT */}
                 <div className={`${styles.group} ${styles.flexItem}`}>
                     <label className={styles.label}>Purpose</label>
                     <select name="reason" className={styles.select}>
@@ -97,7 +91,6 @@ export default function LoanApplicationForm({ currency, rate }: { currency: stri
                 </div>
             </div>
 
-            {/* LIVE CALCULATOR PREVIEW */}
             <div className={styles.calculatorBox}>
                 <div className={styles.calcRow}>
                     <span>Interest Rate</span>
@@ -117,7 +110,6 @@ export default function LoanApplicationForm({ currency, rate }: { currency: stri
                 </div>
             </div>
 
-            {/* PIN INPUT */}
             <div className={styles.group}>
                 <label className={styles.label}>Security PIN</label>
                 <input

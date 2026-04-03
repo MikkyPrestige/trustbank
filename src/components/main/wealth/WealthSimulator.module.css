@@ -38,7 +38,6 @@
   font-size: 1rem;
 }
 
-/* --- GRID --- */
 .grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -46,7 +45,6 @@
   align-items: center;
 }
 
-/* --- CONTROLS (This was missing) --- */
 .controls {
   display: flex;
   flex-direction: column;
@@ -72,7 +70,6 @@
   letter-spacing: 0.5px;
 }
 
-/* Custom Slider Styling */
 .slider {
   -webkit-appearance: none;
   width: 100%;
@@ -103,7 +100,6 @@
   transform: scale(1.1);
 }
 
-/* Stats */
 .statsRow {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -148,7 +144,6 @@
   flex-shrink: 0;
 }
 
-/* --- CHART --- */
 .chartWrapper {
   display: flex;
   flex-direction: column;
@@ -184,7 +179,6 @@
   font-size: 0.8rem;
 }
 
-/* Legend */
 .legend {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -211,16 +205,15 @@
   background-color: var(--primary);
 }
 .crypto {
-  background-color: #eab308;
+  background-color: var(--accent);
 }
 .realEstate {
   background-color: #a855f7;
 }
 .bonds {
-  background-color: #64748b;
+  background-color: var(--text-muted);
 }
 
-/* RESPONSIVE */
 @media (max-width: 768px) {
   .grid {
     grid-template-columns: 1fr;

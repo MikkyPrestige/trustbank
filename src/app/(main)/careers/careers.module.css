@@ -10,7 +10,6 @@
   padding: 0 1.5rem;
 }
 
-/* HERO */
 .hero {
   position: relative;
   min-height: 300px;
@@ -143,7 +142,6 @@
   line-height: 1.6;
 }
 
-/* JOB LIST */
 .jobsSection {
   padding: 2rem 0;
 }

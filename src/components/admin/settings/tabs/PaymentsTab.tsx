@@ -51,9 +51,8 @@ export function PaymentsTab({ settings, currencies, paymentsHeroUrl, setPayments
 
     return (
         <div className={styles.grid}>
-            {/* --- HERO SECTION --- */}
             <div className={styles.fullWidth}>
-                <h3 className={styles.sectionTitle}>Payments: Hero</h3>
+                <h3 className={styles.sectionTitle}>HERO SECTION</h3>
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Badge</label>
@@ -80,13 +79,12 @@ export function PaymentsTab({ settings, currencies, paymentsHeroUrl, setPayments
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Image Alt Text</label>
-                <input name="payments_hero_alt" defaultValue={settings.payments_hero_alt} className={styles.input} />
+                <textarea name="payments_hero_alt" defaultValue={settings.payments_hero_alt} className={styles.textarea} />
             </div>
 
-            {/* --- WIDGET --- */}
             <div className={styles.fullWidth}>
                 <hr className={styles.divider} />
-                <h3 className={styles.sectionTitle}>Transfer Estimator Widget</h3>
+                <h3 className={styles.sectionTitle}>Transfer Estimator</h3>
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Title</label>
@@ -151,8 +149,7 @@ export function PaymentsTab({ settings, currencies, paymentsHeroUrl, setPayments
                 <p className={styles.subtitle}>Manage the exchange rates relative to 1 USD.</p>
             </div>
             <div className={`${styles.fullWidth} ${styles.currencyContainer}`}>
-                {/* 1. List of existing currencies */}
-                <div className={styles.fullWidth}>
+                <div className={styles.groupHeader}>
                     <div className={styles.currencyList}>
                         {currencies?.length > 0 ? (
                             currencies.map((curr) => (
@@ -174,7 +171,7 @@ export function PaymentsTab({ settings, currencies, paymentsHeroUrl, setPayments
                                     <button
                                         type="button"
                                         onClick={() => handleDelete(curr.id, curr.code)}
-                                        className={styles.deleteBtn}
+                                        className={styles.deleteCurr}
                                     >
                                         Remove
                                     </button>
@@ -184,9 +181,9 @@ export function PaymentsTab({ settings, currencies, paymentsHeroUrl, setPayments
                             <p className={styles.emptyState}>No currencies added yet.</p>
                         )}
                     </div>
-                    {/* 2. Add New Currency Form */}
+
                     <div className={styles.addCurrencyForm}>
-                        <h4 className={styles.sectionSubtitle}>ADD NEW CURRENCY</h4>
+                        <h4 className={styles.currencyTitle}>ADD NEW CURRENCY</h4>
                         <div className={styles.inlineForm}>
                             <div className={styles.inputGroupMini}>
                                 <label className={styles.label}>Flag</label>
@@ -243,17 +240,15 @@ export function PaymentsTab({ settings, currencies, paymentsHeroUrl, setPayments
                             </button>
                         </div>
                     </div>
-
                 </div>
             </div>
 
-            {/* --- ANCHOR SECTIONS --- */}
             <div className={styles.fullWidth}>
                 <hr className={styles.divider} />
                 <h3 className={styles.sectionTitle}>Anchor Sections</h3>
             </div>
-            {/* 1. Bill Pay */}
-            <div className={styles.fullWidth}><strong>1. Bill Pay</strong></div>
+
+            <div className={styles.groupHeader}><strong>1. Bill Pay</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Title</label>
                 <input name="payments_bills_title" defaultValue={settings.payments_bills_title} className={styles.input} />
@@ -276,10 +271,10 @@ export function PaymentsTab({ settings, currencies, paymentsHeroUrl, setPayments
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Image Alt Text</label>
-                <input name="payments_bills_alt" defaultValue={settings.payments_bills_alt} className={styles.input} placeholder="Alt" />
+                <textarea name="payments_bills_alt" defaultValue={settings.payments_bills_alt} className={styles.textarea} placeholder="Alt" />
             </div>
-            {/* P2P */}
-            <div className={styles.fullWidth}><strong>2. P2P </strong></div>
+
+            <div className={styles.groupHeader}><strong>2. P2P </strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Title</label>
                 <input name="payments_p2p_title" defaultValue={settings.payments_p2p_title} className={styles.input} />
@@ -302,10 +297,10 @@ export function PaymentsTab({ settings, currencies, paymentsHeroUrl, setPayments
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Image Alt Text</label>
-                <input name="payments_p2p_alt" defaultValue={settings.payments_p2p_alt} className={styles.input} placeholder="Alt" />
+                <textarea name="payments_p2p_alt" defaultValue={settings.payments_p2p_alt} className={styles.textarea} placeholder="Alt" />
             </div>
-            {/* Wires */}
-            <div className={styles.fullWidth}><strong>3. Wires </strong></div>
+
+            <div className={styles.groupHeader}><strong>3. Wires </strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Title</label>
                 <input name="payments_wires_title" defaultValue={settings.payments_wires_title} className={styles.input} />
@@ -328,10 +323,9 @@ export function PaymentsTab({ settings, currencies, paymentsHeroUrl, setPayments
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Image Alt Text</label>
-                <input name="payments_wires_alt" defaultValue={settings.payments_wires_alt} className={styles.input} placeholder="Alt" />
+                <textarea name="payments_wires_alt" defaultValue={settings.payments_wires_alt} className={styles.textarea} placeholder="Alt" />
             </div>
 
-            {/* --- SUPPLEMENTAL GRID --- */}
             <div className={styles.fullWidth}>
                 <hr className={styles.divider} />
                 <h3 className={styles.sectionTitle}>Supplemental Grid</h3>
@@ -344,7 +338,8 @@ export function PaymentsTab({ settings, currencies, paymentsHeroUrl, setPayments
                 <label className={styles.label}>Description</label>
                 <textarea name="payments_supp_desc" defaultValue={settings.payments_supp_desc} className={styles.textarea} />
             </div>
-            <div className={styles.fullWidth}><strong>Items</strong></div>
+
+            <div className={styles.groupHeader}><strong>Items</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Title</label>
                 <input name="payments_supp1_title" defaultValue={settings.payments_supp1_title} className={styles.input} />
@@ -374,13 +369,13 @@ export function PaymentsTab({ settings, currencies, paymentsHeroUrl, setPayments
                 <input name="payments_supp_linkText" defaultValue={settings.payments_supp_linkText} className={styles.input} />
             </div>
 
-            {/* --- UTILITY STRIP --- */}
+
             <div className={styles.fullWidth}>
                 <hr className={styles.divider} />
                 <h3 className={styles.sectionTitle}>Utility Strip</h3>
             </div>
-            {/* Item 1 */}
-            <div className={styles.fullWidth}><strong>1. Pay by Mail</strong></div>
+
+            <div className={styles.groupHeader}><strong>1. Pay by Mail</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Title</label>
                 <input name="payments_util1_title" defaultValue={settings.payments_util1_title} className={styles.input} />
@@ -389,8 +384,8 @@ export function PaymentsTab({ settings, currencies, paymentsHeroUrl, setPayments
                 <label className={styles.label}>Description</label>
                 <textarea name="payments_util1_desc" defaultValue={settings.payments_util1_desc} className={styles.textarea} />
             </div>
-            {/* Item 2 */}
-            <div className={styles.fullWidth}><strong>2. Pay at Branch</strong></div>
+
+            <div className={styles.groupHeader}><strong>2. Pay at Branch</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Title</label>
                 <input name="payments_util2_title" defaultValue={settings.payments_util2_title} className={styles.input} />
@@ -399,8 +394,8 @@ export function PaymentsTab({ settings, currencies, paymentsHeroUrl, setPayments
                 <label className={styles.label}>Description</label>
                 <textarea name="payments_util2_desc" defaultValue={settings.payments_util2_desc} className={styles.textarea} />
             </div>
-            {/* Item 3 */}
-            <div className={styles.fullWidth}><strong>3. Wire Instructions</strong></div>
+
+            <div className={styles.groupHeader}><strong>3. Wire Instructions</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Title</label>
                 <input name="payments_util3_title" defaultValue={settings.payments_util3_title} className={styles.input} />

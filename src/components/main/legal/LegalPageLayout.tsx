@@ -30,17 +30,17 @@ export default function LegalPageLayout({
     updatedLabel,
 }: LegalPageProps) {
 
-    // 1. Icon Mapping
+    // Icon Mapping
     const Icon = {
         privacy: ShieldCheck,
         terms: Scale,
         accessibility: Accessibility,
     }[type];
 
-    // 2. Navigation Configuration
+    // Navigation Configuration
     const navItems = Object.values(navConfig);
 
-    // 3. Date Formatter Helper
+    // Date Formatter Helper
     const formatDate = (date: Date | null) => {
         if (!date) return 'Recently';
         return date.toLocaleDateString("en-US", {
@@ -73,7 +73,6 @@ export default function LegalPageLayout({
                         </div>
                     </div>
 
-                    {/* Navigation Tabs */}
                     <div className={styles.tabsContainer}>
                         {navItems.map((item) => (
                             <Link
@@ -88,7 +87,6 @@ export default function LegalPageLayout({
                 </div>
             </div>
 
-            {/* Document Body */}
             <div className={styles.container}>
                 <div className={styles.documentCard}>
                     <div
@@ -97,7 +95,6 @@ export default function LegalPageLayout({
                     />
                 </div>
 
-                {/* Smart Footer - */}
                 {(footerText || linkText) && (
                     <div className={styles.footerNote}>
                         <p>

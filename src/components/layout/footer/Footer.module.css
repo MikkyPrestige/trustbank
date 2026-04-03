@@ -1,4 +1,3 @@
-/* --- GLOBAL WRAPPER --- */
 .footer {
   width: 100%;
   position: relative;
@@ -13,11 +12,10 @@
   padding: 0 2rem;
 }
 
-/* --- CONTACT STRIP  --- */
 .contactStrip {
   background: var(--primary);
   padding: 2rem 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid sub(--sub-divider);
 }
 
 .contactGrid {
@@ -36,8 +34,8 @@
 .iconCircle {
   width: 3rem;
   height: 3rem;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: var(--sub-bg);
+  border: 1px solid var(--sub-divider);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -71,9 +69,8 @@
   color: var(--text-invert);
 }
 
-/* --- MAIN FOOTER --- */
 .mainFooter {
-  background-color: #0f172a;
+  background-color: var(--text-dark);
   padding: 2rem 0;
   border-top: 5px solid var(--accent);
 }
@@ -90,7 +87,6 @@
   }
 }
 
-/* --- MISSION COLUMN --- */
 .missionColumn {
   display: flex;
   flex-direction: column;
@@ -114,7 +110,6 @@
   max-width: 450px;
 }
 
-/* SOCIALS */
 .socialRow {
   display: flex;
   gap: 1rem;
@@ -124,24 +119,23 @@
 .socialIcon {
   width: 3rem;
   height: 3rem;
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--sub-bg);
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
   color: var(--text-invert);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--sub-divider);
   transition: all 0.2s;
 }
 
 .socialIcon:hover {
-  background: var(--accent);
+  background: rgba(var(--accent-rgb), 0.1);
   color: var(--bg-surface);
-  border-color: var(--accent);
+  border-color: rgba(var(--accent-rgb), 0.3);
   transform: translateY(-3px);
 }
 
-/* LINKS */
 .linkColumn h3 {
   font-size: 1.1rem;
   font-weight: 700;
@@ -173,12 +167,11 @@
   transform: translateX(5px);
 }
 
-/* BRAND COLUMN  */
 .brandColumn {
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--sub-bg);
   padding: 1rem 2rem;
   border-radius: 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--sub-divider);
 }
 
 .whiteLogoBox {
@@ -210,7 +203,7 @@
   color: var(--text-invert);
   font-weight: 700;
   text-decoration: none;
-  border-bottom: 2px solid var(--accent);
+  border-bottom: 2px solid rgba(var(--accent-rgb), 0.3);;
   padding-bottom: 5px;
 }
 
@@ -218,7 +211,6 @@
   color: var(--accent);
 }
 
-/* --- REGULATORY STRIP  --- */
 .legalStrip {
   background-color: var(--text-invert);
   padding: 1rem 0;

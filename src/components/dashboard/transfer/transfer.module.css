@@ -4,10 +4,9 @@
   padding: 1rem 2rem;
 }
 
-/* --- HEADER --- */
 .header {
   text-align: center;
-  margin-bottom: 1rem;
+  margin-bottom: 2rem;
 }
 
 .title {
@@ -23,7 +22,6 @@
   margin-top: 0.5rem;
 }
 
-/* Status Badges */
 .verifiedBadge,
 .unverifiedBadge {
   display: inline-flex;
@@ -31,28 +29,27 @@
   gap: 0.5rem;
   margin-top: 0.5rem;
   padding: 0.5rem 1rem;
-  border-radius: 50px;
+  border-radius: 2rem;
   font-size: 0.85rem;
   font-weight: 600;
 }
 .verifiedBadge {
-  background: rgba(34, 197, 94, 0.1);
+  background: rgba(var(--success-rgb), 0.1);
   color: var(--success);
-  border: 1px solid rgba(34, 197, 94, 0.2);
+  border: 1px solid rgba(var(--success-rgb), 0.3);
 }
 .unverifiedBadge {
-  background: rgba(234, 179, 8, 0.1);
+  background: rgba(var(--accent-rgb), 0.1);
   color: var(--accent);
-  border: 1px solid rgba(234, 179, 8, 0.2);
+  border: 1px solid rgba(var(--accent-rgb), 0.3);
 }
 
-/* --- CARD & FORM --- */
 .card {
   background: var(--bg-card);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-subtle);
   border-radius: 1rem;
   padding: 1.5rem;
-  box-shadow: 0 2rem 4rem -1rem var(--shadow-card);
+  box-shadow: var(--shadow-card);
 }
 
 .formGrid {
@@ -110,10 +107,9 @@
 }
 
 .miniSelectActive {
-  border-color: var(--primary) !important;
+  border-color: var(--primary-rgb) !important;
 }
 
-/* --- INPUT GROUPS --- */
 .row {
   display: flex;
   gap: 2rem;
@@ -131,10 +127,6 @@
   align-items: center;
 }
 
-.pinGroup {
-  flex: 0.6;
-}
-
 .icon {
   position: absolute;
   left: 16px;
@@ -143,24 +135,12 @@
   z-index: 2;
 }
 
-.pinField {
-  height: 3.5rem;
-  letter-spacing: 4px;
-  text-align: center;
-  font-size: 1.2rem;
-  padding-left: 1rem;
-}
-
-.noteField {
-  padding-left: 1rem;
-}
-
 .input,
 .select {
   width: 100%;
   padding: 1rem 1rem 1rem 4rem;
-  background: var(--bg-surface);
-  border: 1px solid var(--border);
+  background: var(--sub-bg);
+  border: 1px solid var(--border-subtle);
   border-radius: 1rem;
   color: var(--text-main);
   font-size: 1rem;
@@ -171,51 +151,98 @@
 .input:focus,
 .select:focus {
   background: var(--bg-card);
-  border-color: var(--primary);
+  border-color: var(--primary-rgb);
   box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
   outline: none;
 }
 
-/* --- AMOUNT FIELD  --- */
+.saveOption {
+  margin-top: 0.5rem;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.checkbox {
+  width: 1rem;
+  height: 1rem;
+  accent-color: var(--primary-rgb);
+}
+
+.saveIcon {
+  color: var(--primary);
+  margin-right: -0.8rem;
+  transition: transform 0.2s ease;
+}
+
+.checkboxLabel:hover .saveIcon {
+  transform: scale(1.1);
+}
+
 .amountWrapper {
   flex: 1;
   position: relative;
-  background: var(--bg-surface);
-  border: 1px solid var(--border);
+  background: var(--sub-bg);
+  border: 1px solid var(--border-subtle);
   border-radius: 1rem;
   display: flex;
   align-items: center;
-  padding: 0 1.5rem;
+  padding: 0 1rem;
   transition: 0.2s;
 }
 .amountWrapper:focus-within {
-  border-color: var(--primary);
+  border-color: var(--primary-rgb);
   background: var(--bg-card);
   box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
 }
 
-.dollarSign {
-  font-size: 2rem;
+.currencyPrefix {
+  font-size: 0.9rem;
   font-weight: 700;
   color: var(--text-muted);
+  pointer-events: none;
 }
 
 .amountInput {
   width: 100%;
-  height: 3.5rem;
   border: none;
-  background: transparent;
+  padding: 0.5rem;
+  /* background: transparent; */
   font-size: 2rem;
   font-weight: 800;
   color: var(--text-main);
   outline: none;
-  margin-left: 1rem;
+  margin-left: 0.5rem;
 }
 
-/* --- BUTTONS --- */
+.pinGroup {
+  flex: 0.6;
+}
+
+.pinField {
+  padding: 1rem;
+  letter-spacing: 4px;
+  text-align: center;
+  font-size: 1.2rem;
+}
+
+.noteField {
+  padding-left: 1rem;
+}
+
 .submitBtn {
-  margin-top: 16px;
-  background: linear-gradient(135deg, #3b82f6 0%, var(--primary) 100%);
+  margin-top: 1rem;
+  background: linear-gradient(
+    135deg,
+    var(--primary) 0%,
+    var(--primary-rgb) 100%
+  );
   color: var(--text-invert);
   padding: 0.8rem;
   border-radius: 0.7rem;
@@ -239,32 +266,6 @@
   cursor: not-allowed;
 }
 
-/* Checkbox */
-.saveOption {
-  margin-top: 0.5rem;
-}
-.checkboxLabel {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  cursor: pointer;
-  font-size: 0.9rem;
-  color: var(--text-muted);
-}
-.checkbox {
-  width: 1rem;
-  height: 1rem;
-  accent-color: var(--primary);
-}
-.saveIcon {
-  color: var(--primary);
-  margin-right: -0.8rem;
-  transition: transform 0.2s ease;
-}
-.checkboxLabel:hover .saveIcon {
-  transform: scale(1.1);
-}
-
 /* --- SUCCESS MODAL --- */
 .modalOverlay {
   position: fixed;
@@ -272,7 +273,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: var(--bg-app);
+  background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(8px);
   z-index: 100;
   display: flex;
@@ -283,22 +284,23 @@
 
 .modalContent {
   background: var(--bg-card);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-subtle);
   padding: 1rem;
   border-radius: 1rem;
   width: 90%;
   max-width: 500px;
   text-align: center;
   position: relative;
-  box-shadow: 0 2.5rem 5rem -1rem var(--shadow-card);
+  box-shadow: var(--shadow-card);
   animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .modalIconBox {
   width: 4rem;
   height: 4rem;
-  background: rgba(34, 197, 94, 0.1);
+  background: rgba(var(--success-rgb), 0.1);
   color: var(--success);
+  border: 1px solid rgba(var(--success-rgb), 0.3);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -311,6 +313,7 @@
   font-weight: 800;
   color: var(--text-main);
 }
+
 .modalText {
   color: var(--text-muted);
   font-size: 0.95rem;
@@ -319,22 +322,23 @@
 
 .receiptBox {
   margin-top: 1rem;
-  background: var(--bg-surface);
-  padding: 1rem;
+  background: var(--sub-bg);
+  padding: 1rem 2rem;
   border-radius: 1rem;
-  border: 1px dashed var(--border);
+  border: 1px dashed var(--sub-divider);
 }
+
 .receiptRow {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 0.5rem;
+  margin-bottom: 1rem;
   font-size: 0.9rem;
   color: var(--text-muted);
 }
 .receiptRow:last-child {
   margin-bottom: 0;
-  padding-top: 0.5rem;
-  border-top: 1px solid var(--border);
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-subtle);
 }
 .receiptRow strong {
   color: var(--text-main);
@@ -350,36 +354,42 @@
   gap: 1rem;
   margin-top: 2rem;
 }
+
 .primaryBtn {
   background: var(--primary);
   color: var(--text-invert);
   padding: 1rem;
-  border-radius: 1rem;
+  border-radius: 0.8rem;
   font-weight: 600;
   border: none;
   cursor: pointer;
   transition: 0.2s;
 }
+.primaryBtn:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+}
+
 .secondaryBtn {
   background: transparent;
   color: var(--primary);
-  padding: 0.5rem 1rem;
-  border-radius: 1rem;
+  padding: 0.8rem;
+  border-radius: 0.5rem;
   font-weight: 600;
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-subtle);
   text-decoration: none;
   display: block;
   transition: 0.2s;
 }
 .secondaryBtn:hover {
-  background: var(--bg-surface);
+  background: var(--sub-bg);
   color: var(--text-main);
 }
 
 .lockedState {
   margin-top: 1rem;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
+  background: var(--sub-bg);
+  border: 1px solid var(--border-subtle);
   border-radius: 1rem;
   padding: 2rem;
   text-align: center;

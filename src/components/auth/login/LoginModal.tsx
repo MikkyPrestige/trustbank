@@ -71,7 +71,6 @@ export default function LoginModal({ isOpen, onClose, onSwitchToRegister, siteNa
                         </div>
                     )}
 
-                    {/* EMAIL FIELD */}
                     <div className={`${styles.inputGroup} ${focusedField === 'email' || email ? styles.focused : ''}`}>
                         <div className={styles.iconBox}><Mail size={18} /></div>
                         <div className={styles.fieldWrapper}>
@@ -91,7 +90,6 @@ export default function LoginModal({ isOpen, onClose, onSwitchToRegister, siteNa
                         </div>
                     </div>
 
-                    {/* PASSWORD FIELD */}
                     <div className={`${styles.inputGroup} ${focusedField === 'password' || password ? styles.focused : ''}`}>
                         <div className={`${styles.iconBox} ${focusedField === 'password' ? styles.iconLocked : ''}`}>
                             <Lock size={18} />

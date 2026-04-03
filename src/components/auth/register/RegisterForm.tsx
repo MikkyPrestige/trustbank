@@ -207,8 +207,8 @@ export default function RegisterForm({ siteName }: RegisterFormProps) {
                     <div className={`${styles.successIcon} ${styles.otpIconWrapper}`}>
                         <Mail size={40} />
                     </div>
-                    <h1>Verify Your Email</h1>
-                    <p>We sent a 6-digit code to <strong>{state.email}</strong></p>
+                    <h1 className={styles.successCardTitle}>Verify Your Email</h1>
+                    <p className={styles.successCardText}>We sent a 6-digit code to  <strong>{state.email}</strong></p>
                     <p className={styles.otpSubText}>
                         Enter the code below to activate your account.
                     </p>
@@ -468,8 +468,9 @@ export default function RegisterForm({ siteName }: RegisterFormProps) {
                                             )}
                                         </div>
                                     </div>
+
                                     {/* BACK SIDE UPLOAD */}
-                                    <div className={styles.dropZone} style={{ marginTop: '10px' }}>
+                                    <div className={styles.dropZone}>
                                         <input type="file" name="idDocumentBack" className={styles.fileInput} onChange={handleFileChange} />
                                         <div className={styles.dropContent}>
                                             <div className={styles.cloudIcon}><UploadCloud size={24} /></div>

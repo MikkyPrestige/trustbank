@@ -45,7 +45,6 @@ export function NavTab({ settings, jsonMenu, setJsonMenu }: NavTabProps) {
             const jsonValue = parsed[key]?.promo?.[field === 'link' ? 'href' : field];
             const settingsValue = settings[settingsKey];
 
-            // It's overridden if the settings field has a value
             return !!settingsValue && settingsValue !== jsonValue;
         } catch (e) {
             return false;
@@ -54,7 +53,6 @@ export function NavTab({ settings, jsonMenu, setJsonMenu }: NavTabProps) {
 
     return (
         <div className={styles.grid}>
-            {/* --- SECTION 1: TOP BAR UTILITY LINKS --- */}
             <div className={styles.fullWidth}>
                 <h3 className={styles.sectionTitle}>Top Utility Links</h3>
                 <p className={styles.sectionSubtitle}>Manage the links at the very top of the header.</p>
@@ -72,7 +70,7 @@ export function NavTab({ settings, jsonMenu, setJsonMenu }: NavTabProps) {
                 <input name="nav_locations_label" defaultValue={settings.nav_locations_label} className={styles.input} />
             </div>
 
-            <div className={styles.fullWidth}><strong className={styles.sectionSubtitle}>Dashboard</strong></div>
+            <div className={styles.groupHeader}><strong>Dashboard</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>label</label>
                 <input name="nav_dashboard_label" defaultValue={settings.nav_dashboard_label} className={styles.input} />
@@ -82,7 +80,7 @@ export function NavTab({ settings, jsonMenu, setJsonMenu }: NavTabProps) {
                 <input name="nav_dashboard_link" defaultValue={settings.nav_dashboard_link} className={styles.input} />
             </div>
 
-            <div className={styles.fullWidth}><strong className={styles.sectionSubtitle}>Action</strong></div>
+            <div className={styles.groupHeader}><strong>Action</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Login</label>
                 <input name="nav_login_label" defaultValue={settings.nav_login_label} className={styles.input} />
@@ -98,13 +96,13 @@ export function NavTab({ settings, jsonMenu, setJsonMenu }: NavTabProps) {
 
             <div className={styles.fullWidth}><hr className={styles.divider} /></div>
 
-            {/* --- SECTION 2: STRUCTURE EDITOR (JSON) --- */}
+            {/* --- STRUCTURE EDITOR (JSON) --- */}
             <div className={`${styles.fullWidth} ${styles.warningBox}`}>
-                <div style={{ display: 'flex', gap: '10px' }}>
+                <div className={styles.warningWrapper}>
                     <AlertTriangle size={20} />
-                    <div>
+                    <div className={styles.warningContent}>
                         <strong>Advanced Structure Configuration</strong>
-                        <p style={{ margin: '5px 0 0', fontSize: '0.9rem' }}>
+                        <p>
                             Controls the dropdown columns and links. Use valid JSON format.
                         </p>
                     </div>
@@ -141,8 +139,6 @@ export function NavTab({ settings, jsonMenu, setJsonMenu }: NavTabProps) {
                 <p className={styles.sectionSubtitle}>Titles, descriptions, and destination links for the dropdown promos.</p>
             </div>
 
-            {/* --- SECTION 3: PROMO CONTENT  --- */}
-            {/* 1. BANKING */}
             <div className={styles.promoAdminGroup}>
                 <div className={styles.promoHeader}>
                     <label className={styles.label}>Banking Promo</label>
@@ -155,7 +151,6 @@ export function NavTab({ settings, jsonMenu, setJsonMenu }: NavTabProps) {
                 <input name="nav_bank_link" placeholder="Link" defaultValue={settings.nav_bank_link} className={styles.input} />
             </div>
 
-            {/* 2. LENDING */}
             <div className={styles.promoAdminGroup}>
                 <div className={styles.promoHeader}>
                     <label className={styles.label}>Lending Promo</label>
@@ -168,7 +163,6 @@ export function NavTab({ settings, jsonMenu, setJsonMenu }: NavTabProps) {
                 <input name="nav_borrow_link" placeholder="Link" defaultValue={settings.nav_borrow_link} className={styles.input} />
             </div>
 
-            {/* 3. WEALTH */}
             <div className={styles.promoAdminGroup}>
                 <div className={styles.promoHeader}>
                     <label className={styles.label}>Wealth Promo</label>
@@ -181,7 +175,6 @@ export function NavTab({ settings, jsonMenu, setJsonMenu }: NavTabProps) {
                 <input name="nav_wealth_link" placeholder="Link" defaultValue={settings.nav_wealth_link} className={styles.input} />
             </div>
 
-            {/* 4. INSURANCE */}
             <div className={styles.promoAdminGroup}>
                 <div className={styles.promoHeader}>
                     <label className={styles.label}>Insurance Promo</label>
@@ -194,7 +187,6 @@ export function NavTab({ settings, jsonMenu, setJsonMenu }: NavTabProps) {
                 <input name="nav_insure_link" placeholder="Link" defaultValue={settings.nav_insure_link} className={styles.input} />
             </div>
 
-            {/* 5. RESOURCES */}
             <div className={styles.promoAdminGroup}>
                 <div className={styles.promoHeader}>
                     <label className={styles.label}>Resources Promo</label>

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { MapPin, ArrowRight, List } from "lucide-react";
+import { MapPin, ArrowRight } from "lucide-react";
 import styles from "../settings.module.css";
 
 interface LocationsTabProps {
@@ -9,7 +9,6 @@ interface LocationsTabProps {
 export function LocationsTab({ settings }: LocationsTabProps) {
     return (
         <div className={styles.grid}>
-            {/* --- BRANCH MANAGEMENT LINK --- */}
             <div className={styles.fullWidth}>
                 <h3 className={styles.sectionTitle}>Branch Data</h3>
                 <p className={styles.sectionSubtitle}>Manage your physical locations database.</p>
@@ -25,9 +24,9 @@ export function LocationsTab({ settings }: LocationsTabProps) {
                 <ArrowRight size={16} className={styles.chevron} />
             </Link>
 
-            {/* --- PAGE CONFIGURATION --- */}
-            <div className={`${styles.fullWidth} ${styles.marginTop}`}>
-                <h3 className={styles.sectionTitle}>Locations Page Config</h3>
+            <div className={styles.fullWidth}>
+                <hr className={styles.divider} />
+                <h3 className={styles.sectionTitle}>HERO SECTION</h3>
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Hero Title</label>

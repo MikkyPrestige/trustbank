@@ -12,14 +12,12 @@ import {
     UserRole
 } from "@prisma/client";
 
-// 1. DELETE TRANSACTION
 export async function deleteTransaction(transactionId: string) {
     const { authorized, session } = await checkAdminAction();
 
     if (!authorized || !session || !session.user) {
         return { success: false, message: "Unauthorized" };
     }
-    // permission Check (Support Agents cannot delete financial records.)
     if (!canPerform(session.user.role as UserRole, 'MONEY')) {
         return { success: false, message: "Insufficient permissions. Only Admins can delete transactions." };
     }
@@ -29,7 +27,6 @@ export async function deleteTransaction(transactionId: string) {
             const record = await tx.ledgerEntry.findUnique({ where: { id: transactionId } });
             if (!record) throw new Error("Transaction not found");
 
-            // REVERSE IMPACT (Only if it was completed)
             if (record.status === TransactionStatus.COMPLETED) {
                 const op = record.direction === TransactionDirection.CREDIT
                     ? { decrement: record.amount }
@@ -61,7 +58,6 @@ export async function deleteTransaction(transactionId: string) {
     return { success: true, message: "Transaction deleted & balance reverted." };
 }
 
-// 2. UPDATE TRANSACTION
 export async function updateTransaction(prevState: any, formData: FormData) {
     const { authorized, session } = await checkAdminAction();
 
@@ -69,7 +65,6 @@ export async function updateTransaction(prevState: any, formData: FormData) {
         return { success: false, message: "Unauthorized" };
     }
 
-    // permission Check (Support Agents cannot edit financial records.)
     if (!canPerform(session.user.role as UserRole, 'MONEY')) {
         return { success: false, message: "Insufficient permissions. Only Admins can edit transactions." };
     }
@@ -81,18 +76,15 @@ export async function updateTransaction(prevState: any, formData: FormData) {
     const directionInput = formData.get("direction") as "CREDIT" | "DEBIT";
     const newDirection = directionInput === 'CREDIT' ? TransactionDirection.CREDIT : TransactionDirection.DEBIT;
 
-    // Auto-fix the "type": If Credit -> DEPOSIT, If Debit -> WITHDRAWAL (Safe defaults)
     const newType = newDirection === TransactionDirection.CREDIT
         ? TransactionType.DEPOSIT
         : TransactionType.WITHDRAWAL;
 
     try {
         await db.$transaction(async (tx) => {
-            // A. Fetch Original State
             const oldRecord = await tx.ledgerEntry.findUnique({ where: { id: transactionId } });
             if (!oldRecord) throw new Error("Transaction not found");
 
-            // B. REVERT OLD BALANCE
             if (oldRecord.status === TransactionStatus.COMPLETED) {
                 const reverseOp = oldRecord.direction === TransactionDirection.CREDIT
                     ? { decrement: oldRecord.amount }
@@ -104,19 +96,17 @@ export async function updateTransaction(prevState: any, formData: FormData) {
                 });
             }
 
-            // C. UPDATE THE RECORD
             const updatedRecord = await tx.ledgerEntry.update({
                 where: { id: transactionId },
                 data: {
                     amount,
                     description,
-                    createdAt: new Date(createdAt), // Admin can backdate transactions
+                    createdAt: new Date(createdAt),
                     direction: newDirection,
                     type: newType
                 }
             });
 
-            // D. APPLY NEW BALANCE
             if (updatedRecord.status === TransactionStatus.COMPLETED) {
                 const newOp = updatedRecord.direction === TransactionDirection.CREDIT
                     ? { increment: amount }

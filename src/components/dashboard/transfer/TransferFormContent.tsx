@@ -22,7 +22,7 @@ interface ContentProps {
     beneficiaries: Beneficiary[];
     preSelectedId?: string;
     onReset: () => void;
-    limit: number; // This is in USD
+    limit: number;
     currency: string;
     rate: number;
 }
@@ -56,7 +56,6 @@ export default function TransferFormContent({
     const [formData, setFormData] = useState(() => findBeneficiaryData(beneficiaries, preSelectedId));
     const [amount, setAmount] = useState("");
 
-    // Calculate limit in User's Currency for UI checks
     const limitInUserCurrency = limit === Infinity ? Infinity : limit * rate;
 
     useEffect(() => {
@@ -77,26 +76,22 @@ export default function TransferFormContent({
         if (selectedBen) setSelectedBen("");
     };
 
-    // Helper to display money in USER Currency
     const formatMoney = (usdAmount: number) => {
         const converted = usdAmount * rate;
         return new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(converted);
     };
 
     const handleFormSubmit = (formData: FormData) => {
-        const inputAmount = Number(formData.get("amount")); // This is EUR
+        const inputAmount = Number(formData.get("amount"));
 
-        // 1. Client-Side Limit Check (Using converted limit)
         if (limitInUserCurrency !== Infinity && inputAmount > limitInUserCurrency) {
             toast.error(`Amount exceeds your daily limit of ${formatMoney(limit)}`);
             return;
         }
 
-        // 2. CONVERT TO USD FOR SERVER
         const usdAmount = inputAmount / rate;
         formData.set("amount", usdAmount.toString());
 
-        // 3. Pass Display Info for Notifications
         formData.set("displayAmount", inputAmount.toString());
         formData.set("displayCurrency", currency);
 
@@ -143,8 +138,6 @@ export default function TransferFormContent({
     // --- FORM VIEW ---
     return (
         <form action={handleFormSubmit} className={styles.formGrid}>
-
-            {/* FROM ACCOUNT */}
             <div className={styles.section}>
                 <h3 className={styles.secTitle}>From Account</h3>
                 <div className={styles.inputGroup}>
@@ -160,7 +153,6 @@ export default function TransferFormContent({
                 </div>
             </div>
 
-            {/* RECIPIENT */}
             <div className={styles.section}>
                 {beneficiaries.length > 0 && (
                     <div className={styles.quickFillRow}>
@@ -241,15 +233,11 @@ export default function TransferFormContent({
                 )}
             </div>
 
-            {/* AMOUNT & PIN */}
             <div className={styles.section}>
                 <h3 className={styles.secTitle}>Transfer Amount</h3>
                 <div className={styles.row}>
                     <div className={styles.amountWrapper}>
-                        {/* Dynamic Currency Symbol */}
-                        <span className={styles.dollarSign} style={{ fontSize: '0.9rem', fontWeight: 'bold' }}>
-                            {currency}
-                        </span>
+                        <span className={styles.currencyPrefix}>{currency}</span>
                         <input
                             name="amount"
                             type="number"

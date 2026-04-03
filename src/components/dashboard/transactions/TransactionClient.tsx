@@ -36,13 +36,11 @@ export default function TransactionClient({ transactions, currency, rate }: Tran
 
     const ITEMS_PER_PAGE = 10;
 
-    // 1. FILTERING LOGIC
     const filtered = useMemo(() => {
         return transactions.filter((t: Transaction) => {
             const query = search.toLowerCase();
             const type = t.type || "";
 
-            // Calculate display amount for search
             const displayAmount = (Number(t.amount) * rate).toFixed(2);
 
             const matchesSearch =
@@ -71,13 +69,11 @@ export default function TransactionClient({ transactions, currency, rate }: Tran
         });
     }, [search, filterType, transactions, rate]);
 
-    // 2. STATS (Converted)
     const stats = useMemo(() => {
         let income = 0;
         let expense = 0;
         filtered.forEach(t => {
             if (t.status === 'COMPLETED') {
-                // Convert USD -> User Currency
                 const val = Number(t.amount) * rate;
                 if (t.direction === 'CREDIT') income += val;
                 else expense += val;
@@ -86,14 +82,12 @@ export default function TransactionClient({ transactions, currency, rate }: Tran
         return { income, expense };
     }, [filtered, rate]);
 
-    // 3. PAGINATION
     const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
     const paginatedData = filtered.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
     if (currentPage > totalPages && totalPages > 0) setCurrentPage(1);
 
-    // 4. EXPORT (Smart PDF)
     const handleExport = () => {
         const doc = new jsPDF();
         doc.setFillColor(5, 5, 5);
@@ -141,7 +135,6 @@ export default function TransactionClient({ transactions, currency, rate }: Tran
         doc.save(`Transaction_History_${currency}.pdf`);
     };
 
-    // Helper: Returns Icon based on specific state
     const renderIcon = (t: Transaction, statusType: 'REVERSED' | 'FAILED' | 'NORMAL') => {
         if (statusType === 'REVERSED') return <AlertTriangle size={18} />;
         if (statusType === 'FAILED') return <XCircle size={18} />;
@@ -182,7 +175,6 @@ export default function TransactionClient({ transactions, currency, rate }: Tran
             </header>
 
             <div className={styles.controlsBar}>
-                {/* ... (Search and Filter controls remain same) ... */}
                 <div className={styles.searchWrapper}>
                     <Search size={18} className={styles.searchIcon} />
                     <input
@@ -201,18 +193,18 @@ export default function TransactionClient({ transactions, currency, rate }: Tran
                             value={filterType}
                             onChange={(e) => { setFilterType(e.target.value); setCurrentPage(1); }}
                         >
-                            <option value="ALL">All Transactions</option>
-                            <optgroup label="Bank / Fiat">
-                                <option value="BANK">All Bank</option>
-                                <option value="BANK_IN">Deposits (In)</option>
-                                <option value="BANK_OUT">Withdrawals (Out)</option>
+                            <option value="ALL" className={styles.filterSelectOption}>All Transactions</option>
+                            <optgroup label="Bank / Fiat" className={styles.filterSelectOption}>
+                                <option value="BANK" className={styles.filterSelectOption}>All Bank</option>
+                                <option value="BANK_IN" className={styles.filterSelectOption}>Deposits (In)</option>
+                                <option value="BANK_OUT" className={styles.filterSelectOption}>Withdrawals (Out)</option>
                             </optgroup>
-                            <optgroup label="Crypto">
-                                <option value="CRYPTO">All Crypto</option>
-                                <option value="CRYPTO_BUY">Crypto Buys</option>
-                                <option value="CRYPTO_SELL">Crypto Sells</option>
-                                <option value="CRYPTO_SEND">Crypto Sends</option>
-                                <option value="CRYPTO_RECEIVE">Crypto Receives</option>
+                            <optgroup label="Crypto" className={styles.filterSelectOption}>
+                                <option value="CRYPTO" className={styles.filterSelectOption}>All Crypto</option>
+                                <option value="CRYPTO_BUY" className={styles.filterSelectOption}>Crypto Buys</option>
+                                <option value="CRYPTO_SELL" className={styles.filterSelectOption}>Crypto Sells</option>
+                                <option value="CRYPTO_SEND" className={styles.filterSelectOption}>Crypto Sends</option>
+                                <option value="CRYPTO_RECEIVE" className={styles.filterSelectOption}>Crypto Receives</option>
                             </optgroup>
                         </select>
                     </div>
@@ -251,7 +243,6 @@ export default function TransactionClient({ transactions, currency, rate }: Tran
                                     if (t.status === 'REVERSED') statusType = 'REVERSED';
                                     else if (t.status === 'FAILED') statusType = 'FAILED';
 
-                                    // Display Value Conversion
                                     const displayVal = Number(t.amount) * rate;
 
                                     return (

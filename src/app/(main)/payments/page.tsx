@@ -43,7 +43,6 @@ export default async function PaymentsPage() {
         },
     ];
 
-    // Supplemental Grid
     const SUPPLEMENTAL = [
         {
             title: settings.payments_supp1_title,
@@ -61,7 +60,6 @@ export default async function PaymentsPage() {
 
     return (
         <main className={styles.main}>
-            {/* 1. HERO & WIDGET */}
             <section className={styles.heroBackground}>
                 <Image
                     src={settings.payments_hero_img}
@@ -86,7 +84,6 @@ export default async function PaymentsPage() {
                 </div>
             </section>
 
-            {/* 2. ANCHOR SECTIONS  */}
             {ANCHORS.map((p, i) => (
                 <section key={p.id} id={p.id} className={`${styles.productSection} ${i % 2 !== 0 ? styles.bgAlt : ''}`}>
                     <div className={styles.container}>
@@ -106,7 +103,6 @@ export default async function PaymentsPage() {
                 </section>
             ))}
 
-            {/* 3. SUPPLEMENTAL GRID */}
             <section id="manage" className={styles.suppSection}>
                 <div className={styles.container}>
                     <div className={styles.sectionHeader}>
@@ -126,11 +122,9 @@ export default async function PaymentsPage() {
                 </div>
             </section>
 
-            {/* 4. UTILITY STRIP */}
             <section className={styles.utilityStrip}>
                 <div className={styles.container}>
                     <div className={styles.utilityRow}>
-                        {/* Item 1 */}
                         <div className={styles.utilityItem}>
                             <Mail size={24} className={styles.utilIcon} />
                             <div>
@@ -138,7 +132,6 @@ export default async function PaymentsPage() {
                                 <p>{settings.payments_util1_desc}</p>
                             </div>
                         </div>
-                        {/* Item 2 */}
                         <div className={styles.utilityItem}>
                             <Building size={24} className={styles.utilIcon} />
                             <div>
@@ -146,7 +139,6 @@ export default async function PaymentsPage() {
                                 <p>{settings.payments_util2_desc}</p>
                             </div>
                         </div>
-                        {/* Item 3 */}
                         <div className={styles.utilityItem}>
                             <CreditCard size={24} className={styles.utilIcon} />
                             <div>

@@ -14,7 +14,6 @@ const beneficiarySchema = z.object({
     routingNumber: z.string().optional(),
 });
 
-// --- ADD BENEFICIARY ---
 export async function addBeneficiary(prevState: any, formData: FormData) {
 const { success, message, user } = await getAuthenticatedUser();
 
@@ -41,7 +40,6 @@ if (await checkMaintenanceMode()) {
     }
 
     try {
-        // 1. CREATE BENEFICIARY (Atomic Write)
         await db.beneficiary.create({
             data: {
                 userId: user.id,
@@ -53,7 +51,6 @@ if (await checkMaintenanceMode()) {
             }
         });
 
-        // 2. NOTIFY USER
         try {
             await db.notification.create({
                 data: {
@@ -70,7 +67,7 @@ if (await checkMaintenanceMode()) {
         }
 
     } catch (err: any) {
-        console.error("❌ DB ERROR:", err);
+        console.error("DB ERROR:", err);
 
         if (err.code === 'P2002') {
             return { message: `This beneficiary is already saved.` };
@@ -85,7 +82,7 @@ if (await checkMaintenanceMode()) {
     return { success: true, message: "Beneficiary saved successfully!" };
 }
 
-// --- DELETE BENEFICIARY ---
+
 export async function deleteBeneficiary(id: string) {
   const { success, message, user } = await getAuthenticatedUser();
 

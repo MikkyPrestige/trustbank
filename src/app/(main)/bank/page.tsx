@@ -9,7 +9,6 @@ export default async function BankPage() {
 
     return (
         <main className={styles.main}>
-            {/* 1. HERO SECTION */}
             <section className={styles.heroBackground}>
                 <Image
                     src={settings.bank_hero_img}
@@ -35,7 +34,6 @@ export default async function BankPage() {
                 </div>
             </section>
 
-            {/* 2. CARD SHOWCASE */}
             <section className={styles.cardSection}>
                 <div className={styles.container}>
                     <div className={styles.cardGrid}>
@@ -56,7 +54,6 @@ export default async function BankPage() {
                 </div>
             </section>
 
-            {/* 3. CHECKING & SAVINGS SECTION */}
             <section id="cs" className={styles.productSection}>
                 <div className={styles.container}>
                     <div className={styles.productGrid}>
@@ -79,7 +76,6 @@ export default async function BankPage() {
                 </div>
             </section>
 
-            {/* 4. BUSINESS BANKING SECTION */}
             <section id="business" className={`${styles.productSection} ${styles.bgAlt}`}>
                 <div className={styles.container}>
                     <div className={`${styles.productGrid} ${styles.reverseGrid}`}>
@@ -102,7 +98,6 @@ export default async function BankPage() {
                 </div>
             </section>
 
-            {/* 5. STUDENT BANKING SECTION */}
             <section id="student" className={styles.productSection}>
                 <div className={styles.container}>
                     <div className={styles.productGrid}>
@@ -125,7 +120,6 @@ export default async function BankPage() {
                 </div>
             </section>
 
-            {/* 6. FEATURES GRID */}
             <section className={styles.featureSection}>
                 <div className={styles.container}>
                     <div className={styles.features}>
@@ -148,7 +142,6 @@ export default async function BankPage() {
                 </div>
             </section>
 
-            {/* 7. COMPARISON TABLE */}
             <section className={styles.compareSection}>
                 <div className={styles.container}>
                     <div className={styles.compareHeader}>
@@ -166,31 +159,26 @@ export default async function BankPage() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {/* ROW 1: MONTHLY FEE */}
                                 <tr>
                                     <td>{settings.bank_tbl_row_1_label}</td>
                                     <td className={styles.tdTrust}>{settings.bank_fee_monthly}</td>
                                     <td>{settings.bank_competitor_fee_monthly}</td>
                                 </tr>
-                                {/* ROW 2: OVERDRAFT */}
                                 <tr>
                                     <td>{settings.bank_tbl_row_2_label}</td>
                                     <td className={styles.tdTrust}>{settings.bank_fee_overdraft}</td>
                                     <td>{settings.bank_competitor_fee_overdraft}</td>
                                 </tr>
-                                {/* ROW 3: FOREIGN TX */}
                                 <tr>
                                     <td>{settings.bank_tbl_row_3_label}</td>
                                     <td className={styles.tdTrust}>{settings.bank_fee_foreign}</td>
                                     <td>{settings.bank_competitor_fee_foreign}</td>
                                 </tr>
-                                {/* ROW 4: MIN BALANCE */}
                                 <tr>
                                     <td>{settings.bank_tbl_row_4_label}</td>
                                     <td className={styles.tdTrust}>{settings.bank_min_balance}</td>
                                     <td>{settings.bank_competitor_min_balance}</td>
                                 </tr>
-                                {/* ROW 5: DIRECT DEPOSIT */}
                                 <tr>
                                     <td>{settings.bank_tbl_row_5_label}</td>
                                     <td className={styles.tdTrust}><Check size={20} /></td>

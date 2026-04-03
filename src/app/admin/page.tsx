@@ -10,7 +10,7 @@ import WiresCard from "@/components/admin/stats/WiresCard";
 import KycCard from "@/components/admin/stats/KycCard";
 import { TransactionDirection } from "@prisma/client";
 import styles from "./admin.module.css";
-import { ShieldCheck, AlertTriangle } from "lucide-react";
+import { ShieldCheck } from "lucide-react";
 
 export default async function AdminDashboard() {
     const session = await auth();
@@ -31,7 +31,7 @@ export default async function AdminDashboard() {
         liquidityData,
         todayCredits,
         todayDebits,
-        rates // Fetch rates here
+        rates
     ] = await Promise.all([
         db.user.findMany({
             where: { ...(scopeFilter as any), status: { not: 'ARCHIVED' } },
@@ -51,24 +51,20 @@ export default async function AdminDashboard() {
             where: currentUserRole === 'SUPER_ADMIN' ? {} : { user: { role: 'CLIENT' } },
             _sum: { availableBalance: true }
         }),
-        // Inflow
         db.ledgerEntry.aggregate({
             _sum: { amount: true },
             where: { direction: TransactionDirection.CREDIT, createdAt: { gte: startOfDay } }
         }),
-        // Outflow
         db.ledgerEntry.aggregate({
             _sum: { amount: true },
             where: { direction: TransactionDirection.DEBIT, createdAt: { gte: startOfDay } }
         }),
-        // Exchange Rates
         db.exchangeRate.findMany()
     ]);
 
     const totalReserves = Number(liquidityData._sum.availableBalance || 0);
     const liquidityTrend = Number(todayCredits._sum.amount || 0) - Number(todayDebits._sum.amount || 0);
 
-    // Create Map for fast lookup
     const rateMap = new Map(rates.map(r => [r.currency, Number(r.rate)]));
 
     return (
@@ -92,14 +88,11 @@ export default async function AdminDashboard() {
                 </div>
             </header>
 
-            {/* --- SECTION 1: URGENT WIRES  --- */}
             <div className={styles.section}>
                 {pendingWires.length > 0 ? (
                     <>
-                        <h2 className={`${styles.subTitle} ${styles.urgentTitle}`}>
-                            <AlertTriangle size={18} /> Wire Action Required
-                        </h2>
-                        <div className={styles.tableWrapper} style={{ borderColor: 'var(--warning)' }}>
+                        <h2 className={`${styles.subTitle} ${styles.urgentTitle}`}> Wire Action Required</h2>
+                        <div className={styles.tableWrapper} style={{ borderColor: 'var(--accent)' }}>
                             <table className={styles.table}>
                                 <thead>
                                     <tr>
@@ -127,7 +120,6 @@ export default async function AdminDashboard() {
                 )}
             </div>
 
-            {/* --- SECTION 2: RECENT SIGN UPS --- */}
             <div className={styles.section}>
                 <h2 className={styles.subTitle}>Recent Sign Ups</h2>
                 <div className={styles.tableWrapper}>
@@ -135,10 +127,10 @@ export default async function AdminDashboard() {
                         <thead>
                             <tr>
                                 <th>Name</th>
-                                <th>Email</th>
+                                <th>Email Address</th>
                                 <th>Status</th>
                                 <th>KYC</th>
-                                <th>Total Balance</th>
+                                <th>Balance</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -146,7 +138,6 @@ export default async function AdminDashboard() {
                                 <DashboardUserRow
                                     key={u.id}
                                     user={u}
-                                    styles={styles}
                                     exchangeRate={(u.currency === 'USD' || !u.currency) ? 1 : (rateMap.get(u.currency) || 1)}
                                 />
                             ))}

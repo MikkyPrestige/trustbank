@@ -27,15 +27,12 @@ export default function RepaymentModal({
 }) {
     const [isOpen, setIsOpen] = useState(false);
 
-    // Convert values to Native
     const remainingUSD = loan.totalRepayment - loan.repaidAmount;
     const remainingNative = remainingUSD * rate;
 
-    // Note: maxPayable is the account balance (USD).
     const maxPayableNative = maxPayable * rate;
     const monthlyPaymentNative = loan.monthlyPayment * rate;
 
-    // Default amount: Monthly payment, capped by balance or remaining debt
     const defaultAmount = Math.min(monthlyPaymentNative, maxPayableNative, remainingNative);
 
     const [amountStr, setAmountStr] = useState<string>(defaultAmount.toFixed(2));
@@ -47,7 +44,6 @@ export default function RepaymentModal({
             setAmountStr('');
             return;
         }
-        // Basic validation
         const numVal = Number(val);
         if (numVal > remainingNative) {
             setAmountStr(remainingNative.toFixed(2));
@@ -59,11 +55,9 @@ export default function RepaymentModal({
     const handleFormSubmit = (formData: FormData) => {
         const inputAmount = Number(formData.get("amount"));
 
-        // Convert to USD
         const usdAmount = inputAmount / rate;
         formData.set("amount", usdAmount.toString());
 
-        // Add display info
         formData.set("displayAmount", inputAmount.toString());
         formData.set("displayCurrency", currency);
 

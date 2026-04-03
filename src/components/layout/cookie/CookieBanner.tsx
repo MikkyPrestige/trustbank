@@ -38,7 +38,7 @@ export default function CookieBanner() {
     return (
         <div className={styles.banner}>
             <button className={styles.closeIcon} onClick={handleDecline}>
-                <X size={18} />
+                <X size={20} />
             </button>
 
             <div className={styles.header}>

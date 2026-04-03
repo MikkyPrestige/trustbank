@@ -28,13 +28,11 @@ export default function BillsClient({ currency, rate }: { currency: string, rate
     }, [state]);
 
     const handleFormSubmit = (formData: FormData) => {
-        const inputAmount = Number(formData.get("amount")); // Native Currency
+        const inputAmount = Number(formData.get("amount"));
 
-        // 1. Convert to USD
         const usdAmount = inputAmount / rate;
         formData.set("amount", usdAmount.toString());
 
-        // 2. Add Display Data
         formData.set("displayAmount", inputAmount.toString());
         formData.set("displayCurrency", currency);
 
@@ -48,7 +46,6 @@ export default function BillsClient({ currency, rate }: { currency: string, rate
                 <p className={styles.subtitle}>Select a service provider to settle bills instantly.</p>
             </div>
 
-            {/* Provider Selection Grid */}
             <div className={styles.grid}>
                 {PROVIDERS.map(p => (
                     <div
@@ -60,15 +57,14 @@ export default function BillsClient({ currency, rate }: { currency: string, rate
                             color: p.color,
                             background: selected.id === p.id ? `${p.color}15` : 'var(--bg-surface)'
                         }}>
-                            <p.icon size={28} />
+                            <p.icon size={30} />
                         </div>
                         <span className={styles.providerName}>{p.name}</span>
-                        {selected.id === p.id && <div className={styles.indicator} style={{ background: p.color }} />}
+                        {selected.id === p.id && <div className={styles.indicator} />}
                     </div>
                 ))}
             </div>
 
-            {/* Payment Form */}
             <form action={handleFormSubmit} className={styles.formCard}>
                 <input type="hidden" name="provider" value={selected.name} />
 
@@ -97,7 +93,6 @@ export default function BillsClient({ currency, rate }: { currency: string, rate
                                 required
                                 placeholder="0.00"
                                 className={`${styles.input} ${styles.inputAmount}`}
-                                style={{ paddingLeft: '3.5rem' }}
                             />
                         </div>
                     </div>

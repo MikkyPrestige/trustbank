@@ -1,39 +1,58 @@
 .banner {
   position: fixed;
-  bottom: 24px;
-  right: 24px;
+  bottom: 2rem;
+  right: 2rem;
   width: 100%;
   max-width: 400px;
-  background: var(--bg-card); /* Adaptive background */
-  /* Glass Effect */
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 24px;
-  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.2);
+  background: var(--bg-card);
+  backdrop-filter: blur(1rem);
+  -webkit-backdrop-filter: blur(1rem);
+  border: 1px solid var(--border-subtle);
+  border-radius: 1rem;
+  padding: 1rem;
+  box-shadow: 0 2rem 4rem -1rem rgba(0, 0, 0, 0.2);
   z-index: 9999;
-
-  /* Animation */
   transform: translateY(100px);
   opacity: 0;
   animation: slideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  animation-delay: 1s; /* Wait 1s before showing */
+  animation-delay: 1s;
+}
+
+.closeIcon {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(var(--danger-rgb), 0.1);
+  color: var(--danger);
+  border: 1px solid rgba(var(--danger-rgb), 0.3);
+  cursor: pointer;
+  border-radius: 50%;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.closeIcon:hover {
+  background: var(--danger);
+  color: var(--text-invert);
 }
 
 .header {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 12px;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .iconBox {
-  width: 36px;
-  height: 36px;
-  background: rgba(16, 185, 129, 0.1); /* Green Security Tint */
-  color: #10b981;
-  border-radius: 8px;
+  width: 2.5rem;
+  height: 2.5rem;
+  background: rgba(var(--success-rgb), 0.1);
+  color: var(--success);
+  border: 1px solid rgba(var(--success-rgb), 0.3);
+  border-radius: 0.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -50,12 +69,12 @@
   font-size: 0.85rem;
   color: var(--text-muted);
   line-height: 1.5;
-  margin-bottom: 20px;
+  margin-bottom: 1.5rem;
 }
 
 .actions {
   display: flex;
-  gap: 12px;
+  gap: 1rem;
 }
 
 .acceptBtn {
@@ -63,8 +82,8 @@
   background: var(--text-main);
   color: var(--bg-app);
   border: none;
-  padding: 12px;
-  border-radius: 8px;
+  padding: 1rem;
+  border-radius: 0.5rem;
   font-size: 0.85rem;
   font-weight: 700;
   cursor: pointer;
@@ -76,11 +95,11 @@
 
 .declineBtn {
   flex: 1;
-  background: transparent;
-  color: var(--text-muted);
+  background: var(--bg-surface);
+  color: var(--text-main);
   border: 1px solid var(--border);
-  padding: 12px;
-  border-radius: 8px;
+  padding: 1rem;
+  border-radius: 0.5rem;
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
@@ -88,17 +107,6 @@
 }
 .declineBtn:hover {
   border-color: var(--text-main);
-  color: var(--text-main);
-}
-
-.closeIcon {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  background: transparent;
-  border: none;
-  color: var(--text-muted);
-  cursor: pointer;
 }
 
 @keyframes slideIn {
@@ -108,13 +116,12 @@
   }
 }
 
-/* Mobile: Full width at bottom */
 @media (max-width: 480px) {
   .banner {
     bottom: 0;
     right: 0;
     max-width: 100%;
-    border-radius: 16px 16px 0 0;
+    border-radius: 1rem 1rem 0 0;
     border-bottom: none;
   }
 }

@@ -12,15 +12,6 @@ export default async function AdminSettingsPage() {
         db.currency.findMany({orderBy: { code: 'asc' }}),
         db.footerLink.findMany({orderBy: { order: 'asc' }})
     ]);
-    // const settings = await getSiteSettings();
-
-    // const currencies = await db.currency.findMany({
-    //     orderBy: { code: 'asc' }
-    // });
-
-    // const footerLinks = await db.footerLink.findMany({
-    //     orderBy: { order: 'asc' }
-    // });
 
     return (
         <SettingsForm

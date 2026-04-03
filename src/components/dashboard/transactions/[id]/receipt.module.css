@@ -1,4 +1,3 @@
-/* Container centers the receipt */
 .container {
   max-width: 600px;
   width: 60%;
@@ -37,23 +36,22 @@
 
 .receiptCard {
   background: var(--bg-card);
-  border-radius: 2rem;
-  box-shadow: 0 1rem 4rem -1rem var(--shadow-card);
+  border-radius: 1rem;
+  box-shadow: var(--shadow-card);
   border: 1px solid var(--border);
   max-width: 600px;
   position: relative;
-  padding: 2rem;
+  padding: 1rem 2rem;
   overflow: hidden;
 }
 
-/* 1. Header */
 .bankHeader {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 1rem;
   padding-bottom: 0.5rem;
-  border-bottom: 2px dashed var(--border);
+  border-bottom: 2px dashed var(--border-subtle);
 }
 
 .brandColumn {
@@ -66,7 +64,7 @@
 .logoContainer {
   position: relative;
   width: 8rem;
-  height: 2.5rem;
+  height: 2rem;
 }
 
 .logoImage {
@@ -86,9 +84,9 @@
   text-align: right;
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0.2rem;
   justify-content: center;
-  height: 2.5rem;
+  height: 2rem;
 }
 
 .receiptLabel {
@@ -114,8 +112,8 @@
 }
 
 .iconBox {
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 2rem;
+  height: 2rem;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -123,10 +121,10 @@
 }
 
 .amount {
-  font-size: 2.5rem;
+  font-size: 2rem;
   font-weight: 800;
   color: var(--text-main);
-  margin-bottom: 1rem;
+  margin: 0.5rem;
   letter-spacing: -1px;
 }
 
@@ -134,37 +132,37 @@
   color: var(--success);
 }
 
-/* Status Badges */
 .statusBadge {
-  padding: .5rem;
-  border-radius: 2rem;
+  padding: 0.3rem 0.5rem;
+  border-radius: 1rem;
   font-size: 0.8rem;
   font-weight: 600;
   text-transform: capitalize;
 }
 
 .success {
-  background: #dcfce7;
+  background: rgba(var(--success-rgb), 0.1);
   color: var(--success);
+  border: 1px solid rgba(var(--success-rgb), 0.3);
 }
 .pending {
-  background: #eff6ff;
+  background: rgba(var(--accent-rgb), 0.1);
   color: var(--accent);
+  border: 1px solid rgba(var(--accent-rgb), 0.3);
 }
 .failed {
-  background: #fee2e2;
+  background: rgba(var(--danger-rgb), 0.1);
   color: var(--danger);
+  border: 1px solid rgba(var(--danger-rgb), 0.3);
 }
 
-/* 3. THE MISSING DIVIDER */
 .divider {
   height: 1px;
-  background: var(--border);
+  background: var(--border-subtle);
   margin: 1rem 0;
   width: 100%;
 }
 
-/* Details */
 .detailsList {
   display: flex;
   flex-direction: column;
@@ -207,22 +205,12 @@
   margin-top: 2px;
 }
 
-.monoValue {
-  font-family: monospace;
-  background: var(--bg-surface);
-  padding: 0.3rem 0.5rem;
-  border-radius: 0.5rem;
-  font-size: 0.85rem;
-  color: var(--text-muted);
-}
-
-/* Actions Footer */
 .footer {
   margin-top: 1rem;
   padding-top: 1rem;
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--border-subtle);
   display: flex;
-  gap: 1rem;
+  gap: 2rem;
   justify-content: center;
 }
 
@@ -230,10 +218,10 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 1rem 2rem;
+  padding: .5rem 1rem;
   border-radius: 0.5rem;
-  border: 1px solid var(--border);
-  background: var(--bg-card);
+  border: 1px solid var(--sub-divider);
+  background: var(--sub-bg);
   color: var(--text-muted);
   font-weight: 600;
   font-size: 0.9rem;
@@ -242,8 +230,8 @@
 }
 
 .actionBtn:hover {
-  background: var(--bg-surface);
-  border-color: var(--text-muted);
+  background: var(--sub-hover);
+  border-color: var(--border-subtle);
   color: var(--text-main);
 }
 

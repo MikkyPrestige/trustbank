@@ -8,7 +8,6 @@ export default async function AboutPage() {
 
     return (
         <main className={styles.main}>
-            {/* 1. HERO SECTION  */}
             <section className={styles.heroBackground}>
                 <Image
                     src={settings.about_hero_img}
@@ -27,7 +26,6 @@ export default async function AboutPage() {
                 </div>
             </section>
 
-            {/* 2. STATS STRIP */}
             <section className={styles.statsStrip}>
                 <div className={styles.container} style={{ padding: 0 }}>
                     <div className={styles.statsGrid}>
@@ -51,7 +49,6 @@ export default async function AboutPage() {
                 </div>
             </section>
 
-            {/* 3. MISSION CARDS */}
             <div className={styles.container}>
                 <h2 className={styles.sectionTitle}>{settings.about_mission_title}</h2>
                 <div className={styles.grid}>

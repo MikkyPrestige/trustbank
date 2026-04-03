@@ -16,14 +16,11 @@ const HOTSPOTS = [
 ];
 
 export default async function GlobalReach() {
-    // 1. Fetch Dynamic Data
     const settings = await getSiteSettings();
 
     return (
         <section className={styles.globalSection}>
             <div className={styles.container}>
-
-                {/* HEADLINE */}
                 <div className={styles.globalHeader}>
                     <h2 className={styles.sectionTitleDark}>
                         {settings.home_global_title} <span className={styles.highlightBlue}>{settings.home_global_highlight}</span>
@@ -33,7 +30,6 @@ export default async function GlobalReach() {
                     </p>
                 </div>
 
-                {/* THE MAP VISUAL */}
                 <div className={styles.mapWrapper}>
                     <Image
                         src={settings.home_global_img}
@@ -60,7 +56,6 @@ export default async function GlobalReach() {
                     ))}
                 </div>
 
-                {/* STATS STRIP */}
                 <div className={styles.statsStrip}>
                     <div className={styles.statItem}>
                         <Globe size={24} className={styles.statIcon} />
@@ -86,7 +81,6 @@ export default async function GlobalReach() {
                         </div>
                     </div>
                 </div>
-
             </div>
         </section>
     );

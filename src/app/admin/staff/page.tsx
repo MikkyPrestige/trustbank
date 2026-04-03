@@ -10,7 +10,6 @@ import styles from "../../../components/admin/staff/staff.module.css"
 export default async function StaffManagementPage() {
     await requireSuperAdmin()
 
-    // Fetch only Admin and Support staff (Hide Super Admin and Clients)
     const staff = await db.user.findMany({
         where: {
             role: { in: ['ADMIN', 'SUPPORT'] }
@@ -34,19 +33,17 @@ export default async function StaffManagementPage() {
                         Staff Management
                     </h1>
                     <p className={styles.subtitle}>
-                        You are in <strong>Super Admin</strong> mode. Grant or revoke platform access here.
+                        You are in <strong className={styles.strong}>Super Admin</strong> mode. Grant or revoke platform access here.
                     </p>
                 </div>
             </header>
 
             <div className={styles.grid}>
-                {/* Left Column: Create Form */}
                 <div className={styles.formColumn}>
                     <PromoteStaffForm />
                     <CreateStaffForm />
                 </div>
 
-                {/* Right Column: Staff List */}
                 <div className={styles.listColumn}>
                     <h3 className={styles.sectionHeader}>Active Personnel ({staff.length})</h3>
                     {/* @ts-ignore */}

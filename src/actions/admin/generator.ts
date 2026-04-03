@@ -38,17 +38,11 @@ export async function generateTransactions(prevState: any, formData: FormData) {
 
     const accountId = formData.get("accountId") as string;
     const type = formData.get("type") as 'CREDIT' | 'DEBIT' | 'MIXED';
-
-    // This is the USD Amount (already converted by client)
     const totalAmount = parseFloat(formData.get("totalAmount") as string);
-
-    // These are for display/notification purposes
     const displayAmount = parseFloat(formData.get("displayAmount") as string);
     const displayCurrency = formData.get("displayCurrency") as string;
-
     const count = parseInt(formData.get("count") as string);
     const customNote = formData.get("customNote") as string;
-
     const startStr = formData.get("startDate") as string;
     const endStr = formData.get("endDate") as string;
     const startDate = startStr ? new Date(startStr) : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
@@ -67,19 +61,16 @@ export async function generateTransactions(prevState: any, formData: FormData) {
         }
     }
 
-    // EXECUTE GENERATOR
     let userIdForNotification = "";
 
     try {
         const transactions: any[] = [];
 
-        // THE MATH LOGIC
         if (type === 'MIXED') {
             const debitCount = Math.floor(count * 0.3) || 1;
             const creditCount = count - debitCount;
             let totalDebitVal = 0;
 
-            // A. Generate Random Debits
             for (let i = 0; i < debitCount; i++) {
                 const val = Math.floor(Math.random() * 500) + 10;
                 totalDebitVal += val;
@@ -90,7 +81,6 @@ export async function generateTransactions(prevState: any, formData: FormData) {
                 });
             }
 
-            // B. Calculate Required Credit to hit Target
             const requiredCreditVal = totalAmount + totalDebitVal;
             const creditDistrib = distributeAmount(requiredCreditVal, creditCount);
 
@@ -103,7 +93,6 @@ export async function generateTransactions(prevState: any, formData: FormData) {
             });
 
         } else {
-            // SIMPLE MODE (All Credit or All Debit)
             const amounts = distributeAmount(totalAmount, count);
             const dir = type === 'CREDIT' ? TransactionDirection.CREDIT : TransactionDirection.DEBIT;
             const trxType = type === 'CREDIT' ? TransactionType.DEPOSIT : TransactionType.WITHDRAWAL;
@@ -113,14 +102,12 @@ export async function generateTransactions(prevState: any, formData: FormData) {
             });
         }
 
-        // SHUFFLE, DATE & DESCRIBE
         const finalOps = transactions
             .map(t => ({ ...t, sort: Math.random() }))
             .sort((a, b) => a.sort - b.sort)
             .map(t => {
                 const time = startDate.getTime() + Math.random() * (endDate.getTime() - startDate.getTime());
 
-                // Description Logic
                 let desc;
                 if (customNote && customNote.trim() !== "") {
                     desc = customNote;
@@ -141,18 +128,14 @@ export async function generateTransactions(prevState: any, formData: FormData) {
                 };
             });
 
-        // DATABASE INSERT (Transaction)
         await db.$transaction(async (tx) => {
-            //  Get User ID for notification
             const account = await tx.account.findUnique({ where: { id: accountId } });
             if (account) userIdForNotification = account.userId;
 
-            //  Insert Transactions
             await tx.ledgerEntry.createMany({
                 data: finalOps
             });
 
-            //  Update Account Balance
             const netChange = type === 'DEBIT' ? -totalAmount : totalAmount;
 
             await tx.account.update({
@@ -164,7 +147,6 @@ export async function generateTransactions(prevState: any, formData: FormData) {
             });
         });
 
-        // LOGGING & NOTIFICATION
         const formattedAmount = (displayAmount && displayCurrency)
             ? `${displayCurrency} ${displayAmount.toLocaleString()}`
             : `$${totalAmount.toLocaleString()}`;
@@ -201,7 +183,6 @@ export async function generateTransactions(prevState: any, formData: FormData) {
         return { message: "Generator failed." };
     }
 
-    // REVALIDATE
     revalidatePath("/admin/users");
 
     return { success: true, message: `Successfully generated ${count} transactions.` };

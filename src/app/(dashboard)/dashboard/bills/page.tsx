@@ -20,7 +20,6 @@ export default async function BillsPage() {
         db.exchangeRate.findMany()
     ]);
 
-    // 1. Determine Currency Context
     const currency = user?.currency || "USD";
     const rate = currency === "USD"
         ? 1

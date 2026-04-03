@@ -12,7 +12,7 @@ export const getSiteSettings = cache(async () => {
              }
         });
 
-        // 2. Initialize Defaults (Singleton Pattern)
+        // Initialize Defaults (Singleton Pattern)
         if (!mainSettings) {
             mainSettings = await db.siteSettings.create({
                 data: {
@@ -55,10 +55,10 @@ export const getSiteSettings = cache(async () => {
         // RE-VERIFY after re-fetch
         if (!mainSettings) throw new Error("Failed to reload settings");
 
-        // 3. Navigation Logic
+        //  Navigation Logic
         let baseMenuStructure = MEGA_MENUS;
 
-        // 4. Hydrate Navigation
+        // Hydrate Navigation
         const navigation = {
             BANKING: {
                 ...baseMenuStructure.BANKING,
@@ -102,7 +102,7 @@ export const getSiteSettings = cache(async () => {
             }
         };
 
-        // 5. Return Merged Settings
+        // Return Merged Settings
         return {
             ...mainSettings,
             ...mainSettings.content,

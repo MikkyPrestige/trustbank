@@ -4,7 +4,7 @@ import { useActionState } from 'react';
 import { adminResetPassword } from '@/actions/admin/users';
 import { X, Loader2, KeyRound } from 'lucide-react';
 import toast from 'react-hot-toast';
-import styles from './resetPassword.module.css';
+import styles from './resetPasswordModal.module.css';
 
 const initialState = { message: '', success: false };
 
@@ -26,7 +26,6 @@ export default function ResetPasswordModal({ userId, onClose, siteName }: Props)
         <div className={styles.overlay}>
             <div className={styles.modal}>
 
-                {/* Header */}
                 <div className={styles.modalHeader}>
                     <h3 className={styles.modalTitle}>
                         <KeyRound size={20} className={styles.headerIcon} />
@@ -49,7 +48,7 @@ export default function ResetPasswordModal({ userId, onClose, siteName }: Props)
                         <input
                             name="newPassword"
                             type="text"
-                            placeholder={`e.g. ${siteName}2024!`}
+                            placeholder={`e.g. ${siteName}2026!`}
                             required
                             className={styles.input}
                             autoComplete="off"

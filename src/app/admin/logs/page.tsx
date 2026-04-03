@@ -56,27 +56,24 @@ export default async function AdminAuditLogsPage({
                     <tbody>
                         {logs.map((log) => (
                             <tr key={log.id} className={log.level === 'CRITICAL' ? styles.rowCritical : ''}>
-                                {/* Risk Level */}
                                 <td>
                                     <span className={`${styles.badge} ${getLevelStyle(log.level, styles)}`}>
                                         {log.level}
                                     </span>
                                 </td>
 
-                                {/* Status Icon */}
                                 <td>
                                     <div className={styles.statusCell}>
-                                        {log.status === 'SUCCESS' && <CheckCircle size={16} className={styles.iconSuccess} />}
-                                        {log.status === 'FAILED' && <AlertTriangle size={16} className={styles.iconWarning} />}
-                                        {log.status === 'BLOCKED' && <XCircle size={16} className={styles.iconError} />}
+                                        {log.status === 'SUCCESS' && <CheckCircle size={20} className={styles.iconSuccess} />}
+                                        {log.status === 'FAILED' && <AlertTriangle size={20} className={styles.iconWarning} />}
+                                        {log.status === 'BLOCKED' && <XCircle size={20} className={styles.iconError} />}
                                     </div>
                                 </td>
 
-                                {/* Actor */}
                                 <td>
                                     {log.admin ? (
                                         <div className={styles.adminInfo}>
-                                            <User size={14} className={styles.userIcon} />
+                                            <User size={16} className={styles.userIcon} />
                                             <div className={styles.userInfoCol}>
                                                 <span className={styles.userName}>{log.admin.fullName}</span>
                                                 <span className={styles.userEmail}>{log.admin.email}</span>
@@ -87,14 +84,12 @@ export default async function AdminAuditLogsPage({
                                     )}
                                 </td>
 
-                                {/* Action */}
                                 <td>
                                     <span className={styles.actionName}>
                                         {log.action.replace(/_/g, ' ')}
                                     </span>
                                 </td>
 
-                                {/* Details */}
                                 <td className={styles.mono}>
                                     {log.metadata ? (
                                         <code className={styles.code} title={log.metadata}>
@@ -103,15 +98,13 @@ export default async function AdminAuditLogsPage({
                                     ) : '-'}
                                 </td>
 
-                                {/* IP Address */}
                                 <td>
                                     <div className={styles.ipCell}>
-                                        <Globe size={12} className={styles.globeIcon} />
+                                        <Globe size={16} className={styles.globeIcon} />
                                         <span>{log.ipAddress || 'Unknown'}</span>
                                     </div>
                                 </td>
 
-                                {/* Time */}
                                 <td className={styles.dateCell}>
                                     {new Date(log.createdAt).toLocaleString(undefined, {
                                         month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
@@ -128,7 +121,6 @@ export default async function AdminAuditLogsPage({
                 </table>
             </div>
 
-            {/* Pagination */}
             {totalPages > 1 && (
                 <div className={styles.pagination}>
                     <p className={styles.pageInfo}>

@@ -3,7 +3,6 @@
 import dynamic from 'next/dynamic';
 import { useState, useMemo } from 'react';
 import { Search, MapPin, Navigation, Clock, Phone, CheckCircle2 } from "lucide-react";
-// import BranchMap from "./BranchMap";
 import styles from "./locations.module.css";
 
 const BranchMap = dynamic(() => import("./BranchMap"), {
@@ -46,7 +45,6 @@ export default function LocationsClient({ initialBranches, settings }: Props) {
 
     return (
         <div className={styles.pageWrapper}>
-            {/* HEADER */}
             <div className={styles.header}>
                 <div className={styles.container}>
                     <h1>{settings.locations_hero_title}</h1>
@@ -65,7 +63,6 @@ export default function LocationsClient({ initialBranches, settings }: Props) {
 
             <div className={styles.container}>
                 <div className={styles.contentGrid}>
-                    {/* LEFT: LIST */}
                     <div className={styles.listCol}>
                         <div className={styles.resultsCount}>
                             {filteredBranches.length} {settings.locations_results_label}
@@ -135,7 +132,6 @@ export default function LocationsClient({ initialBranches, settings }: Props) {
                         </div>
                     </div>
 
-                    {/* RIGHT: MAP */}
                     <div className={styles.mapCol}>
                         <BranchMap branches={filteredBranches} />
                     </div>

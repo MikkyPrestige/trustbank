@@ -10,9 +10,6 @@
   padding: 0 1.5rem;
 }
 
-/* =========================================
-   1. HERO SECTION
-   ========================================= */
 .heroBackground {
   position: relative;
   width: 100%;
@@ -58,12 +55,11 @@
   flex-shrink: 0;
 }
 
-/* Badges */
 .amberBadge {
   display: inline-block;
+ background: rgba(var(--accent-rgb), 0.1);
   color: var(--accent);
-  background: rgba(251, 191, 36, 0.1);
-  border: 1px solid var(--accent);
+  border: 1px solid rgba(var(--accent-rgb), 0.3);
   padding: 0.5rem 1rem;
   border-radius: 50px;
   font-weight: 700;
@@ -94,9 +90,6 @@
   max-width: 500px;
 }
 
-/* =========================================
-   2. CONTENT GRID
-   ========================================= */
 .contentSection {
   padding: 2rem 0;
   background: var(--bg-app);
@@ -241,12 +234,9 @@
 }
 
 .readLink:hover {
-  gap: 12px;
+  gap: 1rem;
 }
 
-/* =========================================
-   3. CATEGORY STRIP
-   ========================================= */
 .categoryStrip {
   padding: 4rem 0;
   border-top: 1px solid var(--border);
@@ -298,7 +288,6 @@
   color: var(--text-muted);
 }
 
-/* Responsive */
 @media (max-width: 968px) {
   .heroBackground .container {
     flex-direction: column;

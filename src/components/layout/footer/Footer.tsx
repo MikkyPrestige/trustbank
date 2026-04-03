@@ -25,7 +25,6 @@ export default function Footer({ settings, links = [] }: FooterProps) {
 
     return (
         <footer className={styles.footer}>
-            {/* 1. CONTACT STRIP */}
             <div className={styles.contactStrip}>
                 <div className={styles.container}>
                     <div className={styles.contactGrid}>
@@ -62,11 +61,9 @@ export default function Footer({ settings, links = [] }: FooterProps) {
                 </div>
             </div>
 
-            {/* 2. MAIN CONTENT */}
             <div className={styles.mainFooter}>
                 <div className={styles.container}>
                     <div className={styles.mainGrid}>
-                        {/* COLUMN 1: MISSION */}
                         <div className={styles.missionColumn}>
                             <h2 className={styles.footerHeading}>
                                 {settings.footer_mission_title}
@@ -81,7 +78,7 @@ export default function Footer({ settings, links = [] }: FooterProps) {
                                 {settings.social_instagram && <Link href={settings.social_instagram} className={styles.socialIcon}><Instagram size={20} /></Link>}
                             </div>
                         </div>
-                        {/* COLUMN 2: DYNAMIC LINKS */}
+
                         <div className={styles.linkColumn}>
                             <h3>{settings.footer_col1_title}</h3>
                             <ul className={styles.linkList}>
@@ -90,7 +87,7 @@ export default function Footer({ settings, links = [] }: FooterProps) {
                                 )) : <li style={{ opacity: 0.5 }}>{settings.footer_noLink}</li>}
                             </ul>
                         </div>
-                        {/* COLUMN 3: DYNAMIC LINKS */}
+
                         <div className={styles.linkColumn}>
                             <h3>{settings.footer_col2_title}</h3>
                             <ul className={styles.linkList}>
@@ -100,7 +97,6 @@ export default function Footer({ settings, links = [] }: FooterProps) {
                             </ul>
                         </div>
 
-                        {/* COLUMN 4: BRAND */}
                         <div className={styles.brandColumn}>
                             <div className={styles.whiteLogoBox}>
                                 <Image
@@ -128,7 +124,6 @@ export default function Footer({ settings, links = [] }: FooterProps) {
                 </div>
             </div>
 
-            {/* 3. LEGAL STRIP */}
             <div className={styles.legalStrip}>
                 <div className={styles.container}>
                     <div className={styles.legalGrid}>

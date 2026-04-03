@@ -9,13 +9,10 @@ interface FaqTabProps {
 export function FaqTab({ settings }: FaqTabProps) {
     return (
         <div className={styles.grid}>
-
-            {/* --- 1. DATA MANAGEMENT LINK --- */}
             <div className={styles.fullWidth}>
-                <h3 className={styles.sectionTitle}>FAQ Database</h3>
+                <h3 className={styles.sectionTitle}>FAQ</h3>
                 <p className={styles.sectionSubtitle}>Manage the Questions & Answers displayed in the accordion.</p>
             </div>
-
             <Link href="/admin/faqs" className={styles.navCard}>
                 <div className={`${styles.navIcon} ${styles.iconPrimary}`}>
                     <HelpCircle size={24} />
@@ -27,14 +24,10 @@ export function FaqTab({ settings }: FaqTabProps) {
                 <ArrowRight size={16} className={styles.chevron} />
             </Link>
 
-            {/* --- 2. HELP PAGE CONFIG --- */}
-            <div className={`${styles.fullWidth} ${styles.marginTop}`}>
+            <div className={styles.fullWidth}>
                 <hr className={styles.divider} />
-                <h3 className={styles.sectionTitle}>Help Page Configuration</h3>
-                <p className={styles.sectionSubtitle}>Customize the headers and action cards.</p>
+                <h3 className={styles.sectionTitle}>HERO SECTION</h3>
             </div>
-
-            {/* Hero Section */}
             <div className={styles.group}>
                 <label className={styles.label}>Hero Title</label>
                 <input name="help_hero_title" defaultValue={settings.help_hero_title} className={styles.input} />
@@ -43,14 +36,16 @@ export function FaqTab({ settings }: FaqTabProps) {
                 <label className={styles.label}>Hero Description</label>
                 <textarea name="help_hero_desc" defaultValue={settings.help_hero_desc} className={styles.textarea} />
             </div>
-            {/* Quick Actions */}
-            <div className={styles.fullWidth}><h4 className={styles.subsectionTitle}>Quick Action Cards</h4></div>
+
+            <div className={styles.fullWidth}>
+                <h4 className={styles.sectionTitle}>Quick Action Cards</h4>
+            </div>
             <div className={styles.group}>
                 <label className={styles.label}>Section Title</label>
                 <input name="help_quick_title" defaultValue={settings.help_quick_title} className={styles.input} />
             </div>
-            {/* Card 1 */}
-            <div className={styles.fullWidth}><strong>Action 1</strong></div>
+
+            <div className={styles.groupHeader}><strong>Action 1</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Title</label>
                 <input name="help_action1_title" defaultValue={settings.help_action1_title} className={styles.input} />
@@ -63,8 +58,8 @@ export function FaqTab({ settings }: FaqTabProps) {
                 <label className={styles.label}>Description</label>
                 <textarea name="help_action1_desc" defaultValue={settings.help_action1_desc} className={styles.textarea} />
             </div>
-            {/* Card 2 */}
-            <div className={styles.fullWidth}><strong>Action 2</strong></div>
+
+            <div className={styles.groupHeader}><strong>Action 2</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Title</label>
                 <input name="help_action2_title" defaultValue={settings.help_action2_title} className={styles.input} />
@@ -77,8 +72,8 @@ export function FaqTab({ settings }: FaqTabProps) {
                 <label className={styles.label}>Description</label>
                 <textarea name="help_action2_desc" defaultValue={settings.help_action2_desc} className={styles.textarea} />
             </div>
-            {/* Card 3 */}
-            <div className={styles.fullWidth}><strong>Action 3</strong></div>
+
+            <div className={styles.groupHeader}><strong>Action 3</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Title</label>
                 <input name="help_action3_title" defaultValue={settings.help_action3_title} className={styles.input} />
@@ -91,8 +86,8 @@ export function FaqTab({ settings }: FaqTabProps) {
                 <label className={styles.label}>Description</label>
                 <textarea name="help_action3_desc" defaultValue={settings.help_action3_desc} className={styles.textarea} />
             </div>
-            {/* Card 4 */}
-            <div className={styles.fullWidth}><strong>Action 4</strong></div>
+
+            <div className={styles.groupHeader}><strong>Action 4</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Title</label>
                 <input name="help_action4_title" defaultValue={settings.help_action4_title} className={styles.input} />
@@ -106,16 +101,16 @@ export function FaqTab({ settings }: FaqTabProps) {
                 <textarea name="help_action4_desc" defaultValue={settings.help_action4_desc} className={styles.textarea} />
             </div>
 
-            {/* FAQ */}
-            <div className={styles.fullWidth}><h4 className={styles.subsectionTitle}>FAQ Section</h4></div>
+            <div className={styles.fullWidth}>
+                <h4 className={styles.sectionTitle}>FAQ Section</h4>
+            </div>
             <div className={styles.group}>
                 <label className={styles.label}>Title</label>
                 <input name="help_faq_title" defaultValue={settings.help_faq_title} className={styles.input} />
             </div>
 
-            {/* Bottom CTA */}
             <div className={styles.fullWidth}>
-                <h4 className={styles.subsectionTitle}>Contact Strip Section</h4>
+                <h4 className={styles.sectionTitle}>Contact Strip Section</h4>
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Title</label>
@@ -126,13 +121,10 @@ export function FaqTab({ settings }: FaqTabProps) {
                 <textarea name="help_contact_desc" defaultValue={settings.help_contact_desc} className={styles.input} />
             </div>
 
-            <div className={styles.fullWidth}><strong>Buttons</strong></div>
-            {/* Button 1: Phone  */}
             <div className={styles.group}>
                 <label className={styles.label}>Phone Button Text</label>
                 <input name="help_contact_btn1_text" defaultValue={settings.help_contact_btn1_text} className={styles.input} />
             </div>
-            {/* Button 2: Chat */}
             <div className={styles.row}>
                 <div className={styles.group}>
                     <label className={styles.label}>Chat Button Text</label>

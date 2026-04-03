@@ -11,7 +11,6 @@ export async function getSecurityStats() {
     const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 
     try {
-        // 1. Run Aggregations in Parallel for speed
         const [
             totalLogs,
             criticalEvents,

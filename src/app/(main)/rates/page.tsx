@@ -10,7 +10,6 @@ export default async function RatesPage() {
 
     return (
         <main className={styles.main}>
-            {/* HEADER SECTION */}
             <section className={styles.header}>
                 <div className={styles.bgImageWrapper}>
                     <Image
@@ -35,7 +34,6 @@ export default async function RatesPage() {
 
             <section className={styles.content}>
                 <div className={styles.container}>
-                    {/* 1. DEPOSIT RATES */}
                     <div className={styles.rateGroup}>
                         <h2>{content.rates_title_deposit}</h2>
                         <div className={styles.tableWrapper}>
@@ -49,7 +47,6 @@ export default async function RatesPage() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {/* HYSA */}
                                     <tr>
                                         <td>
                                             <strong>{settings.rate_hysa_name}</strong>
@@ -61,21 +58,21 @@ export default async function RatesPage() {
                                         <td className={styles.apy}>{settings.rate_hysa_apy}{settings.rates_percent}</td>
                                         <td>{settings.rate_hysa_min}</td>
                                     </tr>
-                                    {/* MMA */}
+
                                     <tr>
                                         <td><strong>{settings.rate_mma_name}</strong></td>
                                         <td>{settings.rate_mma_rate}{settings.rates_percent}</td>
                                         <td className={styles.apy}>{settings.rate_mma_apy}{settings.rates_percent}</td>
                                         <td>{settings.rate_mma_min}</td>
                                     </tr>
-                                    {/* CD */}
+
                                     <tr>
                                         <td><strong>{settings.rate_cd_name}</strong></td>
                                         <td>{settings.rate_cd_rate}{settings.rates_percent}</td>
                                         <td className={styles.apy}>{settings.rate_cd_apy}{settings.rates_percent}</td>
                                         <td>{settings.rate_cd_min}</td>
                                     </tr>
-                                    {/* KIDS */}
+
                                     <tr>
                                         <td><strong>{settings.rate_kids_name}</strong></td>
                                         <td>{settings.rate_kids_rate}{settings.rates_percent}</td>
@@ -87,7 +84,6 @@ export default async function RatesPage() {
                         </div>
                     </div>
 
-                    {/* 2. LENDING RATES */}
                     <div className={styles.rateGroup}>
                         <h2>{content.rates_title_borrow}</h2>
                         <div className={styles.tableWrapper}>
@@ -101,28 +97,27 @@ export default async function RatesPage() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {/* AUTO */}
                                     <tr>
                                         <td><strong>{settings.rate_auto_name}</strong></td>
                                         <td>{settings.rate_auto_term}</td>
                                         <td className={styles.apr}>{settings.rate_auto_apr}{settings.rates_percent}</td>
                                         <td><Link href={settings.rate_auto_apr_link}>{content.rates_btn_view}</Link></td>
                                     </tr>
-                                    {/* PERSONAL */}
+
                                     <tr>
                                         <td><strong>{settings.rate_personal_name}</strong></td>
                                         <td>{settings.rate_personal_term}</td>
                                         <td className={styles.apr}>{settings.rate_personal_apr}{settings.rates_percent}</td>
                                         <td><Link href={settings.rate_personal_link}>{content.rates_btn_view}</Link></td>
                                     </tr>
-                                    {/* MORTGAGE */}
+
                                     <tr>
                                         <td><strong>{settings.rate_mortgage_name}</strong></td>
                                         <td>{settings.rate_mortgage_term}</td>
                                         <td className={styles.apr}>{settings.rate_mortgage_30yr}{settings.rates_percent}</td>
                                         <td><Link href={settings.rate_mortgage_link}>{content.rates_btn_view}</Link></td>
                                     </tr>
-                                    {/* CREDIT CARD */}
+
                                     <tr>
                                         <td><strong>{settings.rate_cc_name}</strong></td>
                                         <td>{settings.rate_cc_term}</td>
@@ -134,7 +129,6 @@ export default async function RatesPage() {
                         </div>
                     </div>
 
-                    {/* DISCLAIMER */}
                     <div className={styles.disclaimerBox}>
                         <h4>
                             <CheckCircle2 size={16} />

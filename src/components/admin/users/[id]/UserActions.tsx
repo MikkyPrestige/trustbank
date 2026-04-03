@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import { useRouter } from 'next/navigation';
 import styles from "./users.module.css";
-import ResetPasswordModal from '@/components/auth/resetPassword/ResetPasswordModal';
+import ResetPasswordModal from '@/components/admin/auth/ResetPasswordModal';
 import { UserStatus } from '@prisma/client';
 import toast from 'react-hot-toast';
 
@@ -92,8 +92,6 @@ export default function UserActions({ userId, status, siteName = "TrustBank", is
     return (
         <>
             <div className={styles.actions}>
-
-                {/* UNLOCK BUTTON */}
                 {isLocked && (
                     <button
                         onClick={handleUnlock}
@@ -106,7 +104,6 @@ export default function UserActions({ userId, status, siteName = "TrustBank", is
                     </button>
                 )}
 
-                {/* 1. RESET PASSWORD */}
                 <button
                     onClick={() => setShowReset(true)}
                     disabled={loading}
@@ -116,7 +113,6 @@ export default function UserActions({ userId, status, siteName = "TrustBank", is
                     <KeyRound size={16} /> <span className={styles.btnText}>Reset Pass</span>
                 </button>
 
-                {/* 2. STATUS DROPDOWN */}
                 <div className={styles.dropdownWrapper}>
                     <button
                         onClick={() => setShowStatusMenu(!showStatusMenu)}
@@ -126,40 +122,39 @@ export default function UserActions({ userId, status, siteName = "TrustBank", is
                         <div className={styles.statusContent}>
                             {loading ? <Loader2 className={styles.spin} size={16} /> : (
                                 <>
-                                    {status === 'ACTIVE' && <CheckCircle size={16} color="#22c55e" />}
-                                    {status === 'FROZEN' && <Lock size={16} color="#3b82f6" />}
-                                    {status === 'SUSPENDED' && <Ban size={16} color="#ef4444" />}
-                                    {status === 'PENDING_VERIFICATION' && <Lock size={16} color="#eab308" />}
+                                    {status === 'ACTIVE' && <CheckCircle size={16} className={styles.activeIcon} />}
+                                    {status === 'FROZEN' && <Lock size={16} className={styles.frozenIcon} />}
+                                    {status === 'SUSPENDED' && <Ban size={16} className={styles.suspendedIcon} />}
+                                    {status === 'PENDING_VERIFICATION' && <Lock size={16} className={styles.pendingIcon} />}
                                 </>
                             )}
                             <span>{status.replace('_', ' ')}</span>
                         </div>
-                        <ChevronDown size={14} className={styles.chevron} />
+                        <ChevronDown size={16} className={styles.chevron} />
                     </button>
 
                     {showStatusMenu && (
                         <div className={styles.statusMenu}>
                             <button onClick={() => handleStatusChange('ACTIVE')} className={styles.menuItem}>
-                                <CheckCircle size={14} color="#22c55e" /> Activate
+                                <CheckCircle size={16} className={styles.activeIcon} /> Activate
                             </button>
                             <button onClick={() => handleStatusChange('FROZEN')} className={styles.menuItem}>
-                                <Lock size={14} color="#3b82f6" /> Freeze
+                                <Lock size={16} className={styles.frozenIcon} /> Freeze
                             </button>
                             <button onClick={() => handleStatusChange('SUSPENDED')} className={styles.menuItem}>
-                                <Ban size={14} color="#ef4444" /> Suspend
+                                <Ban size={16} className={styles.suspendedIcon} /> Suspend
                             </button>
                         </div>
                     )}
                 </div>
 
-                {/* 3. DELETE */}
                 <button
                     onClick={handleDelete}
                     disabled={loading}
                     className={`${styles.actionBtn} ${styles.deleteBtn}`}
                     title="Delete User"
                 >
-                    <Trash2 size={16} />
+                    <Trash2 size={16} /> <span className={styles.btnText}>Delete</span>
                 </button>
             </div>
 

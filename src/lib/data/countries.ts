@@ -1,5 +1,3 @@
-// src/lib/countries.ts
-
 export const countries = [
     // --- AMERICAS ---
     { code: "AR", name: "Argentina" },

@@ -31,7 +31,6 @@ export default function TradeForm({ livePrices, assets, currency, rate }: TradeF
 
     const maxSellValue = userBalance * currentPrice;
 
-    // Estimate Logic
     const estimate = amount && currentPrice > 0
         ? (Number(amount) / currentPrice).toFixed(6) + ` ${selectedCoin}`
         : '---';
@@ -58,11 +57,9 @@ export default function TradeForm({ livePrices, assets, currency, rate }: TradeF
     const handleSubmit = (formData: FormData) => {
         const inputAmount = Number(formData.get("amount"));
 
-        // 1. Convert to USD for Server
         const usdAmount = inputAmount / rate;
         formData.set("amount", usdAmount.toString());
 
-        // 2. Add Display Data
         formData.set("displayAmount", inputAmount.toString());
         formData.set("displayCurrency", currency);
 
@@ -75,7 +72,7 @@ export default function TradeForm({ livePrices, assets, currency, rate }: TradeF
         <div className={styles.tradeCard}>
             <div className={styles.tradeHeader}>
                 <h3 className={styles.headerRow}>
-                    <Activity size={18} style={{ marginRight: '8px', color: 'var(--primary)' }} /> Quick Trade
+                    <Activity size={18} className={styles.tradeHeaderIcon}  /> Quick Trade
                 </h3>
                 <span className={styles.liveBadge}><div className={styles.pulse}></div> Live</span>
             </div>

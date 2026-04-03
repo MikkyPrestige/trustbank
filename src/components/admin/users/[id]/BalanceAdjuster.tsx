@@ -24,7 +24,6 @@ export default function BalanceAdjuster({ accountId, currency, rate }: BalanceAd
             return toast.error("Enter a valid amount");
         }
 
-        // 1. Calculate USD Equivalent for Database
         const rawAmount = Number(amount);
         const usdAmount = rawAmount / rate;
 

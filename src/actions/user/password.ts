@@ -33,7 +33,6 @@ export async function resetPassword(
         return { message: "Passwords do not match." };
     }
 
-    // Find User with Valid Token
     const user = await db.user.findFirst({
         where: {
             passwordResetToken: token,
@@ -47,7 +46,6 @@ export async function resetPassword(
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Update Database
     await db.user.update({
         where: { id: user.id },
         data: {
@@ -97,18 +95,15 @@ export async function requestPasswordReset(prevState: any, formData: FormData) {
     return { message: "Please enter a valid email address." };
   }
 
-  // 1. Check if user exists
   const user = await db.user.findUnique({ where: { email } });
 
   if (!user) {
     return { success: true, message: "If an account exists, a reset link has been sent." };
   }
 
-  // 2. Generate Secure Token
   const token = crypto.randomBytes(32).toString("hex");
   const expires = new Date(Date.now() + 3600000);
 
-  // 3. Save to DB
   await db.user.update({
     where: { id: user.id },
     data: {
@@ -117,7 +112,6 @@ export async function requestPasswordReset(prevState: any, formData: FormData) {
     }
   });
 
-  // 4. Send Email
   await sendPasswordResetEmail(user.email, token, siteName);
 
   return { success: true, message: "Check your email for the reset link." };

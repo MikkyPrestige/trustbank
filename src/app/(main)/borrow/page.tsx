@@ -7,7 +7,6 @@ import styles from './borrow.module.css';
 export default async function BorrowPage() {
     const settings = await getSiteSettings();
 
-    // 1. ANCHOR SECTIONS
     const ANCHORS = [
         {
             id: 'cc',
@@ -65,7 +64,6 @@ export default async function BorrowPage() {
         },
     ];
 
-    // 2. RATE GRID
     const RATE_PRODUCTS = [
         {
             title: settings.borrow_prod1_title, // Personal Loan
@@ -113,7 +111,6 @@ export default async function BorrowPage() {
 
     return (
         <main className={styles.main}>
-            {/* 1. HERO SECTION */}
             <section className={styles.heroBackground}>
                 <Image
                     src={settings.borrow_hero_img}
@@ -147,14 +144,12 @@ export default async function BorrowPage() {
                 </div>
             </section>
 
-            {/* 2. CALCULATOR SECTION */}
             <section className={styles.calcSection}>
                 <div className={styles.container}>
                     <LoanCalculator defaultRate={Number(settings.rate_personal_apr)} settings={settings} />
                 </div>
             </section>
 
-            {/* 3. ANCHOR SECTIONS */}
             {ANCHORS.map((p, i) => (
                 <section key={p.id} id={p.id} className={`${styles.productSection} ${i % 2 !== 0 ? styles.bgAlt : ''}`}>
                     <div className={styles.container}>
@@ -179,7 +174,6 @@ export default async function BorrowPage() {
                 </section>
             ))}
 
-            {/* 4. RATE GRID  */}
             <section className={styles.productsSection}>
                 <div className={styles.container}>
                     <div className={styles.sectionHeader}>
@@ -204,7 +198,6 @@ export default async function BorrowPage() {
                 </div>
             </section>
 
-            {/* 5. TRUST STRIP */}
             <section className={styles.trustStrip}>
                 <div className={styles.container}>
                     <div className={styles.trustGrid}>

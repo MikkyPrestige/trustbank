@@ -5,7 +5,6 @@
   background: var(--bg-app);
 }
 
-/* HEADER */
 .minimalHeader {
   padding: 1rem;
   display: flex;
@@ -27,19 +26,17 @@
   transform: scale(1.02);
 }
 
-/* MAIN */
 .mainContent {
   flex: 1;
   display: flex;
   flex-direction: column;
 }
 
-/* FOOTER */
 .minimalFooter {
   padding: 2rem;
   text-align: center;
   background: transparent;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-top: 1px solid var(--sub-bg);
   margin-top: auto;
 }
 
@@ -72,7 +69,7 @@
   display: inline-block;
   font-size: 0.7rem;
   color: var(--success);
-  background: rgba(22, 163, 74, 0.1);
+  background: rgba(var(--success-rgb), 0.1);
   padding: 0.5rem 1rem;
   border-radius: 1rem;
   font-weight: 700;

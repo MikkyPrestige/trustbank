@@ -29,7 +29,7 @@ export default async function CryptoTransactions({ currency, rate }: { currency:
     return (
         <div className={styles.recentTxBox}>
             <div className={styles.txHeader}>
-                <Clock size={14} style={{ marginRight: '6px' }} /> Recent Activity
+                <Clock size={20}  /> Recent Activity
             </div>
 
             <div className={styles.txList}>
@@ -42,14 +42,13 @@ export default async function CryptoTransactions({ currency, rate }: { currency:
                     if (tx.type === TransactionType.CRYPTO_SEND) Icon = ArrowUpRight;
                     if (tx.type === TransactionType.CRYPTO_RECEIVE) Icon = ArrowDownLeft;
 
-                    // Convert to User Currency
                     const displayAmount = Number(tx.amount) * rate;
 
                     return (
                         <div key={tx.id} className={styles.txItem}>
                             <div className={styles.txLeft}>
                                 <div className={`${styles.txIcon} ${isPositive ? styles.txIconSuccess : styles.txIconDanger}`}>
-                                    <Icon size={12} />
+                                    <Icon size={20} />
                                 </div>
                                 <div className={styles.txDetails}>
                                     <span className={styles.txTitle}>{tx.description || tx.type.replace('CRYPTO_', '')}</span>

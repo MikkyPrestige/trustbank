@@ -77,8 +77,8 @@ export default function TransactionTable({ transactions, currency, rate }: Trans
                                     </td>
                                     <td>
                                         <div className={styles.descText}>{t.description}</div>
-                                        <div className={styles.typeBadge}>
-                                            {t.direction === 'CREDIT' ? <ArrowDownLeft size={10} /> : <ArrowUpRight size={10} />}
+                                        <div className={`${styles.typeBadge} ${t.direction === 'CREDIT' ? styles.creditBadge : styles.debitBadge}`}>
+                                            {t.direction === 'CREDIT' ? <ArrowDownLeft size={14} /> : <ArrowUpRight size={14} />}
                                             {t.direction}
                                         </div>
                                     </td>
@@ -118,7 +118,6 @@ export default function TransactionTable({ transactions, currency, rate }: Trans
                 </table>
             </div>
 
-            {/* EDIT MODAL */}
             {editingTrx && (
                 <EditModal
                     trx={editingTrx}
@@ -149,16 +148,12 @@ function EditModal({ trx, onClose, currency, rate }: { trx: TransactionWithAccou
     }, [state, onClose, router]);
 
     const dateStr = new Date(trx.createdAt).toISOString().split('T')[0];
-
-    // Calculate initial converted amount for the input
     const initialAmount = (Number(trx.amount) * rate).toFixed(2);
 
-    // Smart Submit Handler
     const handleSubmit = (formData: FormData) => {
         const inputAmount = parseFloat(formData.get("amount") as string);
 
         if (!isNaN(inputAmount)) {
-            // Convert back to USD for the database
             const usdAmount = inputAmount / rate;
             formData.set("amount", usdAmount.toString());
         }
@@ -178,13 +173,13 @@ function EditModal({ trx, onClose, currency, rate }: { trx: TransactionWithAccou
 
                 <div className={styles.modalBody}>
                     <div className={styles.formGroup}>
-                        <label className={styles.label}><FileText size={14} /> Description</label>
+                        <label className={styles.label}><FileText size={18} /> Description</label>
                         <input name="description" defaultValue={trx.description || ''} className={styles.input} required />
                     </div>
 
                     <div className={styles.row}>
                         <div className={styles.formGroup}>
-                            <label className={styles.label}><DollarSign size={14} /> Amount ({currency})</label>
+                            <label className={styles.label}><DollarSign size={18} /> Amount ({currency})</label>
                             <input
                                 name="amount"
                                 type="number"
@@ -196,13 +191,13 @@ function EditModal({ trx, onClose, currency, rate }: { trx: TransactionWithAccou
                         </div>
 
                         <div className={styles.formGroup}>
-                            <label className={styles.label}><Calendar size={14} /> Date</label>
+                            <label className={styles.label}><Calendar size={18} /> Date</label>
                             <input name="createdAt" type="date" defaultValue={dateStr} className={styles.input} required />
                         </div>
                     </div>
 
                     <div className={styles.formGroup}>
-                        <label className={styles.label}><ArrowLeftRight size={14} /> Type</label>
+                        <label className={styles.label}><ArrowLeftRight size={18} /> Type</label>
                         <select name="direction" defaultValue={trx.direction} className={styles.input}>
                             <option value="CREDIT">Credit (Incoming +)</option>
                             <option value="DEBIT">Debit (Outgoing -)</option>

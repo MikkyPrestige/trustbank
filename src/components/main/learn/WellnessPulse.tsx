@@ -18,17 +18,17 @@ export default function WellnessPulse({ settings }: WellnessPulseProps) {
     const getFeedback = () => {
         if (totalScore >= 80) return {
             label: settings.learn_pulse_res_high,
-            color: "#10b981",
+            color: "var(--success)",
             text: settings.learn_pulse_res_high_msg
         };
         if (totalScore >= 50) return {
             label: settings.learn_pulse_res_mid,
-            color: "#f59e0b",
+            color: "var(--accent)",
             text: settings.learn_pulse_res_mid_msg
         };
         return {
             label: settings.learn_pulse_res_low,
-            color: "#ef4444",
+            color: "var(--danger)",
             text: settings.learn_pulse_res_low_msg
         };
     };

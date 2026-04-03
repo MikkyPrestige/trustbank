@@ -10,9 +10,6 @@
   padding: 0 1.5rem;
 }
 
-/* =========================================
-   1. HERO SECTION
-   ========================================= */
 .heroBackground {
   position: relative;
   height: 65vh;
@@ -79,9 +76,6 @@
   line-height: 1.6;
 }
 
-/* =========================================
-   2. WIZARD SECTION
-   ========================================= */
 .wizardSection {
   margin-top: -2rem;
   position: relative;
@@ -89,9 +83,6 @@
   padding-bottom: 3rem;
 }
 
-/* =========================================
-   3. ANCHOR SECTIONS
-   ========================================= */
 .sectionTitle {
   font-size: 2rem;
   font-weight: 700;
@@ -188,9 +179,6 @@
   box-shadow: var(--shadow-glow);
 }
 
-/* =========================================
-   4. SUPPLEMENTAL GRID
-   ========================================= */
 .suppSection {
   padding: 2rem 0;
   background: var(--bg-surface);
@@ -289,9 +277,6 @@
   color: var(--accent);
 }
 
-/* =========================================
-   5. PARTNER STRIP
-   ========================================= */
 .partnerStrip {
   border-top: 1px solid var(--border);
   padding: 2rem 0;
@@ -336,7 +321,6 @@
   filter: brightness(0) invert(1);
 }
 
-/* Responsive */
 @media (max-width: 968px) {
   .heroTitle {
     font-size: 2.8rem;

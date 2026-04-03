@@ -12,13 +12,10 @@ interface InvestorsTabProps {
 export function InvestorsTab({ settings, investHeroUrl, setInvestHeroUrl }: InvestorsTabProps) {
     return (
         <div className={styles.grid}>
-
-            {/* --- 1. DATA MANAGEMENT LINK --- */}
             <div className={styles.fullWidth}>
-                <h3 className={styles.sectionTitle}>Reports Database</h3>
+                <h3 className={styles.sectionTitle}>Financial Reports</h3>
                 <p className={styles.sectionSubtitle}>Manage financial statements and earnings reports.</p>
             </div>
-
             <Link href="/admin/investors" className={styles.navCard}>
                 <div className={`${styles.navIcon} ${styles.iconPrimary}`}>
                     <TrendingUp size={24} />
@@ -30,10 +27,9 @@ export function InvestorsTab({ settings, investHeroUrl, setInvestHeroUrl }: Inve
                 <ArrowRight size={16} className={styles.chevron} />
             </Link>
 
-            {/* --- 2. PAGE CONFIG --- */}
-            <div className={`${styles.fullWidth} ${styles.marginTop}`}>
+            <div className={styles.fullWidth}>
                 <hr className={styles.divider} />
-                <h3 className={styles.sectionTitle}>Investors Page Configuration</h3>
+                <h3 className={styles.sectionTitle}>HERO SECTION</h3>
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Hero Title</label>
@@ -49,11 +45,11 @@ export function InvestorsTab({ settings, investHeroUrl, setInvestHeroUrl }: Inve
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Image Alt Text</label>
-                <input name="invest_hero_img_alt" defaultValue={settings.invest_hero_img_alt} className={styles.input} />
+                <textarea name="invest_hero_img_alt" defaultValue={settings.invest_hero_img_alt} className={styles.textarea} />
             </div>
-            {/* Stock Ticker */}
+
             <div className={styles.fullWidth}>
-                <h4 className={styles.subsectionTitle}>Stock Ticker Data</h4>
+                <h4 className={styles.sectionTitle}>Stock Ticker Data</h4>
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Stock Price</label>
@@ -73,7 +69,7 @@ export function InvestorsTab({ settings, investHeroUrl, setInvestHeroUrl }: Inve
             </div>
 
             <div className={styles.fullWidth}>
-                <h4 className={styles.subsectionTitle}>UI Labels</h4>
+                <h4 className={styles.sectionTitle}>UI Labels</h4>
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>Reports Title</label>

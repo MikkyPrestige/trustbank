@@ -39,14 +39,12 @@ export default function LoginForm({ siteName, allowRegister }: LoginFormProps) {
 
                 <form action={action} className={styles.glassForm}>
                     <input type="hidden" name="callbackUrl" value={callbackUrl || "/dashboard"} />
-                    {/* Error Alert */}
                     {state?.message && (
                         <div className={styles.errorBanner}>
                             {state.message}
                         </div>
                     )}
 
-                    {/* Email Input */}
                     <div className={styles.inputWrapper}>
                         <label>Email Address</label>
                         <div className={styles.inputIconBox}><Mail size={18} /></div>
@@ -58,7 +56,7 @@ export default function LoginForm({ siteName, allowRegister }: LoginFormProps) {
                             autoComplete="email"
                         />
                     </div>
-                    {/* Password Input */}
+
                     <div className={styles.inputWrapper}>
                         <div className={styles.labelRow}>
                             <label>Password</label>
@@ -103,7 +101,7 @@ export default function LoginForm({ siteName, allowRegister }: LoginFormProps) {
                                 </Link>
                             </div>
                         ) : (
-                                <div className={`${styles.loginLink} ${styles.loginLinkText}`}>
+                            <div className={`${styles.loginLink} ${styles.loginLinkText}`}>
                                 Registration is currently invite-only.
                             </div>
                         )}

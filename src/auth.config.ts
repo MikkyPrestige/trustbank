@@ -11,8 +11,7 @@ export const authConfig = {
       const isAuthPage = nextUrl.pathname === "/login" || nextUrl.pathname === "/register";
 
       if (isDashboard) {
-        if (isLoggedIn) return true;
-        return false; // Redirects to /login
+        return isLoggedIn;
       }
 
       if (isAuthPage && isLoggedIn) {

@@ -20,7 +20,6 @@ export default async function PartnerStrip() {
                 <p className={styles.partnerLabel}>{settings.home_partner_label}</p>
                 <div className={styles.marqueeMask}>
                     <div className={styles.marqueeTrack}>
-                        {/* 1. Original Set */}
                         {PARTNERS.map((p, i) => (
                             <div key={`p1-${i}`} className={styles.logoItem}>
                                 <div className={styles.imgWrapper}>
@@ -35,7 +34,6 @@ export default async function PartnerStrip() {
                             </div>
                         ))}
 
-                        {/* 2. Duplicate Se */}
                         {PARTNERS.map((p, i) => (
                             <div key={`p2-${i}`} className={styles.logoItem} aria-hidden="true">
                                 <div className={styles.imgWrapper}>
@@ -50,7 +48,6 @@ export default async function PartnerStrip() {
                             </div>
                         ))}
 
-                        {/* 3. Triplicate Set */}
                         {PARTNERS.map((p, i) => (
                             <div key={`p3-${i}`} className={styles.logoItem} aria-hidden="true">
                                 <div className={styles.imgWrapper}>

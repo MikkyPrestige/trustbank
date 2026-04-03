@@ -17,11 +17,8 @@ export default function ForgotPasswordCard() {
     return (
         <div className={styles.pageWrapper}>
             <div className={styles.ambientMesh}></div>
-
             <div className={styles.formContainer}>
                 <div className={styles.glassForm}>
-
-                    {/* --- SUCCESS --- */}
                     {state.success ? (
                         <div className={styles.successWrapper}>
                             <div className={styles.successIconWrapper}>
@@ -36,18 +33,16 @@ export default function ForgotPasswordCard() {
                             </Link>
                         </div>
                     ) : (
-                        /* --- INPUT FORM --- */
                         <form action={action}>
                             <div className={styles.header}>
                                 <div className={styles.headerBadge}>
-                                    <ShieldAlert size={14} />
+                                    <ShieldAlert size={18} />
                                     <span>Secure Recovery</span>
                                 </div>
                                 <h1>Forgot Password?</h1>
                                 <p>Enter your email address to reset your access credentials.</p>
                             </div>
 
-                            {/* Error Message */}
                             {state.message && !state.success && (
                                 <div className={styles.errorBanner}>
                                     <ShieldAlert size={16} /> {state.message}
@@ -69,7 +64,6 @@ export default function ForgotPasswordCard() {
                                     />
                                 </div>
                             </div>
-
                             <button
                                 disabled={isPending}
                                 className={styles.submitBtn}

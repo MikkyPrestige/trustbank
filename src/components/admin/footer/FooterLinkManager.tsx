@@ -20,8 +20,6 @@ export default function FooterLinkManager({ initialLinks }: { initialLinks: Link
     const [links, setLinks] = useState<LinkItem[]>(initialLinks);
     const [editingId, setEditingId] = useState<string | null>(null);
     const [order, setOrder] = useState<number>(0);
-
-    // Form States
     const [label, setLabel] = useState("");
     const [href, setHref] = useState("");
     const [column, setColumn] = useState("col1");
@@ -29,7 +27,6 @@ export default function FooterLinkManager({ initialLinks }: { initialLinks: Link
 
     useEffect(() => { setLinks(initialLinks); }, [initialLinks]);
 
-    // Switch to Edit Mode
     const startEdit = (link: LinkItem & { order?: number }) => {
         setEditingId(link.id);
         setLabel(link.label);
@@ -39,7 +36,6 @@ export default function FooterLinkManager({ initialLinks }: { initialLinks: Link
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    // Cancel Edit
     const cancelEdit = () => {
         setEditingId(null);
         setLabel("");
@@ -99,12 +95,10 @@ export default function FooterLinkManager({ initialLinks }: { initialLinks: Link
     const onDragEnd = async (result: DropResult) => {
         if (!result.destination) return;
 
-        // 1. Create new array locally
         const items = Array.from(links);
         const [reorderedItem] = items.splice(result.source.index, 1);
         items.splice(result.destination.index, 0, reorderedItem);
 
-        // 2. Map new index
         const updatedLinks = items.map((item, index) => ({
             ...item,
             order: index,
@@ -117,7 +111,6 @@ export default function FooterLinkManager({ initialLinks }: { initialLinks: Link
             order: link.order
         }));
 
-        // 4. Send mapping to server
         toast.promise(updateFooterOrder(orderData), {
             loading: 'Saving positions...',
             success: 'Order synced to database!',
@@ -133,7 +126,6 @@ export default function FooterLinkManager({ initialLinks }: { initialLinks: Link
                     <option value="col2">Column 2 (Quick Links)</option>
                     <option value="legal">Bottom Strip (Legal)</option>
                 </select>
-
                 <input
                     placeholder="Label"
                     value={label}
@@ -141,7 +133,6 @@ export default function FooterLinkManager({ initialLinks }: { initialLinks: Link
                     onKeyDown={handleKeyDown}
                     className={styles.input}
                 />
-
                 <input
                     placeholder="Link"
                     value={href}
@@ -149,7 +140,7 @@ export default function FooterLinkManager({ initialLinks }: { initialLinks: Link
                     onKeyDown={handleKeyDown}
                     className={styles.input}
                 />
-
+                <div className={styles.actionGroup}>
                 <input
                     type="number"
                     placeholder="Order"
@@ -158,7 +149,6 @@ export default function FooterLinkManager({ initialLinks }: { initialLinks: Link
                     className={styles.orderInput}
                     title="Display Order (lower numbers show first)"
                 />
-
                 <div className={styles.buttonGroup}>
                     <button
                         type="button"
@@ -167,7 +157,7 @@ export default function FooterLinkManager({ initialLinks }: { initialLinks: Link
                         className={editingId ? styles.saveBtn : styles.addBtn}
                     >
                         {editingId ?
-                            <><Save size={16} /> Update</> : <><Plus size={16} /> Add</>
+                            <><Save size={20} /> Update</> : <><Plus size={20} /> Add</>
                         }
                     </button>
 
@@ -177,13 +167,13 @@ export default function FooterLinkManager({ initialLinks }: { initialLinks: Link
                             onClick={cancelEdit}
                             className={styles.cancelBtn}
                         >
-                            <X size={16} />
+                            <X size={20} />
                         </button>
                     )}
                 </div>
+                </div>
             </div>
 
-            {/* Links List */}
             <div className={styles.list}>
                 {links.length === 0 ? (
                     <p className={styles.emptyState}>No dynamic links added yet.</p>
@@ -205,23 +195,25 @@ export default function FooterLinkManager({ initialLinks }: { initialLinks: Link
                                                     className={`${styles.item} ${snapshot.isDragging ? styles.dragging : ''}`}
                                                 >
                                                     <div className={styles.itemContent}>
-                                                        {/* DRAG HANDLE */}
+                                                        <div className={styles.badgeRow}>
                                                         <div {...provided.dragHandleProps} className={styles.dragHandle}>
-                                                            <GripVertical size={18} />
+                                                            <GripVertical size={20} />
                                                         </div>
-
                                                         <span className={styles.itemOrderBadge}>#{index}</span>
                                                         <span className={styles.columnBadge}>{link.column}</span>
-                                                        <span className={styles.linkLabel}>{link.label}</span>
-                                                        <span className={styles.linkUrl}>{link.href}</span>
+                                                        </div>
+                                                        <div className={styles.textGroup}>
+                                                            <span className={styles.linkLabel}>{link.label}</span>
+                                                            <span className={styles.linkUrl}>{link.href}</span>
+                                                        </div>
                                                     </div>
 
                                                     <div className={styles.actions}>
                                                         <button type="button" onClick={() => startEdit(link)} className={styles.editBtn}>
-                                                            <Edit2 size={16} />
+                                                            <Edit2 size={20} />
                                                         </button>
                                                         <button type="button" onClick={() => handleDelete(link.id)} className={styles.deleteBtn}>
-                                                            <Trash2 size={16} />
+                                                            <Trash2 size={20} />
                                                         </button>
                                                     </div>
                                                 </div>

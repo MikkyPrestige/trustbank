@@ -11,9 +11,6 @@ import {
     UserRole
 } from "@prisma/client";
 
-// ==========================================
-// APPLY FOR LOAN
-// ==========================================
 export async function applyForLoan(prevState: any, formData: FormData) {
     const { success, message, user } = await getAuthenticatedUser();
 
@@ -27,12 +24,9 @@ export async function applyForLoan(prevState: any, formData: FormData) {
     const months = Number(formData.get("months"));
     const reason = formData.get("reason") as string;
     const pin = formData.get("pin") as string;
-
-    // Display info for notifications
     const displayAmount = formData.get("displayAmount") as string;
     const displayCurrency = formData.get("displayCurrency") as string;
 
-    // Minimum loan check (Approx $1000 USD)
     if (!amount || amount < 500) return { message: "Minimum loan requirement not met." };
     if (!months) return { message: "Please select a term" };
 
@@ -65,14 +59,12 @@ export async function applyForLoan(prevState: any, formData: FormData) {
             });
         });
 
-        // 5. Notify Admins
         try {
             const admins = await db.user.findMany({
                 where: { role: { in: [UserRole.ADMIN, UserRole.SUPER_ADMIN] } },
                 select: { id: true }
             });
 
-            // Smart formatting
             const formatStr = (displayAmount && displayCurrency)
                 ? `${displayCurrency} ${Number(displayAmount).toLocaleString()}`
                 : `$${amount.toLocaleString()}`;
@@ -102,9 +94,6 @@ export async function applyForLoan(prevState: any, formData: FormData) {
     return { success: true, message: "Application Submitted Successfully" };
 }
 
-// ==========================================
-// REPAY LOAN
-// ==========================================
 export async function repayLoan(prevState: any, formData: FormData) {
     const { success, message, user } = await getAuthenticatedUser();
 
@@ -121,8 +110,6 @@ export async function repayLoan(prevState: any, formData: FormData) {
 
     const loanId = formData.get("loanId") as string;
     const amount = Number(formData.get("amount")); // USD
-
-    // Display info
     const displayAmount = formData.get("displayAmount") as string;
     const displayCurrency = formData.get("displayCurrency") as string;
 
@@ -132,7 +119,6 @@ export async function repayLoan(prevState: any, formData: FormData) {
     if (!loan || loan.status !== 'APPROVED') return { message: "Invalid loan." };
 
     const remaining = Number(loan.totalRepayment) - Number(loan.repaidAmount);
-    // Allow slight float mismatch, but prevent massive overpayment
     if (amount > remaining + 1) {
         return { message: `Overpayment detected. You owe $${remaining.toFixed(2)}` };
     }
@@ -150,7 +136,6 @@ export async function repayLoan(prevState: any, formData: FormData) {
                 throw new Error("Insufficient funds.");
             }
 
-            // Deduct
             await tx.account.update({
                 where: { id: account.id },
                 data: {
@@ -159,7 +144,6 @@ export async function repayLoan(prevState: any, formData: FormData) {
                 }
             });
 
-            // Update Loan
             const newRepaidTotal = Number(loan.repaidAmount) + amount;
             const isFullyPaid = newRepaidTotal >= Number(loan.totalRepayment) - 0.5; // Tolerance
 
@@ -171,7 +155,6 @@ export async function repayLoan(prevState: any, formData: FormData) {
                 }
             });
 
-            // Ledger
             await tx.ledgerEntry.create({
                 data: {
                     accountId: account.id,

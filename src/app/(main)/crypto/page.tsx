@@ -6,23 +6,19 @@ import { Bitcoin, ShieldCheck, Zap, Globe, Lock } from "lucide-react";
 import styles from "./crypto.module.css";
 
 export default async function CryptoPage() {
-    // 1. Parallel Fetching
     const [settings, marketData] = await Promise.all([
         getSiteSettings(),
         getLiveMarketData()
     ]);
 
-    // 2. Filter for assets
     // const cryptoAssets = marketData.assets.filter(item => item.isCrypto);
     const allAssets = marketData.assets;
 
-    // Format the date
     const timeString = marketData.lastUpdated.toLocaleTimeString([], {
         hour: '2-digit',
         minute: '2-digit'
     });
 
-    // Format currency
     const formatPrice = (num: number) => {
         return new Intl.NumberFormat('en-US', {
             style: 'currency',
@@ -34,7 +30,6 @@ export default async function CryptoPage() {
 
     return (
         <main className={styles.main}>
-            {/* 1. HERO SECTION */}
             <section className={styles.hero}>
                 <div className={styles.container}>
                     <div className={styles.heroGrid}>
@@ -56,7 +51,7 @@ export default async function CryptoPage() {
                         </div>
 
                         <div className={styles.heroVisual}>
-                            <div className={styles.floatingCoin} style={{ top: '10%', right: '10%' }}><Bitcoin size={40} /></div>
+                            {/* <div className={styles.floatingCoin} style={{ top: '10%', right: '10%' }}><Bitcoin size={40} /></div> */}
                             <div className={styles.floatingCoin} style={{ bottom: '20%', left: '10%', animationDelay: '1s' }}><Zap size={40} /></div>
 
                             <div className={styles.phoneWrapper}>
@@ -73,7 +68,6 @@ export default async function CryptoPage() {
                 </div>
             </section>
 
-            {/* 2. LIVE MARKET TABLE */}
             <section className={styles.marketSection}>
                 <div className={styles.container}>
                     <div className={styles.tableCard}>
@@ -97,7 +91,6 @@ export default async function CryptoPage() {
                                 <tbody>
                                     {allAssets.map((asset) => {
                                         const displayIcon = asset.iconUrl || `/assets/${asset.symbol.toLowerCase()}.png`;
-                                        // Check if the data was updated in the last 60 seconds
                                         const isFresh = asset.lastUpdated &&
                                             (new Date().getTime() - new Date(asset.lastUpdated).getTime() < 60000);
 
@@ -155,7 +148,6 @@ export default async function CryptoPage() {
                 </div>
             </section>
 
-            {/* 3. SECURITY FEATURES */}
             <section className={styles.featuresSection}>
                 <div className={styles.container}>
                     <div className={styles.sectionHeader}>
@@ -186,10 +178,8 @@ export default async function CryptoPage() {
 }
 
 function Sparkline({ data, color }: { data: any, color: string }) {
-    // 1. Force the data into an array if it's trapped in a JSON string
     let pointsArray = Array.isArray(data) ? [...data] : [];
 
-    // 2. If we have NO data, show the subtle gray flat line
     if (pointsArray.length < 2) {
         return (
             <div style={{ width: '100px', height: '30px', display: 'flex', alignItems: 'center' }}>

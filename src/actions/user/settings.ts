@@ -43,7 +43,6 @@ const pinSchema = z.object({
 });
 
 
-// --- 1. UPDATE AVATAR ---
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
 export async function updateAvatar(formData: FormData) {
@@ -68,7 +67,6 @@ export async function updateAvatar(formData: FormData) {
 
     try {
 
-        // Upload to Server
         secureUrl = await uploadFileToCloud(file, "avatars");
 
         await db.user.update({
@@ -85,7 +83,6 @@ export async function updateAvatar(formData: FormData) {
     return { success: true, message: "Profile picture updated!", url: secureUrl };
 }
 
-// --- 2. UPDATE PROFILE ---
 export async function updateProfile(prevState: any, formData: FormData) {
       const { success, message, user } = await getAuthenticatedUser();
 
@@ -147,7 +144,6 @@ export async function updateProfile(prevState: any, formData: FormData) {
     return { success: true, message: "Profile Updated Successfully!" };
 }
 
-// --- 3. CHANGE PASSWORD ---
 export async function changePassword(prevState: any, formData: FormData) {
      const { success, message, user } = await getAuthenticatedUser();
 
@@ -199,7 +195,6 @@ export async function changePassword(prevState: any, formData: FormData) {
     return { success: true, message: "Password Changed Successfully!" };
 }
 
-// --- 4. CHANGE PIN  ---
 export async function changePin(prevState: any, formData: FormData) {
     const { success, message, user } = await getAuthenticatedUser();
 
@@ -254,7 +249,6 @@ export async function changePin(prevState: any, formData: FormData) {
     return { success: true, message: "Transaction PIN Updated!" };
 }
 
-// --- 5. CHANGE CURRENCY ---
 export async function updateUserCurrency(currencyCode: string) {
     const { success, message, user } = await getAuthenticatedUser();
 
@@ -280,7 +274,6 @@ export async function updateUserCurrency(currencyCode: string) {
 }
 
 
-// --- 6. LOGOUT ALL DEVICES  ---
 export async function logoutAllDevices() {
     const session = await auth();
 
@@ -305,7 +298,6 @@ export async function logoutAllDevices() {
 }
 
 
-// --- 7. CLOSE ACCOUNT  ---
 export async function closeAccount(password: string) {
   const { success, message, user } = await getAuthenticatedUser();
 
@@ -334,7 +326,6 @@ export async function closeAccount(password: string) {
             return { error: "Incorrect password. Cannot verify ownership." };
         }
 
-        // Check Balances
         const totalBalance = dbUser.accounts.reduce((sum, acc) => sum + Number(acc.availableBalance), 0);
 
         const formatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
@@ -351,7 +342,6 @@ export async function closeAccount(password: string) {
             };
         }
 
-        //  ARCHIVE USER (Soft Delete)
         const archivedEmail = `deleted-${Date.now()}_${dbUser.email}`;
 
         await db.user.update({

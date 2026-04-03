@@ -50,8 +50,8 @@ export default function DepositModal() {
 
     return (
         <>
-            <button onClick={() => setIsOpen(true)} className={styles.verifyBtn} style={{ padding: '6px 12px', fontSize: '0.8rem', background: 'var(--text-main)', color: 'var(--bg-app)' }}>
-                <Plus size={16} style={{ marginRight: '6px' }} /> New Wallet
+            <button onClick={() => setIsOpen(true)} className={styles.walletBtn}>
+                <Plus size={18} /> New Wallet
             </button>
 
             {isOpen && createPortal(
@@ -62,7 +62,7 @@ export default function DepositModal() {
                             <button onClick={() => setIsOpen(false)} className={styles.closeBtn}><X size={20} /></button>
                         </div>
 
-                        <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem', textAlign: 'center', fontSize: '0.9rem' }}>
+                        <p className={styles.modalDesc}>
                             Select a blockchain network to generate a secure deposit address.
                         </p>
 

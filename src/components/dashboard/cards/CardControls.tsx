@@ -18,12 +18,10 @@ export default function CardControls({ card }: { card: Card }) {
             </div>
 
             <div className={styles.controlGrid}>
-
-                {/* 1. INTERNATIONAL (Visual Toggle Only) */}
                 <div className={styles.controlCard}>
                     <div className={styles.controlHeader}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                            <div className={styles.iconBox} style={{ background: 'rgba(59, 130, 246, 0.1)', color: '#3b82f6' }}>
+                        <div className={styles.flexGap}>
+                            <div className={styles.iconBox} style={{ background: 'rgba(59, 130, 246, 0.1)', color: 'var(--primary)' }}>
                                 <Globe size={22} />
                             </div>
                             <div className={styles.controlInfo}>
@@ -38,11 +36,10 @@ export default function CardControls({ card }: { card: Card }) {
                     </div>
                 </div>
 
-                {/* 2. CONTACTLESS (Visual Toggle Only) */}
                 <div className={styles.controlCard}>
                     <div className={styles.controlHeader}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                            <div className={styles.iconBox} style={{ background: 'rgba(34, 197, 94, 0.1)', color: '#22c55e' }}>
+                        <div className={styles.flexGap}>
+                            <div className={styles.iconBox} style={{ background: 'rgba(34, 197, 94, 0.1)', color: 'var(--success)' }}>
                                 <Smartphone size={22} />
                             </div>
                             <div className={styles.controlInfo}>
@@ -56,7 +53,6 @@ export default function CardControls({ card }: { card: Card }) {
                         </label>
                     </div>
                 </div>
-
             </div>
         </div>
     );

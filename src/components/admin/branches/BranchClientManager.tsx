@@ -18,12 +18,8 @@ export default function BranchClientManager({ initialBranches }: Props) {
 
     const [loading, setLoading] = useState(false);
     const [geoLoading, setGeoLoading] = useState(false);
-
-    // Modal
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingItem, setEditingItem] = useState<Branch | null>(null);
-
-    // Form Fields
     const [name, setName] = useState('');
     const [address, setAddress] = useState('');
     const [city, setCity] = useState('');
@@ -32,13 +28,11 @@ export default function BranchClientManager({ initialBranches }: Props) {
     const [hours, setHours] = useState('Mon - Fri: 9:00 AM - 5:00 PM');
     const [lat, setLat] = useState('40.7128');
     const [lng, setLng] = useState('-74.0060');
-
     const [isActive, setIsActive] = useState(true);
     const [hasAtm, setHasAtm] = useState(true);
     const [hasDriveThru, setHasDriveThru] = useState(false);
     const [hasNotary, setHasNotary] = useState(false);
 
-    // --- GEOCODING (OpenStreetMap) ---
     const handleAutoGeocode = async () => {
         if (!address || !city) {
             toast.error("Please enter Address and City first.");
@@ -187,13 +181,13 @@ export default function BranchClientManager({ initialBranches }: Props) {
                             </div>
                             <div className={styles.actions}>
                                 <button onClick={() => handleToggleStatus(branch)} className={styles.iconBtn} title="Toggle Status">
-                                    {branch.isActive ? <X size={16} color="var(--danger)" /> : <Plus size={16} color="var(--success)" />}
+                                    {branch.isActive ? <X size={20} color="var(--danger)" /> : <Plus size={20} color="var(--success)" />}
                                 </button>
-                                <button onClick={() => openEditModal(branch)} className={styles.iconBtn}>
-                                    <Pencil size={16} />
+                                <button onClick={() => openEditModal(branch)} className={`${styles.iconBtn} ${styles.iconBtnEdit}`}>
+                                    <Pencil size={20} />
                                 </button>
-                                <button onClick={() => handleDelete(branch.id)} className={`${styles.iconBtn} ${styles.deleteBtn}`}>
-                                    <Trash2 size={16} />
+                                <button onClick={() => handleDelete(branch.id)} className={`${styles.iconBtn} ${styles.iconBtnDelete}`}>
+                                    <Trash2 size={20} />
                                 </button>
                             </div>
                         </div>
@@ -247,7 +241,7 @@ export default function BranchClientManager({ initialBranches }: Props) {
                                         disabled={geoLoading}
                                         className={styles.autoFillBtn}
                                     >
-                                        {geoLoading ? <Loader2 size={12} className={styles.spin} /> : <Search size={12} />}
+                                        {geoLoading ? <Loader2 size={12} className={styles.spin} /> : <Search size={16} />}
                                         Auto-Fill Coords
                                     </button>
                                 </div>

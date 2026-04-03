@@ -2,7 +2,6 @@ import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { headers } from "next/headers";
 
-// Expanded Action List (Features + Security)
 export type AdminLogAction =
   // --- User Management ---
   | 'CREATE_USER' | 'UPDATE_STATUS' | 'DELETE_USER' | 'ARCHIVED_USER' | 'RESET_PASSWORD'
@@ -69,16 +68,11 @@ export async function logAdminAction(
   status: LogStatus = 'SUCCESS'
 ) {
   try {
-    // 1. Get Session (if exists)
     const session = await auth();
-
-    // 2. Get Network Info (Headers)
     const headersList = await headers();
-
     const ip = headersList.get("x-forwarded-for") || "Unknown IP";
     const userAgent = headersList.get("user-agent") || "Unknown Device";
 
-    // 3. Create Log Entry
     await db.adminLog.create({
       data: {
         adminId: session?.user?.id || null,

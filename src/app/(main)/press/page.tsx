@@ -21,7 +21,6 @@ export default async function PressPage() {
 
     return (
         <main className={styles.main}>
-            {/* HERO */}
             <section className={styles.hero}>
                 <div className={styles.heroImageWrapper}>
                     <Image
@@ -49,7 +48,6 @@ export default async function PressPage() {
 
             <div className={styles.container}>
                 <div className={styles.contentGrid}>
-                    {/* LEFT: NEWS LIST */}
                     <div className={styles.newsColumn}>
                         <h2 className={styles.sectionTitle}>{settings.press_release_title}</h2>
                         <div className={styles.pressList}>
@@ -79,7 +77,6 @@ export default async function PressPage() {
                         </div>
                     </div>
 
-                    {/* RIGHT: SIDEBAR */}
                     <aside className={styles.sidebar}>
                         <div className={styles.mediaCard}>
                             <h3>{settings.press_kit_title}</h3>
