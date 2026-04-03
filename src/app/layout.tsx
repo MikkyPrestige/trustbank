@@ -13,7 +13,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-    title: "TrustBank - Banking for the Future",
+    title: "Trust Bank - Banking for the Future",
     description: "Secure, fast, and modern banking for everyone.",
 };
 
@@ -53,7 +53,7 @@ export default function RootLayout({
                         showSpinner={false}
                         easing="ease"
                         speed={200}
-                        shadow="0 0 10px var(--primary), 0 0 5px var(--primary)"
+                        shadow="0 0 10px var(--primary), 0 0 5px var(--primary-rgb)"
                     />
 
                     {children}

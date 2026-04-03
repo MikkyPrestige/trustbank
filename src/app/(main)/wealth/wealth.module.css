@@ -10,9 +10,6 @@
   padding: 0 20px;
 }
 
-/* =========================================
-   1. HERO SECTION
-   ========================================= */
 .heroBackground {
   position: relative;
   width: 100%;
@@ -33,9 +30,11 @@
 
 .heroOverlay {
   position: absolute;
-  top: 0; left: 0; width: 100%; height: 100%;
-  /* Gradient from app bg to transparent */
-  background: linear-gradient(90deg, var(--bg-app) 0%, rgba(0,0,0,0) 100%);
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, var(--bg-app) 0%, rgba(0, 0, 0, 0) 100%);
   z-index: 1;
 }
 
@@ -49,9 +48,9 @@
 
 .goldBadge {
   display: inline-block;
+  background: rgba(var(--accent-rgb), 0.1);
   color: var(--accent);
-  border: 1px solid var(--accent);
-  background: rgba(245, 158, 11, 0.1); /* Subtle gold tint */
+  border: 1px solid rgba(var(--accent-rgb), 0.3);
   padding: 8px 16px;
   border-radius: 50px;
   font-size: 0.8rem;
@@ -72,7 +71,6 @@
 }
 
 .highlight {
-  /* Gradient text using accent color */
   background: linear-gradient(to right, var(--accent), #d97706);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -85,9 +83,6 @@
   max-width: 550px;
 }
 
-/* =========================================
-   2. SIMULATOR
-   ========================================= */
 .simSection {
   margin-top: -25px;
   margin-bottom: 50px;
@@ -95,9 +90,6 @@
   z-index: 10;
 }
 
-/* =========================================
-   3. SERVICES GRID
-   ========================================= */
 .servicesSection {
   padding-bottom: 100px;
 }
@@ -136,7 +128,7 @@
 }
 
 .card:hover {
-  border-color: var(--accent);
+  border-color: rgba(var(--accent-rgb), 0.3);
   transform: translateY(-5px);
   box-shadow: var(--shadow-card);
 }
@@ -171,18 +163,14 @@
 }
 
 .link:hover {
-  gap: 12px;
+  gap: 1rem;
 }
 
-/* =========================================
-   4. ADVISOR SECTION
-   ========================================= */
 .advisorSection {
   padding: 50px 0 100px 0;
 }
 
 .advisorBox {
-  /* Use bg-surface for distinct section */
   background: var(--bg-surface);
   border-radius: 2px;
   padding: 60px;
@@ -228,8 +216,8 @@
 }
 
 .goldBtn {
-  background: var(--accent);
-  color: #000; /* Force black text for contrast on Gold */
+  background: rgba(var(--accent-rgb), 0.1);
+  color: #000;
   padding: 16px 32px;
   border: none;
   font-weight: 700;
@@ -245,7 +233,6 @@
   transform: translateY(-2px);
 }
 
-/* Visuals */
 .advisorVisual {
   position: absolute;
   right: -100px;
@@ -259,13 +246,10 @@
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  border: 1px solid var(--accent);
+   border: 1px solid rgba(var(--accent-rgb), 0.3);
   opacity: 0.2;
 }
 
-/* =========================================
-   5. PRODUCT ANCHOR SECTIONS
-   ========================================= */
 .productSection {
   padding: 6rem 0;
   border-bottom: 1px solid var(--border);
@@ -334,7 +318,7 @@
   align-items: center;
   gap: 10px;
   background: none;
-  border: 1px solid var(--accent);
+  border: 1px solid rgba(var(--accent-rgb), 0.3);
   color: var(--accent);
   padding: 12px 24px;
   border-radius: 2px;
@@ -345,17 +329,28 @@
   text-transform: uppercase;
   letter-spacing: 1px;
 }
-
 .productBtn:hover {
-  background: rgba(251, 191, 36, 0.1);
+  background: rgba(var(--accent-rgb), 0.1);
   gap: 14px;
 }
 
-/* Responsive */
 @media (max-width: 900px) {
-  .heroBackground { height: 70vh; }
-  .productGrid { grid-template-columns: 1fr; gap: 3rem; text-align: center; }
-  .productContent { align-items: center; }
-  .productImageWrapper { height: 300px; order: -1; }
-  .reverseGrid .productImageWrapper { order: -1; }
+  .heroBackground {
+    height: 70vh;
+  }
+  .productGrid {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    text-align: center;
+  }
+  .productContent {
+    align-items: center;
+  }
+  .productImageWrapper {
+    height: 300px;
+    order: -1;
+  }
+  .reverseGrid .productImageWrapper {
+    order: -1;
+  }
 }

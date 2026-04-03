@@ -7,13 +7,9 @@ import SystemRulesForm from "@/components/admin/system/SystemRulesForm";
 export default async function SystemRulesPage() {
     await requireAdmin();
 
-    // 1. Fetch Standard System Rules
     const currentSettings = await db.systemSettings.findMany();
-
-    // 2. Fetch Main Site Settings
     const siteSettings = await db.siteSettings.findFirst();
 
-    // 3. Format Data
     const values = currentSettings.reduce((acc, item) => {
         acc[item.key] = item.value;
         return acc;

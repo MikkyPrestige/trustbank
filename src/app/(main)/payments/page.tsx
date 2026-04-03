@@ -1,3 +1,4 @@
+import { db } from "@/lib/db";
 import { getSiteSettings } from "@/lib/content/get-settings";
 import Image from "next/image";
 import styles from "./payments.module.css";
@@ -7,56 +8,62 @@ import { Zap, CreditCard, ArrowRight, RefreshCw, Building, Mail } from "lucide-r
 export default async function PaymentsPage() {
     const settings = await getSiteSettings();
 
-    // The "Big 3" Anchors (Zig-Zag)
+    const currencies = await db.currency.findMany({
+        where: { active: true },
+        orderBy: { code: 'asc' }
+    });
+
     const ANCHORS = [
         {
             id: 'bills',
             title: settings.payments_bills_title,
             desc: settings.payments_bills_desc,
             btn: settings.payments_bills_btn,
-            img: settings.payments_bills_img || "/payments-bills.png",
-            alt: settings.payments_bills_alt
+            img: settings.payments_bills_img,
+            alt: settings.payments_bills_alt,
+            link: settings.payments_bills_link
         },
         {
             id: 'p2p',
             title: settings.payments_p2p_title,
             desc: settings.payments_p2p_desc,
             btn: settings.payments_p2p_btn,
-            img: settings.payments_p2p_img || "/payments-p2p.png",
-            alt: settings.payments_p2p_alt
+            img: settings.payments_p2p_img,
+            alt: settings.payments_p2p_alt,
+            link: settings.payments_p2p_link
         },
         {
             id: 'wires',
             title: settings.payments_wires_title,
             desc: settings.payments_wires_desc,
             btn: settings.payments_wires_btn,
-            img: settings.payments_wires_img || "/payments-wires.png",
-            alt: settings.payments_wires_alt
+            img: settings.payments_wires_img,
+            alt: settings.payments_wires_alt,
+            link: settings.payments_wires_link
         },
     ];
 
-    // Supplemental Grid
     const SUPPLEMENTAL = [
         {
             title: settings.payments_supp1_title,
             desc: settings.payments_supp1_desc,
-            icon: <RefreshCw size={32} className={styles.iconNeon} />
+            link: settings.payments_supp1_link,
+            icon: < RefreshCw size={32} className={styles.iconNeon} />
         },
         {
             title: settings.payments_supp2_title,
             desc: settings.payments_supp2_desc,
+            link: settings.payments_supp2_link,
             icon: <CreditCard size={32} className={styles.iconNeon} />
         },
     ];
 
     return (
         <main className={styles.main}>
-
-            {/* 1. HERO & WIDGET */}
             <section className={styles.heroBackground}>
                 <Image
-                    src={settings.payments_hero_img || "/payments-hero.png"}
-                    alt={settings.payments_hero_alt || "Payments Hero"}
+                    src={settings.payments_hero_img}
+                    alt={settings.payments_hero_alt}
                     fill
                     className={styles.heroBgImage}
                     priority
@@ -64,7 +71,7 @@ export default async function PaymentsPage() {
                 <div className={styles.heroOverlay}></div>
 
                 <div className={styles.heroContent}>
-                    <div className={styles.neonBadge}><Zap size={14} /> Instant Settlement</div>
+                    <div className={styles.neonBadge}><Zap size={14} /> {settings.payments_hero_badge}</div>
                     <h1 className={styles.heroTitle}>
                         {settings.payments_hero_title} <br />
                         <span className={styles.highlight}>{settings.payments_hero_highlight}</span>
@@ -73,11 +80,10 @@ export default async function PaymentsPage() {
                 </div>
 
                 <div className={styles.heroWidget}>
-                    <TransferEstimator settings={settings} />
+                    <TransferEstimator settings={settings} currencies={currencies} />
                 </div>
             </section>
 
-            {/* 2. ANCHOR SECTIONS (Zig-Zag) */}
             {ANCHORS.map((p, i) => (
                 <section key={p.id} id={p.id} className={`${styles.productSection} ${i % 2 !== 0 ? styles.bgAlt : ''}`}>
                     <div className={styles.container}>
@@ -85,7 +91,7 @@ export default async function PaymentsPage() {
                             <div className={styles.productContent}>
                                 <h2 className={styles.productTitle}>{p.title}</h2>
                                 <p className={styles.productDesc}>{p.desc}</p>
-                                <a href="#" className={styles.productBtn}>
+                                <a href={p.link} className={styles.productBtn}>
                                     {p.btn} <ArrowRight size={18} />
                                 </a>
                             </div>
@@ -97,7 +103,6 @@ export default async function PaymentsPage() {
                 </section>
             ))}
 
-            {/* 3. SUPPLEMENTAL GRID (#manage) */}
             <section id="manage" className={styles.suppSection}>
                 <div className={styles.container}>
                     <div className={styles.sectionHeader}>
@@ -110,19 +115,16 @@ export default async function PaymentsPage() {
                                 <div className={styles.cardHeader}>{p.icon}</div>
                                 <h3>{p.title}</h3>
                                 <p>{p.desc}</p>
-                                {/* Changed to Anchor tag */}
-                                <a href="#" className={styles.cardLink}>Manage <ArrowRight size={16} /></a>
+                                <a href={p.link} className={styles.cardLink}>{settings.payments_supp_linkText} <ArrowRight size={16} /></a>
                             </div>
                         ))}
                     </div>
                 </div>
             </section>
 
-            {/* 4. UTILITY STRIP */}
             <section className={styles.utilityStrip}>
                 <div className={styles.container}>
                     <div className={styles.utilityRow}>
-                        {/* Item 1 */}
                         <div className={styles.utilityItem}>
                             <Mail size={24} className={styles.utilIcon} />
                             <div>
@@ -130,7 +132,6 @@ export default async function PaymentsPage() {
                                 <p>{settings.payments_util1_desc}</p>
                             </div>
                         </div>
-                        {/* Item 2 */}
                         <div className={styles.utilityItem}>
                             <Building size={24} className={styles.utilIcon} />
                             <div>
@@ -138,7 +139,6 @@ export default async function PaymentsPage() {
                                 <p>{settings.payments_util2_desc}</p>
                             </div>
                         </div>
-                        {/* Item 3 */}
                         <div className={styles.utilityItem}>
                             <CreditCard size={24} className={styles.utilIcon} />
                             <div>

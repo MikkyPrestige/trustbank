@@ -14,11 +14,11 @@ async function main() {
   // 1. SUPER ADMIN - With Money & Card
   // ==========================================
   const superAdmin = await prisma.user.upsert({
-    where: { email: "admin@trustbank.com" },
+    where: { email: "meekyberry6@gmail.com" },
     update: { role: "SUPER_ADMIN", status: "ACTIVE", passwordHash: hashedPassword, transactionPin: PIN },
     create: {
-      email: "admin@trustbank.com",
-      fullName: "System Super Admin",
+      email: "meekyberry6@gmail.com",
+      fullName: "Berry",
       role: "SUPER_ADMIN",
       status: "ACTIVE",
       kycStatus: "VERIFIED",
@@ -67,11 +67,11 @@ async function main() {
   // 2.  ADMIN (Operations)
   // ==========================================
   const admin = await prisma.user.upsert({
-    where: { email: "manager@trustbank.com" },
+    where: { email: "mikkylanky03@gmail.com" },
     update: { role: "ADMIN", status: "ACTIVE", passwordHash: hashedPassword },
     create: {
-      email: "manager@trustbank.com",
-      fullName: "Sarah Operations",
+      email: "mikkylanky03@gmail.com",
+      fullName: "Mikky Lanky",
       role: "ADMIN",
       status: "ACTIVE",
       kycStatus: "VERIFIED",
@@ -87,11 +87,11 @@ async function main() {
   // 3. SUPPORT AGENT
   // ==========================================
   const support = await prisma.user.upsert({
-    where: { email: "support@trustbank.com" },
+    where: { email: "mikkyprestige@outlook.com" },
     update: { role: "SUPPORT", status: "ACTIVE", passwordHash: hashedPassword },
     create: {
-      email: "support@trustbank.com",
-      fullName: "Help Desk Agent",
+      email: "mikkyprestige@outlook.com",
+      fullName: "Mikky Prestige",
       role: "SUPPORT",
       status: "ACTIVE",
       kycStatus: "VERIFIED",

@@ -1,6 +1,5 @@
 'use client';
 
-
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { UserPlus, Mail, Lock, User } from "lucide-react";
@@ -37,7 +36,7 @@ export default function CreateStaffForm() {
         <div className={styles.formCard}>
             <h3 className={styles.formTitle}>
                 <UserPlus size={20} className={styles.icon} />
-                Recruit New Staff
+                Add New Staff
             </h3>
 
             <form ref={formRef} action={handleSubmit} className={styles.form}>

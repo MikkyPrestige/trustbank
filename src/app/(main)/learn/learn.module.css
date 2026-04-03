@@ -10,19 +10,15 @@
   padding: 0 1.5rem;
 }
 
-/* =========================================
-   1. HERO SECTION
-   ========================================= */
 .heroBackground {
   position: relative;
   width: 100%;
-  min-height: 80vh;
+  min-height: 60vh;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  padding: 80px 0;
-  /* Use surface for contrast against main app bg */
+  padding: 2rem 0;
   background: var(--bg-surface);
 }
 
@@ -35,12 +31,7 @@
 .heroOverlay {
   position: absolute;
   inset: 0;
-  /* subtle gradient using surface colors */
-  background: linear-gradient(
-    90deg,
-    var(--bg-app) 0%,
-    rgba(0,0,0,0) 100%
-  );
+  background: linear-gradient(90deg, var(--bg-app) 0%, rgba(0, 0, 0, 0) 100%);
   z-index: 1;
 }
 
@@ -51,7 +42,7 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  gap: 4rem;
+  gap: 2rem;
 }
 
 .heroContent {
@@ -64,16 +55,15 @@
   flex-shrink: 0;
 }
 
-/* Badges */
 .amberBadge {
   display: inline-block;
+ background: rgba(var(--accent-rgb), 0.1);
   color: var(--accent);
-  background: rgba(251, 191, 36, 0.1); /* Low opacity accent */
-  border: 1px solid var(--accent);
-  padding: 8px 16px;
+  border: 1px solid rgba(var(--accent-rgb), 0.3);
+  padding: 0.5rem 1rem;
   border-radius: 50px;
   font-weight: 700;
-  margin-bottom: 24px;
+  margin-bottom: 2rem;
   font-size: 0.8rem;
   letter-spacing: 1.5px;
   text-transform: uppercase;
@@ -85,7 +75,7 @@
   font-weight: 800;
   color: var(--text-main);
   line-height: 1.1;
-  margin-bottom: 24px;
+  margin-bottom: 1rem;
   font-family: serif;
 }
 
@@ -100,17 +90,14 @@
   max-width: 500px;
 }
 
-/* =========================================
-   2. CONTENT GRID
-   ========================================= */
 .contentSection {
-  padding: 6rem 0;
+  padding: 2rem 0;
   background: var(--bg-app);
 }
 
 .sectionHeader {
   text-align: center;
-  margin-bottom: 4rem;
+  margin-bottom: 2rem;
 }
 
 .sectionHeader h2 {
@@ -135,7 +122,7 @@
   grid-column: span 2;
   background: var(--bg-card);
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: 1rem;
   overflow: hidden;
   display: flex;
   transition: all 0.3s ease;
@@ -145,7 +132,7 @@
 .card {
   background: var(--bg-card);
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: 1rem;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -190,9 +177,9 @@
   position: absolute;
   top: 15px;
   left: 15px;
-  background: var(--bg-card); /* Adaptive background */
+  background: var(--bg-card);
   color: var(--accent);
-  padding: 6px 12px;
+  padding: 0.5rem 1rem;
   border-radius: 4px;
   font-size: 0.7rem;
   font-weight: 700;
@@ -247,14 +234,11 @@
 }
 
 .readLink:hover {
-  gap: 12px;
+  gap: 1rem;
 }
 
-/* =========================================
-   3. CATEGORY STRIP
-   ========================================= */
 .categoryStrip {
-  padding: 5rem 0;
+  padding: 4rem 0;
   border-top: 1px solid var(--border);
   background: var(--bg-surface);
 }
@@ -269,7 +253,7 @@
 .categoryItem {
   background: var(--bg-card);
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: 1rem;
   padding: 2rem;
   width: 240px;
   text-align: center;
@@ -304,11 +288,10 @@
   color: var(--text-muted);
 }
 
-/* Responsive */
 @media (max-width: 968px) {
   .heroBackground .container {
     flex-direction: column;
-    padding-bottom: 40px;
+    padding-bottom: 3rem;
   }
   .heroContent {
     text-align: center;

@@ -21,12 +21,11 @@ export default async function PressPage() {
 
     return (
         <main className={styles.main}>
-            {/* HERO */}
             <section className={styles.hero}>
                 <div className={styles.heroImageWrapper}>
                     <Image
-                        src={settings.press_hero_img || "/press-hero.png"}
-                        alt={settings.press_hero_img_alt || "Press Newsroom"}
+                        src={settings.press_hero_img}
+                        alt={settings.press_hero_img_alt}
                         fill
                         className={styles.heroImage}
                         priority
@@ -39,7 +38,7 @@ export default async function PressPage() {
                     <p className={styles.heroDesc}>{settings.press_hero_desc}</p>
 
                     <div className={styles.heroContact}>
-                        <Mail size={16} /> Press Contact:
+                        <Mail size={16} /> {settings.press_contact}
                         <a href={`mailto:${settings.press_contact_email}`} className={styles.contactLink}>
                             {settings.press_contact_email}
                         </a>
@@ -49,7 +48,6 @@ export default async function PressPage() {
 
             <div className={styles.container}>
                 <div className={styles.contentGrid}>
-                    {/* LEFT: NEWS LIST */}
                     <div className={styles.newsColumn}>
                         <h2 className={styles.sectionTitle}>{settings.press_release_title}</h2>
                         <div className={styles.pressList}>
@@ -79,7 +77,6 @@ export default async function PressPage() {
                         </div>
                     </div>
 
-                    {/* RIGHT: SIDEBAR */}
                     <aside className={styles.sidebar}>
                         <div className={styles.mediaCard}>
                             <h3>{settings.press_kit_title}</h3>
@@ -87,7 +84,7 @@ export default async function PressPage() {
                             <div className={styles.kitPreview}>
                                 <div className={styles.fileIcon}>{settings.press_file_icon}</div>
                                 <div className={styles.fileInfo}>
-                                    <span>{settings.press_file_name}</span>
+                                    <span>{settings.site_name}{settings.press_file_name}</span>
                                     <span className={styles.fileSize}>{settings.press_file_size}</span>
                                 </div>
                             </div>
@@ -98,13 +95,12 @@ export default async function PressPage() {
                         </div>
 
                         <div className={styles.infoCard}>
-                            <h4>{settings.press_about_title}</h4>
+                            <h4>{settings.press_about_title} {settings.site_name}</h4>
                             <p className={styles.tinyText}>
-                                {settings.press_about_desc}
+                                {settings.site_name} {settings.press_about_desc}
                             </p>
                         </div>
                     </aside>
-
                 </div>
             </div>
         </main>

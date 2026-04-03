@@ -11,7 +11,13 @@ import { useRouter } from 'next/navigation';
 
 type WireWithUser = WireTransfer & { user: User };
 
-export default function WireRow({ wire }: { wire: WireWithUser }) {
+interface WireRowProps {
+    wire: WireWithUser;
+    currency?: string;
+    rate?: number;
+}
+
+export default function WireRow({ wire, currency = "USD", rate = 1 }: WireRowProps) {
     const [showModal, setShowModal] = useState(false);
     const [loading, setLoading] = useState(false);
     const router = useRouter();
@@ -20,7 +26,9 @@ export default function WireRow({ wire }: { wire: WireWithUser }) {
         e.stopPropagation();
     };
 
-    // 1. REJECT LOGIC
+    const amountNative = Number(wire.amount) * rate;
+    const feeNative = Number(wire.fee) * rate;
+
     const handleReject = async (e: React.MouseEvent) => {
         stopProp(e);
         if (!confirm("REJECT & REFUND?\n\nThis will release the held funds back to the user. Are you sure?")) return;
@@ -41,7 +49,6 @@ export default function WireRow({ wire }: { wire: WireWithUser }) {
         }
     };
 
-    // 2. APPROVE LOGIC (Settles Funds)
     const handleApprove = async (e: React.MouseEvent) => {
         stopProp(e);
         const msg = wire.status === 'PENDING_AUTH'
@@ -66,7 +73,6 @@ export default function WireRow({ wire }: { wire: WireWithUser }) {
         }
     };
 
-    // Determine State Helpers
     const isHold = wire.status === 'ON_HOLD';
     const isReadyForApproval = wire.status === 'PENDING_AUTH';
     const isFailed = wire.status === 'FAILED';
@@ -76,8 +82,7 @@ export default function WireRow({ wire }: { wire: WireWithUser }) {
 
     return (
         <>
-            <tr className={styles.row} onClick={() => router.push(`/admin/wires/${wire.id}`)} style={{ cursor: 'pointer' }}>
-                {/* 1. DATE */}
+            <tr className={styles.row} onClick={() => router.push(`/admin/wires/${wire.id}`)}>
                 <td className={styles.dateCell}>
                     <div>{new Date(wire.createdAt).toLocaleDateString()}</div>
                     <span className={styles.time}>
@@ -85,33 +90,38 @@ export default function WireRow({ wire }: { wire: WireWithUser }) {
                     </span>
                 </td>
 
-                {/* 2. USER */}
                 <td className={styles.userCell}>
                     <div className={styles.userName}>{wire.user.fullName || 'Unknown User'}</div>
                     <div className={styles.userEmail}>{wire.user.email}</div>
                 </td>
 
-                {/* 3. BANK */}
                 <td className={styles.infoCell}>
                     <div className={styles.bankName}>{wire.bankName}</div>
                     <div className={styles.accNum}>{wire.accountNumber}</div>
                 </td>
 
-                {/* 4. AMOUNT */}
                 <td className={styles.amountCell}>
-                    {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(wire.amount))}
+                    <div className={styles.amount}>
+                        {new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(amountNative)}
+                    </div>
+
+                    {currency !== 'USD' && (
+                        <div className={styles.amountUsd}>
+                            ≈ {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(wire.amount))}
+                        </div>
+                    )}
+
                     {Number(wire.fee) > 0 && (
                         <div className={styles.feeText}>
-                            + {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(wire.fee))} Fee
+                            + {new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(feeNative)} Fee
                         </div>
                     )}
                 </td>
 
-                {/* 5. STAGE / STATUS */}
                 <td>
                     {isReadyForApproval ? (
                         <span className={`${styles.badge} ${styles.badgeWarning}`}>
-                            <Clock size={12} /> WAITING APPROVAL
+                            <Clock size={12} /> APPROVE TXN
                         </span>
                     ) : (
                         <span className={`${styles.badge} ${isCompleted ? styles.badgeSuccess :
@@ -126,39 +136,35 @@ export default function WireRow({ wire }: { wire: WireWithUser }) {
                     )}
                 </td>
 
-                {/* 6. ACTIONS */}
                 <td>
                     <div className={styles.actions}>
                         {isActive ? (
                             <>
-                                {/* A. Generate Codes Button (Visible during HOLD) */}
                                 <button
                                     onClick={(e) => { stopProp(e); setShowModal(true); }}
                                     className={styles.btnCode}
                                     title="Manage Clearance Codes"
                                     disabled={loading}
                                 >
-                                    <Key size={14} />
+                                    <Key size={18} />
                                 </button>
 
-                                {/* B. Approve Button (Highlight if Ready) */}
                                 <button
                                     onClick={handleApprove}
                                     disabled={loading}
                                     className={`${styles.btnApprove} ${isReadyForApproval ? styles.btnApproveReady : ''}`}
                                     title="Approve & Finalize"
                                 >
-                                    {loading ? <Loader2 className={styles.spin} size={16} /> : <CheckCircle size={16} />}
+                                    {loading ? <Loader2 className={styles.spin} size={18} /> : <CheckCircle size={18} />}
                                 </button>
 
-                                {/* C. Reject Button */}
                                 <button
                                     onClick={handleReject}
                                     disabled={loading}
                                     className={styles.btnReject}
                                     title="Reject & Refund"
                                 >
-                                    {loading ? <Loader2 className={styles.spin} size={16} /> : <XCircle size={16} />}
+                                    {loading ? <Loader2 className={styles.spin} size={18} /> : <XCircle size={18} />}
                                 </button>
                             </>
                         ) : (

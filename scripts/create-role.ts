@@ -4,10 +4,10 @@ import bcrypt from 'bcryptjs';
 const prisma = new PrismaClient();
 
 async function main() {
-  // Get arguments from command line: "npx tsx scripts/create-role.ts support john@trustbank.com"
+  // Get arguments from command line
   const args = process.argv.slice(2);
-  const roleArg = args[0]?.toUpperCase(); // e.g., "SUPPORT"
-  const emailArg = args[1];               // e.g., "john@trustbank.com"
+  const roleArg = args[0]?.toUpperCase();
+  const emailArg = args[1];
 
   // Validate Input
   if (!roleArg || !emailArg) {

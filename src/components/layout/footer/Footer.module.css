@@ -1,4 +1,3 @@
-/* --- GLOBAL WRAPPER --- */
 .footer {
   width: 100%;
   position: relative;
@@ -10,47 +9,43 @@
 .container {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 0 2rem;
 }
 
-/* --- 1. TOP CONTACT STRIP (Vibrant Identity) --- */
 .contactStrip {
-  /* ❌ WAS: Teal (#2dd4bf) */
-  /* ✅ NOW: Your Royal Blue */
   background: var(--primary);
-  padding: 30px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 2rem 0;
+  border-bottom: 1px solid sub(--sub-divider);
 }
 
 .contactGrid {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  gap: 30px;
+  gap: 2rem;
 }
 
 .contactItem {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 1rem;
 }
 
 .iconCircle {
-  width: 48px;
-  height: 48px;
-  /* Glassmorphism effect for the icon background */
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  width: 3rem;
+  height: 3rem;
+  background: var(--sub-bg);
+  border: 1px solid var(--sub-divider);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--accent); /* 👈 GOLD ICONS */
+  color: var(--accent);
   transition: all 0.3s ease;
 }
 
 .contactItem:hover .iconCircle {
-  background: white;
+  background: var(--text-invert);
   color: var(--primary);
   transform: scale(1.1);
 }
@@ -74,40 +69,36 @@
   color: var(--text-invert);
 }
 
-/* --- 2. MAIN FOOTER (Dark & Serious) --- */
 .mainFooter {
-  /* Deep Navy Background to make Gold pop */
-  background-color: #0f172a;
-  padding: 80px 0;
-  border-top: 5px solid var(--accent); /* 👈 A subtle Gold border line */
+  background-color: var(--text-dark);
+  padding: 2rem 0;
+  border-top: 5px solid var(--accent);
 }
 
 .mainGrid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 60px;
+  gap: 3rem;
 }
 
 @media (min-width: 992px) {
   .mainGrid {
-    grid-template-columns: 2fr 1fr 1fr 1.5fr;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
   }
 }
 
-/* --- MISSING STYLE: MISSION COLUMN --- */
 .missionColumn {
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  padding-right: 40px; /* Spacing so text doesn't hit the next column */
+  gap: 2rem;
+  padding-right: 3rem;
 }
 
 .footerHeading {
   font-size: 2.2rem;
   font-weight: 800;
   line-height: 1.1;
-  /* Gradient Text for the Heading */
-  background: linear-gradient(90deg, #ffffff 0%, #cbd5e1 100%);
+  background: linear-gradient(90deg, var(--text-invert) 0%, #cbd5e1 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -115,42 +106,40 @@
 .missionText {
   font-size: 1.05rem;
   line-height: 1.7;
-  color: #94a3b8; /* Slate Grey for readability */
+  color: var(--text-muted);
   max-width: 450px;
 }
 
-/* SOCIALS */
 .socialRow {
   display: flex;
-  gap: 16px;
-  margin-top: 10px;
+  gap: 1rem;
+  margin-top: 1rem;
 }
 
 .socialIcon {
-  width: 44px;
-  height: 44px;
-  background: rgba(255, 255, 255, 0.05);
+  width: 3rem;
+  height: 3rem;
+  background: var(--sub-bg);
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
   color: var(--text-invert);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--sub-divider);
   transition: all 0.2s;
 }
 
 .socialIcon:hover {
-  background: var(--accent); /* Gold Hover */
-  color: #0f172a;
-  border-color: var(--accent);
+  background: rgba(var(--accent-rgb), 0.1);
+  color: var(--bg-surface);
+  border-color: rgba(var(--accent-rgb), 0.3);
   transform: translateY(-3px);
 }
 
-/* LINKS */
 .linkColumn h3 {
   font-size: 1.1rem;
   font-weight: 700;
-  margin-bottom: 24px;
+  margin-bottom: 1rem;
   color: var(--text-invert);
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -161,11 +150,11 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 1rem;
 }
 
 .linkList a {
-  color: #94a3b8;
+  color: var(--text-muted);
   text-decoration: none;
   font-weight: 500;
   transition: all 0.2s;
@@ -174,75 +163,64 @@
 }
 
 .linkList a:hover {
-  color: var(--accent); /* Gold Text Hover */
+  color: var(--accent);
   transform: translateX(5px);
 }
 
-/* BRAND COLUMN (Right Side) */
 .brandColumn {
-  background: rgba(255, 255, 255, 0.03); /* Very subtle box */
-  padding: 30px;
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: var(--sub-bg);
+  padding: 1rem 2rem;
+  border-radius: 1rem;
+  border: 1px solid var(--sub-divider);
 }
 
 .whiteLogoBox {
-  background: white;
-  padding: 12px 20px;
+  padding: 0.5rem;
   text-align: center;
-  margin-bottom: 24px;
+  margin-bottom: 2rem;
   border-radius: 8px;
   display: inline-block;
 }
 
-.tempLogoText {
-  font-weight: 900;
-  color: var(--primary);
-  font-size: 1.2rem;
-  letter-spacing: -0.5px;
-}
-
 .addressBox h4 {
-  color: var(--accent); /* Gold Header */
+  color: var(--accent);
   text-transform: uppercase;
   font-size: 0.85rem;
-  margin-bottom: 12px;
+  margin-bottom: 0.3rem;
   font-weight: 700;
 }
 
 .addressBox p {
-  margin-bottom: 6px;
   font-size: 0.95rem;
-  color: #cbd5e1;
+  color: var(--text-muted);
 }
 
 .mapLink {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  margin-top: 24px;
+  margin-top: 2rem;
   color: var(--text-invert);
   font-weight: 700;
   text-decoration: none;
-  border-bottom: 2px solid var(--accent);
-  padding-bottom: 2px;
+  border-bottom: 2px solid rgba(var(--accent-rgb), 0.3);;
+  padding-bottom: 5px;
 }
 
 .mapLink:hover {
   color: var(--accent);
 }
 
-/* --- 3. REGULATORY STRIP (Clean White) --- */
 .legalStrip {
   background-color: var(--text-invert);
-  padding: 30px 0;
+  padding: 1rem 0;
 }
 
 .legalGrid {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 30px;
+  gap: 1rem;
   text-align: center;
 }
 
@@ -256,17 +234,17 @@
 
 .legalLinks {
   display: flex;
-  gap: 15px;
+  gap: 1rem;
   align-items: center;
   flex-wrap: wrap;
   justify-content: center;
 }
 
 .legalLinks a {
-  color: #64748b;
+  color: var(--text-muted);
   font-weight: 600;
   text-decoration: none;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   transition: color 0.2s;
 }
 
@@ -280,22 +258,31 @@
 
 .legalLogos {
   display: flex;
-  gap: 15px;
+  justify-content: center;
   align-items: center;
+  gap: 2rem;
+  opacity: 0.7;
+  filter: grayscale(100%);
+  transition: filter 0.3s ease;
+}
+
+.legalLogos:hover {
+  filter: grayscale(0%);
+  opacity: 1;
 }
 
 .badgePlaceholder {
   border: 1px solid #e2e8f0;
-  padding: 6px 12px;
+  padding: .5rem;
   font-size: 0.7rem;
   font-weight: 700;
-  color: #64748b;
+  color: var(--text-dark);
   border-radius: 4px;
   background: #f8fafc;
 }
 
 .copyright {
-  color: #94a3b8;
-  font-size: 0.85rem;
+  color: var(--text-dark);
+  font-size: 0.8rem;
   font-weight: 500;
 }

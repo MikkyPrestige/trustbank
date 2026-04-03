@@ -56,11 +56,9 @@ export default function WireActions({ wire }: { wire: any }) {
             <button onClick={() => setShowModal(true)} disabled={loading} className={`${styles.btnFull} ${styles.btnCode}`}>
                 <Key size={18} /> Manage Codes
             </button>
-
             <button onClick={handleApprove} disabled={loading} className={`${styles.btnFull} ${styles.btnApprove}`}>
                 {loading ? <Loader2 className={styles.spin} /> : <CheckCircle size={18} />} Approve Transfer
             </button>
-
             <button onClick={handleReject} disabled={loading} className={`${styles.btnFull} ${styles.btnReject}`}>
                 {loading ? <Loader2 className={styles.spin} /> : <XCircle size={18} />} Reject & Refund
             </button>

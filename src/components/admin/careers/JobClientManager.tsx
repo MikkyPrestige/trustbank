@@ -16,12 +16,8 @@ interface Props {
 export default function JobClientManager({ initialJobs }: Props) {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
-
-    // Modal
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingItem, setEditingItem] = useState<JobListing | null>(null);
-
-    // Form
     const [title, setTitle] = useState('');
     const [department, setDepartment] = useState('');
     const [location, setLocation] = useState('');
@@ -104,7 +100,7 @@ export default function JobClientManager({ initialJobs }: Props) {
 
     return (
         <div className={styles.container}>
-            <div style={{ marginBottom: '1rem' }}>
+            <div className={styles.backLinkContainer}>
                 <Link href="/admin/settings" className={styles.backLink}>
                     <ArrowLeft size={18} />
                     Back to Settings
@@ -143,13 +139,13 @@ export default function JobClientManager({ initialJobs }: Props) {
                                     title={job.isActive ? "Close Job" : "Activate Job"}
                                     disabled={loading}
                                 >
-                                    {job.isActive ? <X size={16} color="#ef4444" /> : <Plus size={16} color="#22c55e" />}
+                                    {job.isActive ? <X size={20} color="var(--danger)" /> : <Plus size={20} color="var(--success)" />}
                                 </button>
-                                <button onClick={() => openEditModal(job)} className={styles.iconBtn} disabled={loading}>
-                                    <Pencil size={16} />
+                                <button onClick={() => openEditModal(job)} className={`${styles.iconBtn} ${styles.iconBtnEdit}`} disabled={loading}>
+                                    <Pencil size={20} />
                                 </button>
-                                <button onClick={() => handleDelete(job.id)} className={`${styles.iconBtn} ${styles.deleteBtn}`} disabled={loading}>
-                                    <Trash2 size={16} />
+                                <button onClick={() => handleDelete(job.id)} className={`${styles.iconBtn} ${styles.iconBtnDelete}`} disabled={loading}>
+                                    <Trash2 size={20} />
                                 </button>
                             </div>
                         </div>

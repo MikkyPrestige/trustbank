@@ -1,7 +1,7 @@
 .wizardCard {
   background: var(--bg-card);
   border-radius: 24px;
-  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 20px 40px -10px var(--shadow-card);
   border: 1px solid var(--border);
   overflow: hidden;
   max-width: 800px;
@@ -9,7 +9,7 @@
 }
 
 .wizardHeader {
-  background: linear-gradient(135deg, #0f766e, #14b8a6); /* Teal Gradient */
+  background: linear-gradient(135deg, #0f766e, #14b8a6);
   padding: 2rem;
   color: var(--text-invert);
   display: flex;
@@ -18,7 +18,7 @@
 }
 
 .iconBox {
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--sub-bg);
   padding: 12px;
   border-radius: 12px;
   display: flex;
@@ -37,7 +37,6 @@
   margin: 0;
 }
 
-/* QUESTION BOX */
 .questionBox {
   padding: 2.5rem;
 }
@@ -53,7 +52,7 @@
 
 .progressFill {
   height: 100%;
-  background: #14b8a6;
+  background: var(--success);
   border-radius: 10px;
   transition: width 0.3s ease;
 }
@@ -87,16 +86,15 @@
 }
 
 .optionBtn:hover {
-  border-color: #14b8a6;
-  background: #f0fdfa;
+  border-color: var(--success);
+  background: var(--primary-light);
   transform: translateY(-2px);
 }
 
 .btnIcon {
-  color: #14b8a6;
+  color: var(--success);
 }
 
-/* RESULT BOX */
 .resultBox {
   padding: 3rem;
   text-align: center;
@@ -106,8 +104,8 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: #f0fdfa;
-  color: #0f766e;
+  background: var(--primary-light);
+  color: var(--success);
   padding: 6px 14px;
   border-radius: 50px;
   font-size: 0.9rem;
@@ -140,7 +138,7 @@
 }
 
 .primaryBtn {
-  background: #0f766e;
+  background: var(--success);
   color: var(--text-invert);
   border: none;
   padding: 14px 28px;

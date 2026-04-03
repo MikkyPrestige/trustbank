@@ -10,7 +10,6 @@ export default function LiquidityCard({ amount, trend }: Props) {
     const isPositive = trend > 0;
     const isNeutral = trend === 0;
 
-    // Determine the class based on state
     const trendClass = isNeutral
         ? styles.textMuted
         : isPositive ? styles.textSuccess : styles.textDanger;
@@ -37,8 +36,6 @@ export default function LiquidityCard({ amount, trend }: Props) {
                     {isNeutral && <Minus size={14} className={styles.inlineIcon} />}
                     {isPositive && <TrendingUp size={14} className={styles.inlineIcon} />}
                     {!isNeutral && !isPositive && <TrendingDown size={14} className={styles.inlineIcon} />}
-
-                    {/* Logic: Show sign only if not neutral */}
                     {!isNeutral && (isPositive ? '+' : '')}
                     {isNeutral ? 'No change today' : `${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(trend)} today`}
                 </span>

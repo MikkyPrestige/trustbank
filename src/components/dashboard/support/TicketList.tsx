@@ -17,18 +17,27 @@ export default function TicketList({ tickets }: { tickets: Ticket[] }) {
     if (tickets.length === 0) {
         return (
             <div className={styles.emptyState}>
-                <MessageCircle size={48} style={{ opacity: 0.2 }} />
+                <MessageCircle size={48} className={styles.emptyStateIcon} />
                 <h3>No Tickets Found</h3>
                 <p>You haven&apos;t opened any support requests yet.</p>
             </div>
         );
     }
 
+    const getPriorityColor = (priority: string) => {
+        switch (priority) {
+            case 'HIGH': return 'var(--danger)';
+            case 'NORMAL': return 'var(--accent)';
+            case 'LOW': return 'var(--success)';
+            default: return 'var(--text-muted)';
+        }
+    };
+
     const getStatusColor = (status: string) => {
         switch (status) {
             case 'OPEN': return 'var(--primary)';
             case 'CLOSED': return 'var(--success)';
-            default: return 'var(--warning)';
+            default: return 'var(--accent)';
         }
     };
 
@@ -43,7 +52,7 @@ export default function TicketList({ tickets }: { tickets: Ticket[] }) {
                 <Link href={`/dashboard/support/${ticket.id}`} key={ticket.id} className={styles.ticketCard}>
                     <div className={styles.ticketLeft}>
                         <div className={styles.iconBox} style={{ color: getStatusColor(ticket.status) }}>
-                            <MessageCircle size={20} />
+                            <MessageCircle size={20} className={styles.ticketIcon} />
                         </div>
                         <div>
                             <h4 className={styles.subject}>{ticket.subject}</h4>
@@ -57,13 +66,10 @@ export default function TicketList({ tickets }: { tickets: Ticket[] }) {
                     </div>
 
                     <div className={styles.ticketRight}>
-                        <span className={styles.priorityBadge} data-priority={ticket.priority}>
+                        <span className={styles.priorityBadge} style={{ color: getPriorityColor(ticket.priority)}}>
                             {ticket.priority}
                         </span>
-                        <span className={styles.statusBadge} style={{
-                            background: `${getStatusColor(ticket.status)}15`,
-                            color: getStatusColor(ticket.status)
-                        }}>
+                        <span className={styles.statusBadge} style={{ color: getStatusColor(ticket.status)}}>
                             {getStatusIcon(ticket.status)} {ticket.status}
                         </span>
                     </div>

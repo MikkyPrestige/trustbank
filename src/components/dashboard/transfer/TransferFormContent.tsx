@@ -23,14 +23,13 @@ interface ContentProps {
     preSelectedId?: string;
     onReset: () => void;
     limit: number;
+    currency: string;
+    rate: number;
 }
 
 const findBeneficiaryData = (list: Beneficiary[], id?: string) => {
-    // Default empty state
     const empty = { accountName: "", bankName: "", accountNumber: "", routingNumber: "" };
-
     if (!id) return empty;
-
     const ben = list.find(b => b.id === id);
     if (ben) {
         return {
@@ -43,12 +42,21 @@ const findBeneficiaryData = (list: Beneficiary[], id?: string) => {
     return empty;
 };
 
-export default function TransferFormContent({ accounts, beneficiaries, preSelectedId, onReset, limit }: ContentProps) {
+export default function TransferFormContent({
+    accounts,
+    beneficiaries,
+    preSelectedId,
+    onReset,
+    limit,
+    currency,
+    rate
+}: ContentProps) {
     const [state, action, isPending] = useActionState(processTransfer, initialState);
-
     const [selectedBen, setSelectedBen] = useState(preSelectedId || "");
     const [formData, setFormData] = useState(() => findBeneficiaryData(beneficiaries, preSelectedId));
     const [amount, setAmount] = useState("");
+
+    const limitInUserCurrency = limit === Infinity ? Infinity : limit * rate;
 
     useEffect(() => {
         if (state?.message && !state.success) {
@@ -68,17 +76,24 @@ export default function TransferFormContent({ accounts, beneficiaries, preSelect
         if (selectedBen) setSelectedBen("");
     };
 
-    const formatMoney = (amount: number) => {
-        return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
+    const formatMoney = (usdAmount: number) => {
+        const converted = usdAmount * rate;
+        return new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(converted);
     };
 
     const handleFormSubmit = (formData: FormData) => {
         const inputAmount = Number(formData.get("amount"));
 
-        if (limit !== Infinity && inputAmount > limit) {
-            toast.error(`Amount exceeds your daily limit of $${limit.toLocaleString()}`);
+        if (limitInUserCurrency !== Infinity && inputAmount > limitInUserCurrency) {
+            toast.error(`Amount exceeds your daily limit of ${formatMoney(limit)}`);
             return;
         }
+
+        const usdAmount = inputAmount / rate;
+        formData.set("amount", usdAmount.toString());
+
+        formData.set("displayAmount", inputAmount.toString());
+        formData.set("displayCurrency", currency);
 
         action(formData);
     };
@@ -106,7 +121,7 @@ export default function TransferFormContent({ accounts, beneficiaries, preSelect
                             <div className={styles.receiptRow}>
                                 <span>Amount</span>
                                 <strong className={styles.receiptValue}>
-                                    {amount ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(amount)) : '$0.00'}
+                                    {amount ? new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(Number(amount)) : '0.00'}
                                 </strong>
                             </div>
                         </div>
@@ -123,8 +138,6 @@ export default function TransferFormContent({ accounts, beneficiaries, preSelect
     // --- FORM VIEW ---
     return (
         <form action={handleFormSubmit} className={styles.formGrid}>
-
-            {/* FROM ACCOUNT */}
             <div className={styles.section}>
                 <h3 className={styles.secTitle}>From Account</h3>
                 <div className={styles.inputGroup}>
@@ -140,7 +153,6 @@ export default function TransferFormContent({ accounts, beneficiaries, preSelect
                 </div>
             </div>
 
-            {/* RECIPIENT */}
             <div className={styles.section}>
                 {beneficiaries.length > 0 && (
                     <div className={styles.quickFillRow}>
@@ -161,7 +173,6 @@ export default function TransferFormContent({ accounts, beneficiaries, preSelect
                 )}
 
                 <h3 className={styles.secTitle}>Recipient Details</h3>
-                {/* BANK NAME */}
                 <div className={styles.inputGroup}>
                     <Building className={styles.icon} size={18} />
                     <input
@@ -174,7 +185,6 @@ export default function TransferFormContent({ accounts, beneficiaries, preSelect
                     />
                 </div>
 
-                {/* ACCOUNT NUMBER & ROUTING NUMBER */}
                 <div className={styles.row}>
                     <div className={styles.inputGroup}>
                         <Hash className={styles.icon} size={18} />
@@ -200,7 +210,6 @@ export default function TransferFormContent({ accounts, beneficiaries, preSelect
                     </div>
                 </div>
 
-                {/* HOLDER NAME */}
                 <div className={styles.inputGroup}>
                     <User className={styles.icon} size={18} />
                     <input
@@ -224,12 +233,11 @@ export default function TransferFormContent({ accounts, beneficiaries, preSelect
                 )}
             </div>
 
-            {/* AMOUNT & PIN */}
             <div className={styles.section}>
                 <h3 className={styles.secTitle}>Transfer Amount</h3>
                 <div className={styles.row}>
                     <div className={styles.amountWrapper}>
-                        <span className={styles.dollarSign}>$</span>
+                        <span className={styles.currencyPrefix}>{currency}</span>
                         <input
                             name="amount"
                             type="number"
@@ -239,7 +247,7 @@ export default function TransferFormContent({ accounts, beneficiaries, preSelect
                             placeholder="0.00"
                             className={styles.amountInput}
                             required
-                            max={limit === Infinity ? undefined : limit}
+                            max={limitInUserCurrency === Infinity ? undefined : limitInUserCurrency}
                         />
                     </div>
                     <div className={`${styles.inputGroup} ${styles.pinGroup}`}>

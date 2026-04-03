@@ -1,4 +1,4 @@
-import { Clock, Phone, Smartphone, Megaphone } from "lucide-react";
+import { Clock, Phone, Globe, Megaphone } from "lucide-react";
 import styles from "./home.module.css";
 import Link from "next/link";
 
@@ -6,13 +6,33 @@ interface InfoBarProps {
     isActive: boolean;
     text: string;
     phone: string;
+    routingNumber: string;
+    swiftCode: string;
+    labelSupport: string;
+    labelHours: string;
+    labelBanking: string;
+    labelRouting: string;
+    labelSwift: string;
+    locationLinkText: string;
+    locationLinkUrl: string;
 }
 
-export default function InfoBar({ isActive, text, phone }: InfoBarProps) {
+export default function InfoBar({
+    isActive,
+    text,
+    phone,
+    routingNumber,
+    swiftCode,
+    labelSupport,
+    labelHours,
+    labelBanking,
+    labelRouting,
+    labelSwift,
+    locationLinkText,
+    locationLinkUrl
+}: InfoBarProps) {
     return (
         <section className={styles.infoBarSection}>
-
-            {/* 1. DYNAMIC ANNOUNCEMENT BANNER */}
             {isActive && (
                 <div className={styles.announcementBanner}>
                     <div className={styles.announcementContent}>
@@ -22,32 +42,38 @@ export default function InfoBar({ isActive, text, phone }: InfoBarProps) {
                 </div>
             )}
 
-            {/* 2. STATIC CONTACT STRIP  */}
             <div className={styles.infoContainer}>
-                {/* Block 1: Support */}
                 <div className={`${styles.infoBlock} ${styles.blueBlock}`}>
                     <Phone size={24} className={styles.infoIcon} />
                     <div className={styles.infoText}>
-                        <span className={styles.infoLabel}>24/7 SUPPORT</span>
+                        <span className={styles.infoLabel}>{labelSupport}</span>
                         <span className={styles.infoValue}>{phone}</span>
                     </div>
                 </div>
 
-                {/* Block 2: Hours */}
                 <div className={`${styles.infoBlock} ${styles.goldBlock}`}>
                     <Clock size={24} className={styles.infoIcon} />
                     <div className={styles.infoText}>
-                        <span className={styles.infoLabel}>BRANCH HOURS</span>
-                        <Link href="/locations" className={styles.infoLink}>Find a location +</Link>
+                        <span className={styles.infoLabel}>{labelHours}</span>
+                        <Link href={locationLinkUrl} className={styles.infoLink}>
+                            {locationLinkText}
+                        </Link>
                     </div>
                 </div>
 
-                {/* Block 3: Digital Access */}
                 <div className={`${styles.infoBlock} ${styles.whiteBlock}`}>
-                    <Smartphone size={24} className={styles.infoIconDark} />
+                    <Globe size={24} className={styles.infoIconDark} />
                     <div className={styles.infoText}>
-                        <span className={styles.infoLabel}>MOBILE BANKING</span>
-                        <Link href="#" className={styles.infoLinkDark}>Download App +</Link>
+                        <span className={styles.infoLabel}>{labelBanking}</span>
+                        <div className={styles.bankingCodes}>
+                            <span title={labelRouting}>
+                                {labelRouting}: <strong>{routingNumber}</strong>
+                            </span>
+                            <span className={styles.divider}>|</span>
+                            <span title={labelSwift}>
+                                {labelSwift}: <strong>{swiftCode}</strong>
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>

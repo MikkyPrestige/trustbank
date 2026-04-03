@@ -5,7 +5,6 @@ import { revalidatePath } from "next/cache";
 import { checkAdminAction } from "@/lib/auth/admin-auth";
 import { logAdminAction } from "@/lib/utils/admin-logger";
 
-// --- CREATE ---
 export async function createBranch(formData: FormData) {
     const auth = await checkAdminAction();
 
@@ -19,10 +18,11 @@ export async function createBranch(formData: FormData) {
     const phone = formData.get("phone") as string;
     const email = formData.get("email") as string;
     const hours = formData.get("hours") as string;
-    const lat = parseFloat(formData.get("lat") as string) || 40.7128;
-    const lng = parseFloat(formData.get("lng") as string) || -74.0060;
+    const lat = parseFloat(formData.get("lat") as string);
+    const lng = parseFloat(formData.get("lng") as string);
     const hasAtm = formData.get("hasAtm") === "on";
     const hasDriveThru = formData.get("hasDriveThru") === "on";
+    const hasNotary = formData.get("hasNotary") === "on";
 
     if (!name || !address || !city) {
         return { success: false, message: "Name, Address, and City are required" };
@@ -30,7 +30,7 @@ export async function createBranch(formData: FormData) {
 
     try {
         await db.branch.create({
-            data: { name, address, city, phone, email, hours, lat, lng, hasAtm, hasDriveThru, isActive: true }
+            data: { name, address, city, phone, email, hours, lat, lng, hasAtm, hasDriveThru, hasNotary, isActive: true }
         });
 
         await logAdminAction(
@@ -54,7 +54,6 @@ export async function createBranch(formData: FormData) {
     }
 }
 
-// --- UPDATE ---
 export async function updateBranch(id: string, formData: FormData) {
     const auth = await checkAdminAction();
 
@@ -73,11 +72,12 @@ export async function updateBranch(id: string, formData: FormData) {
     const isActive = formData.get("isActive") === "on";
     const hasAtm = formData.get("hasAtm") === "on";
     const hasDriveThru = formData.get("hasDriveThru") === "on";
+    const hasNotary = formData.get("hasNotary") === "on";
 
     try {
         await db.branch.update({
             where: { id },
-            data: { name, address, city, phone, email, hours, lat, lng, isActive, hasAtm, hasDriveThru }
+            data: { name, address, city, phone, email, hours, lat, lng, isActive, hasAtm, hasDriveThru, hasNotary }
         });
 
         await logAdminAction(
@@ -100,7 +100,6 @@ export async function updateBranch(id: string, formData: FormData) {
     }
 }
 
-// --- DELETE ---
 export async function deleteBranch(id: string) {
     const auth = await checkAdminAction();
 
@@ -109,7 +108,6 @@ export async function deleteBranch(id: string) {
     }
 
     try {
-        // Fetch first for log context
         const branch = await db.branch.findUnique({ where: { id } });
 
         await db.branch.delete({ where: { id } });
@@ -134,7 +132,6 @@ export async function deleteBranch(id: string) {
     }
 }
 
-// --- TOGGLE STATUS ---
 export async function toggleBranchStatus(id: string, currentStatus: boolean) {
     const auth = await checkAdminAction();
 
@@ -165,5 +162,36 @@ export async function toggleBranchStatus(id: string, currentStatus: boolean) {
         return { success: true, message: "Status updated successfully" };
     } catch (error) {
         return { success: false, message: "Failed to update branch status" };
+    }
+}
+
+export async function getGeocodeAction(address: string) {
+    try {
+        const response = await fetch(
+            `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`,
+            {
+                headers: {
+                    'User-Agent': 'ModernBankAdmin/1.0 (contact@yourdomain.com)'
+                },
+                // next: { revalidate: 86400 }
+            }
+        );
+
+        if (!response.ok) throw new Error('Network response was not ok');
+
+        const data = await response.json();
+
+        if (data && data.length > 0) {
+            return {
+                success: true,
+                lat: data[0].lat,
+                lng: data[0].lon
+            };
+        }
+
+        return { success: false, message: "No coordinates found for this address." };
+    } catch (error) {
+        console.error('Geocoding Error:', error);
+        return { success: false, message: "Failed to connect to geocoding service." };
     }
 }

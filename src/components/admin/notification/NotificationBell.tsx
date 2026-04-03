@@ -26,13 +26,11 @@ export default function NotificationBell() {
     const previousCountRef = useRef(0);
     const isFirstLoadRef = useRef(true);
 
-    // 1. Sound Logic
     const playSound = () => {
         const audio = new Audio('/sound/notification.mp3');
         audio.play().catch(() => { });
     };
 
-    // 2. Fetch & Poll
     useEffect(() => {
         const fetchNotes = async () => {
             try {
@@ -60,7 +58,6 @@ export default function NotificationBell() {
         return () => clearInterval(interval);
     }, []);
 
-    // 3. Click Outside
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -71,14 +68,11 @@ export default function NotificationBell() {
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
-    // 4. Actions
-
     const handleDismiss = async (id: string, link: string | null) => {
         setNotifications(prev => prev.filter(n => n.id !== id));
         await markAsRead(id);
     };
 
-    // Mark All Read: Keeps in list, removes badges
     const handleMarkAllRead = async () => {
         setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
         await markAllAsRead();
@@ -86,12 +80,11 @@ export default function NotificationBell() {
 
     const unreadCount = notifications.filter(n => !n.isRead).length;
 
-    // Helper for Icons
     const getIcon = (type: string) => {
         const t = type.toUpperCase();
-        if (t === 'ERROR' || t === 'CRITICAL') return <AlertTriangle size={16} color="#ef4444" />;
-        if (t === 'SUCCESS') return <CheckCircle size={16} color="#22c55e" />;
-        return <Info size={16} color="#3b82f6" />;
+        if (t === 'ERROR' || t === 'CRITICAL') return <AlertTriangle size={16} color="var(--danger)" />;
+        if (t === 'SUCCESS') return <CheckCircle size={16} color="var(--success)" />;
+        return <Info size={16} color="var(--primary)" />;
     };
 
     function timeAgo(dateString: Date) {
@@ -112,7 +105,6 @@ export default function NotificationBell() {
 
     return (
         <div className={styles.wrapper} ref={dropdownRef}>
-            {/* BELL BUTTON */}
             <button
                 className={`${styles.bellButton} ${isOpen ? styles.active : ''}`}
                 onClick={() => setIsOpen(!isOpen)}
@@ -123,7 +115,6 @@ export default function NotificationBell() {
                 )}
             </button>
 
-            {/* DROPDOWN */}
             {isOpen && (
                 <div className={styles.dropdown}>
                     <div className={styles.header}>
@@ -140,7 +131,7 @@ export default function NotificationBell() {
                             <div className={styles.empty}>Loading...</div>
                         ) : notifications.length === 0 ? (
                             <div className={styles.empty}>
-                                <Bell size={32} style={{ opacity: 0.2, marginBottom: '10px' }} />
+                                <Bell size={32} style={{ opacity: 0.2, marginBottom: '1rem' }} />
                                 <p>No new notifications</p>
                             </div>
                         ) : (

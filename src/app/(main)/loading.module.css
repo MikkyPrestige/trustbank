@@ -5,16 +5,13 @@
   width: 100%;
 }
 
-/* The Shimmer Effect */
 .shimmer {
-  /* Dark base color */
   background: #1f2937;
-  /* The moving highlight */
   background-image: linear-gradient(
     to right,
     #1f2937 0%,
     #374151 20%,
-    /* Lighter gray for the shine */ #1f2937 40%,
+    #1f2937 40%,
     #1f2937 100%
   );
   background-repeat: no-repeat;
@@ -37,7 +34,6 @@
   }
 }
 
-/* Specific Element Sizing */
 .headerGroup {
   margin-bottom: 2rem;
   display: flex;
@@ -88,7 +84,6 @@
   border-radius: 12px;
 }
 
-/* Mobile Adjustments */
 @media (max-width: 768px) {
   .container {
     padding: 1rem;

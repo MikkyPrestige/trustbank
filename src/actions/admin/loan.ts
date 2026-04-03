@@ -42,7 +42,16 @@ export async function processLoan(loanId: string, decision: 'APPROVED' | 'REJECT
              return { success: false, message: `Action Denied: User status is ${loan.user.status}` };
         }
 
-        // --- BRANCH 1: REJECTION ---
+        let currency = loan.user.currency || "USD";
+        let rate = 1;
+        if (currency !== "USD") {
+            const r = await db.exchangeRate.findUnique({ where: { currency } });
+            if (r) rate = Number(r.rate);
+        }
+
+        const userAmount = Number(loan.amount) * rate;
+        const formattedAmount = new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(userAmount);
+
         if (decision === 'REJECTED') {
             await db.$transaction(async (tx) => {
                 await tx.loan.update({
@@ -51,14 +60,13 @@ export async function processLoan(loanId: string, decision: 'APPROVED' | 'REJECT
                 });
             });
 
-            // Notify User
             await db.notification.create({
                 data: {
                     userId: loan.userId,
                     title: "Loan Application Declined",
-                    message: `Your loan request for $${Number(loan.amount).toLocaleString()} was not approved at this time.`,
+                    message: `Your loan request for ${formattedAmount} was not approved at this time.`,
                     type: "ERROR",
-                    link: "/dashboard/loan",
+                    link: "/dashboard/loans",
                     isRead: false
                 }
             });
@@ -76,10 +84,8 @@ export async function processLoan(loanId: string, decision: 'APPROVED' | 'REJECT
             );
         }
 
-        // --- BRANCH 2: APPROVAL ---
         else {
             await db.$transaction(async (tx) => {
-                // A. Update Loan Status
                 await tx.loan.update({
                     where: { id: loanId },
                     data: {
@@ -88,7 +94,6 @@ export async function processLoan(loanId: string, decision: 'APPROVED' | 'REJECT
                     }
                 });
 
-                // B. Find User's Primary Account
                 const account = await tx.account.findFirst({
                     where: { userId: loan.userId },
                     orderBy: { isPrimary: 'desc' }
@@ -96,11 +101,10 @@ export async function processLoan(loanId: string, decision: 'APPROVED' | 'REJECT
 
                 if (!account) throw new Error("User has no account to credit");
 
-                const loanAmount = Number(loan.amount);
+                const loanAmount = Number(loan.amount); // USD
                 const currentBal = Number(account.currentBalance);
                 const newBal = currentBal + loanAmount;
 
-                // C. Credit the Account
                 await tx.account.update({
                     where: { id: account.id },
                     data: {
@@ -109,7 +113,6 @@ export async function processLoan(loanId: string, decision: 'APPROVED' | 'REJECT
                     }
                 });
 
-                // D. Create Ledger Entry
                 await tx.ledgerEntry.create({
                     data: {
                         accountId: account.id,
@@ -120,19 +123,22 @@ export async function processLoan(loanId: string, decision: 'APPROVED' | 'REJECT
                         status: TransactionStatus.COMPLETED,
                         description: `Loan Disbursement: ${loan.reason}`,
                         referenceId: `LOAN-${loan.id.slice(-8).toUpperCase()}`,
-                        metadata: JSON.stringify({ adminId: session.user.id })
+                        metadata: JSON.stringify({
+                            adminId: session.user.id,
+                            originalAmount: userAmount,
+                            originalCurrency: currency
+                        })
                     }
                 });
             });
 
-            // Notifications
             await db.notification.create({
                 data: {
                     userId: loan.userId,
                     title: "Loan Approved!",
-                    message: `Success! $${Number(loan.amount).toLocaleString()} has been deposited into your account.`,
+                    message: `Success! ${formattedAmount} has been deposited into your account.`,
                     type: "SUCCESS",
-                    link: "/dashboard/loan",
+                    link: "/dashboard/loans",
                     isRead: false
                 }
             });

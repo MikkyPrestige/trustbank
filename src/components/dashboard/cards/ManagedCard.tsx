@@ -45,7 +45,6 @@ export default function ManagedCard({ card, userName, siteName }: ManagedCardPro
                     throw new Error(result.message || "Action failed");
                 }
             } catch (error: any) {
-                // 5. Revert on Failure
                 setCurrentStatus(statusBeforeToggle);
                 toast.error(error.message || "Failed to update status");
             }
@@ -61,7 +60,6 @@ export default function ManagedCard({ card, userName, siteName }: ManagedCardPro
                 siteName={siteName}
             />
 
-            {/* Status Pill */}
             <div className={styles.statusWrapper}>
                 <span className={`${styles.statusPill} ${isFrozen ? styles.frozenPill : styles.activePill}`}>
                     <span className={styles.statusDot}></span>
@@ -69,13 +67,12 @@ export default function ManagedCard({ card, userName, siteName }: ManagedCardPro
                 </span>
             </div>
 
-            {/* Freeze Toggle */}
             <div className={`${styles.controlCard} ${isFrozen ? styles.activeFreeze : ''}`}>
                 <div className={styles.controlHeader}>
-                    <div className={styles.flexGap} style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    <div className={styles.flexGap}>
                         <div className={styles.iconBox} style={{
-                            background: isFrozen ? 'rgba(239, 68, 68, 0.1)' : 'rgba(255, 255, 255, 0.05)',
-                            color: isFrozen ? '#ef4444' : 'var(--text-main)'
+                            background: isFrozen ? 'rgba(var(--danger-rgb), 0.1)' : 'rgba(255, 255, 255, 0.05)',
+                            color: isFrozen ? 'var(--danger)' : 'var(--text-main)'
                         }}>
                             {isFrozen ? <Ban size={22} /> : <Unlock size={22} />}
                         </div>

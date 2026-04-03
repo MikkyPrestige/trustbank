@@ -25,19 +25,15 @@ export default async function AdminLayout({
 }: {
     children: React.ReactNode;
 }) {
-    // 🔒 Gatekeeper
     await requireAdmin();
     const session = await auth();
     const role = session?.user?.role;
 
-    // 1. Fetch Dynamic Settings
     const settings = await getSiteSettings();
 
     return (
         <div className={styles.layoutContainer}>
             <nav className={styles.nav}>
-
-                {/* 2. DYNAMIC BRANDING */}
                 <div className={styles.brand}>
                     <Image
                         src={settings.site_logo || "/logo.png"}
@@ -63,22 +59,18 @@ export default async function AdminLayout({
                             <IdCard size={18} /> Staff
                         </Link>
                     )}
-
                     <Link href="/admin/users" className={styles.navLink}>
                         <Users size={18} /> Users
                     </Link>
-
                     <Link href="/admin/verifications" className={styles.navLink}>
                         <FileCheck size={18} /> KYC
                     </Link>
-
                     <div className={styles.separator}></div>
 
                     {/* 3. FINANCIAL QUEUES */}
                     <Link href="/admin/wires" className={styles.navLink}>
                         <Globe size={18} /> Wires
                     </Link>
-
                     <Link href="/admin/loans" className={styles.navLink}>
                         <Banknote size={18} /> Loans
                     </Link>
@@ -89,12 +81,9 @@ export default async function AdminLayout({
                     <Link href="/admin/support" className={styles.navLink}>
                         <MessageSquareText size={18} /> Tickets
                     </Link>
-
                     <Link href="/admin/generator" className={styles.navLink}>
                         <Activity size={18} /> TXNs
                     </Link>
-
-                    {/* Site Settings (CMS) */}
                     <Link href="/admin/settings" className={styles.navLink}>
                         <Settings size={18} /> Site Settings
                     </Link>

@@ -7,6 +7,7 @@ import RepaymentModal from "@/components/dashboard/loans/RepaymentModal";
 import styles from "../../../../components/dashboard/loans/loans.module.css";
 import { TrendingUp, PieChart, CheckCircle, Lock, History, Ban } from "lucide-react";
 import { KycStatus } from "@prisma/client";
+import Link from "next/link";
 
 export default async function LoansPage() {
     const session = await auth();
@@ -14,11 +15,20 @@ export default async function LoansPage() {
 
     if (!session?.user?.id) redirect("/login");
 
-    const user = await db.user.findUnique({
-        where: { id: session.user.id }
-    });
+    const [user, rates] = await Promise.all([
+        db.user.findUnique({
+            where: { id: session.user.id },
+            select: { kycStatus: true, currency: true }
+        }),
+        db.exchangeRate.findMany()
+    ]);
 
     const isVerified = user?.kycStatus === KycStatus.VERIFIED;
+
+    const currency = user?.currency || "USD";
+    const rate = currency === "USD"
+        ? 1
+        : Number(rates.find(r => r.currency === currency)?.rate || 1);
 
     const rawLoans = await db.loan.findMany({
         where: { userId: session.user.id },
@@ -46,7 +56,6 @@ export default async function LoansPage() {
         monthlyPayment: Number(loan.monthlyPayment),
         totalRepayment: Number(loan.totalRepayment),
         repaidAmount: Number(loan.repaidAmount),
-        balanceRemaining: Number(loan.balanceRemaining),
     }));
 
     return (
@@ -56,7 +65,6 @@ export default async function LoansPage() {
                 <p className={styles.subtitle}>Instant approval. Competitive rates. Flexible terms.</p>
             </header>
 
-            {/* SUMMARY STATS */}
             <div className={styles.statsGrid}>
                 <div className={styles.statCard}>
                     <div className={`${styles.iconBox} ${styles.iconRed}`}>
@@ -65,7 +73,7 @@ export default async function LoansPage() {
                     <div>
                         <p className={styles.statLabel}>Total Debt</p>
                         <h3 className={styles.statValue}>
-                            {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(remainingDebt)}
+                            {new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(remainingDebt * rate)}
                         </h3>
                     </div>
                 </div>
@@ -76,7 +84,7 @@ export default async function LoansPage() {
                     <div>
                         <p className={styles.statLabel}>Total Repaid</p>
                         <h3 className={`${styles.statValue} ${styles.statValueGreen}`}>
-                            {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(totalRepaid)}
+                            {new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(totalRepaid * rate)}
                         </h3>
                     </div>
                 </div>
@@ -94,7 +102,6 @@ export default async function LoansPage() {
             </div>
 
             <div className={styles.grid}>
-                {/* LEFT: APPLICATION FORM */}
                 <div className={styles.glassCard}>
                     {!isVerified ? (
                         <div className={styles.lockedState}>
@@ -103,14 +110,14 @@ export default async function LoansPage() {
                             </div>
                             <h2>Loan Access Locked</h2>
                             <p>To ensure security and compliance, you must complete your Identity Verification (KYC) before applying for credit.</p>
-                            <a href="/dashboard/verify" className={styles.verifyLink}>
+                            <Link href="/dashboard/verify" className={styles.verifyLink}>
                                 Verify Identity Now
-                            </a>
+                            </Link>
                         </div>
                     ) : (
                         <>
                             <h2 className={styles.cardHeader}>
-                                <TrendingUp size={20} color="#3b82f6" />
+                                <TrendingUp size={20} color="var(--primary)" />
                                 Apply for a New Loan
                             </h2>
                             {!features.loans ? (
@@ -124,16 +131,18 @@ export default async function LoansPage() {
                                     </p>
                                 </div>
                             ) : (
-                                <LoanApplicationForm />
+                                <LoanApplicationForm
+                                    currency={currency}
+                                    rate={rate}
+                                />
                             )}
                         </>
                     )}
                 </div>
 
-                {/* RIGHT: HISTORY */}
                 <div className={styles.glassCard}>
                     <h2 className={styles.cardHeader}>
-                        <History size={20} color="#888" />
+                        <History size={20} color="var(--text-muted)" />
                         Your History
                     </h2>
 
@@ -160,21 +169,24 @@ export default async function LoansPage() {
                                     ? Math.min(100, (loan.repaidAmount / loan.totalRepayment) * 100)
                                     : 0;
 
+                                const amountNative = loan.amount * rate;
+                                const repaidNative = loan.repaidAmount * rate;
+                                const totalRepayNative = loan.totalRepayment * rate;
+
                                 return (
                                     <div key={loan.id} className={styles.loanItem}>
                                         <div className={styles.loanTop}>
                                             <span className={styles.loanAmount}>
-                                                {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(loan.amount)}
+                                                {new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(amountNative)}
                                             </span>
                                             <span className={`${styles.badge} ${styles[loan.status]}`}>{loan.status}</span>
                                         </div>
 
-                                        {/* PROGRESS BAR */}
                                         {(loan.status === 'APPROVED' || loan.status === 'PAID') && (
                                             <div className={styles.progressWrapper}>
                                                 <div className={styles.progressStats}>
-                                                    <span>Paid: ${loan.repaidAmount.toFixed(0)}</span>
-                                                    <span>Total: ${loan.totalRepayment.toFixed(0)}</span>
+                                                    <span>Paid: {new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(repaidNative)}</span>
+                                                    <span>Total: {new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(totalRepayNative)}</span>
                                                 </div>
                                                 <div className={styles.progressBar}>
                                                     <div
@@ -187,10 +199,14 @@ export default async function LoansPage() {
 
                                         <div className={styles.loanFooter}>
                                             <span className={styles.loanDetails}>{loan.termMonths} Months • {loan.reason}</span>
-                                            {/*  2. BUTTON */}
                                             {loan.status === 'APPROVED' && (
                                                 features.repay ? (
-                                                    <RepaymentModal loan={loan} maxPayable={maxPayable} />
+                                                    <RepaymentModal
+                                                        loan={loan}
+                                                        maxPayable={maxPayable}
+                                                        currency={currency}
+                                                        rate={rate}
+                                                    />
                                                 ) : (
                                                     <button disabled className={styles.repayPaused}>
                                                         <Ban size={12} style={{ marginRight: '4px' }} /> Paused

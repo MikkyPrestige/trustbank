@@ -2,7 +2,7 @@ import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { redirect } from "next/navigation";
 import SettingsTabs from "@/components/dashboard/settings/SettingsTabs";
-import styles from "../../../../components/dashboard/settings/settings.module.css";
+import styles from "../../../../components/dashboard/settings/styles/settings.module.css";
 
 export default async function SettingsPage() {
     const session = await auth();

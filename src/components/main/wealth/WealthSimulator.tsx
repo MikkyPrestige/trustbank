@@ -22,16 +22,27 @@ export default function WealthSimulator({ settings }: SimulatorProps) {
 
     const pieStyle = {
         background: `conic-gradient(
-            var(--primary) 0% ${allocations.stocks}%,
+            #2563eb 0% ${allocations.stocks}%,
             #eab308 ${allocations.stocks}% ${allocations.stocks + allocations.crypto}%,
             #a855f7 ${allocations.stocks + allocations.crypto}% ${allocations.stocks + allocations.crypto + allocations.realEstate}%,
             #64748b ${allocations.stocks + allocations.crypto + allocations.realEstate}% 100%
         )`
     };
 
+    const getRiskStatus = () => {
+        if (risk < 30) return settings.wealth_sim_status_low;
+        if (risk < 70) return settings.wealth_sim_status_mid;
+        return settings.wealth_sim_status_high;
+    };
+
+    const getVolStatus = () => {
+        if (risk < 30) return settings.wealth_sim_vol_low;
+        if (risk < 70) return settings.wealth_sim_vol_mid;
+        return settings.wealth_sim_vol_high;
+    };
+
     return (
         <div className={styles.simCard}>
-            {/* Header */}
             <div className={styles.header}>
                 <div className={styles.iconWrapper}><PieChart size={24} /></div>
                 <div>
@@ -41,17 +52,19 @@ export default function WealthSimulator({ settings }: SimulatorProps) {
             </div>
 
             <div className={styles.grid}>
-                {/* Controls */}
                 <div className={styles.controls}>
                     <label className={styles.sliderLabel}>
                         {settings.wealth_sim_risk_label}
-                        <span className={styles.riskValue}>
-                            {risk < 30 ? "Conservative" : risk < 70 ? "Balanced" : "Aggressive"}
-                        </span>
+                        <span className={styles.riskValue}>{getRiskStatus()}</span>
                     </label>
 
-                    <input type="range" min="0" max="100" step="10" value={risk} onChange={(e) => setRisk(Number(e.target.value))} className={styles.slider} style={{ '--value': `${risk}%` } as React.CSSProperties} />
-
+                    <input
+                        type="range" min="0" max="100" step="10"
+                        value={risk}
+                        onChange={(e) => setRisk(Number(e.target.value))}
+                        className={styles.slider}
+                        style={{ '--value': `${risk}%` } as React.CSSProperties}
+                    />
                     <div className={styles.statsRow}>
                         <div className={styles.stat}>
                             <span className={styles.statLabel}>{settings.wealth_sim_return_label}</span>
@@ -59,7 +72,7 @@ export default function WealthSimulator({ settings }: SimulatorProps) {
                         </div>
                         <div className={styles.stat}>
                             <span className={styles.statLabel}>{settings.wealth_sim_label_volatility}</span>
-                            <span className={styles.statValue}>{risk < 30 ? "Low" : risk < 70 ? "Medium" : "High"}</span>
+                            <span className={styles.statValue}>{getVolStatus()}</span>
                         </div>
                     </div>
 
@@ -69,7 +82,6 @@ export default function WealthSimulator({ settings }: SimulatorProps) {
                     </div>
                 </div>
 
-                {/* Chart */}
                 <div className={styles.chartWrapper}>
                     <div className={styles.pieChart} style={pieStyle}>
                         <div className={styles.innerCircle}>

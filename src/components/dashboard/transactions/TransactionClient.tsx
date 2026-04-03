@@ -22,7 +22,13 @@ interface Transaction {
     createdAt: Date | string;
 }
 
-export default function TransactionClient({ transactions }: { transactions: Transaction[] }) {
+interface TransactionClientProps {
+    transactions: Transaction[];
+    currency: string;
+    rate: number;
+}
+
+export default function TransactionClient({ transactions, currency, rate }: TransactionClientProps) {
     const router = useRouter();
     const [search, setSearch] = useState("");
     const [filterType, setFilterType] = useState("ALL");
@@ -30,17 +36,18 @@ export default function TransactionClient({ transactions }: { transactions: Tran
 
     const ITEMS_PER_PAGE = 10;
 
-    // 1. FILTERING LOGIC
     const filtered = useMemo(() => {
         return transactions.filter((t: Transaction) => {
             const query = search.toLowerCase();
             const type = t.type || "";
 
+            const displayAmount = (Number(t.amount) * rate).toFixed(2);
+
             const matchesSearch =
                 (t.description?.toLowerCase() || "").includes(query) ||
                 (t.accountName?.toLowerCase() || "").includes(query) ||
                 (t.status?.toLowerCase() || "").includes(query) ||
-                t.amount?.toString().includes(query) ||
+                displayAmount.includes(query) ||
                 new Date(t.createdAt).toLocaleDateString().toLowerCase().includes(query);
 
             const isCrypto = type.startsWith("CRYPTO");
@@ -60,30 +67,27 @@ export default function TransactionClient({ transactions }: { transactions: Tran
 
             return matchesSearch && matchesType;
         });
-    }, [search, filterType, transactions]);
+    }, [search, filterType, transactions, rate]);
 
-    // 2. STATS
     const stats = useMemo(() => {
         let income = 0;
         let expense = 0;
         filtered.forEach(t => {
             if (t.status === 'COMPLETED') {
-                const val = Number(t.amount);
+                const val = Number(t.amount) * rate;
                 if (t.direction === 'CREDIT') income += val;
                 else expense += val;
             }
         });
         return { income, expense };
-    }, [filtered]);
+    }, [filtered, rate]);
 
-    // 3. PAGINATION
     const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
     const paginatedData = filtered.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
     if (currentPage > totalPages && totalPages > 0) setCurrentPage(1);
 
-    // 4. EXPORT
     const handleExport = () => {
         const doc = new jsPDF();
         doc.setFillColor(5, 5, 5);
@@ -92,13 +96,15 @@ export default function TransactionClient({ transactions }: { transactions: Tran
         doc.setFontSize(22);
         doc.text("Account Statement", 14, 25);
         doc.setFontSize(10);
-        doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 35);
+        doc.text(`Generated on: ${new Date().toLocaleDateString()} | Currency: ${currency}`, 14, 35);
 
         const tableData = filtered.map(t => {
             const isReversed = t.status === 'REVERSED';
             const isFailed = t.status === 'FAILED' || t.status === 'REJECTED';
 
-            let amountStr = `$${Number(t.amount).toFixed(2)}`;
+            // Convert Amount for PDF
+            const val = Number(t.amount) * rate;
+            let amountStr = `${currency} ${val.toFixed(2)}`;
 
             if (isReversed) {
                 amountStr = `(SECURITY) ${amountStr}`;
@@ -126,10 +132,9 @@ export default function TransactionClient({ transactions }: { transactions: Tran
             alternateRowStyles: { fillColor: [245, 245, 245] },
         });
 
-        doc.save("TrustBank_Statement.pdf");
+        doc.save(`Transaction_History_${currency}.pdf`);
     };
 
-    // Helper: Returns Icon based on specific state
     const renderIcon = (t: Transaction, statusType: 'REVERSED' | 'FAILED' | 'NORMAL') => {
         if (statusType === 'REVERSED') return <AlertTriangle size={18} />;
         if (statusType === 'FAILED') return <XCircle size={18} />;
@@ -156,14 +161,14 @@ export default function TransactionClient({ transactions }: { transactions: Tran
                     <div className={styles.summaryCard}>
                         <span className={styles.summaryLabel}>Total In</span>
                         <span className={styles.summaryValueIncome}>
-                            +{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(stats.income)}
+                            +{new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(stats.income)}
                         </span>
                     </div>
                     <div className={styles.summarySeparator}></div>
                     <div className={styles.summaryCard}>
                         <span className={styles.summaryLabel}>Total Out</span>
                         <span className={styles.summaryValueExpense}>
-                            -{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(stats.expense)}
+                            -{new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(stats.expense)}
                         </span>
                     </div>
                 </div>
@@ -188,18 +193,18 @@ export default function TransactionClient({ transactions }: { transactions: Tran
                             value={filterType}
                             onChange={(e) => { setFilterType(e.target.value); setCurrentPage(1); }}
                         >
-                            <option value="ALL">All Transactions</option>
-                            <optgroup label="Bank / Fiat">
-                                <option value="BANK">All Bank</option>
-                                <option value="BANK_IN">Deposits (In)</option>
-                                <option value="BANK_OUT">Withdrawals (Out)</option>
+                            <option value="ALL" className={styles.filterSelectOption}>All Transactions</option>
+                            <optgroup label="Bank / Fiat" className={styles.filterSelectOption}>
+                                <option value="BANK" className={styles.filterSelectOption}>All Bank</option>
+                                <option value="BANK_IN" className={styles.filterSelectOption}>Deposits (In)</option>
+                                <option value="BANK_OUT" className={styles.filterSelectOption}>Withdrawals (Out)</option>
                             </optgroup>
-                            <optgroup label="Crypto">
-                                <option value="CRYPTO">All Crypto</option>
-                                <option value="CRYPTO_BUY">Crypto Buys</option>
-                                <option value="CRYPTO_SELL">Crypto Sells</option>
-                                <option value="CRYPTO_SEND">Crypto Sends</option>
-                                <option value="CRYPTO_RECEIVE">Crypto Receives</option>
+                            <optgroup label="Crypto" className={styles.filterSelectOption}>
+                                <option value="CRYPTO" className={styles.filterSelectOption}>All Crypto</option>
+                                <option value="CRYPTO_BUY" className={styles.filterSelectOption}>Crypto Buys</option>
+                                <option value="CRYPTO_SELL" className={styles.filterSelectOption}>Crypto Sells</option>
+                                <option value="CRYPTO_SEND" className={styles.filterSelectOption}>Crypto Sends</option>
+                                <option value="CRYPTO_RECEIVE" className={styles.filterSelectOption}>Crypto Receives</option>
                             </optgroup>
                         </select>
                     </div>
@@ -234,10 +239,11 @@ export default function TransactionClient({ transactions }: { transactions: Tran
                                 </tr>
                             ) : (
                                 paginatedData.map(t => {
-                                    // 1. DETERMINE STATUS TYPE
                                     let statusType: 'REVERSED' | 'FAILED' | 'NORMAL' = 'NORMAL';
                                     if (t.status === 'REVERSED') statusType = 'REVERSED';
                                     else if (t.status === 'FAILED') statusType = 'FAILED';
+
+                                    const displayVal = Number(t.amount) * rate;
 
                                     return (
                                         <tr
@@ -248,15 +254,15 @@ export default function TransactionClient({ transactions }: { transactions: Tran
                                             <td data-label="Description">
                                                 <div className={styles.descCell}>
                                                     <div className={`${styles.iconBox} ${statusType === 'REVERSED' ? styles.reversedIcon :
-                                                            statusType === 'FAILED' ? styles.failedIcon :
-                                                                t.type.startsWith('CRYPTO') ? styles.cryptoIcon :
-                                                                    t.direction === 'CREDIT' ? styles.creditIcon : styles.debitIcon
+                                                        statusType === 'FAILED' ? styles.failedIcon :
+                                                            t.type.startsWith('CRYPTO') ? styles.cryptoIcon :
+                                                                t.direction === 'CREDIT' ? styles.creditIcon : styles.debitIcon
                                                         }`}>
                                                         {renderIcon(t, statusType)}
                                                     </div>
                                                     <div className={styles.descText}>
                                                         <span className={`${styles.merchant} ${statusType === 'REVERSED' ? styles.textReversed :
-                                                                statusType === 'FAILED' ? styles.textFailed : ''
+                                                            statusType === 'FAILED' ? styles.textFailed : ''
                                                             }`}>
                                                             {t.description}
                                                         </span>
@@ -281,7 +287,7 @@ export default function TransactionClient({ transactions }: { transactions: Tran
                                                             (t.direction === 'CREDIT' ? styles.greenText : styles.whiteText)
                                                 }>
                                                     {t.direction === 'CREDIT' ? '+' : '-'}
-                                                    {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(t.amount))}
+                                                    {new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(displayVal)}
                                                 </span>
                                             </td>
                                         </tr>

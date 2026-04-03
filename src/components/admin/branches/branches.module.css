@@ -1,23 +1,25 @@
 .container {
-  padding: 2rem;
-  background: var(--bg-app);
-  min-height: 100vh;
+  max-width: 1000px;
+  margin: 0 auto 1rem auto;
+  width: 100%;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.backLinkContainer {
+  margin-bottom: 1rem;
 }
 
 .backLink {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.5rem;
   color: var(--text-muted);
-  text-decoration: none;
   font-size: 0.9rem;
-  font-weight: 500;
-  transition: color 0.2s ease;
+  text-decoration: none;
+  transition: color 0.2s;
 }
-
 .backLink:hover {
-  color: var(--primary);
-  transform: translateX(-2px);
+  color: var(--text-main);
 }
 
 .header {
@@ -37,12 +39,12 @@
 .addBtn {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.5rem;
   background: var(--primary);
   color: var(--text-invert);
   border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
@@ -53,18 +55,24 @@
   transform: translateY(-2px);
 }
 
-/* LIST & CARDS */
 .list {
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
 
+.emptyState {
+  text-align: center;
+  color: var(--text-muted);
+  font-style: italic;
+  margin-top: 2rem;
+}
+
 .card {
   background: var(--bg-card);
-  border: 1px solid var(--border);
-  padding: 1.5rem;
-  border-radius: 12px;
+  border: 1px solid var(--border-subtle);
+  padding: 1rem;
+  border-radius: 0.8rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -98,12 +106,12 @@
 }
 
 .active {
-  background: rgba(34, 197, 94, 0.1);
+  background: rgba(var(--success-rgb), 0.1);
   color: var(--success);
 }
 
 .closed {
-  background: rgba(239, 68, 68, 0.1);
+  background: rgba(var(--danger-rgb), 0.1);
   color: var(--danger);
 }
 
@@ -117,7 +125,13 @@
 .metaItem {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 0.5rem;
+}
+
+.metaAddress {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-top: 4px;
 }
 
 .actions {
@@ -126,69 +140,75 @@
 }
 
 .iconBtn {
-  width: 36px;
-  height: 36px;
+  width: 2.5rem;
+  height: 2.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
   background: var(--bg-surface);
-  border: 1px solid var(--border);
-  border-radius: 8px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 0.5rem;
   cursor: pointer;
   color: var(--text-main);
   transition: all 0.2s;
 }
-
 .iconBtn:hover {
-  background: var(--border);
+  background: var(--sub-bg);
 }
 
-.deleteBtn:hover {
-  background: #fee2e2;
+.iconBtnEdit {
+  background: rgba(59, 130, 246, 0.15);
+  color: var(--primary);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+.iconBtnEdit:hover {
+  background: var(--primary);
+  color: var(--text-invert);
+}
+
+.iconBtnDelete {
+  background: rgba(var(--danger-rgb), 0.1);
   color: var(--danger);
-  border-color: #fca5a5;
+  border: 1px solid rgba(var(--danger-rgb), 0.3);
+}
+.iconBtnDelete:hover {
+  background: var(--danger);
+  color: var(--text-invert);
 }
 
-/* =========================================
-   MODAL (THE FIX)
-   ========================================= */
 .modalOverlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5); /* Dim background */
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(4px);
   z-index: 50;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1rem; /* Safety padding so modal doesn't touch screen edges */
+  padding: 1rem;
 }
 
 .modal {
   background: var(--bg-card);
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: 1rem;
   width: 100%;
-  max-width: 500px;
-  padding: 2rem;
+  max-width: 600px;
+  padding: 1.5rem;
   position: relative;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-
-  /* --- SCROLL FIXES --- */
-  max-height: 85vh; /* Never taller than 85% of screen height */
-  overflow-y: auto; /* Enable vertical scrolling if content overflows */
+  box-shadow: var(--shadow-card);
+  max-height: 85vh;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
+  animation: slideUp 0.2s ease-out;
 }
 
 .modalHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
 }
 
 .modalTitle {
@@ -199,31 +219,45 @@
 }
 
 .closeModalBtn {
-  background: transparent;
-  border: none;
+  background: rgba(var(--danger-rgb), 0.1);
+  color: var(--danger);
+  border: 1px solid rgba(var(--danger-rgb), 0.3);
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-  color: var(--text-muted);
+  transition: all 0.2s;
 }
 
-/* FORM STYLES */
+.closeModalBtn:hover {
+  background: var(--danger);
+  color: var(--text-invert);
+  transform: rotate(90deg);
+}
+
 .formGroup {
   margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
 }
 
 .label {
   display: block;
   font-size: 0.9rem;
   font-weight: 500;
-  color: var(--text-main);
-  margin-bottom: 0.5rem;
+  color: var(--text-muted);
 }
 
 .input {
   width: 100%;
-  padding: 10px 12px;
-  border-radius: 8px;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
   border: 1px solid var(--border);
-  background: var(--bg-app);
+  background: var(--bg-surface);
   color: var(--text-main);
   font-size: 0.95rem;
   transition: border-color 0.2s;
@@ -232,56 +266,118 @@
 .input:focus {
   outline: none;
   border-color: var(--primary);
-  background: var(--bg-card);
+  background: var(--bg-app);
 }
 
 .grid2 {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
+}
+
+.autoFillBtn {
+  background: var(--bg-surface);
+  color: var(--primary);
+  border: none;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background 0.2s ease;
+}
+
+.autoFillBtn:hover:not(:disabled) {
+  background: var(--border-hover);
+}
+
+.autoFillBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.grid3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.serviceCheckboxes {
+  margin-bottom: 1.5rem;
+  margin-top: 1rem;
 }
 
 .checkboxWrapper {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 0.5rem;
   font-size: 0.95rem;
   color: var(--text-main);
   cursor: pointer;
 }
 
 .checkbox {
-  width: 18px;
-  height: 18px;
+  width: 1rem;
+  height: 1rem;
   accent-color: var(--primary);
 }
 
 .submitBtn {
   width: 100%;
-  padding: 12px;
+  padding: 0.8rem;
   background: var(--primary);
   color: var(--text-invert);
   border: none;
-  border-radius: 8px;
+  border-radius: 0.5rem;
   font-weight: 600;
   font-size: 1rem;
   cursor: pointer;
-  margin-top: 1rem;
+  margin-top: 1.5rem;
   transition: opacity 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-
+.submitBtn:hover:not(:disabled) {
+  background: var(--primary-hover);
+}
 .submitBtn:disabled {
   opacity: 0.7;
   cursor: not-allowed;
 }
 
-/* Empty State */
-.emptyState {
-  text-align: center;
-  color: var(--text-muted);
-  font-style: italic;
-  margin-top: 2rem;
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

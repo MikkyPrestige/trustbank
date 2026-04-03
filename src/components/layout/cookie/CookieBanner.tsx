@@ -8,14 +8,12 @@ export default function CookieBanner() {
     const [isVisible, setIsVisible] = useState(false);
 
     useEffect(() => {
-        // 1. Check local storage
         const consent = localStorage.getItem('trustbank_consent');
 
         if (consent === 'true') {
             // initGoogleAnalytics();
         }
 
-        //  If no consent, show banner after a small delay
         if (!consent) {
             const timer = setTimeout(() => {
                 setIsVisible(true);
@@ -40,7 +38,7 @@ export default function CookieBanner() {
     return (
         <div className={styles.banner}>
             <button className={styles.closeIcon} onClick={handleDecline}>
-                <X size={18} />
+                <X size={20} />
             </button>
 
             <div className={styles.header}>

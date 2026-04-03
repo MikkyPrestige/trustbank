@@ -18,8 +18,6 @@ export default function PressClientManager({ initialReleases }: Props) {
     const [loading, setLoading] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingItem, setEditingItem] = useState<PressRelease | null>(null);
-
-    // Form
     const [title, setTitle] = useState('');
     const [summary, setSummary] = useState('');
     const [category, setCategory] = useState('Company News');
@@ -77,9 +75,11 @@ export default function PressClientManager({ initialReleases }: Props) {
 
     return (
         <div className={styles.container}>
+            <div className={styles.backLinkContainer}>
             <Link href="/admin/settings" className={styles.backLink}>
                 <ArrowLeft size={18} /> Back to Settings
             </Link>
+            </div>
             <div className={styles.header}>
                 <h1 className={styles.title}>Press Releases</h1>
                 <button onClick={() => openModal()} className={styles.addBtn}>
@@ -100,8 +100,8 @@ export default function PressClientManager({ initialReleases }: Props) {
                             {item.link && <a href={item.link} target="_blank" className={styles.link}><ExternalLink size={12} /> External Link</a>}
                         </div>
                         <div className={styles.actions}>
-                            <button onClick={() => openModal(item)} className={styles.iconBtn}><Pencil size={16} /></button>
-                            <button onClick={() => handleDelete(item.id)} className={`${styles.iconBtn} ${styles.deleteBtn}`}><Trash2 size={16} /></button>
+                            <button onClick={() => openModal(item)} className={`${styles.iconBtn} ${styles.iconBtnEdit}`}><Pencil size={20} /></button>
+                            <button onClick={() => handleDelete(item.id)} className={`${styles.iconBtn} ${styles.iconBtnDelete}`}><Trash2 size={20} /></button>
                         </div>
                     </div>
                 ))}
@@ -111,22 +111,22 @@ export default function PressClientManager({ initialReleases }: Props) {
                 <div className={styles.modalOverlay}>
                     <div className={styles.modal}>
                         <div className={styles.modalHeader}>
-                            <h2>{editingItem ? 'Edit Release' : 'Publish News'}</h2>
-                            <button onClick={() => setIsModalOpen(false)}><X /></button>
+                            <h2 className={styles.modalTitle}>{editingItem ? 'Edit Release' : 'Publish News'}</h2>
+                            <button onClick={() => setIsModalOpen(false)} className={styles.closeModalBtn}><X size={20} /></button>
                         </div>
                         <form onSubmit={handleSubmit}>
                             <div className={styles.formGroup}>
-                                <label>Title</label>
-                                <input value={title} onChange={e => setTitle(e.target.value)} required className={styles.input} />
+                                <label className={styles.label}>Title</label>
+                                <textarea value={title} onChange={e => setTitle(e.target.value)} required className={styles.textarea} />
                             </div>
                             <div className={styles.grid2}>
                                 <div className={styles.formGroup}>
-                                    <label>Date</label>
+                                    <label className={styles.label}>Date</label>
                                     <input type="date" value={date} onChange={e => setDate(e.target.value)} required className={styles.input} />
                                 </div>
                                 <div className={styles.formGroup}>
-                                    <label>Category</label>
-                                    <select value={category} onChange={e => setCategory(e.target.value)} className={styles.input}>
+                                    <label className={styles.label}>Category</label>
+                                    <select value={category} onChange={e => setCategory(e.target.value)} className={styles.select}>
                                         <option>Company News</option>
                                         <option>Product Launch</option>
                                         <option>Awards</option>
@@ -135,15 +135,15 @@ export default function PressClientManager({ initialReleases }: Props) {
                                 </div>
                             </div>
                             <div className={styles.formGroup}>
-                                <label>Summary</label>
+                                <label className={styles.label}>Summary</label>
                                 <textarea value={summary} onChange={e => setSummary(e.target.value)} required className={styles.textarea} />
                             </div>
                             <div className={styles.formGroup}>
-                                <label>External Link (Optional)</label>
+                                <label className={styles.label}>External Link (Optional)</label>
                                 <input value={link} onChange={e => setLink(e.target.value)} className={styles.input} placeholder="https://..." />
                             </div>
                             <button disabled={loading} className={styles.submitBtn}>
-                                {loading ? <Loader2 className="animate-spin" /> : "Save Release"}
+                                {loading ? <Loader2 className={styles.spin} /> : "Save Release"}
                             </button>
                         </form>
                     </div>

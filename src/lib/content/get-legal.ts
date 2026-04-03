@@ -18,7 +18,6 @@ export type LegalContentResult = {
 
 export const getLegalContent = cache(async (type: 'privacy' | 'terms' | 'accessibility'): Promise<LegalContentResult> => {
 
-    // 2. Define defaults
     const defaultLayout = {
         backText: "Back to Home",
         footerText: "This document is legally binding. If you have questions, please contact our",
@@ -36,12 +35,11 @@ export const getLegalContent = cache(async (type: 'privacy' | 'terms' | 'accessi
         const layoutConfig = {
             backText: settings?.content?.legal_back_text || defaultLayout.backText,
             footerText: settings?.content?.legal_footer_text || defaultLayout.footerText,
-            linkText: settings?.content?.legal_link_text || defaultLayout.linkText,
-            linkUrl: settings?.content?.legal_link_url || defaultLayout.linkUrl,
+            linkText: settings?.content?.legal_contact_text || defaultLayout.linkText,
+            linkUrl: settings?.content?.legal_contact_url || defaultLayout.linkUrl,
             updatedLabel: settings?.content?.legal_updated_label || defaultLayout.updatedLabel,
         };
 
-        // 4. Handle "No Settings Found" case
         if (!settings || !settings.content) {
             return {
                 content: getDefaultContent(type),
@@ -50,7 +48,6 @@ export const getLegalContent = cache(async (type: 'privacy' | 'terms' | 'accessi
             };
         }
 
-        // 5. Select content based on type
         let content = "";
         switch (type) {
             case 'privacy':
@@ -64,13 +61,12 @@ export const getLegalContent = cache(async (type: 'privacy' | 'terms' | 'accessi
                 break;
         }
 
-        // 6. Check for placeholder text
         const isPlaceholder =
             content === "<p>Privacy Policy content...</p>" ||
             content === "<p>Terms of Service content...</p>" ||
             content === "<p>Accessibility content...</p>";
 
-        // 7. Fallback logic
+        // Fallback
         if (!content || content.length < 50 || isPlaceholder) {
             content = getDefaultContent(type);
         }

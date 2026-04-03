@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { useState } from 'react';
 import {
     LayoutDashboard, ArrowRightLeft, CreditCard, History, Settings,
-    LogOut, Menu, Globe, Users, ShieldCheck,
+    LogOut, Menu, X, Globe, Users, ShieldCheck,
     FileText, IdCard, Lock, Bitcoin, Banknote, HelpCircle, Landmark
 } from 'lucide-react';
 import { signOut } from 'next-auth/react';
@@ -36,7 +36,6 @@ export default function Sidebar({ data }: SidebarProps) {
     const pathname = usePathname();
     const [isMobileOpen, setIsMobileOpen] = useState(false);
 
-    // Status Logic
     const isVerified = data.user.kycStatus === 'VERIFIED';
     const isPending = data.user.kycStatus === 'PENDING';
     const actionRequired = !isVerified && !isPending;
@@ -44,11 +43,10 @@ export default function Sidebar({ data }: SidebarProps) {
     const wireBadgeVariant = data.counts.actionRequired > 0 ? 'danger' : 'default';
 
     const logoSource = data.logoUrl || '/logo.png';
-    const siteTitle = data.siteName || 'TrustBank';
+    const siteTitle = data.siteName || 'Trust Bank';
 
     return (
         <>
-            {/* MOBILE HEADER */}
             <div className={styles.mobileHeader}>
                 <Link href="/dashboard">
                     <Image src={logoSource} alt={siteTitle} width={140} height={40} className={styles.logoImage} />
@@ -58,30 +56,30 @@ export default function Sidebar({ data }: SidebarProps) {
                 </button>
             </div>
 
-            {/* BACKDROP */}
             <div
                 className={`${styles.overlay} ${isMobileOpen ? styles.visible : ''}`}
                 onClick={() => setIsMobileOpen(false)}
             />
 
-            {/* SIDEBAR */}
             <aside className={`${styles.sidebar} ${isMobileOpen ? styles.open : ''}`}>
-                {/* 1. LOGO */}
+                <button
+                    className={styles.sidebarCloseBtn}
+                    onClick={() => setIsMobileOpen(false)}
+                >
+                    <X size={20} />
+                </button>
                 <div className={styles.logoArea}>
                     <Link href="/dashboard" onClick={() => setIsMobileOpen(false)}>
                         <Image src={logoSource} alt={siteTitle} width={160} height={45} className={styles.logoImage} />
                     </Link>
                 </div>
 
-                {/* 2. NAVIGATION */}
                 <nav className={styles.navMenu}>
-                    {/* SECTION: PERSONAL */}
                     <p className={styles.navLabel}>Personal Banking</p>
                     <NavItem href="/dashboard" icon={LayoutDashboard} label="Overview" active={pathname === '/dashboard'} />
                     <NavItem href="/dashboard/transactions" icon={History} label="Transactions" active={pathname.includes('/transactions')} />
 
                     <div className={styles.divider}></div>
-                    {/* SECTION: MONEY MOVEMENT */}
                     <p className={styles.navLabel}>Money & Assets</p>
                     <NavItem href="/dashboard/transfer" icon={ArrowRightLeft} label="Transfer" active={pathname.includes('/transfer')} />
                     <NavItem
@@ -100,12 +98,10 @@ export default function Sidebar({ data }: SidebarProps) {
 
                     <div className={styles.divider}></div>
 
-                    {/* SECTION: PREFERENCES */}
                     <p className={styles.navLabel}>Preferences</p>
                     <NavItem href="/dashboard/settings" icon={Settings} label="Settings" active={pathname.includes('/settings')} />
                     <NavItem href="/dashboard/support" icon={HelpCircle} label="Help Center" active={pathname.includes('/help')} />
 
-                    {/* SECTION: ADMIN (Conditional) */}
                     {data.isAdmin && (
                         <>
                             <div className={styles.divider}></div>
@@ -122,7 +118,6 @@ export default function Sidebar({ data }: SidebarProps) {
                     )}
                 </nav>
 
-                {/* 3. USER FOOTER */}
                 <div className={styles.userProfile}>
                     <Link href="/dashboard/profile" className={styles.avatarWrapper}>
                         <div className={styles.avatar}>
@@ -139,7 +134,6 @@ export default function Sidebar({ data }: SidebarProps) {
                             )}
                         </div>
 
-                        {/* Status Indicator Dot */}
                         <div className={`${styles.statusDot} ${data.user.isFrozen ? styles.dotFrozen :
                             isVerified ? styles.dotVerified :
                                 styles.dotPending

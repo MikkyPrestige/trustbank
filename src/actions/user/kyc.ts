@@ -19,7 +19,6 @@ export async function submitKyc(prevState: any, formData: FormData) {
     }
 
     try {
-        // 1. Check if already verified
         if (user.kycStatus === KycStatus.VERIFIED) {
             return { message: "You are already verified." };
         }
@@ -27,7 +26,6 @@ export async function submitKyc(prevState: any, formData: FormData) {
             return { message: "Verification already in progress." };
         }
 
-        // 2. Get Files
        const passportFile = formData.get("passport") as File;
         const idFrontFile = formData.get("idCardFront") as File;
         const idBackFile = formData.get("idCardBack") as File;
@@ -40,14 +38,12 @@ export async function submitKyc(prevState: any, formData: FormData) {
             return { success: false, message: "Passport photo is required." };
         }
 
-        // 3. Upload Files
      const [passportUrl, frontUrl, backUrl] = await Promise.all([
             uploadFileToCloud(passportFile, "avatars"),
             uploadFileToCloud(idFrontFile, "kyc"),
             uploadFileToCloud(idBackFile, "kyc")
         ]);
 
-        // 4. CRITICAL DB UPDATE
      await db.user.update({
             where: { id: user.id },
             data: {
@@ -59,7 +55,6 @@ export async function submitKyc(prevState: any, formData: FormData) {
             }
         });
 
-        // 5. NOTIFY ADMINS
         try {
             const admins = await db.user.findMany({
                 where: { role: { in: [UserRole.ADMIN, UserRole.SUPER_ADMIN] } },

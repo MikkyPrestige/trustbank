@@ -14,19 +14,18 @@ interface ImageUploaderProps {
 
 export default function ImageUploader({ value, onChange, label = "Upload Image" }: ImageUploaderProps) {
     const [isLoading, setIsLoading] = useState(false);
+    const [isDragging, setIsDragging] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
+    // upload logic for both Click and Drop
+    const processUpload = async (file: File) => {
         if (!file) return;
-
         setIsLoading(true);
 
         try {
             const formData = new FormData();
             formData.append("file", file);
 
-            // Server Action
             const res = await uploadMediaAction(formData);
 
             if (res.error) {
@@ -42,11 +41,37 @@ export default function ImageUploader({ value, onChange, label = "Upload Image" 
         }
     };
 
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) processUpload(file);
+    };
+
+    // --- Drag and Drop Handlers ---
+    const onDragOver = (e: React.DragEvent) => {
+        e.preventDefault();
+        setIsDragging(true);
+    };
+
+    const onDragLeave = () => {
+        setIsDragging(false);
+    };
+
+    const onDrop = (e: React.DragEvent) => {
+        e.preventDefault();
+        setIsDragging(false);
+
+        const file = e.dataTransfer.files?.[0];
+        if (file && file.type.startsWith("image/")) {
+            processUpload(file);
+        } else {
+            alert("Please drop a valid image file");
+        }
+    };
+
     return (
         <div className={styles.container}>
             <label className={styles.label}>{label}</label>
 
-            {/* 1. PREVIEW MODE */}
             {value ? (
                 <div className={styles.previewBox}>
                     <Image
@@ -60,21 +85,28 @@ export default function ImageUploader({ value, onChange, label = "Upload Image" 
                         onClick={() => onChange("")}
                         className={styles.removeBtn}
                     >
-                        <X size={14} />
+                        <X size={20} />
                     </button>
                 </div>
             ) : (
-                // 2. UPLOAD MODE
                 <div
                     onClick={() => fileInputRef.current?.click()}
-                    className={styles.uploadBox}
+                    onDragOver={onDragOver}
+                    onDragLeave={onDragLeave}
+                    onDrop={onDrop}
+                    className={`${styles.uploadBox} ${isDragging ? styles.dragging : ""}`}
                 >
                     {isLoading ? (
-                        <Loader2 className="animate-spin" color="var(--primary)" />
+                        <div className={styles.loadingContainer}>
+                                <Loader2 className={styles.spin} color="var(--primary)" />
+                            <span className={styles.uploadText}>Uploading...</span>
+                        </div>
                     ) : (
                         <>
                             <UploadCloud className={styles.uploadIcon} />
-                            <span className={styles.uploadText}>Click to upload</span>
+                            <span className={styles.uploadText}>
+                                {isDragging ? "Drop to upload" : "Click or drag image here"}
+                            </span>
                         </>
                     )}
                 </div>
@@ -83,7 +115,7 @@ export default function ImageUploader({ value, onChange, label = "Upload Image" 
             <input
                 type="file"
                 ref={fileInputRef}
-                onChange={handleUpload}
+                onChange={handleFileChange}
                 accept="image/png, image/jpeg, image/webp"
                 className={styles.hiddenInput}
             />

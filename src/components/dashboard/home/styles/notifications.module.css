@@ -4,12 +4,12 @@
 }
 
 .bellBtn {
-  width: 40px;
-  height: 40px;
+  width: 2.5rem;
+  height: 2.5rem;
   border-radius: 50%;
-  border: 1px solid var(--border);
-  background: var(--bg-card);
-  color: var(--text-secondary);
+  border: 1px solid var(--sub-divider);
+  background: var(--sub-bg);
+  color: var(--text-body);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -19,13 +19,13 @@
 }
 
 .bellBtn:hover {
-  background: var(--bg-secondary);
+  background: var(--sub-hover);
   color: var(--text-main);
-  border-color: var(--border);
+  border-color: var(--border-subtle);
 }
 
 .active {
-  background: var(--bg-secondary);
+  background: var(--bg-card);
   color: var(--text-main);
   border-color: var(--border);
 }
@@ -34,7 +34,7 @@
   position: absolute;
   top: -2px;
   right: -2px;
-  background: var(--danger); /* Replaced #ef4444 */
+  background: var(--danger);
   color: var(--text-invert);
   font-size: 0.65rem;
   font-weight: 700;
@@ -45,41 +45,29 @@
   align-items: center;
   justify-content: center;
   padding: 0 4px;
-  border: 2px solid var(--bg-main); /* Matches page background */
+  border: 2px solid var(--border-subtle);
 }
 
-/* DROPDOWN */
 .dropdown {
   position: absolute;
   top: 50px;
   right: -10px;
   width: 320px;
-  background: var(--bg-card); /* Replaced #0a0a0a */
+  background: var(--bg-card);
   border: 1px solid var(--border);
-  border-radius: 16px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  border-radius: 1rem;
+  box-shadow: var(--shadow-card);
   overflow: hidden;
   animation: slideDown 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px) scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
 .header {
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--border);
+  padding: 1rem;
+  border-bottom: 1px solid var(--sub-divider);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: var(--bg-secondary);
+  background: var(--sub-bg);
 }
 
 .title {
@@ -100,32 +88,44 @@
   max-height: 350px;
   overflow-y: auto;
 }
-
-/* SCROLLBAR */
 .list::-webkit-scrollbar {
   width: 4px;
 }
 .list::-webkit-scrollbar-thumb {
-  background: var(--border);
+  background: var(--ui-bg-high);
   border-radius: 4px;
 }
 
-.item {
-  padding: 12px 16px;
+.empty {
+  padding: 4rem 2rem;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.9rem;
   display: flex;
-  gap: 12px;
-  border-bottom: 1px solid var(--border);
-  transition: background 0.2s;
-  position: relative;
-  background: var(--bg-card);
+  flex-direction: column;
+  align-items: center;
 }
 
+.emptyBell {
+  margin-bottom: 1rem;
+  opacity: 0.2;
+}
+
+.item {
+  padding: 1rem .5rem .5rem .5rem;
+  display: flex;
+  gap: 1rem;
+  border-bottom: 1px solid var(--border-subtle);
+  transition: background 0.2s;
+  position: relative;
+  background: var(--sub-bg);
+}
 .item:hover {
-  background: var(--bg-secondary);
+  background: var(--sub-hover);
 }
 
 .unread {
-  background: rgba(37, 99, 235, 0.05); /* Subtle blue tint using primary hue */
+  background: rgba(37, 99, 235, 0.05);
 }
 
 .unread:hover {
@@ -154,43 +154,15 @@
   margin-bottom: 4px;
 }
 
-.noteTime {
-  font-size: 0.7rem;
-  color: var(--text-muted);
-  opacity: 0.7;
-}
-
-.item:hover .checkBtn {
-  opacity: 1;
-}
-
-.checkBtn:hover {
-  background: var(--primary);
-  color: var(--text-invert);
-}
-
-.empty {
-  padding: 40px 20px;
-  text-align: center;
-  color: var(--text-muted);
-  font-size: 0.9rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
 .actionsRow {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-top: 8px;
-  margin-bottom: 4px;
+  gap: 2rem;
+  margin-top: 6px;
 }
 
 .actionLink {
   display: inline-block;
-  margin-top: 6px;
-  margin-bottom: 4px;
   font-size: 0.8rem;
   font-weight: 600;
   color: var(--primary);
@@ -204,21 +176,37 @@
 }
 
 .dismissBtn {
-  background: none;
-  border: 1px solid var(--border);
+  background: var(--sub-bg);
+  border: 1px solid var(--sub-divider);
   color: var(--text-muted);
   font-size: 0.75rem;
-  padding: 2px 8px;
-  border-radius: 4px;
+  padding: 0.3rem 0.5rem;
+  border-radius: 0.4rem;
   cursor: pointer;
   transition: all 0.2s;
-  height: 24px;
   display: flex;
   align-items: center;
 }
 
 .dismissBtn:hover {
-  background: var(--bg-secondary);
+  background: rgba(var(--danger-rgb), 0.1);
   color: var(--danger);
-  border-color: var(--danger);
+  border-color: rgba(var(--danger-rgb), 0.3);
+}
+
+.noteTime {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  opacity: 0.7;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }

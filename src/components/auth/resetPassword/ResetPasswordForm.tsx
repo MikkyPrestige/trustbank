@@ -4,7 +4,7 @@ import { useActionState } from "react";
 import Link from "next/link";
 import { Lock, CheckCircle, AlertCircle, ArrowRight, Loader2, KeyRound } from "lucide-react";
 import styles from "./resetPassword.module.css";
-import { resetPassword } from "@/actions/user/reset-password";
+import { resetPassword } from "@/actions/user/password";
 
 interface Props {
     token: string;
@@ -30,7 +30,7 @@ export default function ResetPasswordForm({ token }: Props) {
                                 <CheckCircle size={32} />
                             </div>
                             <h1>Password Reset!</h1>
-                            <p style={{ color: 'var(--text-muted)', marginBottom: '2rem' }}>
+                            <p>
                                 Your account has been secured with your new credentials.
                             </p>
                             <Link href="/login" className={styles.primaryBtn}>
@@ -48,20 +48,17 @@ export default function ResetPasswordForm({ token }: Props) {
             <div className={styles.ambientMesh}></div>
             <div className={styles.formContainer}>
                 <div className={styles.glassForm}>
-
                     <div className={styles.header}>
                         <div className={styles.brandBadge}>
-                            <KeyRound size={14} />
+                            <KeyRound size={18} />
                             <span>Secure Reset</span>
                         </div>
                         <h1>Set New Password</h1>
                         <p>Create a strong password to protect your assets.</p>
                     </div>
-
-                    {/* Error Message */}
                     {state.message && (
                         <div className={styles.errorBanner}>
-                            <AlertCircle size={16} /> {state.message}
+                            <AlertCircle size={18} /> {state.message}
                         </div>
                     )}
 
@@ -109,7 +106,6 @@ export default function ResetPasswordForm({ token }: Props) {
                             )}
                         </button>
                     </form>
-
                 </div>
             </div>
         </div>

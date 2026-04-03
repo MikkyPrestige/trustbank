@@ -13,15 +13,17 @@ import {
 } from "@prisma/client";
 
 const transferSchema = z.object({
-    sourceAccountId: z.string(),
-    amount: z.coerce.number().min(1, "Minimum transfer is $1"),
-    pin: z.string().length(4, "PIN must be 4 digits"),
-    accountName: z.string().min(1, "Name is required"),
-    accountNumber: z.string().min(6, "Invalid Account Number"),
-    bankName: z.string().min(1, "Bank Name is required"),
-    routingNumber: z.string().optional(),
-    note: z.string().optional(),
-    saveBeneficiary: z.string().optional(),
+  sourceAccountId: z.string(),
+  amount: z.coerce.number().min(0.01, "Minimum transfer is 0.01"),
+  pin: z.string().length(4, "PIN must be 4 digits"),
+  accountName: z.string().min(1, "Name is required"),
+  accountNumber: z.string().min(6, "Invalid Account Number"),
+  bankName: z.string().min(1, "Bank Name is required"),
+  routingNumber: z.string().optional(),
+  note: z.string().optional(),
+  saveBeneficiary: z.string().optional(),
+  displayAmount: z.string().optional(),
+  displayCurrency: z.string().optional(),
 });
 
 export async function processTransfer(prevState: any, formData: FormData) {
@@ -44,22 +46,20 @@ export async function processTransfer(prevState: any, formData: FormData) {
 
     const {
         sourceAccountId, amount, pin, accountName,
-        accountNumber, bankName, saveBeneficiary, note, routingNumber
+        accountNumber, bankName, saveBeneficiary, note, routingNumber,
+        displayAmount, displayCurrency
     } = validated.data;
 
-    // 1. SECURITY: Verify PIN
     const pinValidation = await verifyPin(user.id, pin);
     if (!pinValidation.success) {
         return { message: pinValidation.error };
     }
 
-    // 2. SECURITY: Role & Action Permissions (Sender Limits)
-  const permission = await checkPermissions(user.id, 'TRANSFER_INTERNAL', amount);
+    const permission = await checkPermissions(user.id, 'TRANSFER_INTERNAL', amount);
     if (!permission.allowed) {
         return { message: `🚫 ${permission.error}` };
     }
 
-    // 3. PRE-TRANSACTION CHECKS
     const isVerified = user.kycStatus === KycStatus.VERIFIED;
     const UNVERIFIED_LIMIT = 2000;
 
@@ -79,7 +79,6 @@ export async function processTransfer(prevState: any, formData: FormData) {
         where: { accountNumber: accountNumber }
     });
 
-    // 4. INBOUND LIMIT CHECK (The New Feature)
     if (destinationAccount) {
         const inboundCheck = await checkInboundLimit(destinationAccount.userId, amount);
         if (!inboundCheck.allowed) {
@@ -87,7 +86,6 @@ export async function processTransfer(prevState: any, formData: FormData) {
         }
     }
 
-    // 5. THE TRANSACTION
     try {
         type TxResult = {
             senderTxId: string;
@@ -97,7 +95,6 @@ export async function processTransfer(prevState: any, formData: FormData) {
 
         const result: TxResult = await db.$transaction(async (tx) => {
 
-            // A. DEDUCT FROM SENDER
             await tx.account.update({
                 where: { id: sourceAccountId },
                 data: {
@@ -118,13 +115,13 @@ export async function processTransfer(prevState: any, formData: FormData) {
                     type: TransactionType.TRANSFER,
                     description: senderDesc,
                     referenceId: senderRefId,
+                    metadata: JSON.stringify({ originalAmount: displayAmount, originalCurrency: displayCurrency })
                 }
             });
 
             let receiverTxId: string | undefined;
             let destUserId: string | undefined;
 
-            // B. CREDIT RECEIVER (If Internal)
             if (destinationAccount) {
                 destUserId = destinationAccount.userId;
 
@@ -154,7 +151,6 @@ export async function processTransfer(prevState: any, formData: FormData) {
                 receiverTxId = receiverTx.id;
             }
 
-            // C. SAVE BENEFICIARY
             if (saveBeneficiary === "on") {
                 const existing = await tx.beneficiary.findFirst({
                     where: { userId: user.id, accountNumber: accountNumber }
@@ -173,7 +169,6 @@ export async function processTransfer(prevState: any, formData: FormData) {
                 }
             }
 
-            // Return IDs
             return {
                 senderTxId: senderTx.id,
                 receiverTxId,
@@ -181,27 +176,27 @@ export async function processTransfer(prevState: any, formData: FormData) {
             };
         });
 
-        // 6. NOTIFICATIONS
+        const notificationAmount = (displayAmount && displayCurrency)
+            ? `${displayCurrency} ${Number(displayAmount).toLocaleString()}`
+            : `$${amount.toLocaleString()}`;
 
-        // A. Notify Sender (Always)
         await db.notification.create({
             data: {
                 userId: user.id,
                 title: "Transfer Sent",
-                message: `You successfully sent $${amount.toLocaleString()} to ${accountName}.`,
+                message: `You successfully sent ${notificationAmount} to ${accountName}.`,
                 type: "SUCCESS",
                 link: `/dashboard/transactions/${result.senderTxId}`,
                 isRead: false
             }
         });
 
-        // B. Notify Receiver (If Internal AND NOT Self)
         if (result.destUserId && result.receiverTxId && result.destUserId !== user.id) {
             await db.notification.create({
                 data: {
                     userId: result.destUserId,
                     title: "Money Received",
-                    message: `You received $${amount.toLocaleString()} from ${user.fullName}.`,
+                    message: `You received $${amount.toLocaleString()} (approx) from ${user.fullName}.`,
                     type: "SUCCESS",
                     link: `/dashboard/transactions/${result.receiverTxId}`,
                     isRead: false
@@ -209,7 +204,6 @@ export async function processTransfer(prevState: any, formData: FormData) {
             });
         }
 
-        // C. Notify Admins
         const admins = await db.user.findMany({
             where: { role: { in: ["ADMIN", "SUPER_ADMIN"] } },
             select: { id: true }

@@ -3,11 +3,11 @@
 import { useActionState, useState, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { registerUser } from '@/actions/user/register';
-import { verifyOtp } from '@/actions/user/verify-otp';
+import { verifyOtp } from '@/actions/user/otp';
 import Link from 'next/link';
 import {
-    Lock, User, MapPin, UploadCloud, ShieldCheck,
-    CheckCircle, ArrowRight, FileText, Mail, HeartHandshake, Fingerprint, Camera, AlertCircle, Loader2, Check
+    Lock, User, MapPin, UploadCloud,
+    CheckCircle, ArrowRight, FileText, Mail, HeartHandshake, Fingerprint, Camera, AlertCircle, Loader2, Check, Wallet
 } from 'lucide-react';
 import styles from './styles/RegisterForm.module.css';
 import toast from 'react-hot-toast';
@@ -17,7 +17,8 @@ const initialState = {
     errors: {},
     success: false,
     requireOtp: false,
-    email: ''
+    email: '',
+    callbackUrl: ''
 };
 
 const MAX_TOTAL_SIZE = 25 * 1024 * 1024;   // 25 mb
@@ -26,32 +27,24 @@ interface RegisterFormProps {
     siteName?: string;
 }
 
-export default function RegisterForm({ siteName = "TrustBank" }: RegisterFormProps) {
+export default function RegisterForm({ siteName }: RegisterFormProps) {
     const [state, action, isPending] = useActionState(registerUser, initialState);
     const [fileError, setFileError] = useState<string | null>(null);
     const router = useRouter();
-
-    // OTP States
     const [showOtp, setShowOtp] = useState(false);
     const [otpCode, setOtpCode] = useState("");
     const [otpError, setOtpError] = useState("");
     const [isVerifying, setIsVerifying] = useState(false);
-
-    // Success Modal States
     const [isVerified, setIsVerified] = useState(false);
     const [countdown, setCountdown] = useState(5);
-
     const searchParams = useSearchParams();
     const defaultName = searchParams.get('full_name') || '';
     const defaultEmail = searchParams.get('email') || '';
-
-    //  files State
     const [frontFile, setFrontFile] = useState<string | null>(null);
     const [backFile, setBackFile] = useState<string | null>(null);
     const [passportFile, setPassportFile] = useState<string | null>(null);
-
-    // Track sizes
     const [sizes, setSizes] = useState({ passport: 0, front: 0, back: 0 });
+    const callbackUrl = searchParams.get('callbackUrl') || '';
 
     useEffect(() => {
         if (state?.requireOtp) {
@@ -65,20 +58,54 @@ export default function RegisterForm({ siteName = "TrustBank" }: RegisterFormPro
             const timer = setTimeout(() => setCountdown((c) => c - 1), 1000);
             return () => clearTimeout(timer);
         } else if (isVerified && countdown === 0) {
-            router.push('/login?verified=true');
+            const dest = callbackUrl
+                ? `/login?verified=true&callbackUrl=${encodeURIComponent(callbackUrl)}`
+                : '/login?verified=true';
+            router.push(dest);
         }
-    }, [isVerified, countdown, router]);
+    }, [isVerified, countdown, router, callbackUrl]);
+
 
     useEffect(() => {
         if (state?.isUnverified && state.email) {
             toast.error("Account pending verification. Redirecting...");
-
             setTimeout(() => {
                 const emailParam = encodeURIComponent(state.email || "");
                 router.push(`/verify-email?email=${emailParam}`);
             }, 1500);
         }
     }, [state, router]);
+
+    const handleFormSubmit = (formData: FormData) => {
+        setFileError(null);
+        const frontBlob = formData.get("idDocumentFront") as File;
+        const backBlob = formData.get("idDocumentBack") as File;
+        const realFrontSize = frontBlob ? frontBlob.size : 0;
+        const realBackSize = backBlob ? backBlob.size : 0;
+
+        // "GHOST" FILES
+        if (frontFile && realFrontSize === 0) {
+            setFileError("Please re-select your ID Front (file was reset).");
+            setFrontFile(null);
+            return;
+        }
+        if (backFile && realBackSize === 0) {
+            setFileError("Please re-select your ID Back (file was reset).");
+            setBackFile(null);
+            return;
+        }
+
+        // PARTIAL UPLOADS
+        const hasFront = realFrontSize > 0;
+        const hasBack = realBackSize > 0;
+
+        if ((hasFront && !hasBack) || (!hasFront && hasBack)) {
+            setFileError("Incomplete ID Upload. Please upload BOTH front and back images.");
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            return;
+        }
+        action(formData);
+    };
 
     const handleVerify = async () => {
         if (otpCode.length !== 6) {
@@ -100,7 +127,8 @@ export default function RegisterForm({ siteName = "TrustBank" }: RegisterFormPro
                 if (errorMessage.toLowerCase().includes("expired")) {
                     setTimeout(() => {
                         const emailParam = encodeURIComponent(state.email || "");
-                        router.push(`/verify-email?email=${emailParam}`);
+                        const cbParam = callbackUrl ? `&callbackUrl=${encodeURIComponent(callbackUrl)}` : '';
+                        router.push(`/verify-email?email=${emailParam}${cbParam}`);
                     }, 1500);
                 }
             }
@@ -142,7 +170,7 @@ export default function RegisterForm({ siteName = "TrustBank" }: RegisterFormPro
         }
     };
 
-    // --- VIEW 0: SUCCESS MODAL OVERLAY ---
+    // --- VIEW 0: SUCCESS ---
     if (isVerified) {
         return (
             <div className={styles.modalOverlay}>
@@ -152,13 +180,16 @@ export default function RegisterForm({ siteName = "TrustBank" }: RegisterFormPro
                     </div>
                     <h2 className={styles.modalTitle}>Email Verified!</h2>
                     <p className={styles.modalText}>Your account has been successfully activated.</p>
-
                     <span className={styles.timerRing}>
                         Redirecting to Login in {countdown}s...
                     </span>
-
                     <button
-                        onClick={() => router.push('/login?verified=true')}
+                        onClick={() => {
+                            const dest = callbackUrl
+                                ? `/login?verified=true&callbackUrl=${encodeURIComponent(callbackUrl)}`
+                                : '/login?verified=true';
+                            router.push(dest);
+                        }}
                         className={`${styles.primaryBtn} ${styles.fullWidthBtn}`}
                     >
                         Go to Login Now
@@ -176,12 +207,11 @@ export default function RegisterForm({ siteName = "TrustBank" }: RegisterFormPro
                     <div className={`${styles.successIcon} ${styles.otpIconWrapper}`}>
                         <Mail size={40} />
                     </div>
-                    <h1>Verify Your Email</h1>
-                    <p>We sent a 6-digit code to <strong>{state.email}</strong></p>
+                    <h1 className={styles.successCardTitle}>Verify Your Email</h1>
+                    <p className={styles.successCardText}>We sent a 6-digit code to  <strong>{state.email}</strong></p>
                     <p className={styles.otpSubText}>
                         Enter the code below to activate your account.
                     </p>
-
                     <input
                         type="text"
                         maxLength={6}
@@ -190,54 +220,31 @@ export default function RegisterForm({ siteName = "TrustBank" }: RegisterFormPro
                         onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ''))}
                         className={styles.otpInput}
                     />
-
                     {otpError && (
                         <div className={styles.otpError}>
                             <AlertCircle size={16} /> {otpError}
                         </div>
                     )}
-
                     <button
                         onClick={handleVerify}
                         disabled={isVerifying}
                         className={`${styles.primaryBtn} ${styles.fullWidthBtn}`}
                     >
-                        {isVerifying ? <><Loader2 className="spin" /> Verifying...</> : 'Verify & Activate'}
+                        {isVerifying ? <><Loader2 className={styles.spin} /> Verifying...</> : 'Verify & Activate'}
                     </button>
 
                     <div className={styles.resendContainer}>
                         <span className={styles.resendText}>Code expired or didn&apos;t receive it? </span>
                         <Link
-                            href={`/verify-email?email=${encodeURIComponent(state.email || "")}`}
+                            href={`/verify-email?email=${encodeURIComponent(state.email || "")}${callbackUrl ? `&callbackUrl=${encodeURIComponent(callbackUrl)}` : ''}`}
                             className={styles.resendLink}
                         >
                             Request a new code
                         </Link>
                     </div>
-
                     <button onClick={() => setShowOtp(false)} className={styles.backBtn}>
                         Incorrect email? Go back
                     </button>
-                </div>
-            </div>
-        );
-    }
-
-    // --- VIEW 2: SUCCESS MESSAGE (Legacy fallback) ---
-    if (state?.success && !state.requireOtp) {
-        return (
-            <div className={styles.pageWrapper}>
-                <div className={styles.successCard}>
-                    <div className={styles.successIcon}><CheckCircle size={64} strokeWidth={1.5} /></div>
-                    <h1>Application Received</h1>
-                    <p>{state.message}</p>
-                    <div className={styles.successDetails}>
-                        <p>Your {siteName} digital vault is being provisioned.</p>
-                        <p>Please check your secure inbox for the activation link.</p>
-                    </div>
-                    <Link href="/login" className={styles.primaryBtn}>
-                        Return to Login <ArrowRight size={20} />
-                    </Link>
                 </div>
             </div>
         );
@@ -247,18 +254,13 @@ export default function RegisterForm({ siteName = "TrustBank" }: RegisterFormPro
     return (
         <div className={styles.pageWrapper}>
             <div className={styles.ambientMesh}></div>
-
             <div className={styles.formContainer}>
                 <div className={styles.header}>
-                    <div className={styles.brandBadge}>
-                        <ShieldCheck size={16} />
-                        <span>256-Bit Encrypted Protocol</span>
-                    </div>
-                    <h1>Secure Onboarding</h1>
-                    <p>Complete your profile to access {siteName} Enterprise.</p>
+                    <h1 className={styles.headerTitle}>Secure Onboarding</h1>
+                    <p className={styles.headerSubTitle}>Complete your profile to access {siteName} Enterprise.</p>
                 </div>
-
-                <form action={action} className={styles.glassForm}>
+                <form action={handleFormSubmit} className={styles.glassForm}>
+                    <input type="hidden" name="callbackUrl" value={callbackUrl} />
                     {(state?.message && !state.success) && (
                         <div className={styles.errorBanner}>
                             <AlertCircle size={20} />
@@ -273,9 +275,7 @@ export default function RegisterForm({ siteName = "TrustBank" }: RegisterFormPro
                     )}
 
                     <div className={styles.splitLayout}>
-                        {/* LEFT COLUMN */}
                         <div className={styles.colLeft}>
-
                             <div className={styles.sectionLabel}>
                                 <Camera size={16} /> <span>Profile Photo</span>
                             </div>
@@ -354,10 +354,28 @@ export default function RegisterForm({ siteName = "TrustBank" }: RegisterFormPro
                                     <label>Tax ID / SSN</label>
                                     <input name="taxId" placeholder="XXX-XX-XXXX" />
                                 </div>
+
+                                <div className={styles.inputWrapper} style={{ marginTop: '1rem' }}>
+                                    <label className={styles.labelHighlight}>
+                                        <Wallet size={14} className={styles.wallet} />
+                                        Primary Account Currency
+                                    </label>
+                                    <select name="currency" required defaultValue="USD" className={styles.selectHighlight}>
+                                        <option value="USD">🇺🇸 USD - United States Dollar</option>
+                                        <option value="EUR">🇪🇺 EUR - Euro</option>
+                                        <option value="GBP">🇬🇧 GBP - British Pound</option>
+                                        <option value="ZAR">🇿🇦 ZAR - South African Rand</option>
+                                        <option value="CAD">🇨🇦 CAD - Canadian Dollar</option>
+                                        <option value="AUD">🇦🇺 AUD - Australian Dollar</option>
+                                        <option value="CHF">🇨🇭 CHF - Swiss Franc</option>
+                                        <option value="CNY">🇨🇳 CNY - Chinese Yuan</option>
+                                        <option value="JPY">🇯🇵 JPY - Japanese Yen</option>
+                                        <option value="INR">🇮🇳 INR - Indian Rupee</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
 
-                        {/* RIGHT COLUMN */}
                         <div className={styles.colRight}>
                             <div className={styles.sectionLabel}>
                                 <MapPin size={16} /> <span>Residency & Next of Kin</span>
@@ -385,8 +403,8 @@ export default function RegisterForm({ siteName = "TrustBank" }: RegisterFormPro
                                         <input name="zipCode" defaultValue="99950" />
                                     </div>
                                     <div className={styles.inputWrapper}>
-                                        <label>Country</label>
-                                        <input name="country" defaultValue="United States" />
+                                        <label>Country of Residence</label>
+                                        <input name="country" placeholder="e.g. US, Germany, China" required />
                                     </div>
                                 </div>
 
@@ -435,7 +453,7 @@ export default function RegisterForm({ siteName = "TrustBank" }: RegisterFormPro
                                 </div>
 
                                 <div className={styles.uploadGrid}>
-                                    {/*  FRONT SIDE UPLOAD */}
+                                    {/* FRONT SIDE UPLOAD */}
                                     <div className={styles.dropZone}>
                                         <input type="file" name="idDocumentFront" className={styles.fileInput} onChange={handleFileChange} />
                                         <div className={styles.dropContent}>
@@ -450,8 +468,9 @@ export default function RegisterForm({ siteName = "TrustBank" }: RegisterFormPro
                                             )}
                                         </div>
                                     </div>
+
                                     {/* BACK SIDE UPLOAD */}
-                                    <div className={styles.dropZone} style={{ marginTop: '10px' }}>
+                                    <div className={styles.dropZone}>
                                         <input type="file" name="idDocumentBack" className={styles.fileInput} onChange={handleFileChange} />
                                         <div className={styles.dropContent}>
                                             <div className={styles.cloudIcon}><UploadCloud size={24} /></div>
@@ -474,14 +493,15 @@ export default function RegisterForm({ siteName = "TrustBank" }: RegisterFormPro
                     </div>
 
                     <div className={styles.footer}>
-                        <button disabled={isPending || !!fileError} className={styles.primaryBtn}>
+                        <button disabled={isPending} className={styles.primaryBtn}>
                             {isPending ? 'Verifying Identity...' : 'Submit Application'}
                             {!isPending && <ArrowRight size={18} />}
                         </button>
                         <p className={styles.legalText}>By creating an account, you agree to {siteName}&apos;s Terms of Service.</p>
-                        <div className={styles.loginLink}>Already have an account? <Link href="/login">Sign In</Link></div>
+                        <div className={styles.loginLink}>
+                            Already have an account? <Link href={`/login?callbackUrl=${encodeURIComponent(callbackUrl)}`}>Sign In</Link>
+                        </div>
                     </div>
-
                 </form>
             </div>
         </div>

@@ -81,7 +81,6 @@ export default function BeneficiaryList({ beneficiaries }: { beneficiaries: Bene
                                             width={42}
                                             height={42}
                                             className={styles.avatarImg}
-                                            style={{ objectFit: 'cover' }}
                                         />
                                     ) : (
                                         ben.accountName.charAt(0).toUpperCase()

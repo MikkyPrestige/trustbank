@@ -5,7 +5,6 @@ import { signOut } from 'next-auth/react';
 import { LogOut, Timer } from 'lucide-react';
 import styles from './SessionTimeout.module.css';
 
-// CONFIGURATION
 const INACTIVITY_LIMIT = 5 * 60 * 1000; // 5 Minutes
 const WARNING_DURATION = 60 * 1000;      // 60 Seconds
 
@@ -16,7 +15,6 @@ export default function SessionTimeout() {
     const logoutTimer = useRef<NodeJS.Timeout | null>(null);
     const countdownInterval = useRef<NodeJS.Timeout | null>(null);
 
-    //  Actually Log Out
     const handleLogout = useCallback(() => {
         if (countdownInterval.current) clearInterval(countdownInterval.current);
         if (logoutTimer.current) clearTimeout(logoutTimer.current);
@@ -25,7 +23,6 @@ export default function SessionTimeout() {
         signOut({ callbackUrl: '/login?error=SessionExpired' });
     }, []);
 
-    //  Start the Countdown
     const startCountdown = useCallback(() => {
         setTimeLeft(60);
 
@@ -34,22 +31,19 @@ export default function SessionTimeout() {
             handleLogout();
         }, WARNING_DURATION);
 
-        // Update the visual counter every second
+        // Update visual counter every second
         countdownInterval.current = setInterval(() => {
             setTimeLeft((prev) => prev - 1);
         }, 1000);
     }, [handleLogout]);
 
-    // The User is Active (Reset Timers)
     const resetTimer = useCallback(() => {
         if (showWarning) return;
 
-        // Clear existing timers
         if (inactivityTimer.current) clearTimeout(inactivityTimer.current);
         if (logoutTimer.current) clearTimeout(logoutTimer.current);
         if (countdownInterval.current) clearInterval(countdownInterval.current);
 
-        // Start the "Inactivity" timer again
         inactivityTimer.current = setTimeout(() => {
             setShowWarning(true);
             startCountdown();
@@ -57,27 +51,21 @@ export default function SessionTimeout() {
 
     }, [showWarning, startCountdown]);
 
-    //  Stay logged in
     const handleStayLoggedIn = () => {
         setShowWarning(false);
-        // Clear warning timers
         if (logoutTimer.current) clearTimeout(logoutTimer.current);
         if (countdownInterval.current) clearInterval(countdownInterval.current);
 
         resetTimer();
     };
 
-    // SETUP EVENT LISTENERS
     useEffect(() => {
         const events = ['mousemove', 'mousedown', 'click', 'scroll', 'keydown'];
-        // Start initial timer
         resetTimer();
-        // Attach listeners
         const handler = () => resetTimer();
         events.forEach((event) => {
             window.addEventListener(event, handler);
         });
-        // Cleanup
         return () => {
             if (inactivityTimer.current) clearTimeout(inactivityTimer.current);
             if (logoutTimer.current) clearTimeout(logoutTimer.current);

@@ -1,4 +1,5 @@
 .container {
+  width: 100%;
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
@@ -13,20 +14,23 @@
 }
 
 .headerIcon {
-  width: 48px;
-  height: 48px;
-  background: linear-gradient(135deg, #3b82f6 0%, var(--primary) 100%);
-  border-radius: 12px;
+  width: 3rem;
+  height: 3rem;
+  background: linear-gradient(
+    135deg,
+    var(--primary) 0%,
+    var(--primary-rgb) 100%
+  );
+  border-radius: 1rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 0.5rem 1rem rgba(37, 99, 235, 0.3);
 }
 
 .title {
   font-size: 1.8rem;
   font-weight: 800;
-  margin: 0 0 4px 0;
   letter-spacing: -0.5px;
 }
 
@@ -36,7 +40,6 @@
   margin: 0;
 }
 
-/* --- GRID LAYOUT --- */
 .grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -45,12 +48,11 @@
 
 @media (min-width: 1024px) {
   .grid {
-    grid-template-columns: 1fr 380px;
+    grid-template-columns: 1fr 1fr;
     align-items: flex-start;
   }
 }
 
-/* --- LIST SECTION --- */
 .listColumn {
   display: flex;
   flex-direction: column;
@@ -86,10 +88,10 @@
 
 .searchInput {
   width: 100%;
-  padding: 10px 10px 10px 36px;
+  padding: 0.7rem 0.7rem 0.7rem 3rem;
   background: var(--bg-surface);
-  border: 1px solid var(--border);
-  border-radius: 8px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 0.5rem;
   color: var(--text-main);
   font-size: 0.9rem;
   transition: all 0.2s;
@@ -104,15 +106,14 @@
 
 .listContainer {
   display: grid;
-  gap: 1rem;
+  gap: 1.5rem;
 }
 
-/* CONTACT CARD */
 .contactCard {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 1.25rem;
+  background: var(--sub-bg);
+  border: 1px solid var(--border-subtle);
+  border-radius: 1rem;
+  padding: 1rem;
   transition: all 0.2s ease;
   display: flex;
   flex-direction: column;
@@ -132,8 +133,8 @@
 }
 
 .avatar {
-  width: 42px;
-  height: 42px;
+  width: 3rem;
+  height: 3rem;
   background: var(--bg-surface);
   color: var(--primary);
   font-weight: 700;
@@ -141,7 +142,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-subtle);
   overflow: hidden;
   position: relative;
 }
@@ -171,10 +172,10 @@
 }
 
 .cardDetails {
-  background: var(--bg-app);
+  background: var(--bg-surface);
   padding: 0.75rem;
   border-radius: 8px;
-  border: 1px dashed var(--border);
+  border: 1px dashed var(--border-subtle);
 }
 
 .accLabel {
@@ -199,33 +200,33 @@
 }
 
 .actionBtn {
-  width: 36px;
-  height: 36px;
+  width: 2rem;
+  height: 2rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  background: transparent;
+  border-radius: 0.7rem;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-surface);
   color: var(--text-muted);
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .actionBtn:hover {
-  background: rgba(239, 68, 68, 0.1);
+  background: rgba(var(--danger-rgb), 0.1);
   color: var(--danger);
-  border-color: var(--danger);
+  border-color: rgba(var(--danger-rgb), 0.3);
 }
 
 .sendBtn {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.5rem;
   background: var(--primary);
   color: var(--text-invert);
-  padding: 0 1rem;
-  border-radius: 8px;
+  padding: 0.5rem;
+  border-radius: 0.7rem;
   font-size: 0.85rem;
   font-weight: 500;
   text-decoration: none;
@@ -233,15 +234,16 @@
 }
 
 .sendBtn:hover {
+  background: var(--primary-hover);
   opacity: 0.9;
 }
 
 .emptyState {
   text-align: center;
-  padding: 4rem;
-  background: var(--bg-card);
-  border-radius: 12px;
-  border: 1px dashed var(--border);
+  padding: 3rem;
+  background: var(--sub-bg);
+  border-radius: 1rem;
+  border: 1px dashed var(--border-subtle);
   color: var(--text-muted);
   display: flex;
   flex-direction: column;
@@ -249,27 +251,26 @@
   gap: 1rem;
 }
 
-/* --- FORM SECTION --- */
 .formColumn {
   position: sticky;
   top: 2rem;
 }
 
 .formCard {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 1.5rem;
+  background: var(--sub-bg);
+  border: 1px solid var(--border-subtle);
+  border-radius: 1rem;
+  padding: 1rem;
   box-shadow: var(--shadow-card);
 }
 
 .cardHeader {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   border-bottom: 1px solid var(--border);
   padding-bottom: 1rem;
 }
 .cardHeader h3 {
-  margin: 0 0 4px 0;
+  margin: 0 0 1px 0;
 }
 .cardHeader p {
   margin: 0;
@@ -280,7 +281,13 @@
 .formStack {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1rem;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .inputGroup label {
@@ -288,7 +295,6 @@
   font-size: 0.85rem;
   font-weight: 500;
   color: var(--text-muted);
-  margin-bottom: 0.5rem;
 }
 
 .inputWrapper {
@@ -306,10 +312,10 @@
 
 .input {
   width: 100%;
-  padding: 10px 10px 10px 40px;
+  padding: 0.8rem 0.8rem 0.8rem 3rem;
   background: var(--bg-surface);
-  border: 1px solid var(--border);
-  border-radius: 8px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 0.7rem;
   color: var(--text-main);
   font-size: 0.95rem;
   transition: all 0.2s;
@@ -322,23 +328,36 @@
   box-shadow: 0 0 0 2px var(--primary-light);
 }
 
+.grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+@media (max-width: 640px) {
+  .grid2 {
+    grid-template-columns: 1fr;
+  }
+}
+
 .submitBtn {
   margin-top: 1rem;
   background: var(--primary);
   color: var(--text-invert);
   border: none;
-  padding: 12px;
-  border-radius: 8px;
+  padding: 0.8rem;
+  border-radius: 0.7rem;
   font-weight: 600;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 0.5rem;
   transition: opacity 0.2s;
 }
 
 .submitBtn:hover {
+  background: var(--primary-hover);
   opacity: 0.9;
 }
 
@@ -355,39 +374,34 @@
 
 .successBox h3 {
   color: var(--success);
-  margin-bottom: 0.5rem;
 }
+
 .btnSecondary {
   margin-top: 1rem;
   background: var(--bg-surface);
-  border: 1px solid var(--border);
-  padding: 8px 16px;
-  border-radius: 6px;
+  border: 1px solid var(--border-subtle);
+  padding: 0.5rem 1rem;
+  border-radius: 0.7rem;
   cursor: pointer;
   color: var(--text-main);
+}
+
+.btnSecondary:hover {
+  background: var(--bg-card);
+  border-color: var(--primary);
+  box-shadow: var(--shadow-card);
 }
 
 .spin {
   animation: spin 1s linear infinite;
 }
-.grid2 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-  margin-bottom: 1.25rem;
-}
 
-/* Make it stack on mobile screens */
-@media (max-width: 640px) {
-  .grid2 {
-    grid-template-columns: 1fr;
-  }
-}
 @keyframes spin {
   100% {
     transform: rotate(360deg);
   }
 }
+
 @keyframes fadeIn {
   from {
     opacity: 0;

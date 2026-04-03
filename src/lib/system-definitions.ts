@@ -6,7 +6,6 @@ export type SystemSettingSchema = {
   defaultValue: string;
 };
 
-// This is the Master List of all dynamic rules in your bank
 export const SYSTEM_DEFINITIONS: Record<string, SystemSettingSchema> = {
   // --- SECURITY ---
 security_lockout_duration: {
@@ -103,6 +102,14 @@ feature_loan_apply_enabled: {
     group: "features",
     defaultValue: "true",
     description: "Allow users to create new crypto wallets."
+  },
+
+  feature_bills_enabled: {
+    label: "Enable Bill Payments",
+    type: "BOOLEAN",
+    group: "features",
+    defaultValue: "true",
+    description: "Allow users to pay utility bills (Electric, Internet, etc)."
   },
 
   // --- SYSTEM CONTROL ---

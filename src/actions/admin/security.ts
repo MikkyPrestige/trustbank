@@ -12,7 +12,7 @@ export async function revokeUserSessions(userId: string) {
     }
 
     try {
-        // 1. Increment the version number
+        // Increment the version number
         await db.user.update({
             where: { id: userId },
             data: {
@@ -20,7 +20,7 @@ export async function revokeUserSessions(userId: string) {
             }
         });
 
-        // 2. Clear cache
+        // Clear cache
         revalidatePath("/admin/users");
 
         return { success: true, message: "All active sessions revoked. User signed out." };

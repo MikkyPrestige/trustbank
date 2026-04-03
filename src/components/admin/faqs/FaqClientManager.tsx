@@ -18,18 +18,12 @@ const CATEGORIES = ["Security", "Transfers", "Account & Cards", "General"];
 export default function FaqClientManager({ initialFaqs }: Props) {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
-
-    // Modal State
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingItem, setEditingItem] = useState<FaqItem | null>(null);
-
-    // Form State
     const [question, setQuestion] = useState('');
     const [answer, setAnswer] = useState('');
     const [category, setCategory] = useState('General');
     const [order, setOrder] = useState(0);
-
-    // --- HANDLERS ---
 
     const openAddModal = () => {
         setEditingItem(null);
@@ -102,10 +96,12 @@ export default function FaqClientManager({ initialFaqs }: Props) {
 
     return (
         <div className={styles.container}>
+            <div className={styles.backLinkContainer}>
             <Link href="/admin/settings" className={styles.backLink}>
                 <ArrowLeft size={18} />
                 Back to Settings
             </Link>
+            </div>
             <div className={styles.header}>
                 <h1 className={styles.title}>FAQ Manager</h1>
                 <button onClick={openAddModal} className={styles.addBtn} disabled={loading}>
@@ -113,7 +109,6 @@ export default function FaqClientManager({ initialFaqs }: Props) {
                 </button>
             </div>
 
-            {/* LIST */}
             <div className={styles.list}>
                 {initialFaqs.length === 0 ? (
                     <p className={styles.emptyState}>No FAQs found. Create one above.</p>
@@ -121,28 +116,28 @@ export default function FaqClientManager({ initialFaqs }: Props) {
                     initialFaqs.map((faq) => (
                         <div key={faq.id} className={styles.card}>
                             <div className={styles.content}>
-                                <h3>
+                                <h3 className={styles.faqTitle}>
                                     <span className={styles.orderBadge}>#{faq.order}</span>
                                     {faq.question}
                                 </h3>
-                                <p>{faq.answer}</p>
+                                <p className={styles.faqBody}>{faq.answer}</p>
                             </div>
                             <div className={styles.actions}>
                                 <button
                                     onClick={() => openEditModal(faq)}
-                                    className={styles.iconBtn}
+                                    className={`${styles.iconBtn} ${styles.iconBtnEdit}`}
                                     disabled={loading}
                                     title="Edit"
                                 >
-                                    <Pencil size={16} />
+                                    <Pencil size={20} />
                                 </button>
                                 <button
                                     onClick={() => handleDelete(faq.id)}
-                                    className={`${styles.iconBtn} ${styles.deleteBtn}`}
+                                    className={`${styles.iconBtn} ${styles.iconBtnDelete}`}
                                     disabled={loading}
                                     title="Delete"
                                 >
-                                    <Trash2 size={16} />
+                                    <Trash2 size={20} />
                                 </button>
                             </div>
                         </div>
@@ -150,7 +145,6 @@ export default function FaqClientManager({ initialFaqs }: Props) {
                 )}
             </div>
 
-            {/* MODAL */}
             {isModalOpen && (
                 <div className={styles.modalOverlay} onClick={() => setIsModalOpen(false)}>
                     <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
@@ -168,7 +162,7 @@ export default function FaqClientManager({ initialFaqs }: Props) {
                             <div className={styles.formGroup}>
                                 <label className={styles.label}>Category</label>
                                 <select
-                                    className={styles.input}
+                                    className={styles.select}
                                     value={category}
                                     onChange={(e) => setCategory(e.target.value)}
                                 >
@@ -214,7 +208,7 @@ export default function FaqClientManager({ initialFaqs }: Props) {
                             </div>
 
                             <button type="submit" className={styles.submitBtn} disabled={loading}>
-                                {loading ? <Loader2 className="animate-spin" /> : (editingItem ? 'Update FAQ' : 'Create FAQ')}
+                                {loading ? <Loader2 className={styles.spin} /> : (editingItem ? 'Update FAQ' : 'Create FAQ')}
                             </button>
                         </form>
                     </div>

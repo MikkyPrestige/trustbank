@@ -29,7 +29,7 @@ export default function MainError({
             </p>
 
             <button className={styles.button} onClick={() => reset()}>
-                <RefreshCcw size={18} />Refresh Page
+                <RefreshCcw size={20} />Refresh Page
             </button>
         </div>
     );

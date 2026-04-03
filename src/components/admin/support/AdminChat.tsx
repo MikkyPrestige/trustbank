@@ -3,7 +3,7 @@
 import { useState, useActionState } from 'react';
 import { adminReplyTicket, closeTicket } from '@/actions/admin/support';
 import styles from './support.module.css';
-import { Send, Lock } from 'lucide-react';
+import { Send, Lock, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 interface Message {
@@ -14,14 +14,12 @@ interface Message {
 }
 
 export default function AdminChat({ ticketId, messages, status }: { ticketId: string, messages: Message[], status: string }) {
-    // Reply Action
     const [replyState, replyAction, isReplying] = useActionState(async (prev: any, formData: FormData) => {
         const result = await adminReplyTicket(ticketId, formData.get('message') as string);
         if (!result.success) toast.error(result.message);
         return result;
     }, null);
 
-    // Close Action
     const [isClosing, setIsClosing] = useState(false);
 
     const handleClose = async () => {
@@ -37,10 +35,9 @@ export default function AdminChat({ ticketId, messages, status }: { ticketId: st
 
     return (
         <div className={styles.chatContainer}>
-            {/* HEADER */}
             <div className={styles.chatHeader}>
                 <div className={styles.ticketInfo}>
-                    <h2>Ticket Support</h2>
+                    <h2 className={styles.ticketTitle}>Ticket Support</h2>
                     <span className={styles.ticketId}>ID: {ticketId}</span>
                 </div>
                 {!isClosed && (
@@ -51,14 +48,15 @@ export default function AdminChat({ ticketId, messages, status }: { ticketId: st
                 {isClosed && <span className={styles.statusBadge + ' ' + styles.closed}>Ticket Closed</span>}
             </div>
 
-            {/* MESSAGES */}
             <div className={styles.messageList}>
                 {messages.map((m) => (
                     <div
                         key={m.id}
                         className={`${styles.message} ${m.sender === 'ADMIN' ? styles.adminMsg : styles.userMsg}`}
                     >
-                        <div>{m.message}</div>
+                        <div className={styles.msgContent}>
+                            {m.message}
+                        </div>
                         <div className={styles.msgMeta}>
                             {m.sender === 'ADMIN' ? 'You' : 'User'} • {new Date(m.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </div>
@@ -66,7 +64,6 @@ export default function AdminChat({ ticketId, messages, status }: { ticketId: st
                 ))}
             </div>
 
-            {/* INPUT AREA */}
             {!isClosed ? (
                 <form action={replyAction} className={styles.inputArea}>
                     <input
@@ -77,12 +74,12 @@ export default function AdminChat({ ticketId, messages, status }: { ticketId: st
                         className={styles.input}
                     />
                     <button disabled={isReplying} className={styles.sendBtn}>
-                        <Send size={18} />
+                        {isReplying ? <Loader2 className={styles.spin} size={20} /> : <Send size={20} />}
                     </button>
                 </form>
             ) : (
-                <div className={styles.inputArea} style={{ justifyContent: 'center', color: 'var(--text-muted)' }}>
-                    <Lock size={16} style={{ marginRight: 8 }} /> This conversation is closed.
+                <div className={styles.closedNotice}>
+                    <Lock size={20} className={styles.lockIcon} /> This conversation is closed.
                 </div>
             )}
         </div>

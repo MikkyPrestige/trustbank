@@ -1,12 +1,12 @@
 .richCard {
   background: var(--bg-card);
-  padding: 1.5rem;
-  border-radius: 12px;
+  padding: 1rem;
+  border-radius: 0.8rem;
   border: 1px solid var(--border);
   color: var(--text-main);
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 1rem;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
   transition:
     transform 0.2s,
@@ -18,11 +18,10 @@
 
 .richCard:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1rem 1.5rem -0.3rem rgba(0, 0, 0, 0.1);
   border-color: var(--border-hover, #475569);
 }
 
-/* Card Header (Label + Icon) */
 .cardHeader {
   display: flex;
   justify-content: space-between;
@@ -37,24 +36,22 @@
   letter-spacing: 0.5px;
 }
 
-/* Dynamic Icon Wrapper */
 .iconWrapper {
-  padding: 10px;
-  border-radius: 12px; /* Slightly softer square */
+  padding: 1rem;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-/* Icon Color Variants */
 .iconGreen {
-  background: color-mix(in srgb, #10b981, transparent 85%);
-  color: #10b981;
+  background: color-mix(in srgb, var(--success), transparent 85%);
+  color: var(--success);
 }
 
 .iconBlue {
-  background: color-mix(in srgb, #3b82f6, transparent 85%);
-  color: #3b82f6;
+  background: color-mix(in srgb, var(--primary), transparent 85%);
+  color: var(--primary);
 }
 
 .iconPurple {
@@ -63,16 +60,15 @@
 }
 
 .iconOrange {
-  background: color-mix(in srgb, #f97316, transparent 85%);
-  color: #f97316;
+  background: color-mix(in srgb, var(--accent), transparent 85%);
+  color: var(--accent);
 }
 
 .iconRed {
-  background: color-mix(in srgb, #ef4444, transparent 85%);
-  color: #ef4444;
+  background: color-mix(in srgb, var(--danger), transparent 85%);
+  color: var(--danger);
 }
 
-/* Main Value Typography */
 .cardValue {
   font-size: 1.8rem;
   font-weight: 700;
@@ -80,59 +76,6 @@
   letter-spacing: -0.5px;
   line-height: 1;
 }
-
-/* Subtext / Action Line */
-.cardSubtext {
-  font-size: 0.85rem;
-  color: var(--text-muted);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  min-height: 20px;
-}
-
-/* Status Indicators */
-.statusUrgent {
-  color: #ef4444;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.statusSafe {
-  color: var(--success);
-}
-
-
-.cardUrgent {
-  border-color: var(--warning) !important;
-}
-
-/* Text Colors */
-.textSuccess {
-  color: var(--success);
-}
-
-.textDanger {
-  color: #ef4444;
-}
-
-.textWarning {
-  color: #f97316;
-}
-
-.textMuted {
-  color: var(--text-muted);
-}
-
-/* Icon Spacing helper */
-.inlineIcon {
-  display: inline-block;
-  margin-right: 4px;
-  vertical-align: middle;
-}
-
 
 .revenueTrend {
   font-size: 0.85rem;
@@ -143,5 +86,52 @@
 }
 
 .trendPositive {
+  color: var(--success);
+}
+
+.cardSubtext {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  /* min-height: 2rem; */
+}
+
+.textMuted {
+  color: var(--text-muted);
+}
+
+.textSuccess {
+  color: var(--success);
+}
+
+.textDanger {
+  color: var(--danger);
+}
+
+.inlineIcon {
+  display: inline-block;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+
+.cardUrgent {
+  border-color: var(--accent);
+}
+
+.statusUrgent {
+  color: var(--danger);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.textWarning {
+  color: var(--accent);
+}
+
+.statusSafe {
   color: var(--success);
 }

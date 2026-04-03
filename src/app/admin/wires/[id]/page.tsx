@@ -12,16 +12,30 @@ interface PageProps {
 export default async function WireDetailsPage({ params }: PageProps) {
     const { id } = await params;
 
-    const wire = await db.wireTransfer.findUnique({
-        where: { id },
-        include: { user: true }
-    });
+    const [wire, rates] = await Promise.all([
+        db.wireTransfer.findUnique({
+            where: { id },
+            include: {
+                user: {
+                    select: { fullName: true, email: true, currency: true }
+                }
+            }
+        }),
+        db.exchangeRate.findMany()
+    ]);
 
     if (!wire) return notFound();
 
+    // @ts-ignore
+    const currency = wire.user.currency || "USD";
+    const exchangeRate = currency === "USD"
+        ? 1
+        : Number(rates.find(r => r.currency === currency)?.rate || 1);
+
+    const amountNative = Number(wire.amount) * exchangeRate;
+
     return (
         <div className={styles.container}>
-            {/* HEADER */}
             <header className={styles.header}>
                 <div className={styles.headerContent}>
                     <h1 className={styles.title}>Transaction Details</h1>
@@ -35,24 +49,28 @@ export default async function WireDetailsPage({ params }: PageProps) {
             </header>
 
             <div className={styles.detailsGrid}>
-                {/* LEFT COL: DETAILS */}
                 <div className={styles.card}>
                     <h3 className={styles.cardTitle}>Transfer Information</h3>
 
                     <div className={styles.detailRow}>
                         <div className={styles.iconBox}><DollarSign size={20} /></div>
                         <div>
-                            <label>Amount</label>
+                            <label className={styles.label}>Amount</label>
                             <div className={styles.valueLarge}>
-                                {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(wire.amount))}
+                                {new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(amountNative)}
                             </div>
+                            {currency !== "USD" && (
+                                <div className={styles.subValue}>
+                                    System Value: {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(wire.amount))}
+                                </div>
+                            )}
                         </div>
                     </div>
 
                     <div className={styles.detailRow}>
                         <div className={styles.iconBox}><Building2 size={20} /></div>
                         <div>
-                            <label>Beneficiary Bank</label>
+                            <label className={styles.label}>Beneficiary Bank</label>
                             <div className={styles.value}>{wire.bankName}</div>
                             <div className={styles.subValue}>Account: {wire.accountNumber}</div>
                             <div className={styles.subValue}>SWIFT: {wire.swiftCode || 'N/A'}</div>
@@ -62,7 +80,7 @@ export default async function WireDetailsPage({ params }: PageProps) {
                     <div className={styles.detailRow}>
                         <div className={styles.iconBox}><User size={20} /></div>
                         <div>
-                            <label>Sender (Client)</label>
+                            <label className={styles.label}>Sender (Client)</label>
                             <div className={styles.value}>{wire.user.fullName}</div>
                             <div className={styles.subValue}>{wire.user.email}</div>
                         </div>
@@ -71,22 +89,20 @@ export default async function WireDetailsPage({ params }: PageProps) {
                     <div className={styles.detailRow}>
                         <div className={styles.iconBox}><Calendar size={20} /></div>
                         <div>
-                            <label>Date Initiated</label>
+                            <label className={styles.label}>Date Initiated</label>
                             <div className={styles.value}>{new Date(wire.createdAt).toLocaleString()}</div>
                         </div>
                     </div>
                 </div>
 
-                {/* RIGHT COL: STATUS & ACTIONS */}
                 <div className={styles.card}>
                     <h3 className={styles.cardTitle}>Status & Controls</h3>
-
                     <div className={styles.statusBox}>
-                        <label>Current Status</label>
+                        <label className={styles.label}>Current Status</label>
                         <div className={`${styles.statusBadgeLarge} ${wire.status === 'COMPLETED' ? styles.bgSuccess :
-                                wire.status === 'FAILED' ? styles.bgFailed :
-                                    wire.status === 'REVERSED' ? styles.bgReversed :
-                                        styles.bgPending
+                            wire.status === 'FAILED' ? styles.bgFailed :
+                                wire.status === 'REVERSED' ? styles.bgReversed :
+                                    styles.bgPending
                             }`}>
                             <Activity size={18} />
                             {wire.status}
@@ -97,6 +113,7 @@ export default async function WireDetailsPage({ params }: PageProps) {
                     </div>
 
                     <div className={styles.actionsWrapper}>
+                        {/* @ts-ignore */}
                         <WireActions wire={wire} />
                     </div>
                 </div>

@@ -5,7 +5,6 @@ import Image from "next/image";
 import { FileText, PieChart, Download, ExternalLink } from "lucide-react";
 
 export default async function InvestorsPage() {
-    // 1. Fetch Settings AND Reports
     const [settings, reports] = await Promise.all([
         getSiteSettings(),
         getFinancialReports()
@@ -15,12 +14,11 @@ export default async function InvestorsPage() {
 
     return (
         <main className={styles.main}>
-            {/* HERO SECTION */}
             <section className={styles.hero}>
                 <div className={styles.heroImageWrapper}>
                     <Image
-                        src={settings.invest_hero_img || "/investors-hero.png"}
-                        alt={settings.invest_hero_img_alt || "Investor Relations"}
+                        src={settings.invest_hero_img}
+                        alt={settings.invest_hero_img_alt}
                         fill
                         className={styles.heroImage}
                         priority
@@ -34,7 +32,6 @@ export default async function InvestorsPage() {
                 </div>
             </section>
 
-            {/* STOCK TICKER (Keep existing dynamic code) */}
             <section className={styles.statsStrip}>
                 <div className={styles.container}>
                     <div className={styles.tickerContainer}>
@@ -42,7 +39,7 @@ export default async function InvestorsPage() {
                             <span className={styles.stockPrice}>{settings.invest_stock_price}</span>
                             <span
                                 className={styles.stockChange}
-                                style={{ color: isPositive ? '#22c55e' : '#ef4444' }}
+                                style={{ color: isPositive ? 'var(--success)' : 'var(--danger)' }}
                             >
                                 {settings.invest_stock_change}
                             </span>
@@ -56,14 +53,13 @@ export default async function InvestorsPage() {
                 </div>
             </section>
 
-            {/* FINANCIAL REPORTS GRID */}
             <div className={styles.container}>
                 <h2 className={styles.sectionTitle}>{settings.invest_reports_title}</h2>
 
                 <div className={styles.grid}>
                     {reports.length === 0 ? (
                         <div className={styles.emptyState}>
-                            <p>No financial reports available at this time.</p>
+                            <p>{settings.invest_reports_empty}</p>
                         </div>
                     ) : (
                         reports.map((report) => (

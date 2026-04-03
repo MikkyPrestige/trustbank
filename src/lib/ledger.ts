@@ -1,7 +1,6 @@
 import { db } from "@/lib/db";
 import { TransactionType, TransactionStatus } from "@prisma/client";
 
-// Defined direction as a strict string type since it's not an Enum in schema
 interface TransactionRequest {
   accountId: string;
   amount: number;
@@ -15,9 +14,6 @@ interface TransactionRequest {
 export const LedgerService = {
   /**
    * ATOMIC TRANSACTION:
-   * 1. Creates a Ledger Entry (The Receipt)
-   * 2. Updates the Account Balance (The Wallet)
-   * 3. Either BOTH happen, or NEITHER happens.
    */
   async recordTransaction(tx: TransactionRequest) {
     const referenceId = tx.referenceId || `TX-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
@@ -30,7 +26,7 @@ export const LedgerService = {
             accountId: tx.accountId,
             amount: tx.amount,
             type: tx.type,
-            direction: tx.direction, // Passing the string "CREDIT" or "DEBIT"
+            direction: tx.direction,
             status: TransactionStatus.COMPLETED,
             description: tx.description,
             referenceId: referenceId,
@@ -39,7 +35,6 @@ export const LedgerService = {
         });
 
         // 2. Calculate Balance Update
-        // 👇 FIX: Compare against the string "CREDIT"
         const incrementValue = tx.direction === 'CREDIT' ? tx.amount : -tx.amount;
 
         // 3. Update the Wallet
@@ -81,7 +76,7 @@ export const LedgerService = {
       // 1. Check Sender Balance
       const sender = await tx.account.findUnique({ where: { id: fromAccountId } });
 
-      // Ensure we check numbers correctly
+      // Check numbers correctly
       if (!sender || Number(sender.availableBalance) < amount) {
         throw new Error("Insufficient funds");
       }

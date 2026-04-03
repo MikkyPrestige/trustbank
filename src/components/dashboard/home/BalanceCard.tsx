@@ -3,17 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
-    Plus,
-    ArrowUpRight,
-    ArrowDownRight,
-    Minus,
-    Send,
-    Copy,
-    Check,
-    X,
-    Wallet,
-    AlertCircle,
-    Lock
+    Plus, ArrowUpRight, ArrowDownRight, Minus, Send, Copy, Check, X, Wallet, AlertCircle, Lock, Eye, EyeOff
 } from 'lucide-react';
 import styles from './styles/balanceCard.module.css';
 
@@ -25,6 +15,10 @@ interface BalanceCardProps {
     bankName: string;
     trend: number;
     status: string;
+    currencyCode?: string;
+    exchangeRate?: number;
+    isVisible: boolean;
+    onToggleVisibility: () => void;
 }
 
 export default function BalanceCard({
@@ -34,16 +28,28 @@ export default function BalanceCard({
     routingNumber,
     bankName,
     trend,
-    status
+    status,
+    currencyCode = "USD",
+    exchangeRate = 1,
+    isVisible,
+    onToggleVisibility
 }: BalanceCardProps) {
     const router = useRouter();
-    const [isVisible, setIsVisible] = useState(true);
     const [showDepositModal, setShowDepositModal] = useState(false);
     const [copied, setCopied] = useState(false);
 
-    const toggleVisibility = () => setIsVisible(!isVisible);
+    const convertedBalance = totalBalance * exchangeRate;
 
-    // --- STATUS LOGIC ---
+    const displayMoney = (amount: number, currency: string) => {
+        if (!isVisible) return "••••••";
+        return new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: currency,
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+        }).format(amount);
+    };
+
     const isFrozen = status === 'FROZEN' || status === 'SUSPENDED';
 
     const getStatusConfig = () => {
@@ -53,8 +59,6 @@ export default function BalanceCard({
     };
 
     const statusConfig = getStatusConfig();
-
-    // Determine visual state
     const isPositive = trend > 0;
     const isNeutral = trend === 0;
 
@@ -68,42 +72,46 @@ export default function BalanceCard({
         setTimeout(() => setCopied(false), 2000);
     };
 
-    const displayMoney = (amount: number) => {
-        return new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD',
-        }).format(amount);
-    };
-
     return (
         <>
             <div className={styles.balanceCard}>
                 <div className={styles.cardTexture}></div>
-                {/* Hide if frozen to emphasize stoppage */}
+
                 {!isFrozen && (
                     <svg className={styles.sparkline} viewBox="0 0 100 30" preserveAspectRatio="none">
                         <path d="M0,30 Q10,25 20,28 T40,15 T60,20 T80,5 T100,15 L100,30 L0,30 Z" className={styles.sparklinePathFill} />
                         <path d="M0,30 Q10,25 20,28 T40,15 T60,20 T80,5 T100,15" className={styles.sparklinePathStroke} />
-                        <defs>
-                            <linearGradient id="gradient" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.4" />
-                                <stop offset="100%" stopColor="#3b82f6" stopOpacity="0" />
-                            </linearGradient>
-                        </defs>
                     </svg>
                 )}
 
                 <div className={styles.cardTop}>
-                    <div className={styles.cardLabel}>TOTAL LIQUIDITY</div>
+                    <div className={styles.cardLabelGroup}>
+                        <div className={styles.cardLabel}>TOTAL LIQUIDITY</div>
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onToggleVisibility();
+                            }}
+                            className={styles.eyeToggle}
+                        >
+                            {isVisible ? <Eye size={18} /> : <EyeOff size={18} />}
+                        </button>
+                    </div>
                     <div className={`${styles.liveIndicator} ${statusConfig.style}`}>
                         {statusConfig.icon ? statusConfig.icon : <div className={styles.dot}></div>}
                         {statusConfig.label}
                     </div>
                 </div>
 
-                <div className={styles.balanceRow} onClick={toggleVisibility}>
-                    <div className={isVisible ? styles.balanceAmount : styles.hiddenBalance}>
-                        {displayMoney(totalBalance)}
+                <div className={styles.balanceRow}>
+                    <div className={styles.balanceAmount}>
+                        {displayMoney(convertedBalance, currencyCode)}
+
+                        {currencyCode !== "USD" && isVisible && (
+                            <div className={styles.totalBalance}>
+                                ≈ {displayMoney(totalBalance, 'USD')}
+                            </div>
+                        )}
                     </div>
                 </div>
 
@@ -160,7 +168,6 @@ export default function BalanceCard({
                                 <span className={styles.detailValue}>{accountName}</span>
                             </div>
 
-                            {/* Copyable Account Number */}
                             <div className={styles.copyContainer}>
                                 <div>
                                     <div className={styles.accountLabel}>Account Number</div>

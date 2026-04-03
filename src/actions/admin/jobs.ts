@@ -5,7 +5,6 @@ import { revalidatePath } from "next/cache";
 import { checkAdminAction } from "@/lib/auth/admin-auth";
 import { logAdminAction } from "@/lib/utils/admin-logger";
 
-// --- CREATE ---
 export async function createJob(formData: FormData) {
     const auth = await checkAdminAction();
 
@@ -53,7 +52,6 @@ export async function createJob(formData: FormData) {
     }
 }
 
-// --- UPDATE ---
 export async function updateJob(id: string, formData: FormData) {
     const auth = await checkAdminAction();
 
@@ -99,7 +97,6 @@ export async function updateJob(id: string, formData: FormData) {
     }
 }
 
-// --- DELETE ---
 export async function deleteJob(id: string) {
     const auth = await checkAdminAction();
 
@@ -132,7 +129,6 @@ export async function deleteJob(id: string) {
     }
 }
 
-// --- TOGGLE STATUS (Quick Action) ---
 export async function toggleJobStatus(id: string, currentStatus: boolean) {
     const auth = await checkAdminAction();
 

@@ -1,10 +1,10 @@
 'use client';
 
 import { useActionState, useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { login } from '@/actions/user/login';
 import Link from 'next/link';
-import { Lock, Mail, ArrowRight, ShieldCheck, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { Lock, Mail, ArrowRight, Eye, EyeOff, Loader2 } from 'lucide-react';
 import styles from './styles/LoginForm.module.css';
 
 interface LoginFormProps {
@@ -12,11 +12,13 @@ interface LoginFormProps {
     allowRegister: boolean;
 }
 
-export default function LoginForm({ siteName = "TrustBank", allowRegister }: LoginFormProps) {
+export default function LoginForm({ siteName, allowRegister }: LoginFormProps) {
     const [state, action, isPending] = useActionState(login, undefined);
     const [showPassword, setShowPassword] = useState(false);
     const router = useRouter();
+    const searchParams = useSearchParams();
 
+    const callbackUrl = searchParams.get("callbackUrl");
 
     useEffect(() => {
         if (state?.redirect) {
@@ -28,27 +30,21 @@ export default function LoginForm({ siteName = "TrustBank", allowRegister }: Log
         <div className={styles.pageWrapper}>
             <div className={styles.ambientMesh}></div>
             <div className={styles.formContainer}>
-                {/* Header */}
                 <div className={styles.header}>
-                    <div className={styles.brandBadge}>
-                        <ShieldCheck size={14} />
-                        <span>Secure Session • 256-bit Encrypted</span>
-                    </div>
                     <div>
-                        <h1>Welcome Back</h1>
-                        <p>Access your {siteName} digital vault.</p>
+                        <h1 className={styles.headerTitle}>Welcome Back</h1>
+                        <p className={styles.headerSubTitle}>Access your {siteName} digital vault.</p>
                     </div>
                 </div>
 
                 <form action={action} className={styles.glassForm}>
-                    {/* Error Alert */}
+                    <input type="hidden" name="callbackUrl" value={callbackUrl || "/dashboard"} />
                     {state?.message && (
                         <div className={styles.errorBanner}>
                             {state.message}
                         </div>
                     )}
 
-                    {/* Email Input */}
                     <div className={styles.inputWrapper}>
                         <label>Email Address</label>
                         <div className={styles.inputIconBox}><Mail size={18} /></div>
@@ -61,7 +57,6 @@ export default function LoginForm({ siteName = "TrustBank", allowRegister }: Log
                         />
                     </div>
 
-                    {/* Password Input */}
                     <div className={styles.inputWrapper}>
                         <div className={styles.labelRow}>
                             <label>Password</label>
@@ -69,7 +64,6 @@ export default function LoginForm({ siteName = "TrustBank", allowRegister }: Log
                                 Forgot Password?
                             </Link>
                         </div>
-
                         <div className={styles.inputIconBox}><Lock size={18} /></div>
                         <input
                             name="password"
@@ -78,8 +72,6 @@ export default function LoginForm({ siteName = "TrustBank", allowRegister }: Log
                             required
                             autoComplete="current-password"
                         />
-
-                        {/* Toggle Visibility */}
                         <button
                             type="button"
                             className={styles.eyeBtn}
@@ -89,8 +81,6 @@ export default function LoginForm({ siteName = "TrustBank", allowRegister }: Log
                             {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                         </button>
                     </div>
-
-                    {/* Submit Button */}
                     <div className={styles.footer}>
                         <button disabled={isPending} className={styles.primaryBtn}>
                             {isPending ? (
@@ -102,15 +92,20 @@ export default function LoginForm({ siteName = "TrustBank", allowRegister }: Log
 
                         {allowRegister ? (
                             <div className={styles.loginLink}>
-                                New to {siteName}? <Link href="/register">Open an Account</Link>
+                                New to {siteName}?
+                                <Link href={callbackUrl
+                                    ? `/register?callbackUrl=${encodeURIComponent(callbackUrl)}`
+                                    : "/register"}
+                                >
+                                    Open an Account
+                                </Link>
                             </div>
                         ) : (
-                            <div className={styles.loginLink} style={{ color: '#64748b', fontStyle: 'italic' }}>
+                            <div className={`${styles.loginLink} ${styles.loginLinkText}`}>
                                 Registration is currently invite-only.
                             </div>
                         )}
                     </div>
-
                 </form>
             </div>
         </div>

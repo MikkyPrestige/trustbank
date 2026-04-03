@@ -9,7 +9,6 @@ export async function getBankRevenue() {
     if (!authorized) return { totalRevenue: 0, todayRevenue: 0 };
 
     try {
-        // 1. Get TOTAL Revenue (Using the Enum)
         const totalAgg = await db.ledgerEntry.aggregate({
             _sum: { amount: true },
             where: {
@@ -18,7 +17,6 @@ export async function getBankRevenue() {
             }
         });
 
-        // 2. Get TODAY'S Revenue
         const startOfDay = new Date();
         startOfDay.setHours(0,0,0,0);
 

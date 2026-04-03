@@ -1,10 +1,9 @@
-/* --- GLOBAL HEADER CONTAINER --- */
 .header {
   position: sticky;
   top: 0;
   z-index: 1000;
   background: var(--bg-surface);
-  background-color: color-mix(in srgb, var(--bg-surface), transparent 10%);
+  background-color: color-mix(in rgb, var(--bg-surface), transparent 10%);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border);
   transition:
@@ -12,31 +11,22 @@
     border-color 0.3s ease;
 }
 
-/* 1. TOP BAR (Utility Area) */
 .topBar {
-  background: var(--bg-subtle, #f1f5f9);
-  padding: 8px 0;
+  background: var(--bg-card, var(--primary-light));
+  padding: 0.5rem 0;
   border-bottom: 1px solid var(--border);
   font-size: 0.8rem;
-}
-
-/* In Dark Mode, we might want the top bar to blend in */
-@media (prefers-color-scheme: dark) {
-  .topBar {
-    background: var(--bg-surface);
-  }
 }
 
 .container {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 1rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-/* LOGO */
 .logoWrapper {
   display: block;
 }
@@ -44,43 +34,254 @@
   object-fit: contain;
 }
 
-/* TOP ACTIONS */
 .topActions {
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 2rem;
 }
 
-.topLink {
+.phoneLink {
   display: flex;
   align-items: center;
-  gap: 6px;
-  color: var(--text-main);
+  gap: 0.5rem;
+  color: var(--primary);
   text-decoration: none;
   font-size: 0.85rem;
-  font-weight: 600;
-  margin-right: 16px;
-  transition: color 0.2s;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  background: rgba(37, 99, 235, 0.08);
+  border: 1px solid rgba(37, 99, 235, 0.1);
 }
 
-.topLink:hover {
-  color: var(--primary);
+.phoneLink:hover {
+  transform: translateY(-1px);
+  background: rgba(37, 99, 235, 0.15);
+}
+
+@media (max-width: 1150px) {
+  .phoneText {
+    display: none;
+  }
+  .phoneLink {
+    padding: 0.5rem;
+  }
 }
 
 .langSelector {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 6px;
+  justify-content: center;
   color: var(--text-muted);
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: rgba(100, 116, 139, 0.1);
   cursor: pointer;
+  transition: all 0.2s ease;
 }
+
 .langSelector:hover {
+  color: var(--primary);
+  background: rgba(37, 99, 235, 0.1);
+}
+
+.hiddenSelect {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  appearance: none;
+}
+
+.nativeSelect {
+  background: transparent;
+  border: none;
+  color: var(--text-main);
+  font-family: monospace;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  outline: none;
+  appearance: none;
+  padding: 1rem;
+}
+
+.nativeSelect option {
+  color: var(--text-main);
+  font-size: 0.8rem;
+  font-weight: 500;
+  background: var(--bg-card);
+}
+
+.profileContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.profileTrigger {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(var(--primary-rgb), 0.05);
+  border: 1px solid rgba(var(--primary-rgb), 0.1);
+  padding: 0.5rem;
+  border-radius: 10rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.profileTrigger:hover {
+  background: rgba(var(--primary-rgb), 0.1);
+  border-color: rgba(var(--primary-rgb), 0.2);
+}
+
+.avatarWrapper {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: var(--primary);
+  color: var(--text-invert);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.avatarImg, .avatarPlaceholder {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.userName {
+  font-size: 0.9rem;
+  font-weight: 600;
   color: var(--text-main);
 }
 
+.rotate {
+  transform: rotate(180deg);
+  transition: 0.2s;
+}
+
+.profileDropdown {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  width: 220px;
+  background: var(--bg-app, var(--text-invert));
+  border: 1px solid var(--border-subtle);
+  border-radius: 1rem;
+  box-shadow: 0 1rem 2rem var(--shadow-glow);
+  padding: 0.5rem;
+  z-index: 1000;
+  animation: modalPop 0.2s ease-out;
+}
+
+.dropdownHeader {
+  padding: 1rem;
+}
+
+.dropName {
+  font-weight: 600;
+  font-size: 1rem;
+  margin: 0;
+}
+.dropEmail {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.divider {
+  height: 1px;
+  background: var(--border-subtle);
+  border: none;
+  opacity: 0.5;
+}
+
+.dropItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  font-size: 0.9rem;
+  color: inherit;
+  text-decoration: none;
+  border-radius: 0.5rem;
+  transition: background 0.2s;
+}
+
+.dropItem:hover {
+  background: rgba(var(--primary-rgb), 0.05);
+}
+
+.logoutBtn {
+  width: 100%;
+  border: none;
+  background: none;
+  color: var(--danger);
+  cursor: pointer;
+}
+
 .openBtn {
+  font-weight: 600;
+  color: var(--text-body);
+  text-decoration: none;
+  font-size: 0.85rem;
+  letter-spacing: 0.3px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.openBtn:hover {
+  color: var(--primary);
+  background: rgba(37, 99, 235, 0.05);
+}
+
+.loginBtn {
+  background: var(--primary);
+  color: var(--text-invert);
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 0.85rem;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow:
+    0 4px 6px -1px rgba(37, 99, 235, 0.2),
+    0 2px 4px -2px rgba(37, 99, 235, 0.1);
+}
+
+.loginBtn:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.25);
+}
+
+.loginBtn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+}
+/* .openBtn {
   font-weight: 700;
-  color: var(--text-main);
+  color: var(--text-body);
   text-decoration: none;
   font-size: 0.75rem;
   letter-spacing: 0.5px;
@@ -94,12 +295,12 @@
 
 .loginBtn {
   background: var(--primary);
-  color: #fff; /* Always white text on primary button */
-  padding: 8px 16px;
-  border-radius: 6px;
+  color: var(--text-invert);
+  padding: 0.5rem;
+  border-radius: 0.5rem;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.5rem;
   font-weight: 700;
   text-decoration: none;
   font-size: 0.8rem;
@@ -109,21 +310,12 @@
 }
 .loginBtn:hover {
   filter: brightness(1.1);
-}
+} */
 
-/* MOBILE TOGGLE */
-.mobileToggle {
-  display: none; /* Hidden on desktop */
-  background: none;
-  border: none;
-  color: var(--text-main);
-  cursor: pointer;
-}
-
-/* 2. BOTTOM BAR (Main Navigation) */
 .bottomBar {
-  background: transparent;
-  border-top: 1px solid rgba(0, 0, 0, 0.03);
+  background: var(--sub-bg);
+  box-shadow: var(--sub-shadow);
+  border-top: 1px solid var(--sub-divider);
 }
 
 .bottomBar .container {
@@ -135,7 +327,6 @@
   gap: 5rem;
   align-items: center;
   justify-content: center;
-  margin-right: 10rem;
 }
 
 .navItem {
@@ -144,17 +335,15 @@
   text-decoration: none;
   font-size: 1.2rem;
   font-weight: 600;
-  padding: 10px 0;
+  padding: 1rem 0;
   transition: color 0.2s;
 }
 
-/* Hover & Active */
 .navItem:hover,
 .active {
   color: var(--text-main);
 }
 
-/* Underline Animation */
 .navItem::after {
   content: "";
   position: absolute;
@@ -170,7 +359,7 @@
   width: 100%;
 }
 
-/* --- 3. MEGA MENU (Desktop Dropdown) --- */
+/* --- (Desktop Dropdown) --- */
 .megaMenu {
   position: absolute;
   top: 100%;
@@ -178,8 +367,8 @@
   width: 100%;
   background: var(--bg-surface);
   border-bottom: 1px solid var(--border);
-  padding: 40px 0 60px 0;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  padding: 2.5rem 0;
+  box-shadow: 0 1rem 2.5rem var(--shadow-glow);
   animation: slideDown 0.2s ease-out;
   z-index: 900;
 }
@@ -187,9 +376,9 @@
 .megaContainer {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 2rem;
   display: flex;
-  gap: 60px;
+  gap: 5rem;
 }
 
 .megaHeader h2 {
@@ -197,25 +386,24 @@
   font-weight: 800;
   color: var(--text-main);
   border-right: 1px solid var(--border);
-  padding-right: 40px;
-  margin-right: 20px;
+  padding-right: 2rem;
+  margin-right: 1rem;
   height: 100%;
   display: flex;
   align-items: flex-start;
 }
 
-/* GRID LAYOUT */
 .megaGrid {
   display: grid;
   grid-template-columns: 1fr 1fr 1.2fr;
-  gap: 40px;
+  gap: 2rem;
   width: 100%;
 }
 
 .linkColumn {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 1.5rem;
 }
 
 .megaLink {
@@ -224,19 +412,18 @@
   font-size: 1rem;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 0.8rem;
   font-weight: 500;
   transition: all 0.2s;
 }
 .megaLink:hover {
-  gap: 14px;
+  gap: 1rem;
   color: var(--primary);
 }
 
-/* PROMO AREA */
 .promoColumn {
   border-left: 1px solid var(--border);
-  padding-left: 40px;
+  padding-left: 2rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -245,13 +432,13 @@
   font-size: 1.5rem;
   font-weight: 700;
   color: var(--text-main);
-  margin-bottom: 12px;
+  margin-bottom: 0.5rem;
 }
 .promoColumn p {
   font-size: 0.9rem;
   line-height: 1.6;
   color: var(--text-muted);
-  margin-bottom: 24px;
+  margin-bottom: 1.5rem;
 }
 
 .promoBtn {
@@ -259,8 +446,8 @@
   color: var(--primary);
   background: transparent;
   text-decoration: none;
-  padding: 10px 24px;
-  border-radius: 50px;
+  padding: 0.5rem 1rem;
+  border-radius: 5rem;
   font-weight: 700;
   font-size: 0.85rem;
   width: fit-content;
@@ -268,21 +455,27 @@
 }
 .promoBtn:hover {
   background: var(--primary);
-  color: #fff;
+  color: var(--text-invert);
 }
 
-/* --- 4. MOBILE MENU DRAWER (High Grade Animation) --- */
+/* --- MOBILE MENU DRAWER --- */
+.mobileToggle {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--text-main);
+  cursor: pointer;
+}
 
-/* The Backdrop */
 .mobileBackdrop {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.7);
   backdrop-filter: blur(4px);
-  z-index: 1999; /* Higher than Header */
+  z-index: 1999;
   opacity: 0;
   visibility: hidden;
   transition: all 0.3s ease-in-out;
@@ -292,7 +485,6 @@
   visibility: visible;
 }
 
-/* The Drawer */
 .mobileDrawer {
   position: fixed;
   top: 0;
@@ -302,28 +494,28 @@
   height: 100vh;
   background: var(--bg-card);
   border-left: 1px solid var(--border);
-  z-index: 2000; /* Highest z-index */
-  padding: 24px;
+  z-index: 2000;
+  padding: 1rem;
   display: flex;
   flex-direction: column;
-
   transform: translateX(100%);
   transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.2);
+  box-shadow: -1rem 0 3rem var(--shadow-card);
 }
+
 .mobileDrawerOpen {
   transform: translateX(0);
 }
 
-/* Drawer Content */
 .drawerHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-bottom: 20px;
+  padding-bottom: 1rem;
   border-bottom: 1px solid var(--border);
-  margin-bottom: 20px;
+  margin-bottom: 0.5rem;
 }
+
 .drawerTitle {
   font-size: 1.1rem;
   font-weight: 800;
@@ -331,11 +523,11 @@
 }
 
 .closeBtn {
-  background: var(--bg-surface);
-  border: 1px solid var(--border);
-  color: var(--text-muted);
-  width: 36px;
-  height: 36px;
+  background: rgba(var(--danger-rgb), 0.1);
+  color: var(--danger);
+  border: 1px solid rgba(var(--danger-rgb), 0.3);
+  width: 2rem;
+  height: 2rem;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -344,78 +536,390 @@
   transition: 0.2s;
 }
 .closeBtn:hover {
-  background: #ef4444;
+  background: var(--danger);
   color: var(--text-invert);
-  border-color: #ef4444;
+  transform: rotate(90deg);
+}
+
+.drawerContent {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 1rem 0;
 }
 
 .mobileNavLinks {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 0.5rem;
   flex: 1;
   overflow-y: auto;
 }
 
 .mobileLink {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 16px;
-  font-size: 1.1rem;
-  font-weight: 600;
+  justify-content: space-between;
+  padding: 0.5rem 1rem;
   color: var(--text-main);
   text-decoration: none;
-  border-radius: 12px;
-  transition: 0.2s;
+  font-size: 1.1rem;
+  font-weight: 500;
+  transition: background 0.2s ease;
+  background: transparent;
+  border: none;
+  width: 100%;
+  cursor: pointer;
+  text-align: left;
+}
+.mobileLink:active {
+  background: var(--ui-bg-med);
 }
 .mobileLink:hover {
   background: var(--bg-surface);
-  padding-left: 24px;
-  color: #3b82f6;
+  padding-left: 2rem;
+  color: var(--primary);
 }
 .mobileLink svg {
   color: var(--text-muted);
   transition: 0.2s;
 }
 .mobileLink:hover svg {
-  color: #3b82f6;
+  color: var(--primary-hover);
+}
+
+.linkContent {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.drawerDivider {
+  height: 1px;
+  background: var(--ui-bg-high);
+  margin: 1rem;
+}
+
+.accordionGroup {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.mobileLinkWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  transition: background-color 0.2s ease;
+  background-color: var(--ui-bg-low);
+  border-bottom: 1px solid var(--ui-border-med);
+}
+
+.activeLinkWrapper {
+  background-color: rgba(var(--primary-rgb), 0.1);
+  border-bottom-color: var(--primary);
+}
+
+.mobileLinkText {
+  flex: 1;
+  padding: 1rem 2rem;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-main);
+  text-decoration: none;
+  display: block;
+}
+
+.mobileLinkText:active {
+  background-color: var(--ui-border-low);
+}
+
+.mobileToggleBtn {
+  padding: 1rem;
+  background: transparent;
+  border: none;
+  color: var(--text-body);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-left: 1px solid var(--ui-border-low);
+}
+
+.mobileToggleBtn svg {
+  transition: transform 0.3s ease;
+}
+
+.activeLinkWrapper .mobileToggleBtn {
+  color: var(--primary);
+}
+
+.rotateIcon {
+  transform: rotate(180deg);
+}
+
+.mobilesubLinks {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  background-color: var(--sub-bg);
+  box-shadow: var(--sub-shadow);
+  border-top: 1px solid var(--sub-divider);
+  display: flex;
+  flex-direction: column;
+}
+
+.showsubLinks {
+  max-height: 500px;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.sub {
+  display: block;
+  padding: 1rem 2rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  border-bottom: 1px solid var(--sub-divider);
+  transition: background-color 0.2s;
+}
+
+.sub:last-child {
+  border-bottom: none;
+}
+
+.sub:active {
+  background-color: var(--sub-hover);
+}
+
+.UtilsNav {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  margin: 1rem 0;
+  width: 100%;
+}
+
+.mobileSupportLink {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: rgba(37, 99, 235, 0.05);
+  border: 1px solid rgba(37, 99, 235, 0.1);
+  border-radius: 0.5rem;
+  text-decoration: none;
+  width: 100%;
+  transition: all 0.2s ease;
+}
+
+.mobileSupportLink:active {
+  background: rgba(37, 99, 235, 0.1);
+  transform: scale(0.98);
+}
+
+.supportIconWrapper {
+  width: 2.5rem;
+  height: 2.5rem;
+  background: var(--primary);
+  color: var(--text-invert);
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.supportTextWrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.supportLabel {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 2px;
+}
+
+.supportNumber {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.supportArrow {
+  color: var(--text-body);
+}
+
+.mobileLangCard {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: rgba(100, 116, 139, 0.05);
+  border: 1px solid rgba(100, 116, 139, 0.1);
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.langIconWrapper {
+  width: 2.5rem;
+  height: 2.5rem;
+  background: var(--text-muted);
+  color: var(--text-invert);
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.langTextWrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.langLabel {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-bottom: 2px;
+}
+
+.currentLang {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.hiddenSelectFull {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.mobileUserCard {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem;
+  margin: 0.5rem 1rem;
+  background: rgba(37, 99, 235, 0.1);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+
+.mobileAvatarWrapper {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.mobileAvatarPlaceholder,
+.mobileAvatarImg {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.5rem;
+  background: linear-gradient(135deg, var(--primary), #60a5fa);
+  color: var(--text-invert);
+  font-weight: 700;
+}
+
+.mobileUserDetails {
+  display: flex;
+  flex-direction: column;
+}
+
+.mobileUserName {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0;
+}
+
+.mobileUserEmail {
+  font-size: 0.8rem;
+  color: var(--text-muted);
 }
 
 .drawerFooter {
   border-top: 1px solid var(--border);
-  padding-top: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.02);
+  margin: 0.5rem 1rem;
+}
+
+.authGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.drawerLoginBtn,
+.drawerOpenBtn {
+  width: 100%;
+  padding: 0.875rem;
+  border-radius: 1rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.drawerOpenBtn {
+  background: var(--primary);
+  color: var(--text-invert);
+  border: none;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
 }
 
 .drawerLoginBtn {
-  width: 100%;
-  padding: 14px;
-  border-radius: 12px;
-  font-weight: 700;
-  text-align: center;
-  cursor: pointer;
-  background: var(--bg-surface);
-  color: var(--text-main);
-  border: 1px solid var(--border);
-}
-.drawerOpenBtn {
-  width: 100%;
-  padding: 14px;
-  border-radius: 12px;
-  font-weight: 700;
-  text-align: center;
-  cursor: pointer;
-  background: #0f172a;
-  color: var(--text-invert);
-  border: none;
+  background: transparent;
+  color: var(--primary);
+  border: 2px solid var(--primary-rgb);
 }
 
-/* --- RESPONSIVE LOGIC --- */
+.drawerLoginBtn:active,
+.drawerOpenBtn:active {
+  transform: scale(0.98);
+}
 
-/* Desktop: Hide Mobile Elements */
+.mobileLogoutBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: rgba(var(--danger-rgb), 0.1);
+  color: var(--danger);
+  border: 1px solid rgba(var(--danger-rgb), 0.3);
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  margin-top: 0.5rem;
+}
+
+.mobileLogoutBtn:active {
+  background: rgba(var(--danger-rgb), 0.1);
+  transform: scale(0.98);
+  border-color: rgba(var(--danger-rgb), 0.3);
+}
+
 @media (min-width: 1024px) {
   .mobileBackdrop,
   .mobileDrawer,
@@ -424,17 +928,16 @@
   }
 }
 
-/* Mobile/Tablet: Hide Desktop Elements */
 @media (max-width: 1023px) {
   .bottomBar {
     display: none;
-  } /* Hide Desktop Nav */
+  }
   .topActions {
     display: none;
-  } /* Hide Top Login/Register (moved to drawer) */
+  }
   .mobileToggle {
     display: block;
-  } /* Show Hamburger */
+  }
   .megaMenu {
     display: none !important;
   }

@@ -12,7 +12,6 @@ const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 export default function KycForm() {
     const [state, dispatch, isPending] = useActionState(submitKyc, initialState);
 
-    // Visual State
     const [passportName, setPassportName] = useState('');
     const [idFrontName, setIdFrontName] = useState('');
     const [idBackName, setIdBackName] = useState('');

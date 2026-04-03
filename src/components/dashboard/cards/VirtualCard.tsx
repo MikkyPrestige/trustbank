@@ -25,7 +25,7 @@ export default function VirtualCard({ card, userName, overrideStatus, siteName }
     const currentStatus = overrideStatus || card.status;
     const isFrozen = currentStatus === 'FROZEN';
 
-    const bankLabel = siteName ? siteName.toUpperCase() : 'TRUSTBANK';
+    const bankLabel = siteName ? siteName.toUpperCase() : 'TRUST  BANK';
 
     const cleanNum = card.cardNumber.replace(/\D/g, '');
 
@@ -76,7 +76,7 @@ export default function VirtualCard({ card, userName, overrideStatus, siteName }
                     <div className={styles.cardNumber}>{displayNum}</div>
                     {showDetails && (
                         <button onClick={handleCopy} className={styles.copyBtn} title="Copy Number">
-                            {copied ? <Check size={14} color="#4ade80" /> : <Copy size={14} />}
+                            {copied ? <Check size={14} color="var(--success)" /> : <Copy size={14} />}
                         </button>
                     )}
                 </div>

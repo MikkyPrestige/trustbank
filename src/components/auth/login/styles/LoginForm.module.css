@@ -1,4 +1,3 @@
-/* PAGE LAYOUT */
 .pageWrapper {
   min-height: 100vh;
   width: 100%;
@@ -11,102 +10,77 @@
   background-color: var(--bg-app);
 }
 
-/* AMBIENT BACKGROUND */
 .ambientMesh {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   background:
     radial-gradient(
-      circle at 15% 50%,
-      var(--primary-light, rgba(59, 130, 246, 0.15)),
-      transparent 25%
+      circle at 10% 20%,
+      var(--mesh-color-1),
+      transparent var(--mesh-size)
     ),
     radial-gradient(
-      circle at 85% 30%,
-      var(--success-light, rgba(34, 197, 94, 0.15)),
-      transparent 25%
+      circle at 90% 80%,
+      var(--mesh-color-2),
+      transparent var(--mesh-size)
     );
   z-index: 0;
+  filter: blur(5rem);
   pointer-events: none;
+  animation: pulseMesh 15s ease-in-out infinite;
 }
 
-/* CONTAINER */
 .formContainer {
   width: 100%;
-  max-width: 440px;
+  max-width: 500px;
   position: relative;
   z-index: 10;
   animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* HEADER */
 .header {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.1rem;
   text-align: center;
-  margin-top: 3.5rem;
+  margin-top: 2.5rem;
   padding-bottom: 1rem;
 }
 
-.brandBadge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 6px 16px;
-  border-radius: 50px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--text-muted);
-  backdrop-filter: blur(4px);
-}
-
-.header h1 {
+.headerTitle {
   font-size: 2rem;
   font-weight: 800;
   color: var(--text-main);
   letter-spacing: -0.5px;
 }
 
-.header p {
+.headerSubTitle {
   color: var(--text-muted);
   font-size: 1rem;
 }
 
-/* GLASS FORM CARD */
 .glassForm {
   background: var(--bg-card);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(1rem);
+  -webkit-backdrop-filter: blur(1rem);
   border: 1px solid var(--border);
-  border-radius: 24px;
-  padding: 2.5rem;
-  box-shadow: var(--shadow-card, 0 25px 50px -12px rgba(0, 0, 0, 0.5));
+  border-radius: 2rem;
+  padding: 2rem;
+  box-shadow: var(--shadow-card, 0 2rem 5rem -1rem rgba(0, 0, 0, 0.5));
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
 }
 
-/* ERROR BANNER */
 .errorBanner {
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.2);
+  background: rgba(var(--danger-rgb), 0.1);
   color: var(--danger);
-  padding: 12px;
-  border-radius: 12px;
+  border: 1px solid rgba(var(--danger-rgb), 0.3);
+  padding: 1rem;
+  border-radius: 1rem;
   font-size: 0.9rem;
   text-align: center;
   font-weight: 500;
   animation: fadeIn 0.3s ease-out;
 }
 
-/* INPUTS */
 .inputWrapper {
   display: flex;
   flex-direction: column;
@@ -115,10 +89,10 @@
 }
 
 .inputWrapper label {
-  font-size: 0.85rem;
+  font-size: 1rem;
   font-weight: 600;
-  color: var(--text-muted);
-  margin-left: 4px;
+  color: var(--text-body);
+  text-transform: uppercase;
 }
 
 .labelRow {
@@ -127,22 +101,10 @@
   align-items: center;
 }
 
-.forgotLink {
-  font-size: 0.8rem;
-  color: var(--primary);
-  text-decoration: none;
-  font-weight: 600;
-}
-
-.forgotLink:hover {
-  text-decoration: underline;
-  opacity: 0.8;
-}
-
 .inputIconBox {
   position: absolute;
-  bottom: 14px;
-  left: 14px;
+  bottom: 0.6rem;
+  left: 1rem;
   color: var(--text-muted);
   pointer-events: none;
   z-index: 2;
@@ -151,12 +113,11 @@
 .inputWrapper input {
   width: 100%;
   background: var(--bg-surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 12px 12px 12px 42px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 0.5rem;
+  padding: 1rem 1rem 1rem 3rem;
   color: var(--text-main);
   font-size: 1rem;
-  height: 48px;
   outline: none;
   transition:
     border-color 0.2s,
@@ -166,7 +127,7 @@
 .inputWrapper input:focus {
   background: var(--bg-card);
   border-color: var(--primary);
-  box-shadow: 0 0 0 1px var(--primary);
+  box-shadow: 0 0 0 1px var(--primary-rgb);
 }
 
 .inputWrapper input::placeholder {
@@ -174,13 +135,12 @@
   opacity: 0.5;
 }
 
-/* EYE BUTTON */
 .eyeBtn {
   position: absolute;
-  bottom: 0;
+  bottom: -0.3rem;
   right: 0;
-  height: 48px;
-  width: 48px;
+  height: 4rem;
+  width: 4rem;
   background: none;
   border: none;
   color: var(--text-muted);
@@ -195,7 +155,18 @@
   color: var(--text-main);
 }
 
-/* FOOTER / SUBMIT */
+.forgotLink {
+  font-size: 0.8rem;
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.forgotLink:hover {
+  text-decoration: underline;
+  color: var(--primary-hover)
+}
+
 .footer {
   margin-top: 0.5rem;
   display: flex;
@@ -207,8 +178,8 @@
   background: var(--primary);
   color: var(--text-invert);
   border: none;
-  height: 50px;
-  border-radius: 12px;
+  padding: 0.85rem;
+  border-radius: 0.5rem;
   font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
@@ -221,7 +192,7 @@
 }
 
 .primaryBtn:hover:not(:disabled) {
-  opacity: 0.9;
+   color: var(--primary-hover);
   transform: translateY(-1px);
 }
 
@@ -249,11 +220,26 @@
   color: var(--primary);
 }
 
-/* ANIMATIONS */
+.loginLinkText {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
 .spin {
   animation: spin 1s linear infinite;
 }
 
+@keyframes pulseMesh {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+}
 @keyframes spin {
   100% {
     transform: rotate(360deg);

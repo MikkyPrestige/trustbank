@@ -2,10 +2,6 @@ import { db } from "@/lib/db";
 import { KycStatus, TransactionDirection, TransactionType } from "@prisma/client";
 import { hash, compare } from "bcryptjs";
 
-// ==========================================
-// HELPERS: Fetch from Key-Value Table
-// ==========================================
-
 export async function getSetting(key: string, fallback: number): Promise<number> {
     const setting = await db.systemSettings.findUnique({ where: { key } });
     return setting ? Number(setting.value) : fallback;
@@ -16,10 +12,6 @@ export async function getBooleanSetting(key: string, fallback: boolean): Promise
     if (!setting) return fallback;
     return setting.value === 'true';
 }
-
-// ==========================================
-// PART 1: ACTIVE DEFENSE (IP BLOCKING)
-// ==========================================
 
 /**
  * Checks if an IP is currently blocked due to excessive failures.
@@ -48,10 +40,8 @@ export async function getSecurityStatus(ip: string) {
     const WINDOW_MINUTES = await getSetting('security_lockout_duration', 15);
     const MAX_ATTEMPTS = await getSetting('security_max_attempts', 5);
 
-    // Calculate the time window
     const windowStart = new Date(Date.now() - WINDOW_MINUTES * 60 * 1000);
 
-    // 1. Get the failures
     const failures = await db.adminLog.findMany({
         where: {
             ipAddress: ip,
@@ -82,11 +72,7 @@ export async function getSecurityStatus(ip: string) {
     };
 }
 
-// ==========================================
-// PART 2: TRANSACTION LIMITS (Dynamic)
-// ==========================================
-
-// 1. CHECK PERMISSIONS (Sender Limits)
+// CHECK Sender Limits
 export async function checkPermissions(
     userId: string,
     action: 'TRANSFER_INTERNAL' | 'TRANSFER_WIRE' | 'LOAN_APPLY' | 'LOAN_REPAY' | 'CRYPTO_TRADE' | 'CRYPTO_TRANSFER' | 'WALLET_GEN',
@@ -103,7 +89,7 @@ export async function checkPermissions(
     const allowTrade = await getBooleanSetting('feature_crypto_enabled', true);
     const allowWallet = await getBooleanSetting('feature_wallet_gen_enabled', true);
 
-    // 2. CHECK FEATURE FLAGS (Before KYC)
+    // CHECK FEATURE FLAGS (Before KYC)
     if (action === 'TRANSFER_INTERNAL' && !allowTransfer) return { allowed: false, error: "Internal transfers are temporarily disabled." };
     if (action === 'TRANSFER_WIRE' && !allowWire) return { allowed: false, error: "Wire transfers are temporarily paused." };
     if (action === 'LOAN_APPLY' && !allowLoanApply) return { allowed: false, error: "New loan applications are temporarily paused." };
@@ -112,16 +98,16 @@ export async function checkPermissions(
     if (action === 'CRYPTO_TRANSFER' && !allowTransfer) return { allowed: false, error: "Crypto transfers are temporarily disabled." };
     if (action === 'WALLET_GEN' && !allowWallet) return { allowed: false, error: "Wallet generation is paused." };
 
-    // 3. KYC BYPASS (Verified users skip limits, but NOT feature flags)
+    //  KYC BYPASS (Verified users skip limits, but NOT feature flags)
     if (user.kycStatus === KycStatus.VERIFIED) return { allowed: true };
 
-    // 4. UNVERIFIED RESTRICTIONS
+    // UNVERIFIED RESTRICTIONS
     if (action === 'LOAN_APPLY') return { allowed: false, error: "KYC required for Loans." };
     if (action === 'CRYPTO_TRADE') return { allowed: false, error: "KYC required for Trading." };
     if (action === 'CRYPTO_TRANSFER') return { allowed: false, error: "KYC required for Transfers." };
     if (action === 'WALLET_GEN') return { allowed: false, error: "KYC required." };
 
-    // 5. WIRE & INTERNAL TRANSFER LIMITS
+    // WIRE & INTERNAL TRANSFER LIMITS
    if (action === 'TRANSFER_INTERNAL' || action === 'TRANSFER_WIRE') {
         const maxTx = await getSetting('limit_unverified_tx_max', 2000);
         const maxDaily = await getSetting('limit_unverified_daily_max', 10000);
@@ -181,11 +167,6 @@ export async function checkInboundLimit(userId: string, incomingAmount: number) 
     return { allowed: true };
 }
 
-
-// ==========================================
-// PIN SECURITY
-// ==========================================
-
 export async function hashPin(pin: string): Promise<string> {
     return await hash(pin, 10);
 }
@@ -205,24 +186,21 @@ export async function verifyPin(userId: string, pin: string) {
 
     if (!user) return { success: false, error: "User not found" };
 
-    // 1. CHECK LOCK STATUS
+    // CHECK LOCK STATUS
     if (user.pinLockedUntil && new Date() < user.pinLockedUntil) {
        const minutesLeft = Math.ceil((user.pinLockedUntil.getTime() - new Date().getTime()) / 60000);
        return { success: false, error: `PIN locked. Try again in ${minutesLeft} minutes.` };
     }
 
-    // 2. VERIFY PIN (Smart Check)
+    // VERIFY PIN (Smart Check)
     let isValid = false;
     const storedPin = user.transactionPin || "";
 
-    // Check if it's already hashed (bcrypt hashes start with $2)
     const isHashed = storedPin.startsWith('$2');
 
     if (isHashed) {
-        // SECURE CHECK
         isValid = await compare(pin, storedPin);
     } else {
-        // LEGACY CHECK (Plain Text)
         isValid = (pin === storedPin);
 
         // AUTO-MIGRATE: If valid plain text, upgrade to hash immediately
@@ -236,9 +214,7 @@ export async function verifyPin(userId: string, pin: string) {
         }
     }
 
-    // 3. SUCCESS HANDLING
     if (isValid) {
-        // Reset counters if they were previously wrong
         if (user.failedPinAttempts > 0 || user.pinLockedUntil) {
             await db.user.update({
                 where: { id: userId },
@@ -248,7 +224,6 @@ export async function verifyPin(userId: string, pin: string) {
         return { success: true };
     }
 
-    // 4. FAILURE HANDLING (Lockout Logic)
     const newCount = user.failedPinAttempts + 1;
     const isLockedNow = newCount >= 5;
 
@@ -271,7 +246,7 @@ export async function verifyPin(userId: string, pin: string) {
                 isRead: false
             }
         });
-        // Notify Admins
+
         const admins = await db.user.findMany({
             where: { role: { in: ["ADMIN", "SUPER_ADMIN"] } },
             select: { id: true }
@@ -300,10 +275,7 @@ export async function verifyPin(userId: string, pin: string) {
   }
 }
 
-// ==========================================
-//  PART 3: SYSTEM STATUS (Maintenance)
-// ==========================================
-
+// SYSTEM STATUS
 export async function checkMaintenanceMode(): Promise<boolean> {
     return await getBooleanSetting('maintenance_mode', false);
 }

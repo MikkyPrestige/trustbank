@@ -5,41 +5,58 @@ import { applyForLoan } from '@/actions/user/loan';
 import styles from './loans.module.css';
 import { Loader2 } from 'lucide-react';
 
-export default function LoanApplicationForm() {
+export default function LoanApplicationForm({ currency, rate }: { currency: string, rate: number }) {
     const [state, action, isPending] = useActionState(applyForLoan, undefined);
 
-    const [amount, setAmount] = useState(5000);
+    const initialAmount = Math.floor(5000 * rate);
+    const [amount, setAmount] = useState(initialAmount);
     const [months, setMonths] = useState(12);
 
     const interestRate = 0.05; // 5%
     const totalRepayment = amount + (amount * interestRate);
     const monthlyPayment = totalRepayment / months;
 
+    // Constraint User Currency
+    const minAmount = Math.ceil(1000 * rate);
+    const maxAmount = Math.floor(50000 * rate);
+
+    const handleFormSubmit = (formData: FormData) => {
+        const usdAmount = amount / rate;
+        formData.set("amount", usdAmount.toString());
+
+        formData.set("displayAmount", amount.toString());
+        formData.set("displayCurrency", currency);
+
+        action(formData);
+    };
+
     return (
-        <form action={action} className={styles.form}>
+        <form action={handleFormSubmit} className={styles.form}>
             {state?.message && (
                 <div className={state.success ? styles.success : styles.error}>
                     {state.message}
                 </div>
             )}
 
-            {/* AMOUNT SLIDER */}
             <div className={styles.group}>
                 <label className={styles.label}>I want to borrow</label>
                 <div className={styles.amountInputWrapper}>
-                    <span className={styles.currencySymbol}>$</span>
+                    <span className={styles.currencySymbol}>{currency}</span>
                     <input
-                        name="amount"
+                        name="amount_display"
                         type="number"
                         value={amount}
                         onChange={(e) => setAmount(Number(e.target.value))}
                         className={styles.amountInput}
-                        min={1000}
-                        max={50000}
+                        min={minAmount}
+                        max={maxAmount}
                     />
                 </div>
                 <input
-                    type="range" min="1000" max="50000" step="1000"
+                    type="range"
+                    min={minAmount}
+                    max={maxAmount}
+                    step={minAmount}
                     value={amount}
                     onChange={(e) => setAmount(Number(e.target.value))}
                     className={styles.range}
@@ -47,7 +64,6 @@ export default function LoanApplicationForm() {
             </div>
 
             <div className={styles.flexRow}>
-                {/* TERM SELECT */}
                 <div className={`${styles.group} ${styles.flexItem}`}>
                     <label className={styles.label}>Duration</label>
                     <select
@@ -63,7 +79,6 @@ export default function LoanApplicationForm() {
                     </select>
                 </div>
 
-                {/* REASON SELECT */}
                 <div className={`${styles.group} ${styles.flexItem}`}>
                     <label className={styles.label}>Purpose</label>
                     <select name="reason" className={styles.select}>
@@ -76,7 +91,6 @@ export default function LoanApplicationForm() {
                 </div>
             </div>
 
-            {/* LIVE CALCULATOR PREVIEW */}
             <div className={styles.calculatorBox}>
                 <div className={styles.calcRow}>
                     <span>Interest Rate</span>
@@ -85,18 +99,17 @@ export default function LoanApplicationForm() {
                 <div className={styles.calcRow}>
                     <span>Monthly Payment</span>
                     <span className={styles.highlight}>
-                        {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(monthlyPayment)}
+                        {new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(monthlyPayment)}
                     </span>
                 </div>
                 <div className={styles.calcRow}>
                     <span>Total Repayment</span>
                     <span>
-                        {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(totalRepayment)}
+                        {new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(totalRepayment)}
                     </span>
                 </div>
             </div>
 
-            {/* PIN INPUT */}
             <div className={styles.group}>
                 <label className={styles.label}>Security PIN</label>
                 <input

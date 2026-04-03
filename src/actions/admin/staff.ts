@@ -8,7 +8,6 @@ import { UserRole, UserStatus } from "@prisma/client";
 import { checkAdminAction } from "@/lib/auth/admin-auth";
 import { canPerform } from "@/lib/auth/permissions";
 
-// 1. CREATE STAFF ACCOUNT
 export async function createStaffAccount(formData: FormData) {
     const { authorized, session } = await checkAdminAction();
 
@@ -16,7 +15,6 @@ export async function createStaffAccount(formData: FormData) {
         return { success: false, message: "Unauthorized." };
     }
 
-    //  Permission Check (Super Admin Only)
     if (!canPerform(session.user.role as UserRole, 'ADMIN_MGMT')) {
         return { success: false, message: "Unauthorized: Super Admin access required." };
     }
@@ -38,7 +36,6 @@ export async function createStaffAccount(formData: FormData) {
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // 1. Create User (Critical Write)
         const newUser = await db.user.create({
             data: {
                 email,
@@ -50,7 +47,6 @@ export async function createStaffAccount(formData: FormData) {
             }
         });
 
-        // 2. Notify (Side Effect)
         await db.notification.create({
             data: {
                 userId: newUser.id,
@@ -79,7 +75,6 @@ export async function createStaffAccount(formData: FormData) {
     return { success: true, message: `${role} account created successfully.` };
 }
 
-// 2. REMOVE STAFF (Downgrade to Client)
 export async function removeStaffAccount(staffId: string) {
     const { authorized, session } = await checkAdminAction();
 
@@ -87,7 +82,6 @@ export async function removeStaffAccount(staffId: string) {
         return { success: false, message: "Unauthorized" };
     }
 
-    //  Permission Check (Super Admin Only)
     if (!canPerform(session.user.role as UserRole, 'ADMIN_MGMT')) {
         return { success: false, message: "Unauthorized: Super Admin access required." };
     }
@@ -99,13 +93,11 @@ export async function removeStaffAccount(staffId: string) {
             return { success: false, message: "Cannot remove this user." };
         }
 
-        // 1. Update Role (Critical Write)
         await db.user.update({
             where: { id: staffId },
             data: { role: UserRole.CLIENT }
         });
 
-        // 2. Notify (Side Effect)
         await db.notification.create({
             data: {
                 userId: staffId,
@@ -138,7 +130,6 @@ export async function removeStaffAccount(staffId: string) {
     return { success: true, message: "Staff access revoked. User is now a Client." };
 }
 
-// 3. PROMOTE EXISTING USER TO STAFF
 export async function promoteUserToStaff(formData: FormData) {
     const { authorized, session } = await checkAdminAction();
 
@@ -146,7 +137,6 @@ export async function promoteUserToStaff(formData: FormData) {
         return { success: false, message: "Unauthorized." };
     }
 
-    //  Permission Check (Super Admin Only)
     if (!canPerform(session.user.role as UserRole, 'ADMIN_MGMT')) {
         return { success: false, message: "Unauthorized: Super Admin access required." };
     }
@@ -167,13 +157,11 @@ export async function promoteUserToStaff(formData: FormData) {
     if (user.role === role) return { success: false, message: `User is already a ${role}.` };
 
     try {
-        // 1. Update Role (Critical Write)
         await db.user.update({
             where: { email },
             data: { role: role }
         });
 
-        // 2. Notify (Side Effect)
         await db.notification.create({
             data: {
                 userId: user.id,

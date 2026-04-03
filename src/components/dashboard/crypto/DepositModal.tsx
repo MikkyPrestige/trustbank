@@ -8,12 +8,16 @@ import { Plus, X, Wallet, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const SUPPORTED_COINS = [
+    { code: 'USDT', name: 'Tether' },
     { code: 'BTC', name: 'Bitcoin' },
     { code: 'ETH', name: 'Ethereum' },
     { code: 'SOL', name: 'Solana' },
-    { code: 'USDT', name: 'Tether' },
+    { code: 'BNB', name: 'Binance' },
+    { code: 'HYPE', name: 'HyperLiquid' },
     { code: 'XRP', name: 'Ripple' },
-    { code: 'ADA', name: 'Cardano' }
+    { code: 'ADA', name: 'Cardano' },
+    { code: 'DOT', name: 'PolkaDot' },
+    { code: 'DOGE', name: 'DogeCoin' }
 ];
 
 export default function DepositModal() {
@@ -46,19 +50,19 @@ export default function DepositModal() {
 
     return (
         <>
-            <button onClick={() => setIsOpen(true)} className={styles.verifyBtn} style={{ padding: '6px 12px', fontSize: '0.8rem', background: 'var(--text-main)', color: 'var(--bg-app)' }}>
-                <Plus size={16} style={{ marginRight: '6px' }} /> New Wallet
+            <button onClick={() => setIsOpen(true)} className={styles.walletBtn}>
+                <Plus size={18} /> New Wallet
             </button>
 
             {isOpen && createPortal(
                 <div className={styles.modalOverlay}>
                     <div className={styles.modalContent}>
                         <div className={styles.modalHeader}>
-                            <h3>Create Crypto Wallet</h3>
+                            <h3 className={styles.modalTitle}>Create Crypto Wallet</h3>
                             <button onClick={() => setIsOpen(false)} className={styles.closeBtn}><X size={20} /></button>
                         </div>
 
-                        <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem', textAlign: 'center', fontSize: '0.9rem' }}>
+                        <p className={styles.modalDesc}>
                             Select a blockchain network to generate a secure deposit address.
                         </p>
 

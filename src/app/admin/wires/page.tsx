@@ -9,16 +9,24 @@ import { UserStatus } from "@prisma/client";
 export default async function AdminWiresPage() {
     await requireAdmin();
 
-    // Fetch all wires (Newest first)
-    const wires = await db.wireTransfer.findMany({
-        where: {
-            user: {
-                status: { not: UserStatus.ARCHIVED }
-            }
-        },
-        include: { user: true },
-        orderBy: { createdAt: 'desc' }
-    });
+    const [wires, rates] = await Promise.all([
+        db.wireTransfer.findMany({
+            where: {
+                user: {
+                    status: { not: UserStatus.ARCHIVED }
+                }
+            },
+            include: {
+                user: {
+                    select: { fullName: true, email: true, currency: true, status: true }
+                }
+            },
+            orderBy: { createdAt: 'desc' }
+        }),
+        db.exchangeRate.findMany()
+    ]);
+
+    const rateMap = new Map(rates.map(r => [r.currency, Number(r.rate)]));
 
     return (
         <div className={styles.container}>
@@ -28,11 +36,11 @@ export default async function AdminWiresPage() {
                     <p className={styles.subtitle}>Manage international transfers and codes</p>
                 </div>
 
-                <div className={styles.headerActions}>
+                {/* <div className={styles.headerActions}>
                     <Link href="/admin" className={styles.backBtn}>
-                        <ArrowLeft size={16} /> Dashboard
+                        <ArrowLeft size={18} /> Dashboard
                     </Link>
-                </div>
+                </div> */}
             </header>
 
             <div className={styles.tableCard}>
@@ -48,9 +56,21 @@ export default async function AdminWiresPage() {
                         </tr>
                     </thead>
                     <tbody>
-                        {wires.map((wire) => (
-                            <WireRow key={wire.id} wire={wire} />
-                        ))}
+                        {wires.map((wire) => {
+                            // @ts-ignore
+                            const currency = wire.user.currency || "USD";
+                            const rate = currency === "USD" ? 1 : (rateMap.get(currency) || 1);
+
+                            return (
+                                <WireRow
+                                    key={wire.id}
+                                    // @ts-ignore
+                                    wire={wire}
+                                    currency={currency}
+                                    rate={rate}
+                                />
+                            )
+                        })}
                     </tbody>
                 </table>
 

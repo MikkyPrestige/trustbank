@@ -1,52 +1,78 @@
 import Link from 'next/link';
-import { ArrowLeft, Calendar, ShieldCheck, Scale } from 'lucide-react';
+import { ArrowLeft, Calendar, ShieldCheck, Scale, Accessibility } from 'lucide-react';
 import styles from './legal.module.css';
 
 interface LegalPageProps {
     title: string;
-    lastUpdated: Date;
+    lastUpdated: Date | null;
     content: string;
+    navConfig: Record<string, { label: string; href: string; id: string }>;
     type: 'privacy' | 'terms' | 'accessibility';
     backText: string;
+    backUrl: string;
     footerText: string;
     linkText: string;
     linkUrl: string;
     updatedLabel: string;
 }
 
-export default function LegalPageLayout({ title, lastUpdated, content, type, backText, footerText, linkText, linkUrl, updatedLabel }: LegalPageProps) {
-    // 1. Dynamic Icon Logic
-    const Icon = type === 'privacy' ? ShieldCheck : Scale;
+export default function LegalPageLayout({
+    title,
+    lastUpdated,
+    content,
+    navConfig,
+    type,
+    backText,
+    backUrl,
+    footerText,
+    linkText,
+    linkUrl,
+    updatedLabel,
+}: LegalPageProps) {
 
-    // 2. Navigation Items Configuration
-    const navItems = [
-        { label: 'Privacy Policy', href: '/privacy', id: 'privacy' },
-        { label: 'Terms of Use', href: '/terms', id: 'terms' },
-        { label: 'Accessibility', href: '/accessibility', id: 'accessibility' },
-    ];
+    // Icon Mapping
+    const Icon = {
+        privacy: ShieldCheck,
+        terms: Scale,
+        accessibility: Accessibility,
+    }[type];
+
+    // Navigation Configuration
+    const navItems = Object.values(navConfig);
+
+    // Date Formatter Helper
+    const formatDate = (date: Date | null) => {
+        if (!date) return 'Recently';
+        return date.toLocaleDateString("en-US", {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+    };
 
     return (
         <div className={styles.pageWrapper}>
             <div className={styles.header}>
                 <div className={styles.container}>
-                    <Link href="/" className={styles.backLink}>
+                    <Link href={backUrl} className={styles.backLink}>
                         <ArrowLeft size={16} /> {backText}
                     </Link>
 
                     <div className={styles.titleWrapper}>
                         <div className={styles.iconBox}>
-                            <Icon size={32} />
+                            <Icon size={32} strokeWidth={1.5} />
                         </div>
                         <div>
                             <h1 className={styles.title}>{title}</h1>
                             <div className={styles.meta}>
                                 <Calendar size={14} />
-                                <span>{updatedLabel} {lastUpdated.toLocaleDateString("en-US", { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                                <span>
+                                    {updatedLabel} {formatDate(lastUpdated)}
+                                </span>
                             </div>
                         </div>
                     </div>
 
-                    {/* --- NEW: LEGAL TABS NAVIGATION --- */}
                     <div className={styles.tabsContainer}>
                         {navItems.map((item) => (
                             <Link
@@ -61,7 +87,6 @@ export default function LegalPageLayout({ title, lastUpdated, content, type, bac
                 </div>
             </div>
 
-            {/* Content */}
             <div className={styles.container}>
                 <div className={styles.documentCard}>
                     <div
@@ -70,12 +95,18 @@ export default function LegalPageLayout({ title, lastUpdated, content, type, bac
                     />
                 </div>
 
-                <div className={styles.footerNote}>
-                    <p>
-                        {footerText}
-                        <Link href={linkUrl} className={styles.link}> {linkText}</Link>.
-                    </p>
-                </div>
+                {(footerText || linkText) && (
+                    <div className={styles.footerNote}>
+                        <p>
+                            {footerText}{' '}
+                            {linkUrl && (
+                                <Link href={linkUrl} className={styles.link}>
+                                    {linkText}
+                                </Link>
+                            )}
+                        </p>
+                    </div>
+                )}
             </div>
         </div>
     );

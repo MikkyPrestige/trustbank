@@ -1,10 +1,8 @@
-/* SECURITY PAGE STYLES */
 .main {
   min-height: 100vh;
   background-color: var(--bg-surface);
 }
 
-/* HERO SECTION */
 .hero {
   position: relative;
   height: 400px;
@@ -22,11 +20,11 @@
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 0; /* Puts image at the back */
+  z-index: 0;
 }
 
 .heroImage {
-  object-fit: cover; /* Ensures image covers area without stretching */
+  object-fit: cover;
   object-position: center;
 }
 
@@ -37,21 +35,20 @@
     to bottom,
     rgba(0, 0, 0, 0.3),
     rgba(0, 0, 0, 0.7)
-  ); /* Darkens image */
+  );
   z-index: 1;
 }
 
 .heroContent {
   position: relative;
-  z-index: 2; /* Puts text on top of everything */
+  z-index: 2;
   max-width: 800px;
-  padding: 0 20px;
+  padding: 0 2rem;
 }
 
 .heroTitle {
   font-size: 3rem;
   font-weight: 800;
-  margin-bottom: 1rem;
   letter-spacing: -0.5px;
 }
 
@@ -61,27 +58,25 @@
   line-height: 1.6;
 }
 
-/* CONTAINER */
 .container {
   max-width: 1200px;
-  margin: -60px auto 0;
-  padding: 0 20px 4rem;
+  margin: -5rem auto 0;
+  padding: 2rem;
   position: relative;
   z-index: 10;
 }
 
-/* GRID */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
-  margin-bottom: 4rem;
+  gap: 2rem;
+  margin-bottom: 2rem;
 }
 
 .card {
   background: var(--bg-card);
   padding: 2rem;
-  border-radius: 16px;
+  border-radius: 1rem;
   border: 1px solid var(--border);
   box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s;
@@ -92,21 +87,21 @@
 }
 
 .iconBox {
-  width: 48px;
-  height: 48px;
+  width: 4rem;
+  height: 4rem;
   background: rgba(59, 130, 246, 0.1);
   color: var(--primary);
-  border-radius: 12px;
+  border-radius: 1rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .card h3 {
   font-size: 1.25rem;
   font-weight: 700;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.5rem;
   color: var(--text-main);
 }
 
@@ -115,15 +110,15 @@
   line-height: 1.6;
 }
 
-/* FRAUD SECTION */
 .fraudSection {
   margin-top: 4rem;
+  text-align: center;
 }
 
 .sectionTitle {
   font-size: 2rem;
   font-weight: 800;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   color: var(--text-main);
 }
 
@@ -135,14 +130,15 @@
 }
 
 .fraudIconWrapper {
-  background: rgba(239, 68, 68, 0.1);
-  padding: 12px;
+  background: rgba(var(--danger-rgb), 0.1);
+  border: 1px solid rgba(var(--danger-rgb), 0.3);
+  padding: 1rem;
   border-radius: 50%;
   color: var(--danger);
 }
 
 .fraudContent h3 {
-  color: var(--danger); /* Red Title */
+  color: var(--danger);
 }
 
 .fraudAction {
@@ -156,10 +152,9 @@
   color: var(--accent);
 }
 
-/* HELP LINK */
 .helpSection {
   text-align: center;
-  margin-top: 4rem;
+  margin-top: 2rem;
   color: var(--text-muted);
 }
 
@@ -174,7 +169,6 @@
   text-decoration: underline;
 }
 
-/* MOBILE RESPONSIVE */
 @media (max-width: 768px) {
   .hero {
     height: 350px;

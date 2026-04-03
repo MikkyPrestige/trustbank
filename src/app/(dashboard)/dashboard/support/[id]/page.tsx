@@ -16,7 +16,6 @@ export default async function TicketDetailsPage({
 
     const { id } = await params;
 
-    // Fetch ticket with messages
     const ticket = await db.ticket.findUnique({
         where: { id, userId: session.user.id },
         include: {
@@ -26,6 +25,14 @@ export default async function TicketDetailsPage({
 
     if (!ticket) return notFound();
 
+    const getStatusColor = (status: string) => {
+        switch (status) {
+            case 'OPEN': return 'var(--primary)';
+            case 'CLOSED': return 'var(--success)';
+            default: return 'var(--accent)';
+        }
+    };
+
     return (
         <div className={styles.container}>
             <header className={styles.header}>
@@ -34,15 +41,13 @@ export default async function TicketDetailsPage({
                         <ArrowLeft size={20} />
                     </Link>
                     <div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <div className={styles.titleRow}>
                             <h1 className={styles.title}>{ticket.subject}</h1>
-                            <span className={styles.statusBadge} style={{
-                                background: 'rgba(59, 130, 246, 0.1)', color: '#3b82f6'
-                            }}>
+                            <span className={styles.statusBadge} style={{ color: getStatusColor(ticket.status) }}>
                                 {ticket.status}
                             </span>
                         </div>
-                        <p className={styles.subtitle} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <p className={`${styles.subtitle} ${styles.ticketID}`}>
                             <Hash size={14} /> Ticket ID: {ticket.id}
                         </p>
                     </div>

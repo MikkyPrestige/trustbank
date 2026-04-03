@@ -4,7 +4,6 @@ import { getAuthenticatedUser } from "@/lib/auth/user-guard";
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 
-// 1. GET NOTIFICATIONS
 export async function getNotifications() {
   const { success, message, user } = await getAuthenticatedUser();
 
@@ -25,7 +24,6 @@ export async function getNotifications() {
   }
 }
 
-// 2. MARK AS READ
 export async function markNotificationRead(notificationId: string) {
    const { success, message, user } = await getAuthenticatedUser();
 
@@ -43,12 +41,10 @@ export async function markNotificationRead(notificationId: string) {
     return { success: false, message: "Database error" };
   }
 
-  // ✅ Fix: Revalidate outside try/catch
   revalidatePath("/dashboard");
   return { success: true };
 }
 
-// 3. MARK ALL READ
 export async function markAllNotificationsRead() {
     const { success, message, user } = await getAuthenticatedUser();
 
@@ -66,7 +62,6 @@ export async function markAllNotificationsRead() {
       return { success: false, message: "Database error" };
     }
 
-    // ✅ Fix: Revalidate outside try/catch
     revalidatePath("/dashboard");
     return { success: true };
 }

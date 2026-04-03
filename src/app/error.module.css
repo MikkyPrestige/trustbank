@@ -12,31 +12,31 @@
 }
 
 .iconBox {
-  width: 80px;
-  height: 80px;
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.2);
+  width: 4rem;
+  height: 4rem;
+  background: rgba(var(--danger-rgb), 0.1);;
+  border: 1px solid rgba(var(--danger-rgb), 0.3);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 1.5rem;
-  color: #ef4444;
-  box-shadow: 0 0 20px rgba(239, 68, 68, 0.2);
+  margin-bottom: 1rem;
+  color: var(--danger);
+  box-shadow: 0 0 2rem rgba(var(--danger-rgb), 0.2);
 }
 
 .title {
   font-size: 1.8rem;
   font-weight: 800;
   margin-bottom: 1rem;
-  background: linear-gradient(to right, #fff, #ccc);
+  background: linear-gradient(to right, var(--text-main), var(--text-body));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .message {
   color: var(--text-muted);
-  max-width: 500px;
+  max-width: 600px;
   margin-bottom: 2rem;
   line-height: 1.6;
   font-size: 1rem;
@@ -44,45 +44,48 @@
 
 .actions {
   display: flex;
-  gap: 1rem;
+  gap: 2rem;
 }
 
 .retryBtn {
-  background: var(--text-main);
-  color: var(--bg-app);
-  border: none;
-  padding: 12px 24px;
-  border-radius: 8px;
+  background: rgba(var(--danger-rgb), 0.1);
+  color: var(--danger);
+  border: 1px solid rgba(var(--danger-rgb), 0.3);
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
   font-weight: 600;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.5rem;
   transition: opacity 0.2s;
 }
 
 .retryBtn:hover {
   opacity: 0.9;
+  background: var(--danger);
+  color: var(--text-invert);
 }
 
 .homeBtn {
-  background: transparent;
-  border: 1px solid var(--border);
+  background: var(--sub-bg);
+  border: 1px solid var(--border-subtle);
   color: var(--text-main);
-  padding: 12px 24px;
-  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
   font-weight: 600;
   text-decoration: none;
   transition: all 0.2s;
 }
 
 .homeBtn:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--sub-hover);
+  border: 1px solid var(--sub-hover);
 }
 
 .btnIcon {
-    margin-right: 8px;
-    vertical-align: text-bottom;
+  margin-right: 0.5rem;
+  vertical-align: text-bottom;
 }
 
 @keyframes fadeIn {

@@ -20,17 +20,24 @@ export default async function WirePage({
     const params = await searchParams;
     const preSelectedId = params?.beneficiaryId;
 
-    const [user, limitSetting] = await Promise.all([
+    const [user, limitSetting, rates] = await Promise.all([
         db.user.findUnique({
             where: { id: session.user.id },
-            select: { kycStatus: true }
+            select: { kycStatus: true, currency: true }
         }),
         db.systemSettings.findUnique({
             where: { key: 'limit_unverified_daily_max' }
-        })
+        }),
+        db.exchangeRate.findMany()
     ]);
 
     if (!user) return null;
+
+    // Currency Context
+    const currency = user.currency || "USD";
+    const exchangeRate = currency === "USD"
+        ? 1
+        : Number(rates.find(r => r.currency === currency)?.rate || 1);
 
     const isVerified = user.kycStatus === 'VERIFIED';
     const limitAmount = limitSetting ? Number(limitSetting.value) : 10000;
@@ -73,7 +80,6 @@ export default async function WirePage({
                 </div>
             </div>
 
-            {/* FEATURE CHECK */}
             {!features.wire ? (
                 <div className={styles.lockedState}>
                     <div className={styles.lockIconBox}>
@@ -93,6 +99,8 @@ export default async function WirePage({
                         beneficiaries={beneficiaries}
                         preSelectedId={preSelectedId}
                         limit={isVerified ? Infinity : limitAmount}
+                        currency={currency}
+                        rate={exchangeRate}
                     />
                 </>
             )}

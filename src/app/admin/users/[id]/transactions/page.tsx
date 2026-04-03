@@ -13,12 +13,18 @@ export default async function AdminUserTransactionsPage({ params }: { params: Pr
 
     const user = await db.user.findUnique({
         where: { id },
-        select: { fullName: true, email: true }
+        select: { fullName: true, email: true, currency: true }
     });
 
     if (!user) return notFound();
 
-    // Fetch ALL transactions for this user (across all accounts)
+    const currency = user.currency || "USD";
+    let exchangeRate = 1;
+    if (currency !== "USD") {
+        const rateData = await db.exchangeRate.findUnique({ where: { currency } });
+        if (rateData) exchangeRate = Number(rateData.rate);
+    }
+
     const transactions = await db.ledgerEntry.findMany({
         where: {
             account: { userId: id }
@@ -34,14 +40,25 @@ export default async function AdminUserTransactionsPage({ params }: { params: Pr
             <div className={styles.header}>
                 <div>
                     <Link href={`/admin/users/${id}`} className={styles.backLink}>
-                        <ChevronLeft size={14} /> Back to User Profile
+                        <ChevronLeft size={16} /> Back to User Profile
                     </Link>
-                    <h1 className={styles.title}>History: {user.fullName}</h1>
-                    <p className={styles.subtitle}>{user.email}</p>
+                    <div className={styles.title}>
+                        History: <span className={styles.fullName}>{user.fullName}</span>
+                    </div>
+                    <div className={styles.currencyContainer}>
+                        <p className={styles.subtitle}>{user.email}</p>
+                        {currency !== "USD" && (
+                            <span className={styles.currencyBadge}>{currency} (Rate: {exchangeRate})</span>
+                        )}
+                    </div>
                 </div>
             </div>
 
-            <TransactionTable transactions={transactions} />
+            <TransactionTable
+                transactions={transactions}
+                currency={currency}
+                rate={exchangeRate}
+            />
         </div>
     );
 }

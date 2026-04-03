@@ -20,7 +20,6 @@ export interface MegaMenuSection {
 }
 
 export const MEGA_MENUS: Record<string, MegaMenuSection> = {
-    // 1. BANKING
     BANKING: {
         title: "BANKING",
         links: [
@@ -47,7 +46,6 @@ export const MEGA_MENUS: Record<string, MegaMenuSection> = {
         }
     },
 
-    // 2. LENDING
     LENDING: {
         title: "LENDING",
         links: [
@@ -74,7 +72,6 @@ export const MEGA_MENUS: Record<string, MegaMenuSection> = {
         }
     },
 
-    // 3. WEALTH
     WEALTH: {
         title: "WEALTH",
         links: [
@@ -99,7 +96,6 @@ export const MEGA_MENUS: Record<string, MegaMenuSection> = {
         }
     },
 
-    // 4. INSURANCE
     INSURE: {
         title: "INSURANCE",
         links: [
@@ -124,7 +120,6 @@ export const MEGA_MENUS: Record<string, MegaMenuSection> = {
         }
     },
 
-    // 5. RESOURCES
     RESOURCES: {
         title: "RESOURCES",
         links: [

@@ -1,5 +1,5 @@
-/* Container Layout */
 .container {
+  width: 100%;
   max-width: 800px;
   margin: 0 auto;
   padding: 2rem;
@@ -8,47 +8,40 @@
 .contentWrapper {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1rem;
 }
 
-/* Header Section */
 .header {
   text-align: center;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
 }
 
 .iconBadge {
-  width: 50px;
-  height: 50px;
-  background: linear-gradient(
-    135deg,
-    var(--primary),
-    #1e40af
-  ); /* Fallback or derive darker shade if needed */
+  width: 3rem;
+  height: 3rem;
+  background: linear-gradient(135deg, var(--primary), #1e40af);
   color: var(--text-invert);
-  border-radius: 12px;
+  border-radius: 1rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 1rem;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2); /* You can keep rgba for shadow or use var with opacity */
+  margin: 0 auto 0.5rem;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
 }
 
 .title {
   font-size: 1.8rem;
   font-weight: 700;
   color: var(--text-main);
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.3rem;
 }
 
 .subtitle {
   color: var(--text-muted);
   font-size: 0.95rem;
-  max-width: 500px;
   margin: 0 auto;
 }
 
-/* Status Cards */
 .statusSection {
   display: flex;
   flex-direction: column;
@@ -59,10 +52,10 @@
   display: flex;
   align-items: center;
   gap: 1rem;
-  padding: 1.5rem;
+  padding: 1rem;
   border-radius: 12px;
   border: 1px solid transparent;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
 }
 
 .statusIcon {
@@ -70,7 +63,6 @@
 }
 
 .statusCard h3 {
-  margin: 0 0 0.25rem 0;
   font-size: 1.1rem;
   font-weight: 600;
 }
@@ -81,78 +73,90 @@
   opacity: 0.9;
 }
 
-/* Status Variants */
 .success {
-  background-color: rgba(34, 197, 94, 0.1); /* Derived from success green */
-  border-color: rgba(34, 197, 94, 0.3);
-  color: #22c55e;
+  background: rgba(var(--success-rgb), 0.1);
+  color: var(--success);
+  border: 1px solid rgba(var(--success-rgb), 0.3);
 }
+
 .pending {
-  background-color: rgba(59, 130, 246, 0.1); /* Derived from primary blue */
+  background-color: rgba(59, 130, 246, 0.1);
   border-color: rgba(59, 130, 246, 0.3);
   color: var(--primary);
 }
-.error {
-  background-color: rgba(239, 68, 68, 0.1); /* Derived from error red */
-  border-color: rgba(239, 68, 68, 0.3);
-  color: #ef4444;
-}
+
 .neutral {
-  background-color: var(--bg-surface);
-  border-color: var(--border);
+  background: rgba(var(--accent-rgb), 0.1);
+  color: var(--accent);
+  border: 1px solid rgba(var(--accent-rgb), 0.3);
+}
+
+.error {
+  background: rgba(var(--danger-rgb), 0.1);
+  color: var(--danger);
+  border: 1px solid rgba(var(--danger-rgb), 0.3);
+}
+
+.errorReason {
+  font-weight: 500;
+  color: #b91c1c;
+}
+
+.errorSubtext {
+  font-size: 0.85rem;
+  margin-top: 4px;
   color: var(--text-muted);
 }
 
-/* Form Section */
 .formSection {
   animation: slideUp 0.4s ease-out;
 }
 
 .formGrid {
   display: grid;
-  gap: 1.5rem;
+  gap: 2rem;
 }
 
 .errorBanner {
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.2);
-  color: #ef4444;
+  background: rgba(var(--danger-rgb), 0.1);
+  color: var(--danger);
+  border: 1px solid rgba(var(--danger-rgb), 0.3);
   padding: 1rem;
-  border-radius: 8px;
+  border-radius: 0.5rem;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.7rem;
   font-size: 0.9rem;
   animation: slideDown 0.3s ease-out;
 }
 
 .uploadCard {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 1.5rem;
+  background: var(--sub-bg);
+  border: 1px solid var(--border-subtle);
+  border-radius: 1rem;
+  padding: 1rem;
   transition: box-shadow 0.2s;
 }
 
 .uploadCard:hover {
-  box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0.4rem 2rem -0.5rem var(--sub-hover);
   border-color: var(--primary);
 }
 
 .cardHeader {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 1rem;
   margin-bottom: 1rem;
 }
 
 .stepNum {
-  width: 24px;
-  height: 24px;
+  width: 2rem;
+  height: 2rem;
   background: var(--text-main);
   color: var(--bg-surface);
   border-radius: 50%;
-  font-size: 0.8rem;
+  font-size: 1rem;
   font-weight: 600;
   display: flex;
   align-items: center;
@@ -164,41 +168,10 @@
   color: var(--text-main);
 }
 
-.idGrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  margin-top: 8px;
-}
-
-.idUploadBox {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.subLabel {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--text-muted);
-}
-
-@media (max-width: 600px) {
-  .idGrid {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* Dropzone Styling */
-.smallDrop {
-  min-height: 140px;
-  padding: 1rem;
-}
-
 .dropzone {
   display: block;
-  border: 2px dashed var(--border);
-  border-radius: 8px;
+  border: 2px dashed var(--border-subtle);
+  border-radius: 0.5rem;
   padding: 2rem 1rem;
   text-align: center;
   cursor: pointer;
@@ -213,7 +186,7 @@
 
 .active {
   border-style: solid;
-  border-color: #22c55e;
+  border-color: var(--success);
   background: rgba(34, 197, 94, 0.05);
 }
 
@@ -224,10 +197,35 @@
   gap: 0.5rem;
 }
 
+.fileSuccess {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--success);
+}
+
+.checkBadge {
+  background: var(--success);
+  color: var(--text-invert);
+  border-radius: 50%;
+  width: 1.5rem;
+  height: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.fileName {
+  font-weight: 500;
+  word-break: break-all;
+}
+
 .iconCircle {
-  width: 40px;
-  height: 40px;
-  background: var(--bg-card);
+  width: 2.5rem;
+  height: 2.5rem;
+  background: var(--ui-bg-high);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -247,37 +245,40 @@
   color: var(--text-muted);
 }
 
-/* File Selected State */
-.fileSuccess {
+.idGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.idUploadBox {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 0.5rem;
-  color: #22c55e;
 }
 
-.checkBadge {
-  background: #22c55e;
-  color: var(--text-invert);
-  border-radius: 50%;
-  padding: 2px;
+.subLabel {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
 }
 
-.fileName {
-  font-weight: 500;
-  word-break: break-all;
+.smallDrop {
+  min-height: 140px;
+  padding: 1rem;
 }
 
-/* Submit Button */
 .actionRow {
-  margin-top: 1rem;
+  margin-top: 0.5rem;
 }
 
 .submitBtn {
   width: 100%;
-  background: var(--text-main); /* Usually black/dark in your theme */
-  color: var(--bg-surface);
+  background: var(--primary-rgb);
+  color: var(--text-invert);
   padding: 1rem;
-  border-radius: 8px;
+  border-radius: 0.5rem;
+  font-size: 1rem;
   font-weight: 600;
   border: none;
   cursor: pointer;
@@ -296,14 +297,38 @@
 }
 
 .submitBtn:disabled {
-  background: var(--text-muted);
+  background: var(--primary-hover);
   cursor: not-allowed;
   transform: none;
 }
 
-.spin { animation: spin 0.6s linear infinite; }
+.spin {
+  animation: spin 0.6s linear infinite;
+}
 
-@keyframes spin { to { transform: rotate(360deg); } }
+@media (max-width: 600px) {
+  .idGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 640px) {
+  .formGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .actionRow {
+    grid-column: 1 / -1;
+  }
+  .errorBanner {
+    grid-column: 1 / -1;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
 
 @keyframes slideDown {
   from {
@@ -324,18 +349,5 @@
   to {
     opacity: 1;
     transform: translateY(0);
-  }
-}
-
-/* Responsive */
-@media (min-width: 640px) {
-  .formGrid {
-    grid-template-columns: 1fr 1fr;
-  }
-  .actionRow {
-    grid-column: 1 / -1;
-  }
-  .errorBanner {
-    grid-column: 1 / -1;
   }
 }

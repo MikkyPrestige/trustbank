@@ -17,7 +17,7 @@ export default async function HelpPage() {
             <HelpHero settings={settings} />
             <div className={styles.container}>
                 <QuickActions settings={settings} />
-                <FaqList faqs={faqs} />
+                <FaqList faqs={faqs} settings={settings} />
                 <ContactStrip settings={settings} />
             </div>
         </main>

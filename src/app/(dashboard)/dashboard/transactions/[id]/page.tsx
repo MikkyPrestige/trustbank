@@ -17,17 +17,29 @@ export default async function TransactionDetailsPage({ params }: PageProps) {
     const session = await auth();
     if (!session?.user?.id) redirect("/login");
 
-    const [transaction, settings] = await Promise.all([
+    const [transaction, user, settings] = await Promise.all([
         db.ledgerEntry.findUnique({
             where: { id: id },
             include: { account: true },
+        }),
+        db.user.findUnique({
+            where: { id: session.user.id },
+            select: { currency: true }
         }),
         getSiteSettings()
     ]);
 
     if (!transaction || transaction.account.userId !== session.user.id) return notFound();
 
-    // Logic for Status and Styles
+    const currency = user?.currency || "USD";
+    let exchangeRate = 1;
+    if (currency !== "USD") {
+        const rateData = await db.exchangeRate.findUnique({ where: { currency } });
+        if (rateData) exchangeRate = Number(rateData.rate);
+    }
+
+    const convertedAmount = Number(transaction.amount) * exchangeRate;
+
     const isDebit = transaction.direction === "DEBIT";
     const isPending = transaction.status === "PENDING" || transaction.status === "ON_HOLD";
     const isSuccess = transaction.status === "COMPLETED";
@@ -56,7 +68,6 @@ export default async function TransactionDetailsPage({ params }: PageProps) {
 
             <div className={styles.receiptCard}>
                 <div className={styles.bankHeader}>
-                    {/* Left: Brand Identity */}
                     <div className={styles.brandColumn}>
                         {settings.site_logo ? (
                             <div className={styles.logoContainer}>
@@ -74,7 +85,6 @@ export default async function TransactionDetailsPage({ params }: PageProps) {
                         )}
                     </div>
 
-                    {/* Right: Receipt Label & ID */}
                     <div className={styles.headerRight}>
                         <span className={styles.receiptLabel}>Transaction Receipt</span>
                         <span className={styles.receiptId}>#{transaction.id.slice(-8).toUpperCase()}</span>
@@ -82,7 +92,6 @@ export default async function TransactionDetailsPage({ params }: PageProps) {
                 </div>
 
 
-                {/* --- 2. AMOUNT HERO --- */}
                 <div className={styles.receiptHeader}>
                     <div className={`${styles.iconBox} ${getStatusStyle()}`}>
                         {isFailed ? <XCircle size={28} /> :
@@ -93,9 +102,9 @@ export default async function TransactionDetailsPage({ params }: PageProps) {
 
                     <h1
                         className={`${styles.amount} ${isDebit ? '' : styles.creditText}`}
-                        style={isFailed ? { textDecoration: 'line-through', color: '#a1a1aa' } : {}}
+                        style={isFailed ? { textDecoration: 'line-through', color: 'var(--text-muted)' } : {}}
                     >
-                        {isDebit ? "-" : "+"}{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(transaction.amount))}
+                        {isDebit ? "-" : "+"}{new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(convertedAmount)}
                     </h1>
 
                     <span className={`${styles.statusBadge} ${getStatusStyle()}`}>
@@ -107,7 +116,6 @@ export default async function TransactionDetailsPage({ params }: PageProps) {
 
                 <div className={styles.divider}></div>
 
-                {/* --- 3. DETAILS LIST --- */}
                 <div className={styles.detailsList}>
                     <div className={styles.detailRow}>
                         <span className={styles.label}>Beneficiary / Source</span>
@@ -122,6 +130,13 @@ export default async function TransactionDetailsPage({ params }: PageProps) {
                         </div>
                     </div>
 
+                    {currency !== "USD" && (
+                        <div className={styles.detailRow}>
+                            <span className={styles.label}>Exchange Rate Applied</span>
+                            <span className={styles.value}>1 USD = {exchangeRate} {currency}</span>
+                        </div>
+                    )}
+
                     <div className={styles.detailRow}>
                         <span className={styles.label}>Type</span>
                         <span className={styles.value}>{transaction.type.replace(/_/g, " ")}</span>
@@ -135,7 +150,7 @@ export default async function TransactionDetailsPage({ params }: PageProps) {
                     </div>
                 </div>
 
-                <ReceiptActions styles={styles} />
+                <ReceiptActions />
 
                 <div className={styles.disclaimer}>
                     This receipt is generated automatically by {bankName} Systems.

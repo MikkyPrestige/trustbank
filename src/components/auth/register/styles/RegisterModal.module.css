@@ -1,4 +1,3 @@
-/* OVERLAY & ANIMATION */
 .overlay {
   position: fixed;
   top: 0;
@@ -19,24 +18,23 @@
   background: var(--bg-card);
   border: 1px solid var(--border);
   width: 100%;
-  max-width: 440px;
-  border-radius: 24px;
-  padding: 2.5rem;
+  max-width: 500px;
+  border-radius: 2rem;
+  padding: 2rem;
   position: relative;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: var(--shadow-card), var(--shadow-sm);
+  animation: modalPop 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* CLOSE BUTTON */
 .closeBtn {
   position: absolute;
-  top: 1.5rem;
-  right: 1.5rem;
-  background: var(--bg-surface);
-  border: 1px solid var(--border);
-  color: var(--text-muted);
-  width: 32px;
-  height: 32px;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(var(--danger-rgb), 0.1);
+  color: var(--danger);
+  border: 1px solid rgba(var(--danger-rgb), 0.3);
+  width: 2rem;
+  height: 2rem;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -46,25 +44,57 @@
 }
 
 .closeBtn:hover {
-  color: var(--text-main);
-  border-color: var(--text-main);
+ background: var(--danger);
+  color: var(--text-invert);
   transform: rotate(90deg);
 }
 
-/* HEADER */
 .header {
   margin-bottom: 2rem;
   text-align: center;
+}
+
+.loadingPulse {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: var(--primary-rgb);
+  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  margin-left: auto;
+  margin-right: auto;
+  border: 1px solid var(--primary);
+}
+
+.loadingPulse.success {
+   background: rgba(var(--success-rgb), 0.1);
+  border: 1px solid rgba(var(--success-rgb), 0.3);
+}
+
+.checkIcon {
+  color: var(--success);
+  animation: checkPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.spinner {
+  color: var(--primary);
+  animation:
+    spin 1s linear infinite,
+    pulse 1.5s ease-in-out infinite;
 }
 
 .securityBadge {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: rgba(34, 197, 94, 0.1); /* Green tint */
-  color: #22c55e;
-  padding: 4px 12px;
-  border-radius: 20px;
+  background: rgba(var(--success-rgb), 0.1);
+  color: var(--success);
+  border: 1px solid rgba(var(--success-rgb), 0.3);
+  padding: 0.5rem 1rem;
+  border-radius: 1.5rem;
   font-size: 0.75rem;
   font-weight: 700;
   margin-bottom: 1rem;
@@ -72,16 +102,10 @@
   letter-spacing: 0.5px;
 }
 
-.shieldIcon {
-  display: inline-block;
-  animation: pulseSecure 2s infinite ease-in-out;
-}
-
 .header h2 {
   font-size: 1.75rem;
   font-weight: 800;
   color: var(--text-main);
-  margin-bottom: 0.5rem;
   letter-spacing: -0.5px;
 }
 
@@ -90,27 +114,58 @@
   font-size: 0.95rem;
 }
 
-/* FORM */
+
 .form {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1.5rem;
+}
+
+.form.loading {
+  opacity: 0.5;
+  pointer-events: none;
+  filter: blur(1px);
+}
+
+.formFadeOut {
+  opacity: 0;
+  transform: translateY(10px);
+  pointer-events: none;
+  transition: all 0.4s ease;
 }
 
 .inputGroup {
   position: relative;
   display: flex;
   align-items: center;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background: var(--bg-surface);
+  transition: all 0.2s;
+}
+
+.inputGroup:hover {
+  border-color: var(--text-muted);
+}
+
+.focused {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px var(--primary-light, rgba(59, 130, 246, 0.2));
+  background: var(--bg-card);
 }
 
 .iconBox {
   position: absolute;
   left: 1rem;
-  top: 50%;
+  top: 55%;
   transform: translateY(-50%);
   color: var(--text-muted);
   z-index: 2;
   pointer-events: none;
+}
+
+.focused .iconBox {
+  color: var(--primary);
 }
 
 .fieldWrapper {
@@ -122,8 +177,8 @@
   width: 100%;
   background: var(--bg-surface);
   border: 1px solid var(--border);
-  padding: 1rem 1rem 1rem 3rem; /* Space for icon */
-  border-radius: 12px;
+  padding: 1rem 1rem 1rem 3rem;
+  border-radius: 0.5rem;
   color: var(--text-main);
   font-size: 1rem;
   outline: none;
@@ -136,41 +191,44 @@
   background: var(--bg-card);
 }
 
-/* Floating Label Logic (Optional visual flair) */
 .floatingLabel {
   position: absolute;
   left: 3rem;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--text-muted);
-  font-size: 0.95rem;
+  color: var(--text-body);
+  font-size: 0.85rem;
   pointer-events: none;
   transition: all 0.2s;
-  opacity: 0; /* Hidden by default if using placeholders, or logic below */
 }
 
-/* BUTTON */
+.focused .floatingLabel,
+.input:not(:placeholder-shown) + .floatingLabel {
+  top: 14px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
 .submitBtn {
-  margin-top: 0.5rem;
   background: var(--primary);
   color: var(--text-invert);
   border: none;
-  padding: 14px;
-  border-radius: 12px;
+  padding: 0.85rem;
+  border-radius: 0.5rem;
   font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 0.5rem;
   transition:
     opacity 0.2s,
     transform 0.1s;
 }
 
 .submitBtn:hover:not(:disabled) {
-  opacity: 0.9;
+   background: var(--primary-hover);
   transform: translateY(-1px);
 }
 
@@ -179,15 +237,35 @@
   cursor: wait;
 }
 
+.footer {
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  /* margin-top: 0.5rem; */
+}
+
+.switchBtn {
+  background: none;
+  border: none;
+  color: var(--primary);
+  font-weight: 600;
+  cursor: pointer;
+  padding-left: 5px;
+  text-decoration: underline;
+  transition: color 0.2s;
+}
+
+.switchBtn:hover {
+  color: var(--primary-hover);
+}
+
 .disclaimer {
   font-size: 0.75rem;
   color: var(--text-muted);
   text-align: center;
   line-height: 1.4;
-  margin-top: 0.5rem;
 }
 
-/* ANIMATIONS */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -197,13 +275,45 @@
   }
 }
 
-@keyframes slideUp {
+@keyframes modalPop {
   from {
     opacity: 0;
-    transform: translateY(20px) scale(0.95);
+    transform: scale(0.95) translateY(10px);
   }
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes checkPop {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 2px var(--primary));
+  }
+  50% {
+    transform: scale(1.15);
+    filter: drop-shadow(0 0 12px var(--primary));
   }
 }

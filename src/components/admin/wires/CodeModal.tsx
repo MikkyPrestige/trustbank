@@ -12,10 +12,7 @@ export default function CodeModal({ wire, onClose }: { wire: WireTransfer, onClo
     const router = useRouter();
     const [code, setCode] = useState('');
     const [loading, setLoading] = useState(false);
-
     const currentStage = wire.currentStage || 'TAA';
-
-    // 1. CHECK IF FINISHED
     const isReadyForApproval = currentStage === 'PENDING_APPROVAL' || currentStage === 'COMPLETE' || currentStage === 'PENDING_AUTH';
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -51,7 +48,7 @@ export default function CodeModal({ wire, onClose }: { wire: WireTransfer, onClo
                         {isReadyForApproval ? "Clearance Complete" : `Set ${currentStage} Code`}
                     </h3>
                     <button onClick={onClose} className={styles.closeBtn}>
-                        <X size={20} />
+                        <X size={24} />
                     </button>
                 </div>
 
@@ -59,7 +56,7 @@ export default function CodeModal({ wire, onClose }: { wire: WireTransfer, onClo
                     // --- STATE A: READY FOR APPROVAL (No Input) ---
                     <div className={styles.modalContentCenter}>
                         <div className={styles.successIconWrapper}>
-                            <ShieldCheck size={48} />
+                            <ShieldCheck size={40} />
                         </div>
                         <h4 className={styles.modalTitle}>All Codes Passed</h4>
                         <p className={styles.modalText}>
@@ -67,8 +64,8 @@ export default function CodeModal({ wire, onClose }: { wire: WireTransfer, onClo
                             This transaction is now ready for final settlement.
                         </p>
                         <div className={styles.infoBox}>
-                            <CheckCircle size={16} />
-                            <p>Close this window and click the <strong>Green Approve Button</strong> to finalize.</p>
+                            <CheckCircle size={30} className={styles.infoIcon} />
+                            <p className={styles.infoText}>Close this window and click the <strong>Green Approve Button</strong> to finalize.</p>
                         </div>
                         <button onClick={onClose} className={styles.btnSecondary}>
                             Close
@@ -76,10 +73,10 @@ export default function CodeModal({ wire, onClose }: { wire: WireTransfer, onClo
                     </div>
                 ) : (
                     // --- STATE B: INPUT FORM (Enter Code) ---
-                    <>
+                        <div className={styles.modalContentCenter}>
                         <div className={styles.infoBox}>
-                            <AlertTriangle size={16} />
-                            <p>Client is stuck at <strong>{currentStage}</strong>. Provide the clearance code below to unblock them.</p>
+                            <AlertTriangle size={30} className={styles.infoIcon} />
+                            <p className={styles.infoText}>Client is stuck at <strong>{currentStage}</strong>. Provide the clearance code below to unblock them.</p>
                         </div>
 
                         <form onSubmit={handleSubmit} className={styles.form}>
@@ -96,7 +93,7 @@ export default function CodeModal({ wire, onClose }: { wire: WireTransfer, onClo
                                 {loading ? <Loader2 className={styles.spin} size={20} /> : <><Save size={18} /> Update Code</>}
                             </button>
                         </form>
-                    </>
+                    </div>
                 )}
             </div>
         </div>

@@ -13,32 +13,30 @@ export default async function WealthPage() {
             desc: settings.wealth_service1_desc,
             icon: <Briefcase size={32} />,
             link: settings.wealth_service1_btn,
-            href: "#advisor"
+            href: settings.wealth_service1_id
         },
         {
             title: settings.wealth_service2_title, // Estate & Trust
             desc: settings.wealth_service2_desc,
             icon: <FileText size={32} />,
             link: settings.wealth_service2_btn,
-            href: "#estate"
+            href: settings.wealth_service2_id
         },
         {
             title: settings.wealth_service3_title, // Retirement
             desc: settings.wealth_service3_desc,
             icon: <Gem size={32} />,
             link: settings.wealth_service3_btn,
-            href: "#retirement"
+            href: settings.wealth_service3_id
         }
     ];
 
     return (
         <main className={styles.main}>
-
-            {/* 1. HERO SECTION */}
             <section className={styles.heroBackground}>
                 <Image
-                    src={settings.wealth_hero_img || "/wealth-hero.png"}
-                    alt={settings.wealth_hero_alt || "Wealth Management"}
+                    src={settings.wealth_hero_img}
+                    alt={settings.wealth_hero_alt}
                     fill
                     className={styles.heroBgImage}
                     priority
@@ -57,14 +55,12 @@ export default async function WealthPage() {
                 </div>
             </section>
 
-            {/* 2. SIMULATOR SECTION */}
             <section className={styles.simSection}>
                 <div className={styles.container}>
                     <WealthSimulator settings={settings} />
                 </div>
             </section>
 
-            {/* 3. SERVICES GRID */}
             <section className={styles.servicesSection}>
                 <div className={styles.container}>
                     <div className={styles.sectionHeader}>
@@ -86,7 +82,6 @@ export default async function WealthPage() {
                 </div>
             </section>
 
-            {/* 4. ADVISOR (#advisor) */}
             <section id="advisor" className={styles.advisorSection}>
                 <div className={styles.container}>
                     <div className={styles.advisorBox}>
@@ -109,49 +104,52 @@ export default async function WealthPage() {
                 </div>
             </section>
 
-            {/* 5. PRIVATE CLIENT (#pcg) */}
             <section id="pcg" className={styles.productSection}>
                 <div className={styles.container}>
                     <div className={styles.productGrid}>
                         <div className={styles.productImageWrapper}>
-                            <Image src={settings.wealth_pcg_img || "/wealth-pcg.png"} alt={settings.wealth_pcg_img_alt} fill className={styles.productImage} />
+                            <Image src={settings.wealth_pcg_img} alt={settings.wealth_pcg_img_alt} fill className={styles.productImage} />
                         </div>
                         <div className={styles.productContent}>
                             <h2 className={styles.productTitle}>{settings.wealth_pcg_title}</h2>
                             <p className={styles.productDesc}>{settings.wealth_pcg_desc}</p>
-                            <button className={styles.productBtn}>{settings.wealth_pcg_btn} <ArrowRight size={18} /></button>
+                            <a href={settings.wealth_pcg_anchor} className={styles.link}>
+                                <button className={styles.productBtn}>{settings.wealth_pcg_btn} <ArrowRight size={18} /></button>
+                            </a>
                         </div>
                     </div>
                 </div>
             </section>
 
-            {/* 6. RETIREMENT (#retirement) */}
             <section id="retirement" className={`${styles.productSection} ${styles.bgAlt}`}>
                 <div className={styles.container}>
                     <div className={`${styles.productGrid} ${styles.reverseGrid}`}>
                         <div className={styles.productContent}>
                             <h2 className={styles.productTitle}>{settings.wealth_ret_title}</h2>
                             <p className={styles.productDesc}>{settings.wealth_ret_desc}</p>
-                            <button className={styles.productBtn}>{settings.wealth_ret_btn} <ArrowRight size={18} /></button>
+                            <a href={settings.wealth_ret_anchor} className={styles.link}>
+                                <button className={styles.productBtn}>{settings.wealth_ret_btn} <ArrowRight size={18} /></button>
+                            </a>
                         </div>
                         <div className={styles.productImageWrapper}>
-                            <Image src={settings.wealth_ret_img || "/wealth-ret.png"} alt={settings.wealth_ret_img_alt} fill className={styles.productImage} />
+                            <Image src={settings.wealth_ret_img} alt={settings.wealth_ret_img_alt} fill className={styles.productImage} />
                         </div>
                     </div>
                 </div>
             </section>
 
-            {/* 7. ESTATE (#estate) */}
             <section id="estate" className={styles.productSection}>
                 <div className={styles.container}>
                     <div className={styles.productGrid}>
                         <div className={styles.productImageWrapper}>
-                            <Image src={settings.wealth_est_img || "/wealth-est.png"} alt={settings.wealth_est_img_alt} fill className={styles.productImage} />
+                            <Image src={settings.wealth_est_img} alt={settings.wealth_est_img_alt} fill className={styles.productImage} />
                         </div>
                         <div className={styles.productContent}>
                             <h2 className={styles.productTitle}>{settings.wealth_est_title}</h2>
                             <p className={styles.productDesc}>{settings.wealth_est_desc}</p>
-                            <button className={styles.productBtn}>{settings.wealth_est_btn} <ArrowRight size={18} /></button>
+                            <a href={settings.wealth_est_anchor} className={styles.link}>
+                                <button className={styles.productBtn}>{settings.wealth_est_btn} <ArrowRight size={18} /></button>
+                            </a>
                         </div>
                     </div>
                 </div>

@@ -10,9 +10,6 @@
   padding: 0 1.5rem;
 }
 
-/* =========================================
-   1. HERO SECTION
-   ========================================= */
 .heroBackground {
   position: relative;
   height: 75vh;
@@ -92,9 +89,6 @@
   font-size: 1.1rem;
 }
 
-/* =========================================
-   2. CALCULATOR SECTION
-   ========================================= */
 .calcSection {
   margin-top: -60px;
   position: relative;
@@ -102,9 +96,6 @@
   margin-bottom: 4rem;
 }
 
-/* =========================================
-   3. ANCHOR SECTIONS (ZIG-ZAG)
-   ========================================= */
 .productSection {
   padding: 6rem 0;
   border-bottom: 1px solid var(--border);
@@ -189,9 +180,6 @@
   box-shadow: var(--shadow-glow);
 }
 
-/* =========================================
-   4. RATE GRID SECTION
-   ========================================= */
 .productsSection {
   padding: 6rem 0;
   background: var(--bg-surface);
@@ -245,7 +233,7 @@
 }
 
 .rateBadge {
-  background: rgba(34, 197, 94, 0.1);
+  background: rgba(var(--success-rgb), 0.1);
   color: var(--success);
   font-weight: 700;
   font-size: 0.8rem;
@@ -269,7 +257,7 @@
 .cardLink {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.5rem;
   color: var(--primary);
   font-weight: 600;
   text-decoration: none;
@@ -277,10 +265,9 @@
 }
 
 .cardLink:hover {
-  gap: 12px;
+  gap: 1rem;
 }
 
-/* Icons */
 .iconGreen  { color: var(--success); }
 .iconBlue   { color: var(--primary); }
 .iconOrange { color: #f97316; }
@@ -289,9 +276,6 @@
 .iconGold   { color: var(--accent); }
 .iconYellow { color: #eab308; }
 
-/* =========================================
-   5. TRUST STRIP
-   ========================================= */
 .trustStrip {
   background: var(--bg-app);
   border-top: 1px solid var(--border);
@@ -321,7 +305,6 @@
   line-height: 1.6;
 }
 
-/* Responsive */
 @media (max-width: 968px) {
   .heroBackground { height: auto; padding: 6rem 0 8rem 0; }
   .productGrid { grid-template-columns: 1fr; gap: 3rem; text-align: center; }

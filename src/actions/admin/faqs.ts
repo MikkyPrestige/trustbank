@@ -5,7 +5,6 @@ import { revalidatePath } from "next/cache";
 import { checkAdminAction } from "@/lib/auth/admin-auth";
 import { logAdminAction } from "@/lib/utils/admin-logger";
 
-// --- CREATE ---
 export async function createFaq(formData: FormData) {
     const auth = await checkAdminAction();
 
@@ -48,7 +47,6 @@ export async function createFaq(formData: FormData) {
     }
 }
 
-// --- UPDATE ---
 export async function updateFaq(id: string, formData: FormData) {
     const auth = await checkAdminAction();
 
@@ -91,7 +89,6 @@ export async function updateFaq(id: string, formData: FormData) {
     }
 }
 
-// --- DELETE ---
 export async function deleteFaq(id: string) {
     const auth = await checkAdminAction();
 
@@ -100,7 +97,6 @@ export async function deleteFaq(id: string) {
     }
 
     try {
-        // Fetch first for log context
         const faq = await db.faqItem.findUnique({ where: { id } });
 
         await db.faqItem.delete({ where: { id } });

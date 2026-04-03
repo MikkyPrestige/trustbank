@@ -17,17 +17,30 @@ export default async function Home() {
     return (
         <main className={styles.main}>
             <Hero
+                siteName={settings.site_name}
                 badgeText={settings.hero_badge}
-                title={settings.hero_title}
-                subtitle={settings.hero_subtitle}
-                ctaText={settings.hero_cta_text}
                 imgSrc={settings.home_hero_img}
                 imgAlt={settings.home_hero_alt}
+                title={settings.hero_title}
+                subtitle={settings.hero_subtitle}
+                ctaLink={settings.hero_cta_link}
+                ctaText={settings.hero_cta_text}
+                cta1Text={settings.hero_cta1_text}
+                cta1Link={settings.hero_cta1_link}
             />
             <InfoBar
-                isActive={settings.announcement_active === 'true'}
+                isActive={settings.announcement_active}
                 text={settings.announcement_text}
-                phone={settings.contact_phone}
+                phone={settings.announcement_contact_phone}
+                routingNumber={settings.routingNumber}
+                swiftCode={settings.swiftCode}
+                labelSupport={settings.home_support_label}
+                labelHours={settings.home_hours_label}
+                labelBanking={settings.home_banking_label}
+                labelRouting={settings.home_routing_label}
+                labelSwift={settings.home_swift_label}
+                locationLinkText={settings.home_location_link_text}
+                locationLinkUrl={settings.home_location_link_url}
             />
             <RatesGrid settings={settings} />
             <CardShowcase />

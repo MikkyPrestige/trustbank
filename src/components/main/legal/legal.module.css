@@ -10,7 +10,6 @@
   padding: 0 1.5rem;
 }
 
-/* Header Section */
 .header {
   border-bottom: 1px solid var(--border);
   padding: 2rem 0 3rem 0;
@@ -90,11 +89,10 @@
 
 .activeTab {
   color: var(--primary);
-  border-bottom-color: var(--primary);
+  border-bottom-color: rgba(59, 130, 246, 0.3);
   font-weight: 600;
 }
 
-/* Document Card */
 .documentCard {
   background: var(--bg-card);
   border-radius: 16px;
@@ -104,7 +102,6 @@
   border: 1px solid var(--border);
 }
 
-/* Typography (The "Prose" class) */
 .prose {
   color: var(--text-main);
   line-height: 1.7;
@@ -138,7 +135,6 @@
   margin-bottom: 0.5rem;
 }
 
-/* Footer Note */
 .footerNote {
   margin-top: 2rem;
   text-align: center;

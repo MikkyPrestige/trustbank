@@ -10,7 +10,13 @@ import { LedgerEntry, Account } from "@prisma/client";
 
 type TransactionWithAccount = LedgerEntry & { account: Account };
 
-export default function TransactionTable({ transactions }: { transactions: TransactionWithAccount[] }) {
+interface TransactionTableProps {
+    transactions: TransactionWithAccount[];
+    currency: string;
+    rate: number;
+}
+
+export default function TransactionTable({ transactions, currency, rate }: TransactionTableProps) {
     const router = useRouter();
     const [editingTrx, setEditingTrx] = useState<TransactionWithAccount | null>(null);
     const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -44,58 +50,63 @@ export default function TransactionTable({ transactions }: { transactions: Trans
                             <th>Account</th>
                             <th>Description</th>
                             <th>Ref ID</th>
-                            <th>Amount</th>
+                            <th>Amount ({currency})</th>
                             <th className={styles.alignRight}>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {transactions.map((t) => (
-                            <tr key={t.id}>
-                                <td className={styles.dateCell}>
-                                    {new Date(t.createdAt).toLocaleDateString()}
-                                    <div className={styles.timeText}>
-                                        {new Date(t.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                    </div>
-                                </td>
-                                <td>
-                                    <div className={styles.accountCell}>
-                                        <Wallet size={14} className={styles.iconMuted} />
-                                        <span className={styles.accountType}>{t.account.type}</span>
-                                    </div>
-                                    <div className={styles.accountNum}>
-                                        •••• {t.account.accountNumber.slice(-4)}
-                                    </div>
-                                </td>
-                                <td>
-                                    <div className={styles.descText}>{t.description}</div>
-                                    <div className={styles.typeBadge}>
-                                        {t.direction === 'CREDIT' ? <ArrowDownLeft size={10} /> : <ArrowUpRight size={10} />}
-                                        {t.direction}
-                                    </div>
-                                </td>
-                                <td className={styles.refId}>
-                                    {t.referenceId}
-                                </td>
-                                <td className={t.direction === 'CREDIT' ? styles.amountCredit : styles.amountDebit}>
-                                    {t.direction === 'CREDIT' ? '+' : '-'}{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(t.amount))}
-                                </td>
-                                <td>
-                                    <div className={styles.actions}>
-                                        <button onClick={() => setEditingTrx(t)} className={styles.btnIcon} title="Edit">
-                                            <Pencil size={16} />
-                                        </button>
-                                        <button
-                                            onClick={() => handleDelete(t.id)}
-                                            className={`${styles.btnIcon} ${styles.btnDelete}`}
-                                            title="Delete"
-                                            disabled={deletingId === t.id}
-                                        >
-                                            {deletingId === t.id ? <Loader2 className={styles.spin} size={16} /> : <Trash2 size={16} />}
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        ))}
+                        {transactions.map((t) => {
+                            const displayAmount = Number(t.amount) * rate;
+
+                            return (
+                                <tr key={t.id}>
+                                    <td className={styles.dateCell}>
+                                        {new Date(t.createdAt).toLocaleDateString()}
+                                        <div className={styles.timeText}>
+                                            {new Date(t.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div className={styles.accountCell}>
+                                            <Wallet size={14} className={styles.iconMuted} />
+                                            <span className={styles.accountType}>{t.account.type}</span>
+                                        </div>
+                                        <div className={styles.accountNum}>
+                                            •••• {t.account.accountNumber.slice(-4)}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div className={styles.descText}>{t.description}</div>
+                                        <div className={`${styles.typeBadge} ${t.direction === 'CREDIT' ? styles.creditBadge : styles.debitBadge}`}>
+                                            {t.direction === 'CREDIT' ? <ArrowDownLeft size={14} /> : <ArrowUpRight size={14} />}
+                                            {t.direction}
+                                        </div>
+                                    </td>
+                                    <td className={styles.refId}>
+                                        {t.referenceId}
+                                    </td>
+                                    <td className={t.direction === 'CREDIT' ? styles.amountCredit : styles.amountDebit}>
+                                        {t.direction === 'CREDIT' ? '+' : '-'}
+                                        {new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(displayAmount)}
+                                    </td>
+                                    <td>
+                                        <div className={styles.actions}>
+                                            <button onClick={() => setEditingTrx(t)} className={styles.btnIcon} title="Edit">
+                                                <Pencil size={16} />
+                                            </button>
+                                            <button
+                                                onClick={() => handleDelete(t.id)}
+                                                className={`${styles.btnIcon} ${styles.btnDelete}`}
+                                                title="Delete"
+                                                disabled={deletingId === t.id}
+                                            >
+                                                {deletingId === t.id ? <Loader2 className={styles.spin} size={16} /> : <Trash2 size={16} />}
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            )
+                        })}
                         {transactions.length === 0 && (
                             <tr>
                                 <td colSpan={6} className={styles.empty}>
@@ -107,11 +118,12 @@ export default function TransactionTable({ transactions }: { transactions: Trans
                 </table>
             </div>
 
-            {/* EDIT MODAL */}
             {editingTrx && (
                 <EditModal
                     trx={editingTrx}
                     onClose={() => setEditingTrx(null)}
+                    currency={currency}
+                    rate={rate}
                 />
             )}
         </div>
@@ -119,7 +131,7 @@ export default function TransactionTable({ transactions }: { transactions: Trans
 }
 
 // Sub-component for the Edit Form
-function EditModal({ trx, onClose }: { trx: TransactionWithAccount, onClose: () => void }) {
+function EditModal({ trx, onClose, currency, rate }: { trx: TransactionWithAccount, onClose: () => void, currency: string, rate: number }) {
     const router = useRouter();
     const [state, action, isPending] = useActionState(updateTransaction, undefined);
 
@@ -136,10 +148,22 @@ function EditModal({ trx, onClose }: { trx: TransactionWithAccount, onClose: () 
     }, [state, onClose, router]);
 
     const dateStr = new Date(trx.createdAt).toISOString().split('T')[0];
+    const initialAmount = (Number(trx.amount) * rate).toFixed(2);
+
+    const handleSubmit = (formData: FormData) => {
+        const inputAmount = parseFloat(formData.get("amount") as string);
+
+        if (!isNaN(inputAmount)) {
+            const usdAmount = inputAmount / rate;
+            formData.set("amount", usdAmount.toString());
+        }
+
+        action(formData);
+    }
 
     return (
         <div className={styles.modalOverlay}>
-            <form action={action} className={styles.modal}>
+            <form action={handleSubmit} className={styles.modal}>
                 <div className={styles.modalHeader}>
                     <h3>Edit Transaction</h3>
                     <button type="button" onClick={onClose} className={styles.closeBtn}><X size={20} /></button>
@@ -149,24 +173,31 @@ function EditModal({ trx, onClose }: { trx: TransactionWithAccount, onClose: () 
 
                 <div className={styles.modalBody}>
                     <div className={styles.formGroup}>
-                        <label className={styles.label}><FileText size={14} /> Description</label>
+                        <label className={styles.label}><FileText size={18} /> Description</label>
                         <input name="description" defaultValue={trx.description || ''} className={styles.input} required />
                     </div>
 
                     <div className={styles.row}>
                         <div className={styles.formGroup}>
-                            <label className={styles.label}><DollarSign size={14} /> Amount</label>
-                            <input name="amount" type="number" step="0.01" defaultValue={Number(trx.amount)} className={styles.input} required />
+                            <label className={styles.label}><DollarSign size={18} /> Amount ({currency})</label>
+                            <input
+                                name="amount"
+                                type="number"
+                                step="0.01"
+                                defaultValue={initialAmount}
+                                className={styles.input}
+                                required
+                            />
                         </div>
 
                         <div className={styles.formGroup}>
-                            <label className={styles.label}><Calendar size={14} /> Date</label>
+                            <label className={styles.label}><Calendar size={18} /> Date</label>
                             <input name="createdAt" type="date" defaultValue={dateStr} className={styles.input} required />
                         </div>
                     </div>
 
                     <div className={styles.formGroup}>
-                        <label className={styles.label}><ArrowLeftRight size={14} /> Type</label>
+                        <label className={styles.label}><ArrowLeftRight size={18} /> Type</label>
                         <select name="direction" defaultValue={trx.direction} className={styles.input}>
                             <option value="CREDIT">Credit (Incoming +)</option>
                             <option value="DEBIT">Debit (Outgoing -)</option>

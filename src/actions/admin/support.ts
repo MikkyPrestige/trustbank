@@ -7,7 +7,6 @@ import { revalidatePath } from "next/cache";
 import { canPerform } from "@/lib/auth/permissions";
 import { UserRole } from "@prisma/client";
 
-// 1. ADMIN REPLY
 export async function adminReplyTicket(ticketId: string, message: string) {
   const { authorized, session } = await checkAdminAction();
 
@@ -23,7 +22,6 @@ export async function adminReplyTicket(ticketId: string, message: string) {
 
   try {
     const ticketInfo = await db.$transaction(async (tx) => {
-        // A. Add Message
         await tx.ticketMessage.create({
             data: {
                 ticketId,
@@ -32,14 +30,12 @@ export async function adminReplyTicket(ticketId: string, message: string) {
             }
         });
 
-        // B. Fetch ticket details and RETURN them
         return await tx.ticket.findUnique({
             where: { id: ticketId },
             select: { userId: true, subject: true }
         });
     });
 
-    // C. Send Notification
     if (ticketInfo) {
         await db.notification.create({
             data: {
@@ -72,7 +68,6 @@ export async function adminReplyTicket(ticketId: string, message: string) {
   return { success: true, message: "Reply sent." };
 }
 
-// 2. CLOSE TICKET
 export async function closeTicket(ticketId: string) {
     const { authorized, session } = await checkAdminAction();
 
@@ -86,7 +81,6 @@ export async function closeTicket(ticketId: string) {
 
     try {
         const closedTicket = await db.$transaction(async (tx) => {
-            // A. Update Ticket Status & Return the result
             return await tx.ticket.update({
                 where: { id: ticketId },
                 data: { status: "CLOSED" },
@@ -94,7 +88,6 @@ export async function closeTicket(ticketId: string) {
             });
         });
 
-        // B. Notify User
         if (closedTicket) {
             await db.notification.create({
                 data: {

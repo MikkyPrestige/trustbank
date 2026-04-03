@@ -1,13 +1,21 @@
 'use client';
 
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { generateTransactions } from "@/actions/admin/generator";
 import { Loader2, Wand2 } from "lucide-react";
 import toast from "react-hot-toast";
 import styles from "./generator.module.css";
 
-export default function GeneratorForm({ accounts }: { accounts: any[] }) {
+interface GeneratorFormProps {
+    accounts: any[];
+    rateMap: Record<string, { currency: string, rate: number }>;
+}
+
+export default function GeneratorForm({ accounts, rateMap }: GeneratorFormProps) {
     const [state, action, isPending] = useActionState(generateTransactions, undefined);
+    const [selectedAccountId, setSelectedAccountId] = useState("");
+
+    const currentContext = selectedAccountId ? rateMap[selectedAccountId] : { currency: "USD", rate: 1 };
 
     useEffect(() => {
         if (state?.message) {
@@ -16,34 +24,57 @@ export default function GeneratorForm({ accounts }: { accounts: any[] }) {
         }
     }, [state]);
 
+    const handleSubmit = (formData: FormData) => {
+        const rawAmount = parseFloat(formData.get("totalAmount") as string);
+
+        if (!isNaN(rawAmount) && currentContext.rate !== 1) {
+            const usdAmount = rawAmount / currentContext.rate;
+
+            formData.set("totalAmount", usdAmount.toString());
+            formData.append("displayAmount", rawAmount.toString());
+            formData.append("displayCurrency", currentContext.currency);
+        } else {
+            formData.append("displayAmount", rawAmount.toString());
+            formData.append("displayCurrency", "USD");
+        }
+
+        action(formData);
+    };
+
     return (
-        <form action={action} className={styles.card}>
-            {/* 1. SELECT ACCOUNT */}
+        <form action={handleSubmit} className={styles.card}>
             <div className={styles.group}>
                 <label className={styles.label}>Target Account</label>
-                <select name="accountId" required className={styles.select} defaultValue="">
-                    <option value="" disabled>-- Select User Account --</option>
+                <select
+                    name="accountId"
+                    required
+                    className={styles.select}
+                    defaultValue=""
+                    onChange={(e) => setSelectedAccountId(e.target.value)}
+                >
+                    <option value="" disabled className={styles.option}>
+                        -- Select User Account --
+                    </option>
                     {accounts.map(acc => (
-                        <option key={acc.id} value={acc.id}>
+                        <option key={acc.id} value={acc.id} className={styles.option}>
                             {acc.user.fullName} ({acc.type}) - {acc.accountNumber}
                         </option>
                     ))}
                 </select>
             </div>
 
-            {/* 2. CONFIGURATION ROW */}
             <div className={styles.grid}>
-                <div>
+                <div className={styles.transaction}>
                     <label className={styles.label}>Transaction Mode</label>
                     <div className={styles.selectWrapper}>
                         <select name="type" className={styles.select}>
-                            <option value="MIXED">Mixed (Realistic)</option>
-                            <option value="CREDIT">Credit Only (Deposits)</option>
-                            <option value="DEBIT">Debit Only (Spends)</option>
+                            <option value="MIXED" className={styles.option}>Mixed (Realistic)</option>
+                            <option value="CREDIT" className={styles.option}>Credit Only (Deposits)</option>
+                            <option value="DEBIT" className={styles.option}>Debit Only (Spends)</option>
                         </select>
                     </div>
                 </div>
-                <div>
+                <div className={styles.transaction}>
                     <label className={styles.label}>Transaction Count</label>
                     <input
                         name="count"
@@ -56,33 +87,38 @@ export default function GeneratorForm({ accounts }: { accounts: any[] }) {
                 </div>
             </div>
 
-            {/* 3. AMOUNT & DATES */}
             <div className={styles.group}>
-                <label className={styles.label}>Net Amount Change ($)</label>
-                <input
-                    name="totalAmount"
-                    type="number"
-                    placeholder="e.g. 50000"
-                    required
-                    className={styles.input}
-                />
+                <label className={styles.label}>Net Amount Change ({currentContext.currency})</label>
+                <div className={styles.currency}>
+                    <span className={styles.currencyContext}>
+                        {currentContext.currency}
+                    </span>
+                    <input
+                        name="totalAmount"
+                        type="number"
+                        placeholder="e.g. 5000"
+                        required
+                        className={`${styles.input} ${selectedAccountId ? '' : styles.inputDisabled}`}
+                        style={{ paddingLeft: '3rem' }}
+                        disabled={!selectedAccountId || isPending}
+                    />
+                </div>
                 <p className={styles.hint}>
-                    The account balance will increase/decrease by exactly this amount.
+                    The account balance will change by exactly this amount in {currentContext.currency}.
                 </p>
             </div>
 
             <div className={styles.grid}>
-                <div>
+                <div className={styles.date}>
                     <label className={styles.label}>Start Date</label>
                     <input name="startDate" type="date" className={styles.input} />
                 </div>
-                <div>
+                <div className={styles.date}>
                     <label className={styles.label}>End Date</label>
                     <input name="endDate" type="date" className={styles.input} />
                 </div>
             </div>
 
-            {/* 4. CUSTOM NOTE */}
             <div className={styles.group}>
                 <label className={styles.label}>Custom Tag / Note (Optional)</label>
                 <input
@@ -92,12 +128,11 @@ export default function GeneratorForm({ accounts }: { accounts: any[] }) {
                     className={styles.input}
                 />
                 <p className={styles.hint}>
-                    This will be appended to the random descriptions (e.g. &quot;Uber Ride - Project X&quot;).
+                    This will be appended to the random descriptions.
                 </p>
             </div>
 
-            {/* 5. SUBMIT BUTTON */}
-            <button disabled={isPending} className={styles.button}>
+            <button disabled={isPending || !selectedAccountId} className={styles.button}>
                 {isPending ? <Loader2 className={styles.spin} size={20} /> : <Wand2 size={20} />}
                 {isPending ? "Generating..." : "Generate History"}
             </button>

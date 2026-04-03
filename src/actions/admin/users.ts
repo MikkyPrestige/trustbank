@@ -21,7 +21,6 @@ const resetSchema = z.object({
     newPassword: z.string().min(6, "Password must be at least 6 characters"),
 });
 
-// --- Generate Unique Numbers ---
 async function generateUniqueNumber(prefix: string, model: 'account' | 'card'): Promise<string> {
     let isUnique = false;
     let number = "";
@@ -49,7 +48,7 @@ function generateRoutingNumber() {
     return "0" + Math.floor(20000000 + Math.random() * 10000000).toString();
 }
 
-// 1. CREATE USER (Clients)
+
 export async function adminCreateUser(formData: FormData) {
     const { authorized, session } = await checkAdminAction();
 
@@ -66,6 +65,7 @@ export async function adminCreateUser(formData: FormData) {
     const zipCode = formData.get("zipCode") as string;
     const occupation = formData.get("occupation") as string;
     const gender = formData.get("gender") as string;
+    const taxId = formData.get("taxId") as string;
     const dateOfBirthStr = formData.get("dateOfBirth") as string;
 
     if (!email || !password || !fullName) return { success: false, message: "Missing required fields" };
@@ -79,14 +79,13 @@ export async function adminCreateUser(formData: FormData) {
         const savingsNum = await generateUniqueNumber("20", 'account');
         const routingNum = generateRoutingNumber();
 
-        // 1. CRITICAL DB WRITE (Transaction)
         const newUser = await db.$transaction(async (tx) => {
             return await tx.user.create({
                 data: {
                     email, fullName, passwordHash: hashedPassword, role: UserRole.CLIENT, status: UserStatus.ACTIVE,
                     transactionPin: "0000", phone: phone || undefined, address: address || undefined,
                     city: city || undefined, country: country || undefined, zipCode: zipCode || undefined,
-                    occupation: occupation || undefined, gender: gender || null, dateOfBirth: dateOfBirthStr ? new Date(dateOfBirthStr) : null,
+                    occupation: occupation || undefined, gender: gender || null, dateOfBirth: dateOfBirthStr ? new Date(dateOfBirthStr) : null, taxId: taxId || undefined,
                     accounts: {
                         create: [
                             { accountName: `${fullName} - Checking`, type: AccountType.CHECKING, accountNumber: checkingNum, routingNumber: routingNum, availableBalance: 0, currentBalance: 0, currency: "USD", status: AccountStatus.ACTIVE, isPrimary: true },
@@ -97,7 +96,6 @@ export async function adminCreateUser(formData: FormData) {
             });
         });
 
-        // 2. SIDE EFFECTS (Notifications & Logs)
         await db.notification.create({
             data: {
                 userId: newUser.id,
@@ -126,7 +124,7 @@ export async function adminCreateUser(formData: FormData) {
     return { success: true, message: "User created with Checking & Savings accounts." };
 }
 
-// 2. TOGGLE FREEZE STATUS
+
 export async function toggleUserStatus(userId: string, newStatus: string) {
     const { authorized, session } = await checkAdminAction();
 
@@ -140,7 +138,6 @@ export async function toggleUserStatus(userId: string, newStatus: string) {
         const targetUser = await db.user.findUnique({ where: { id: userId } });
         if (targetUser?.role === UserRole.SUPER_ADMIN) return { success: false, message: "Cannot modify Super Admin status." };
 
-        // 1. CRITICAL DB WRITE
         await db.$transaction(async (tx) => {
             await tx.user.update({
                 where: { id: userId },
@@ -155,7 +152,6 @@ export async function toggleUserStatus(userId: string, newStatus: string) {
             }
         });
 
-        // 2. SIDE EFFECTS
         let title = "Account Status Update";
         let msg = `Your account status is now: ${newStatus}`;
         let type = "INFO";
@@ -174,7 +170,6 @@ export async function toggleUserStatus(userId: string, newStatus: string) {
             data: { userId: userId, title: title, message: msg, type: type, link: "/dashboard/support", isRead: false }
         });
 
-        // UPDATED LOG: Warning if frozen, Info if active
         const logLevel = (newStatus === 'FROZEN' || newStatus === 'SUSPENDED') ? 'WARNING' : 'INFO';
 
         await logAdminAction(
@@ -195,7 +190,7 @@ export async function toggleUserStatus(userId: string, newStatus: string) {
     return { success: true, message: `User status updated to ${newStatus}. Cards synced.` };
 }
 
-// 3. DELETE USER
+
 export async function deleteUser(userId: string) {
     const { authorized, session } = await checkAdminAction();
 
@@ -211,7 +206,6 @@ export async function deleteUser(userId: string) {
         if (!targetUser) return { success: false, message: "User not found." };
         if (targetUser.role === UserRole.SUPER_ADMIN) return { success: false, message: "Attempt to delete Super Admin blocked." };
 
-        // SOFT DELETE (ARCHIVE)
         await db.user.update({
             where: { id: userId },
             data: {
@@ -243,7 +237,6 @@ export async function deleteUser(userId: string) {
     return { success: true, message: "User deleted (archived) successfully." };
 }
 
-// 4. ISSUE VISA CARD
 export async function adminIssueCard(userId: string) {
     const { authorized, session } = await checkAdminAction();
 
@@ -260,7 +253,6 @@ export async function adminIssueCard(userId: string) {
         date.setFullYear(date.getFullYear() + 3);
         const expiryDate = `${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getFullYear()).slice(-2)}`;
 
-        // 1. CRITICAL DB WRITE
         await db.$transaction(async (tx) => {
             await tx.card.create({
                 data: {
@@ -299,7 +291,7 @@ export async function adminIssueCard(userId: string) {
     return { success: true, message: "New Card Issued" };
 }
 
-// 5. RESET PASSWORD
+
 export async function adminResetPassword(prevState: any, formData: FormData) {
     const { authorized, session } = await checkAdminAction();
 
@@ -328,7 +320,6 @@ export async function adminResetPassword(prevState: any, formData: FormData) {
 
         const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-        // 1. CRITICAL DB WRITE
         await db.$transaction(async (tx) => {
             await tx.user.update({
                 where: { id: userId },
@@ -341,7 +332,6 @@ export async function adminResetPassword(prevState: any, formData: FormData) {
             });
         });
 
-        // 2. SECURITY NOTIFICATION
         await db.notification.create({
             data: {
                 userId: userId,
@@ -375,11 +365,9 @@ export async function unlockUserSecurity(userId: string) {
     if (!authorized || !session || !session.user) return { success: false, message: "Unauthorized" };
 
     try {
-        // 1. Get the user to find their email
         const user = await db.user.findUnique({ where: { id: userId } });
         if (!user) return { success: false, message: "User not found" };
 
-        // 2. Reset User Table Counters (Pin & Account Lock)
         await db.user.update({
             where: { id: userId },
             data: {
@@ -400,7 +388,6 @@ export async function unlockUserSecurity(userId: string) {
             console.log("No logs to clear");
         }
 
-        // 4. Notify User (Unlocked)
         await db.notification.create({
             data: {
                 userId,

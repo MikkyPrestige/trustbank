@@ -12,7 +12,7 @@
 .iconBox {
   margin-bottom: 1.5rem;
   color: var(--danger);
-  background: rgba(239, 68, 68, 0.1);
+  background: rgba(var(--danger-rgb), 0.1);
   padding: 1.5rem;
   border-radius: 50%;
   display: flex;

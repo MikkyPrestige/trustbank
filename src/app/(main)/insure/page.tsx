@@ -13,73 +13,75 @@ export const metadata: Metadata = {
 export default async function InsurePage() {
     const settings = await getSiteSettings();
 
-    // The "Big 4" Anchors (Zig-Zag)
     const ANCHORS = [
         {
-            id: 'medicare',
+            id: settings.insure_prod1_id,
             title: settings.insure_prod1_title,
             desc: settings.insure_prod1_desc,
             btn: settings.insure_prod1_btn,
-            img: settings.insure_prod1_img || "/insure-medicare.png",
-            alt: settings.insure_prod1_img_alt
+            img: settings.insure_prod1_img,
+            alt: settings.insure_prod1_img_alt,
+            link: settings.insure_prod1_link
         },
         {
-            id: 'auto',
+            id: settings.insure_prod2_id,
             title: settings.insure_prod2_title,
             desc: settings.insure_prod2_desc,
             btn: settings.insure_prod2_btn,
-            img: settings.insure_prod2_img || "/insure-auto.png",
-            alt: settings.insure_prod2_img_alt
+            img: settings.insure_prod2_img,
+            alt: settings.insure_prod2_img_alt,
+            link: settings.insure_prod2_link
         },
         {
-            id: 'home',
+            id: settings.insure_prod3_id,
             title: settings.insure_prod3_title,
             desc: settings.insure_prod3_desc,
             btn: settings.insure_prod3_btn,
-            img: settings.insure_prod3_img || "/insure-home.png",
-            alt: settings.insure_prod3_img_alt
+            img: settings.insure_prod3_img,
+            alt: settings.insure_prod3_img_alt,
+            link: settings.insure_prod3_link
         },
         {
-            id: 'life',
+            id: settings.insure_prod4_id,
             title: settings.insure_prod4_title,
             desc: settings.insure_prod4_desc,
             btn: settings.insure_prod4_btn,
-            img: settings.insure_prod4_img || "/insure-life.png",
-            alt: settings.insure_prod4_img_alt
+            img: settings.insure_prod4_img,
+            alt: settings.insure_prod4_img_alt,
+            link: settings.insure_prod4_link
         },
     ];
 
-    // The Supplemental Grid
     const SUPPLEMENTAL = [
         {
+            id: settings.insure_prod5_id,
             title: settings.insure_prod5_title,
             desc: settings.insure_prod5_desc,
+            link: settings.insure_prod5_link,
             icon: <Activity size={32} className={styles.iconRed} />
         },
         {
-            id: 'business',
+            id: settings.insure_prod6_id,
             title: settings.insure_prod6_title,
             desc: settings.insure_prod6_desc,
+            link: settings.insure_prod6_link,
             icon: <ShieldCheck size={32} className={styles.iconGold} />
         },
     ];
 
-    // Partners
     const PARTNERS = [
-        { src: settings.insure_partner1_img || "/logos/allstate-1.png" },
-        { src: settings.insure_partner2_img || "/logos/prudential-1.png" },
-        { src: settings.insure_partner3_img || "/logos/metlife-1.png" },
-        { src: settings.insure_partner4_img || "/logos/liberty-1.png" },
+        { src: settings.insure_partner1_img, alt: settings.insure_partner1_img_alt },
+        { src: settings.insure_partner2_img, alt: settings.insure_partner2_img_alt },
+        { src: settings.insure_partner3_img, alt: settings.insure_partner3_img_alt },
+        { src: settings.insure_partner4_img, alt: settings.insure_partner4_img_alt },
     ];
 
     return (
         <main className={styles.main}>
-
-            {/* HERO SECTION */}
             <section className={styles.heroBackground}>
                 <Image
-                    src={settings.insure_hero_img || "/insure-hero.png"}
-                    alt={settings.insure_hero_alt || "Insurance Protection"}
+                    src={settings.insure_hero_img}
+                    alt={settings.insure_hero_alt}
                     fill
                     className={styles.heroBgImage}
                     priority
@@ -98,54 +100,54 @@ export default async function InsurePage() {
                 </div>
             </section>
 
-            {/* WIZARD */}
             <section className={styles.wizardSection}>
                 <div className={styles.container}>
                     <CoverageWizard settings={settings} />
                 </div>
             </section>
 
-            {/* ANCHOR SECTIONS */}
-            {ANCHORS.map((p, i) => (
-                <section key={p.id} id={p.id} className={`${styles.productSection} ${i % 2 !== 0 ? styles.bgAlt : ''}`}>
+            <div className={styles.container}>
+                <h2 className={styles.sectionTitle}>{settings.insure_products_title}</h2>
+                <p className={styles.sectionSubTitle}>{settings.insure_products_desc}</p>
+                {ANCHORS.map((p, i) => (
+                    <section key={p.id} id={p.id} className={`${styles.productSection} ${i % 2 !== 0 ? styles.bgAlt : ''}`}>
+                        <div className={styles.container}>
+                            <div className={`${styles.productGrid} ${i % 2 !== 0 ? styles.reverseGrid : ''}`}>
+                                <div className={styles.productContent}>
+                                    <h2 className={styles.productTitle}>{p.title}</h2>
+                                    <p className={styles.productDesc}>{p.desc}</p>
+                                    <a href={p.link} className={styles.productBtn}>
+                                        {p.btn} <ArrowRight size={18} />
+                                    </a>
+                                </div>
+                                <div className={styles.productImageWrapper}>
+                                    <Image src={p.img} alt={p.alt} fill className={styles.productImage} />
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                ))}
+
+                <section id="supplemental" className={styles.suppSection}>
                     <div className={styles.container}>
-                        <div className={`${styles.productGrid} ${i % 2 !== 0 ? styles.reverseGrid : ''}`}>
-                            <div className={styles.productContent}>
-                                <h2 className={styles.productTitle}>{p.title}</h2>
-                                <p className={styles.productDesc}>{p.desc}</p>
-                                <a href="#" className={styles.productBtn}>
-                                    {p.btn} <ArrowRight size={18} />
-                                </a>
-                            </div>
-                            <div className={styles.productImageWrapper}>
-                                <Image src={p.img} alt={p.alt} fill className={styles.productImage} />
-                            </div>
+                        <div className={styles.sectionHeader}>
+                            <h2>{settings.insure_supp_title}</h2>
+                            <p>{settings.insure_supp_desc}</p>
+                        </div>
+                        <div className={styles.grid}>
+                            {SUPPLEMENTAL.map((p, i) => (
+                                <div key={i} id={p.id} className={styles.card}>
+                                    <div className={styles.cardHeader}>{p.icon}</div>
+                                    <h3>{p.title}</h3>
+                                    <p>{p.desc}</p>
+                                    <a href={p.link} className={styles.cardLink}>{settings.insure_supp_link_text} <ArrowRight size={16} /></a>
+                                </div>
+                            ))}
                         </div>
                     </div>
                 </section>
-            ))}
+            </div>
 
-            {/* SUPPLEMENTAL GRID */}
-            <section id="supplemental" className={styles.suppSection}>
-                <div className={styles.container}>
-                    <div className={styles.sectionHeader}>
-                        <h2>{settings.insure_supp_title}</h2>
-                        <p>{settings.insure_supp_desc}</p>
-                    </div>
-                    <div className={styles.grid}>
-                        {SUPPLEMENTAL.map((p, i) => (
-                            <div key={i} id={p.id} className={styles.card}>
-                                <div className={styles.cardHeader}>{p.icon}</div>
-                                <h3>{p.title}</h3>
-                                <p>{p.desc}</p>
-                                <a href="#" className={styles.cardLink}>Learn More <ArrowRight size={16} /></a>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            {/* PARTNER STRIP */}
             <section className={styles.partnerStrip}>
                 <div className={styles.container}>
                     <h3>{settings.insure_partners_title}</h3>
@@ -155,7 +157,7 @@ export default async function InsurePage() {
                             <div key={i} className={styles.logoItem}>
                                 <Image
                                     src={partner.src}
-                                    alt="Insurance Partner"
+                                    alt={partner.alt}
                                     width={120}
                                     height={40}
                                     className={styles.logoImg}
@@ -166,7 +168,6 @@ export default async function InsurePage() {
                     </div>
                 </div>
             </section>
-
         </main>
     );
 }

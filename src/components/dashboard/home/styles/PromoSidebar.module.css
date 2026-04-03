@@ -1,31 +1,54 @@
 .card {
-  background: linear-gradient(
-    135deg,
-    #0f172a,
-    #1e293b
-  ); /* Dark Navy Gradient */
-  border-radius: 16px;
-  padding: 1.5rem;
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  border-radius: 1rem;
+  padding: 1rem;
+  margin-top: 1.2rem;
   color: var(--text-invert);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.closeBtn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(var(--danger-rgb), 0.1);
+  color: var(--danger);
+  border: 1px solid rgba(var(--danger-rgb), 0.3);
+  border-radius: 50%;
+  cursor: pointer;
+   width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.closeBtn:hover {
+  background: var(--danger);
+  color: var(--text-invert);
+  transform: rotate(90deg);
 }
 
 .iconCircle {
-  background: rgba(255, 255, 255, 0.1);
-  width: 40px;
-  height: 40px;
+  background: rgba(var(--accent-rgb), 0.1);
+  color: var(--accent);
+  border: 1px solid rgba(var(--accent-rgb), 0.3);
+  width: 2.5rem;
+  height: 2.5rem;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 1rem;
-  color: #fbbf24; /* Gold */
 }
 
 .title {
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 700;
   margin-bottom: 0.5rem;
+  padding-right: 2rem;
 }
 
 .rateRow {
@@ -36,15 +59,15 @@
 }
 
 .rateValue {
-  font-size: 2.5rem;
+  font-size: 2.2rem;
   font-weight: 800;
-  color: #fbbf24; /* Gold */
+  color: var(--accent);
   line-height: 1;
 }
 
 .rateLabel {
-  font-size: 0.875rem;
-  color: #94a3b8;
+  font-size: 0.8rem;
+  color: var(--text-muted);
   font-weight: 600;
 }
 
@@ -59,15 +82,15 @@
   display: block;
   width: 100%;
   text-align: center;
-  background: #fbbf24; /* Gold */
-  color: #0f172a; /* Dark Text */
+  background: rgba(var(--accent-rgb), 0.1);
+  color: var(--accent);
   font-weight: 700;
-  padding: 12px;
+  padding: 0.7rem 1rem;
   border-radius: 8px;
   text-decoration: none;
   transition: background 0.2s;
 }
 
 .ctaBtn:hover {
-  background: #f59e0b;
+  background: rgba(var(--accent-rgb), 0.2);
 }

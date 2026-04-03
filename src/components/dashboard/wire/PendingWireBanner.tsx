@@ -20,19 +20,19 @@ export default async function PendingWireBanner() {
 
     return (
         <div className={styles.banner}>
-            <div className={styles.content}>
-                <div className={styles.iconWrapper}>
+            <div className={styles.bannerContent}>
+                <div className={styles.bannerIconWrapper}>
                     <AlertCircle size={20} />
                 </div>
                 <div>
-                    <h4 className={styles.title}>Clearance Required</h4>
-                    <p className={styles.text}>
+                    <h4 className={styles.bannerTitle}>Clearance Required</h4>
+                    <p className={styles.bannerText}>
                         You have <strong>{actionRequiredCount} wire transfer{actionRequiredCount > 1 ? 's' : ''}</strong> pending clearance code entry.
                     </p>
                 </div>
             </div>
 
-            <Link href="/dashboard/wire/status" className={styles.button}>
+            <Link href="/dashboard/wire/status" className={styles.bannerButton}>
                 Enter Codes <ArrowRight size={14} />
             </Link>
         </div>

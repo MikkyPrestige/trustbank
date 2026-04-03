@@ -4,14 +4,18 @@ import { useState, useRef, MouseEvent } from 'react';
 import styles from './DebitCard3D.module.css';
 import { Wifi, Aperture } from 'lucide-react';
 
-// 1. Accept Props
 interface DebitCard3DProps {
-    bankName?: string;
+    settings: any;
 }
 
-export default function DebitCard3D({ bankName = "TrustBank" }: DebitCard3DProps) {
+export default function DebitCard3D({ settings }: DebitCard3DProps) {
     const cardRef = useRef<HTMLDivElement>(null);
     const [rotate, setRotate] = useState({ x: 0, y: 0 });
+
+    const bankName = settings.site_name;
+    const holderName = settings?.bank_card_holder_name;
+    const lastFour = settings?.bank_card_last_four;
+    const expiry = settings?.bank_card_expiry;
 
     const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
         if (!cardRef.current) return;
@@ -44,7 +48,6 @@ export default function DebitCard3D({ bankName = "TrustBank" }: DebitCard3DProps
                     transform: `perspective(1000px) rotateX(${rotate.x}deg) rotateY(${rotate.y}deg) scale3d(1, 1, 1)`
                 }}
             >
-                {/* GLOSS EFFECT */}
                 <div
                     className={styles.gloss}
                     style={{
@@ -53,10 +56,8 @@ export default function DebitCard3D({ bankName = "TrustBank" }: DebitCard3DProps
                     }}
                 ></div>
 
-                {/* CARD CONTENT */}
                 <div className={styles.cardContent}>
                     <div className={styles.cardTop}>
-                        {/* 2. Use Dynamic Bank Name */}
                         <span className={styles.bankName}>{bankName}</span>
                         <Wifi size={24} className={styles.contactless} />
                     </div>
@@ -68,22 +69,21 @@ export default function DebitCard3D({ bankName = "TrustBank" }: DebitCard3DProps
 
                     <div className={styles.cardBottom}>
                         <div className={styles.number}>
-                            <span>••••</span> <span>••••</span> <span>••••</span> <span>4289</span>
+                            <span>••••</span> <span>••••</span> <span>••••</span> <span>{lastFour}</span>
                         </div>
                         <div className={styles.details}>
                             <div className={styles.holder}>
                                 <small>Card Holder</small>
-                                <span>ALEX MORGAN</span>
+                                <span>{holderName}</span>
                             </div>
                             <div className={styles.expiry}>
                                 <small>Expires</small>
-                                <span>12/29</span>
+                                <span>{expiry}</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                {/* CARD TEXTURE */}
                 <div className={styles.texture}></div>
             </div>
         </div>

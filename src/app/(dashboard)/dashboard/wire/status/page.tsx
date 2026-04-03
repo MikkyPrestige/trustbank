@@ -18,9 +18,20 @@ export default async function WireStatusPage({
     const params = await searchParams;
     const selectedId = params?.id;
 
-    // PAGINATION SETTINGS
+    const [user, rates] = await Promise.all([
+        db.user.findUnique({ where: { id: session.user.id }, select: { currency: true } }),
+        db.exchangeRate.findMany()
+    ]);
+
+    const currency = user?.currency || "USD";
+    const rate = currency === "USD" ? 1 : Number(rates.find(r => r.currency === currency)?.rate || 1);
+
     const currentPage = Number(params?.page) || 1;
     const PAGE_SIZE = 5;
+
+    const formatMoney = (usdAmount: number) => {
+        return new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(usdAmount * rate);
+    };
 
     // 1. DETAIL VIEW (If ID is selected)
     if (selectedId) {
@@ -67,7 +78,7 @@ export default async function WireStatusPage({
                             </div>
                             <div className={styles.receiptRow}>
                                 <span>Amount Sent</span>
-                                <span>{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(wire.amount))}</span>
+                                <span>{formatMoney(Number(wire.amount))}</span>
                             </div>
                             <div className={styles.receiptRow}>
                                 <span>Status</span>
@@ -129,8 +140,6 @@ export default async function WireStatusPage({
                     </div>
 
                     <div className={isReversed ? `${styles.rejectedCard} ${styles.reversedCard}` : styles.rejectedCard}>
-
-                        {/* Icon Wrapper */}
                         <div className={isReversed ? styles.reversedIconWrapper : styles.rejectedIcon}>
                             {isReversed ? (
                                 <ShieldAlert size={48} strokeWidth={2} />
@@ -157,7 +166,7 @@ export default async function WireStatusPage({
                             </div>
                             <div className={styles.receiptRow}>
                                 <span>Amount</span>
-                                <strong>{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(wire.amount))}</strong>
+                                <strong>{formatMoney(Number(wire.amount))}</strong>
                             </div>
                             <div className={styles.receiptRow}>
                                 <span>Status</span>
@@ -206,6 +215,10 @@ export default async function WireStatusPage({
 
                         <div className={styles.receiptDetails}>
                             <div className={styles.receiptRow}>
+                                <span>Amount</span>
+                                <span>{formatMoney(Number(wire.amount))}</span>
+                            </div>
+                            <div className={styles.receiptRow}>
                                 <span>Current Status</span>
                                 <strong className={styles.warning}>ON HOLD (Action Required)</strong>
                             </div>
@@ -245,11 +258,9 @@ export default async function WireStatusPage({
         status: { in: [TransactionStatus.ON_HOLD, TransactionStatus.PENDING_AUTH, TransactionStatus.REVERSED, TransactionStatus.FAILED] }
     };
 
-    // Calculate pagination values
     const totalCount = await db.wireTransfer.count({ where: whereClause });
     const totalPages = Math.ceil(totalCount / PAGE_SIZE);
 
-    // Ensure page is within valid range
     const validPage = Math.max(1, Math.min(currentPage, totalPages || 1));
     const skip = (validPage - 1) * PAGE_SIZE;
 
@@ -289,7 +300,7 @@ export default async function WireStatusPage({
                                         <div className={styles.wireBank}>{wire.bankName}</div>
                                         <div className={styles.wireDate}>{new Date(wire.createdAt).toLocaleDateString()}</div>
                                         <div className={styles.wireAmount}>
-                                            {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(wire.amount))}
+                                            {formatMoney(Number(wire.amount))}
                                         </div>
                                     </div>
                                     <div className={styles.wireAction}>
@@ -314,7 +325,6 @@ export default async function WireStatusPage({
                         })}
                     </div>
 
-                    {/* PAGINATION CONTROLS */}
                     {totalPages > 1 && (
                         <div className={styles.pagination}>
                             <Link

@@ -14,31 +14,55 @@ interface Loan {
     repaidAmount: number;
 }
 
-export default function RepaymentModal({ loan, maxPayable }: { loan: Loan, maxPayable: number }) {
+export default function RepaymentModal({
+    loan,
+    maxPayable,
+    currency,
+    rate
+}: {
+    loan: Loan,
+    maxPayable: number,
+    currency: string,
+    rate: number
+}) {
     const [isOpen, setIsOpen] = useState(false);
 
-    const [amountStr, setAmountStr] = useState<string>(
-        Math.min(loan.monthlyPayment, maxPayable).toString()
-    );
+    const remainingUSD = loan.totalRepayment - loan.repaidAmount;
+    const remainingNative = remainingUSD * rate;
+
+    const maxPayableNative = maxPayable * rate;
+    const monthlyPaymentNative = loan.monthlyPayment * rate;
+
+    const defaultAmount = Math.min(monthlyPaymentNative, maxPayableNative, remainingNative);
+
+    const [amountStr, setAmountStr] = useState<string>(defaultAmount.toFixed(2));
 
     const [state, action, isPending] = useActionState(repayLoan, undefined);
-    const remainingBalance = loan.totalRepayment - loan.repaidAmount;
 
     const handleAmountChange = (val: string) => {
         if (val === '') {
             setAmountStr('');
             return;
         }
-        if (val.length > 1 && val.startsWith('0')) {
-            val = val.replace(/^0+/, '');
-        }
         const numVal = Number(val);
-        if (numVal > remainingBalance) {
-            setAmountStr(remainingBalance.toString());
+        if (numVal > remainingNative) {
+            setAmountStr(remainingNative.toFixed(2));
         } else {
             setAmountStr(val);
         }
     };
+
+    const handleFormSubmit = (formData: FormData) => {
+        const inputAmount = Number(formData.get("amount"));
+
+        const usdAmount = inputAmount / rate;
+        formData.set("amount", usdAmount.toString());
+
+        formData.set("displayAmount", inputAmount.toString());
+        formData.set("displayCurrency", currency);
+
+        action(formData);
+    }
 
     return (
         <>
@@ -58,10 +82,12 @@ export default function RepaymentModal({ loan, maxPayable }: { loan: Loan, maxPa
 
                         <div className={styles.balanceInfo}>
                             <span>Remaining Balance</span>
-                            <strong className={styles.balanceAmount}>${remainingBalance.toFixed(2)}</strong>
+                            <strong className={styles.balanceAmount}>
+                                {new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(remainingNative)}
+                            </strong>
                         </div>
 
-                        <form action={action}>
+                        <form action={handleFormSubmit}>
                             <input type="hidden" name="loanId" value={loan.id} />
 
                             {state?.message && (
@@ -73,14 +99,17 @@ export default function RepaymentModal({ loan, maxPayable }: { loan: Loan, maxPa
                             <div className={styles.group}>
                                 <label className={styles.label}>Payment Amount</label>
                                 <div className={styles.amountInputWrapper}>
-                                    <span className={`${styles.currencySymbol} ${styles.currencySymbolGreen}`}>$</span>
+                                    <span className={`${styles.currencySymbol} ${styles.currencySymbolGreen}`}>
+                                        {currency}
+                                    </span>
                                     <input
                                         name="amount"
                                         type="number"
                                         value={amountStr}
-                                        placeholder="0"
+                                        placeholder="0.00"
                                         onChange={(e) => handleAmountChange(e.target.value)}
                                         className={styles.amountInput}
+                                        step="0.01"
                                     />
                                 </div>
                             </div>
@@ -88,18 +117,18 @@ export default function RepaymentModal({ loan, maxPayable }: { loan: Loan, maxPa
                             <input
                                 type="range"
                                 min="1"
-                                max={remainingBalance}
+                                max={Math.ceil(remainingNative)}
                                 value={Number(amountStr) || 0}
                                 onChange={(e) => setAmountStr(e.target.value)}
                                 className={styles.slider}
                             />
 
                             <div className={styles.limits}>
-                                <span onClick={() => setAmountStr(loan.monthlyPayment.toString())} className={styles.limitBtn}>
-                                    Min: ${loan.monthlyPayment.toFixed(0)}
+                                <span onClick={() => setAmountStr(monthlyPaymentNative.toFixed(2))} className={styles.limitBtn}>
+                                    Min: {Math.floor(monthlyPaymentNative)}
                                 </span>
-                                <span onClick={() => setAmountStr(remainingBalance.toString())} className={styles.limitBtn}>
-                                    Max: ${remainingBalance.toFixed(0)}
+                                <span onClick={() => setAmountStr(remainingNative.toFixed(2))} className={styles.limitBtn}>
+                                    Max: {Math.floor(remainingNative)}
                                 </span>
                             </div>
 

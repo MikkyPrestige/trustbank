@@ -30,7 +30,6 @@ export default function SystemRulesForm({
         }
     }, [state]);
 
-    // Helper to group definitions
     const groups = {
         security: Object.entries(SYSTEM_DEFINITIONS).filter(([_, def]) => def.group === 'security'),
         limits: Object.entries(SYSTEM_DEFINITIONS).filter(([_, def]) => def.group === 'limits'),
@@ -41,12 +40,10 @@ export default function SystemRulesForm({
     return (
         <form action={formAction}>
             <div className={styles.grid}>
-
-                {/* SECURITY GROUP */}
                 <div className={styles.card}>
                     <div className={styles.cardHeader}>
                         <ShieldAlert className={styles.cardIcon} size={20} />
-                        <h2>Active Defense</h2>
+                        <h2 className={styles.cardTitle}>Active Defense</h2>
                     </div>
                     <div className={styles.cardContent}>
                         {groups.security.map(([key, def]) => (
@@ -64,11 +61,10 @@ export default function SystemRulesForm({
                     </div>
                 </div>
 
-                {/* LIMITS GROUP */}
                 <div className={styles.card}>
                     <div className={styles.cardHeader}>
                         <DollarSign className={styles.cardIcon} size={20} />
-                        <h2>Financial Limits</h2>
+                        <h2 className={styles.cardTitle}>Financial Limits</h2>
                     </div>
                     <div className={styles.cardContent}>
                         {groups.limits.map(([key, def]) => (
@@ -88,11 +84,10 @@ export default function SystemRulesForm({
                     </div>
                 </div>
 
-                {/*  FEATURE FLAGS */}
                 <div className={styles.card}>
                     <div className={styles.cardHeader}>
                         <Power className={styles.cardIcon} size={20} />
-                        <h2>Feature Flags</h2>
+                        <h2 className={styles.cardTitle}>Feature Flags</h2>
                     </div>
                     <div className={styles.cardContent}>
                         {groups.features.map(([key, def]) => (
@@ -106,6 +101,7 @@ export default function SystemRulesForm({
                                         type="checkbox"
                                         name={key}
                                         defaultChecked={initialValues[key] === 'true' || (!initialValues[key] && def.defaultValue === 'true')}
+                                        className={styles.switchInput}
                                     />
                                     <span className={styles.slider}></span>
                                 </label>
@@ -114,16 +110,14 @@ export default function SystemRulesForm({
                     </div>
                 </div>
 
-                {/*  SYSTEM CONTROL */}
                 <div className={`${styles.card} ${styles.dangerZone}`}>
                     <div className={styles.cardHeader}>
                         <Server className={styles.cardIcon} size={20} />
-                        <h2>System Control</h2>
+                        <h2 className={styles.cardTitle}>System Control</h2>
                     </div>
                     <div className={styles.cardContent}>
                         {groups.system.map(([key, def]) => (
                             <div key={key} className={styles.toggleRow}>
-                                {/* CASE 1: BOOLEAN (Toggle Switch) */}
                                 {def.type === 'BOOLEAN' && (
                                     <>
                                         <div>
@@ -141,7 +135,6 @@ export default function SystemRulesForm({
                                     </>
                                 )}
 
-                                {/* CASE 2: TEXT (New Input Field) */}
                                 {def.type === 'TEXT' && (
                                     <div style={{ width: '100%' }}>
                                         <label className={styles.label}>{def.label}</label>

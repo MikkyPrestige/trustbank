@@ -4,7 +4,6 @@ import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 
-// 1. Fetch Notifications
 export async function getNotifications() {
     const session = await auth();
     if (!session?.user?.id) return [];
@@ -24,7 +23,6 @@ export async function getNotifications() {
     }
 }
 
-// 2. Mark Single as Read
 export async function markAsRead(notificationId: string) {
     const session = await auth();
     if (!session) return;
@@ -38,7 +36,6 @@ export async function markAsRead(notificationId: string) {
     revalidatePath("/dashboard");
 }
 
-// 3. Mark ALL as Read
 export async function markAllAsRead() {
     const session = await auth();
     if (!session?.user?.id) return;

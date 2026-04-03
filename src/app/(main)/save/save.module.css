@@ -10,9 +10,6 @@
   padding: 0 1.5rem;
 }
 
-/* =========================================
-   1. HERO SECTION
-   ========================================= */
 .heroBackground {
   position: relative;
   height: 70vh;
@@ -21,7 +18,6 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  /* Use bg-surface to separate hero from body */
   background: var(--bg-surface);
   overflow: hidden;
 }
@@ -35,8 +31,7 @@
 .heroOverlay {
   position: absolute;
   inset: 0;
-  /* Fade from transparent to app background */
-  background: linear-gradient(to bottom, rgba(0,0,0,0), var(--bg-app));
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0), var(--bg-app));
   z-index: 1;
 }
 
@@ -80,9 +75,6 @@
   line-height: 1.6;
 }
 
-/* =========================================
-   2. CALCULATOR
-   ========================================= */
 .calcSection {
   margin-top: -60px;
   position: relative;
@@ -90,9 +82,6 @@
   margin-bottom: 4rem;
 }
 
-/* =========================================
-   3. PRODUCT SECTIONS (ZIG ZAG)
-   ========================================= */
 .productSection {
   padding: 6rem 0;
   border-bottom: 1px solid var(--border);
@@ -185,9 +174,6 @@
   box-shadow: var(--shadow-glow);
 }
 
-/* =========================================
-   4. SUPPLEMENTAL GRID
-   ========================================= */
 .suppSection {
   padding: 6rem 0;
   background: var(--bg-surface);
@@ -241,7 +227,7 @@
 }
 
 .apyBadge {
-  background: rgba(16, 185, 129, 0.1); /* Success tint */
+  background: rgba(var(--success-rgb), 0.1);
   color: var(--success);
   font-weight: 700;
   font-size: 0.85rem;
@@ -276,19 +262,27 @@
   gap: 12px;
 }
 
-/* Icon Colors using variables where possible, or fallbacks consistent with theme */
-.iconGreen  { color: var(--success); }
-.iconTeal   { color: #14b8a6; } /* Custom but acceptable */
-.iconOrange { color: #f97316; }
-.iconGold   { color: var(--accent); }
-.iconBlue   { color: var(--primary); }
-.iconPurple { color: #a855f7; }
+.iconGreen {
+  color: var(--success);
+}
+.iconTeal {
+  color: #14b8a6;
+}
+.iconOrange {
+  color: #f97316;
+}
+.iconGold {
+  color: var(--accent);
+}
+.iconBlue {
+  color: var(--primary);
+}
+.iconPurple {
+  color: #a855f7;
+}
 
-/* =========================================
-   5. TRUST STRIP
-   ========================================= */
 .trustStrip {
-  background: var(--bg-surface); /* Adaptive background */
+  background: var(--bg-surface);
   border-top: 1px solid var(--border);
   padding: 4rem 0;
 }
@@ -325,12 +319,28 @@
   color: var(--text-body);
 }
 
-/* Responsive */
 @media (max-width: 968px) {
-  .heroBackground { height: auto; padding: 6rem 0 8rem 0; }
-  .productGrid { grid-template-columns: 1fr; gap: 3rem; text-align: center; }
-  .productContent { align-items: center; }
-  .productImageWrapper { height: 300px; order: -1; }
-  .reverseGrid .productImageWrapper { order: -1; }
-  .trustContent { flex-direction: column; text-align: center; }
+  .heroBackground {
+    height: auto;
+    padding: 6rem 0 8rem 0;
+  }
+  .productGrid {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    text-align: center;
+  }
+  .productContent {
+    align-items: center;
+  }
+  .productImageWrapper {
+    height: 300px;
+    order: -1;
+  }
+  .reverseGrid .productImageWrapper {
+    order: -1;
+  }
+  .trustContent {
+    flex-direction: column;
+    text-align: center;
+  }
 }

@@ -1,13 +1,12 @@
-/* CONTACT PAGE STYLES */
 .main {
   min-height: 100vh;
   background-color: var(--bg-surface);
+  color: var(--text-main);
 }
 
-/* HERO SECTION */
 .hero {
-  position: relative; /* Essential for containing the absolute image */
-  height: 400px; /* Fixed height for impact */
+  position: relative;
+  height: 400px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -22,7 +21,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 0; /* Puts image behind text */
+  z-index: 0;
 }
 
 .heroImage {
@@ -37,21 +36,20 @@
     to bottom,
     rgba(0, 0, 0, 0.3),
     rgba(0, 0, 0, 0.7)
-  ); /* Darkens image for readability */
+  );
   z-index: 1;
 }
 
 .heroContent {
   position: relative;
-  z-index: 2; /* Puts text on top */
+  z-index: 2;
   max-width: 800px;
-  padding: 0 20px;
+  padding: 0 2rem;
 }
 
 .heroContent h1 {
   font-size: 3rem;
   font-weight: 800;
-  margin-bottom: 1rem;
   letter-spacing: -0.5px;
 }
 
@@ -61,27 +59,25 @@
   line-height: 1.6;
 }
 
-/* CONTAINER */
 .container {
   max-width: 1200px;
-  margin: -60px auto 0; /* Overlaps hero slightly for modern look */
-  padding: 0 20px 4rem;
+  margin: -6rem auto 0;
+  padding: 1rem;
   position: relative;
   z-index: 10;
 }
 
-/* CONTACT GRID */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 24px;
-  margin-bottom: 4rem;
+  gap: 2rem;
+  margin-bottom: 2rem;
 }
 
 .card {
   background: var(--bg-card);
-  padding: 2.5rem 2rem;
-  border-radius: 16px;
+  padding: 2rem;
+  border-radius: 1rem;
   border: 1px solid var(--border);
   box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.1);
   text-align: center;
@@ -100,29 +96,29 @@
 }
 
 .iconBox {
-  width: 56px;
-  height: 56px;
-  background: rgba(59, 130, 246, 0.1); /* Blue tint */
+  width: 4rem;
+  height: 4rem;
+  background: rgba(59, 130, 246, 0.1);
   color: var(--primary);
-  border-radius: 50%; /* Circle icon background */
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .card h3 {
-  font-size: 1.25rem;
+  font-size: 1.2rem;
   font-weight: 700;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.3rem;
   color: var(--text-main);
 }
 
 .value {
-  font-size: 1.1rem;
+  font-size: 1rem;
   color: var(--text-main);
   font-weight: 500;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.2rem;
 }
 
 .sub {
@@ -130,12 +126,11 @@
   color: var(--text-muted);
 }
 
-/* FAQ TEASER SECTION */
 .faqTeaser {
   background: var(--bg-card);
   border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 2.5rem;
+  border-radius: 1rem;
+  padding: 2rem;
   display: flex;
   align-items: center;
   gap: 2rem;
@@ -172,7 +167,6 @@
   text-decoration: underline;
 }
 
-/* MOBILE RESPONSIVE */
 @media (max-width: 768px) {
   .hero {
     height: 350px;

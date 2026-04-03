@@ -4,25 +4,28 @@ import { useState, useMemo } from 'react';
 import styles from './LoanCalculator.module.css';
 import { DollarSign, Calendar, Percent } from 'lucide-react';
 
-// 1. Accept Props
 interface LoanCalculatorProps {
     defaultRate?: number;
     settings: any;
 }
 
 export default function LoanCalculator({ defaultRate = 6.99, settings }: LoanCalculatorProps) {
-    const [amount, setAmount] = useState(25000);
+    const minAmt = settings.borrow_calc_min_amt || 1000;
+    const maxAmt = settings.borrow_calc_max_amt || 100000;
+    const minTerm = settings.borrow_calc_min_term || 12;
+    const maxTerm = settings.borrow_calc_max_term || 84;
+    const symbol = settings.borrow_calc_currency || '$';
+    const pc = settings.borrow_calc_percent || '%';
+
+    const [amount, setAmount] = useState(maxAmt / 4);
     const [months, setMonths] = useState(36);
     const [rate, setRate] = useState(defaultRate);
 
     const monthlyPayment = useMemo(() => {
         const principal = amount;
         const calculatedInterest = rate / 100 / 12;
-        const calculatedPayments = months;
-
-        const x = Math.pow(1 + calculatedInterest, calculatedPayments);
+        const x = Math.pow(1 + calculatedInterest, months);
         const monthly = (principal * x * calculatedInterest) / (x - 1);
-
         return isFinite(monthly) ? monthly : 0;
     }, [amount, months, rate]);
 
@@ -38,36 +41,32 @@ export default function LoanCalculator({ defaultRate = 6.99, settings }: LoanCal
             </div>
 
             <div className={styles.calcGrid}>
-                {/* CONTROLS */}
                 <div className={styles.controls}>
-
-                    {/* AMOUNT SLIDER */}
                     <div className={styles.inputGroup}>
                         <div className={styles.labelRow}>
                             <label><DollarSign size={16} />{settings.borrow_calc_label_amt}</label>
-                            <span className={styles.valueDisplay}>${amount.toLocaleString()}</span>
+                            <span className={styles.valueDisplay}>{symbol}{amount.toLocaleString()}</span>
                         </div>
                         <input
-                            type="range" min="1000" max="100000" step="1000"
+                            type="range" min={minAmt} max={maxAmt} step="1000"
                             value={amount}
                             onChange={(e) => setAmount(Number(e.target.value))}
                             className={styles.rangeInput}
-                            style={getBackgroundSize(amount, 1000, 100000)}
+                            style={getBackgroundSize(amount, minAmt, maxAmt)}
                         />
                     </div>
 
-                    {/* MONTHS SLIDER */}
                     <div className={styles.inputGroup}>
                         <div className={styles.labelRow}>
                             <label><Calendar size={16} />{settings.borrow_calc_label_term}</label>
-                            <span className={styles.valueDisplay}>{months} Months</span>
+                            <span className={styles.valueDisplay}>{months} {settings.borrow_calc_unit_mo}</span>
                         </div>
                         <input
-                            type="range" min="12" max="84" step="12"
+                            type="range" min={minTerm} max={maxTerm} step="12"
                             value={months}
                             onChange={(e) => setMonths(Number(e.target.value))}
                             className={styles.rangeInput}
-                            style={getBackgroundSize(months, 12, 84)}
+                            style={getBackgroundSize(months, minTerm, maxTerm)}
                         />
                         <div className={styles.termBadges}>
                             {[12, 36, 60, 84].map(m => (
@@ -78,44 +77,41 @@ export default function LoanCalculator({ defaultRate = 6.99, settings }: LoanCal
                         </div>
                     </div>
 
-                    {/* INTEREST RATE */}
                     <div className={styles.inputGroup}>
                         <div className={styles.labelRow}>
                             <label><Percent size={16} /> {settings.borrow_calc_label_rate}</label>
-                            <span className={styles.valueDisplay}>{rate}%</span>
+                            <span className={styles.valueDisplay}>{rate}{pc}</span>
                         </div>
                         <input
-                            type="range" min="3.0" max="25.0" step="0.1"
+                            type="range" min="1.0" max="30.0" step="0.1"
                             value={rate}
                             onChange={(e) => setRate(Number(e.target.value))}
                             className={styles.rangeInput}
-                            style={getBackgroundSize(rate, 3.0, 25.0)}
+                            style={getBackgroundSize(rate, 1.0, 30.0)}
                         />
                     </div>
                 </div>
 
-                {/* RESULT BOX */}
                 <div className={styles.resultBox}>
                     <span className={styles.resultLabel}>{settings.borrow_calc_res_monthly}</span>
                     <div className={styles.resultAmount}>
-                        ${monthlyPayment.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                        {symbol}{monthlyPayment.toLocaleString(undefined, { maximumFractionDigits: 2 })}
                     </div>
 
                     <div className={styles.breakdown}>
                         <div className={styles.breakdownItem}>
                             <span>{settings.borrow_calc_label_princ}</span>
-                            <strong>${amount.toLocaleString()}</strong>
+                            <strong>{symbol}{amount.toLocaleString()}</strong>
                         </div>
                         <div className={styles.breakdownItem}>
                             <span>{settings.borrow_calc_label_int}</span>
-                            <strong>${((monthlyPayment * months) - amount).toLocaleString(undefined, { maximumFractionDigits: 0 })}</strong>
+                            <strong>{symbol}{((monthlyPayment * months) - amount).toLocaleString(undefined, { maximumFractionDigits: 0 })}</strong>
                         </div>
                         <div className={styles.breakdownTotal}>
                             <span>{settings.borrow_calc_res_total}</span>
-                            <strong>${(monthlyPayment * months).toLocaleString(undefined, { maximumFractionDigits: 0 })}</strong>
+                            <strong>{symbol}{(monthlyPayment * months).toLocaleString(undefined, { maximumFractionDigits: 0 })}</strong>
                         </div>
                     </div>
-
                     <button className={styles.applyBtn}>{settings.borrow_calc_cta}</button>
                 </div>
             </div>

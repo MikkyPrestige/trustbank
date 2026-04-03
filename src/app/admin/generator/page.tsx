@@ -8,18 +8,29 @@ import { UserRole, UserStatus } from "@prisma/client";
 export default async function AdminGeneratorPage() {
     await requireAdmin();
 
-    const accounts = await db.account.findMany({
-        where: {
-            user: {
-                role: UserRole.CLIENT,
-                status: { not: UserStatus.ARCHIVED }
-            }
-        },
-        include: {
-            user: { select: { fullName: true, email: true } }
-        },
-        orderBy: { user: { fullName: 'asc' } }
-    });
+    const [accounts, rates] = await Promise.all([
+        db.account.findMany({
+            where: {
+                user: {
+                    role: UserRole.CLIENT,
+                    status: { not: UserStatus.ARCHIVED }
+                }
+            },
+            include: {
+                user: { select: { fullName: true, email: true, currency: true } }
+            },
+            orderBy: { user: { fullName: 'asc' } }
+        }),
+        db.exchangeRate.findMany()
+    ]);
+
+    const rateMap = accounts.reduce((acc, account) => {
+        const currency = account.user.currency || "USD";
+        const rate = rates.find(r => r.currency === currency)?.rate || 1;
+        // @ts-ignore
+        acc[account.id] = { currency, rate: Number(rate) };
+        return acc;
+    }, {} as Record<string, { currency: string, rate: number }>);
 
     return (
         <div className={styles.container}>
@@ -33,7 +44,7 @@ export default async function AdminGeneratorPage() {
                 </p>
             </div>
 
-            <GeneratorForm accounts={accounts} />
+            <GeneratorForm accounts={accounts} rateMap={rateMap} />
         </div>
     );
 }

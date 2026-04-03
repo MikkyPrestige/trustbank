@@ -1,6 +1,6 @@
 import nodemailer from "nodemailer";
 
-// 1. Configure the Transporter
+// Transporter
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
   port: Number(process.env.SMTP_PORT) || 465,
@@ -11,7 +11,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// 2. Define the Email Sender Function
+// Email Sender Function
 export async function sendSecurityEmail(
   to: string,
   userName: string,
@@ -26,7 +26,6 @@ export async function sendSecurityEmail(
       ? `SECURITY ALERT: Account Locked - ${siteName}`
       : `Security Warning: Suspicious Activity - ${siteName}`;
 
-    // Define color/text based on type
     const color = type === 'LOCKED' ? '#d32f2f' : '#f57c00';
     const title = type === 'LOCKED' ? 'Account Security Alert' : 'Network Access Suspended';
 
@@ -41,7 +40,6 @@ export async function sendSecurityEmail(
         <p>Please ensure you are using the correct password before trying again.</p>
       `;
 
-    // Shared Template Structure
     const body = `
       <div style="background-color: #f3f4f6; padding: 40px 20px; font-family: Arial, sans-serif;">
         <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">

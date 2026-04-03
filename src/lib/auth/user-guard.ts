@@ -9,12 +9,10 @@ type UserGuardResult =
 export async function getAuthenticatedUser(): Promise<UserGuardResult> {
   const session = await auth();
 
-  // 1. Check Session
   if (!session?.user?.id) {
     return { success: false, message: "Unauthorized", user: null };
   }
 
-  // 2. Check Database Record
   const user = await db.user.findUnique({
     where: { id: session.user.id }
   });
@@ -23,7 +21,6 @@ export async function getAuthenticatedUser(): Promise<UserGuardResult> {
     return { success: false, message: "Session invalid. Please log out and log back in.", user: null };
   }
 
-  // 3. Check Status (Global protection)
   if (user.status === UserStatus.FROZEN) {
     return { success: false, message: "Account is Frozen. Contact Support.", user: null };
   }

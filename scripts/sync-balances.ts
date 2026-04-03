@@ -12,7 +12,7 @@ async function main() {
   let updatedCount = 0;
 
   for (const acc of accounts) {
-    // 2. The Banking Equation: Current = Available + Held
+    // 2. Banking Equation: Current = Available + Held
     const available = Number(acc.availableBalance);
     const held = Number(acc.heldBalance);
     const current = Number(acc.currentBalance);

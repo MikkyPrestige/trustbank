@@ -15,7 +15,6 @@ async function main() {
 
   console.log(`Resetting password for: ${email}...`);
 
-  // Hash the new password
   const hashedPassword = await bcrypt.hash(newPassword, 10);
 
   try {

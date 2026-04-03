@@ -11,7 +11,7 @@ export default async function MainLayout({ children }: { children: React.ReactNo
     });
     return (
         <>
-            <SiteHeader />
+            <SiteHeader settings={settings} />
             <main>
                 {children}
             </main>

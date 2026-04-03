@@ -13,13 +13,11 @@ const ticketSchema = z.object({
   priority: z.enum(["LOW", "NORMAL", "HIGH"]).optional(),
 });
 
-// Reply to an existing ticket
 const replySchema = z.object({
     ticketId: z.string().min(1),
     message: z.string().min(1, "Message cannot be empty"),
 });
 
-// 1. CREATE TICKET
 export async function createTicket(prevState: any, formData: FormData) {
  const { success, message, user } = await getAuthenticatedUser();
 
@@ -41,7 +39,6 @@ export async function createTicket(prevState: any, formData: FormData) {
   const { subject, priority, message: ticketMessage } = validated.data;
 
   try {
-    // 1. CREATE TICKET (Atomic DB Write)
     const ticket = await db.ticket.create({
         data: {
           userId: user.id,
@@ -57,7 +54,6 @@ export async function createTicket(prevState: any, formData: FormData) {
         }
     });
 
-    // 2. NOTIFY ADMINS
     try {
         const admins = await db.user.findMany({
             where: { role: { in: [UserRole.ADMIN, UserRole.SUPER_ADMIN] } },
@@ -89,7 +85,6 @@ export async function createTicket(prevState: any, formData: FormData) {
   return { success: true, message: "Ticket created successfully!" };
 }
 
-// 2. REPLY TO TICKET
 export async function replyToTicket(prevState: any, formData: FormData) {
    const { success, message, user } = await getAuthenticatedUser();
 
@@ -109,16 +104,13 @@ export async function replyToTicket(prevState: any, formData: FormData) {
     const { ticketId, message: replyMessage } = validated.data;
 
     try {
-        // 1. Verify ownership
         const ticket = await db.ticket.findUnique({
             where: { id: ticketId, userId: user.id }
         });
 
         if (!ticket) return { message: "Ticket not found" };
 
-        // 2. DB UPDATE (Transaction)
         await db.$transaction(async (tx) => {
-            // Add User Message
             await tx.ticketMessage.create({
                 data: {
                     ticketId,
@@ -127,14 +119,12 @@ export async function replyToTicket(prevState: any, formData: FormData) {
                 }
             });
 
-            // Update Ticket Timestamp & Status
             await tx.ticket.update({
                 where: { id: ticketId },
                 data: { updatedAt: new Date(), status: "OPEN" }
             });
         });
 
-        // 3. NOTIFY ADMINS
         try {
             const admins = await db.user.findMany({
                 where: { role: { in: [UserRole.ADMIN, UserRole.SUPER_ADMIN] } },

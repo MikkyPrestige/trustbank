@@ -52,7 +52,7 @@ export default async function AdminUsersPage({
         })
     };
 
-    const [users, totalCount] = await Promise.all([
+    const [users, totalCount, exchangeRates] = await Promise.all([
         db.user.findMany({
             where: whereClause,
             include: { accounts: true },
@@ -60,8 +60,12 @@ export default async function AdminUsersPage({
             take: itemsPerPage,
             skip: skip,
         }),
-        db.user.count({ where: whereClause })
+        db.user.count({ where: whereClause }),
+        db.exchangeRate.findMany()
     ]);
+
+    const rateMap = new Map<string, number>();
+    exchangeRates.forEach(r => rateMap.set(r.currency, Number(r.rate)));
 
     const totalPages = Math.ceil(totalCount / itemsPerPage);
 
@@ -72,7 +76,7 @@ export default async function AdminUsersPage({
                     <div className={styles.titleRow}>
                         {isArchivedView && (
                             <Link href="/admin/users" className={styles.backBtn} title="Back to Active Users">
-                                <ArrowLeft size={20} />
+                                <ArrowLeft size={28} />
                             </Link>
                         )}
                         <h1 className={styles.title}>
@@ -138,20 +142,22 @@ export default async function AdminUsersPage({
                             </tr>
                         ) : (
                             users.map(user => {
-                                const totalBal = user.accounts.reduce((sum, acc) => sum + Number(acc.availableBalance), 0);
+                                const totalBalUSD = user.accounts.reduce((sum, acc) => sum + Number(acc.availableBalance), 0);
+                                const currency = user.currency || "USD";
+                                const rate = currency === "USD" ? 1 : (rateMap.get(currency) || 1);
+                                const convertedBal = totalBalUSD * rate;
 
                                 return (
                                     <tr key={user.id} className={isArchivedView ? styles.archivedRow : ''}>
                                         <td>
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                            <div className={styles.userDetails}>
                                                 <UserAvatar src={user.image} name={user.fullName} />
                                                 <div>
-                                                    <div className={styles.uName}>{user.fullName}</div>
-                                                    <div className={styles.uEmail}>{user.email}</div>
+                                                    <div className={styles.userName}>{user.fullName}</div>
+                                                    <div className={styles.userEmail}>{user.email}</div>
                                                 </div>
                                             </div>
                                         </td>
-
                                         <td>
                                             <span className={`${styles.badge} ${styles[user.role]}`}>
                                                 {user.role}
@@ -172,9 +178,17 @@ export default async function AdminUsersPage({
                                         </td>
 
                                         <td className={styles.money}>
-                                            {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(totalBal)}
+                                            <div className={styles.balance}>
+                                                <span>
+                                                    {new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(convertedBal)}
+                                                </span>
+                                                {currency !== 'USD' && (
+                                                    <span className={styles.usdApprox}>
+                                                        ≈ {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(totalBalUSD)}
+                                                    </span>
+                                                )}
+                                            </div>
                                         </td>
-
                                         <td className={styles.dateText}>{new Date(user.createdAt).toLocaleDateString()}</td>
                                         <td>
                                             <div className={styles.actionGroup}>
@@ -183,21 +197,18 @@ export default async function AdminUsersPage({
                                                 ) : (
                                                     <>
                                                         <QuickActions userId={user.id} currentStatus={user.status} />
-
                                                         <Link href={`/admin/users/${user.id}`} className={styles.viewBtn}>
                                                             Manage
                                                         </Link>
-
                                                         <Link
                                                             href={`/admin/users/${user.id}/transactions`}
                                                             className={styles.iconBtn}
                                                             title="View History"
                                                         >
-                                                            <History size={16} />
+                                                            <History size={20} />
                                                         </Link>
                                                     </>
                                                 )}
-
                                             </div>
                                         </td>
                                     </tr>

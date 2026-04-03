@@ -67,7 +67,7 @@ export default function CryptoActionModal({ asset }: { asset: Asset }) {
         <div className={styles.modalOverlay}>
             <div className={styles.modalContent}>
                 <div className={styles.modalHeader}>
-                    <h3 style={{ margin: 0 }}>
+                    <h3 className={styles.modalTitle}>
                         {mode === 'SEND' ? `Send ${asset.symbol}` : `Receive ${asset.symbol}`}
                     </h3>
                     <button onClick={() => setMode(null)} className={styles.closeBtn}>
@@ -83,15 +83,14 @@ export default function CryptoActionModal({ asset }: { asset: Asset }) {
                                 src={qrUrl}
                                 alt="Wallet QR Code"
                                 className={styles.qrImage}
-                                style={{ borderRadius: '12px', border: '4px solid white', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}
                             />
                         </div>
-                        <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '1.5rem', marginTop: '1rem', textAlign: 'center', lineHeight: 1.5 }}>
+                        <p className={styles.qrText}>
                             Scan to deposit <strong>{asset.symbol}</strong> directly to your wallet.
                             <br />Network: <strong>TrustBank Chain (TBC)</strong>
                         </p>
                         <div className={styles.addressBox}>
-                            <span style={{ fontSize: '0.8rem', wordBreak: 'break-all' }}>{walletAddress}</span>
+                            <span className={styles.addressText}>{walletAddress}</span>
                             <button onClick={handleCopy} className={styles.copyBtn}>
                                 {copied ? <Check size={16} color="var(--success)" /> : <Copy size={16} />}
                             </button>
@@ -107,11 +106,11 @@ export default function CryptoActionModal({ asset }: { asset: Asset }) {
                             <input name="recipient" required placeholder={`Enter ${asset.symbol} Address`} className={styles.input} />
                         </div>
                         <div className={styles.group}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                            <div className={styles.maxBtnContainer}>
                                 <label>Amount ({asset.symbol})</label>
                                 <span
                                     onClick={handleMaxSend}
-                                    style={{ fontSize: '0.75rem', color: 'var(--primary)', cursor: 'pointer', fontWeight: 600 }}
+                                    className={styles.maxBtn}
                                 >
                                     Max
                                 </span>

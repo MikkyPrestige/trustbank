@@ -9,6 +9,8 @@ interface Props {
     beneficiaries: any[];
     preSelectedId?: string;
     limit: number;
+    currency: string;
+    rate: number;
 }
 
 export default function TransferForm(props: Props) {

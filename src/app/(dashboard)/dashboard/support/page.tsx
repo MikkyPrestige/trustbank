@@ -20,7 +20,7 @@ export default async function SupportPage() {
             <header className={styles.header}>
                 <div className={styles.headerLeft}>
                     <div className={styles.headerIcon}>
-                        <LifeBuoy size={24} />
+                        <LifeBuoy size={30} />
                     </div>
                     <div>
                         <h1 className={styles.title}>Help Center</h1>

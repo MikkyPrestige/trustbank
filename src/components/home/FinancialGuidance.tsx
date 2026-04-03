@@ -1,18 +1,15 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, ShieldAlert, ChevronRight, Home } from "lucide-react";
+import { ArrowRight, ShieldAlert, ChevronRight } from "lucide-react";
 import styles from "./home.module.css";
 import { getSiteSettings } from "@/lib/content/get-settings";
 
 export default async function FinancialGuidance() {
-    // 1. Fetch Dynamic Data
     const settings = await getSiteSettings();
 
     return (
         <section className={styles.guideSection}>
             <div className={styles.container}>
-
-                {/* SECTION HEADER */}
                 <div className={styles.guideHeader}>
                     <div>
                         <h2 className={styles.sectionTitleDark}>{settings.home_guide_title}</h2>
@@ -20,85 +17,79 @@ export default async function FinancialGuidance() {
                             {settings.home_guide_desc}
                         </p>
                     </div>
-                    <Link href="/learn" className={styles.linkUnderline}>
-                        View all articles <ArrowRight size={16} />
+                    <Link href={settings.home_guide_link_text} className={styles.linkUnderline}>
+                        {settings.home_guide_link_text} <ArrowRight size={16} />
                     </Link>
                 </div>
 
-                {/* BENTO GRID LAYOUT */}
                 <div className={styles.guideGrid}>
-
-                    {/* CARD 1: HERO (Retirement/Planning) */}
                     <div className={styles.guideCardLarge}>
                         <Image
-                            // DYNAMIC
-                            src={settings.guide_article_1_img || "/guide-retirement.png"}
-                            alt={settings.guide_article_1_alt || ""}
+                            src={settings.guide_article_1_img}
+                            alt={settings.guide_article_1_alt}
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                             fill
                             className={styles.cardBgImage}
                         />
                         <div className={styles.cardOverlay}>
-                            <span className={styles.tagBlue}>PLANNING</span>
+                            <span className={styles.tagBlue}>{settings.guide_article_1_head}</span>
                             <h3>{settings.guide_article_1_title}</h3>
-                            <p>Protect what you&apos;ve built as you look ahead. Strategies for a stronger retirement.</p>
-                            <Link href="/retirement" className={styles.btnGlass}>
-                                Unlock Options <ChevronRight size={16} />
+                            <p>{settings.guide_article_1_subtitle}</p>
+                            <Link href={settings.guide_article_1_link} className={styles.btnGlass}>
+                                {settings.guide_article_1_link_text} <ChevronRight size={16} />
                             </Link>
                         </div>
                     </div>
 
-                    {/* CARD 2: SECURITY (Icon only - No image needed) */}
                     <div className={styles.guideCardGold}>
                         <div className={styles.securityContent}>
                             <div className={styles.iconCircleWhite}>
                                 <ShieldAlert size={32} className={styles.iconGold} />
                             </div>
+                            <span className={styles.tagRed}>{settings.guide_article_2_head}</span>
                             <h3>{settings.guide_article_2_title}</h3>
-                            <p>Spot the latest tactics scammers are using and how to shield yourself.</p>
-                            <Link href="/security" className={styles.linkDark}>
-                                Get the latest <ArrowRight size={16} />
+                            <p>{settings.guide_article_2_subtitle}</p>
+                            <Link href={settings.guide_article_2_link} className={styles.btnGlassSmall}>
+                                {settings.guide_article_2_link_text} <ArrowRight size={16} />
                             </Link>
                         </div>
                     </div>
 
-                    {/* CARD 3: HOME OWNERSHIP */}
                     <div className={styles.guideCardSmall}>
                         <Image
-                            // DYNAMIC
-                            src={settings.guide_article_3_img || "/guide-home.png"}
-                            alt={settings.guide_article_3_alt || ""}
+                            src={settings.guide_article_3_img}
+                            alt={settings.guide_article_3_alt}
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                             fill
                             className={styles.cardBgImage}
                         />
                         <div className={styles.cardOverlaySmall}>
-                            <div className={styles.iconWrapperSmall}>
-                                <Home size={20} color="white" />
-                            </div>
+                            <span className={styles.tagGreen}>{settings.guide_article_3_head}</span>
                             <h3>{settings.guide_article_3_title}</h3>
-                            <Link href="/mortgage" className={styles.linkWhite}>
-                                Calculate Rate <ChevronRight size={14} />
+                            <p>{settings.guide_article_3_subtitle}</p>
+                            <Link href={settings.guide_article_3_link} className={styles.btnGlassSmall}>
+                                {settings.guide_article_3_link_text} <ChevronRight size={14} />
                             </Link>
                         </div>
                     </div>
 
-                    {/* CARD 4: BUSINESS */}
                     <div className={styles.guideCardWide}>
                         <Image
-                            // DYNAMIC
-                            src={settings.guide_article_4_img || "/guide-business.png"}
-                            alt={settings.guide_article_4_alt || ""}
+                            src={settings.guide_article_4_img}
+                            alt={settings.guide_article_4_alt}
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                             fill
                             className={styles.cardBgImage}
                         />
                         <div className={styles.cardOverlaySide}>
-                            <span className={styles.tagWhite}>BUSINESS</span>
+                            <span className={styles.tagWhite}>{settings.guide_article_4_head}</span>
                             <h3>{settings.guide_article_4_title}</h3>
-                            <Link href="/business" className={styles.btnGlassSmall}>
-                                Read Article
+                            <p>{settings.guide_article_4_subtitle}</p>
+                            <Link href={settings.guide_article_4_link} className={styles.btnGlassSmall}>
+                                {settings.guide_article_4_link_text} <ArrowRight size={16} />
                             </Link>
                         </div>
                     </div>
-
                 </div>
             </div>
         </section>

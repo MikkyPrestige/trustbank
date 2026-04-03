@@ -6,7 +6,6 @@ import styles from './users.module.css';
 import { User } from 'lucide-react';
 
 export default function UserAvatar({ src, name }: { src?: string | null, name: string }) {
-    // 1. If image exists, show it
     if (src) {
         return (
             <img
@@ -21,7 +20,7 @@ export default function UserAvatar({ src, name }: { src?: string | null, name: s
         );
     }
 
-    // 2. Fallback: Generate Initials
+    // Fallback: Use initials from name
     const initials = name
         .split(' ')
         .map(n => n[0])

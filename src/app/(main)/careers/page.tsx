@@ -12,13 +12,11 @@ export default async function CareersPage() {
 
     return (
         <div className={styles.pageWrapper}>
-
-            {/* 1. HERO */}
             <section className={styles.hero}>
                 <div className={styles.heroImageWrapper}>
                     <Image
-                        src={settings.careers_hero_img || "/careers-hero.png"}
-                        alt={settings.careers_hero_img_alt || "Our Team"}
+                        src={settings.careers_hero_img}
+                        alt={settings.careers_hero_img_alt}
                         fill
                         className={styles.heroImage}
                         priority
@@ -30,36 +28,32 @@ export default async function CareersPage() {
                     <h1>{settings.careers_hero_title}</h1>
                     <p>{settings.careers_hero_desc}</p>
 
-                    <a href={settings.careers_hero_btn_link || "#jobs"} className={styles.primaryBtn}>
+                    <a href={settings.careers_hero_btn_link} className={styles.primaryBtn}>
                         {settings.careers_hero_btn_text}
                     </a>
                 </div>
             </section>
 
-            {/* 2. VALUES */}
             <section className={styles.valuesSection}>
                 <div className={styles.container}>
                     <div className={styles.sectionHeader}>
-                        <h2>Why {settings.site_name}?</h2>
+                        <h2>{settings.careers_values_title} {settings.site_name}{settings.careers_values_mark}</h2>
                         <p>{settings.careers_values_subtitle}</p>
                     </div>
 
                     <div className={styles.valuesGrid}>
-                        {/* Value 1 */}
                         <div className={styles.valueCard}>
                             <div className={styles.iconBox}><Zap size={24} /></div>
                             <h3>{settings.careers_val1_title}</h3>
                             <p>{settings.careers_val1_desc}</p>
                         </div>
 
-                        {/* Value 2 */}
                         <div className={styles.valueCard}>
                             <div className={styles.iconBox}><Users size={24} /></div>
                             <h3>{settings.careers_val2_title}</h3>
                             <p>{settings.careers_val2_desc}</p>
                         </div>
 
-                        {/* Value 3 */}
                         <div className={styles.valueCard}>
                             <div className={styles.iconBox}><Heart size={24} /></div>
                             <h3>{settings.careers_val3_title}</h3>
@@ -69,7 +63,6 @@ export default async function CareersPage() {
                 </div>
             </section>
 
-            {/* 3. JOB BOARD */}
             <section id="jobs" className={styles.jobsSection}>
                 <div className={styles.container}>
                     <h2 className={styles.jobsTitle}>{settings.careers_jobs_title}</h2>
@@ -93,7 +86,7 @@ export default async function CareersPage() {
                                         </div>
                                     </div>
                                     <button className={styles.applyBtn}>
-                                        Apply Now <ArrowRight size={16} />
+                                        {settings.careers_jobs_btn_text} <ArrowRight size={16} />
                                     </button>
                                 </div>
                             ))

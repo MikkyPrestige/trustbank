@@ -12,7 +12,6 @@ export default async function TransactionsPage() {
     });
     if (!user) return redirect("/login");
 
-    // 1. Fetch ALL Account IDs belonging to this user
     const userAccounts = await db.account.findMany({
         where: { userId: user.id },
         select: { id: true }
@@ -20,7 +19,6 @@ export default async function TransactionsPage() {
 
     const accountIds = userAccounts.map(acc => acc.id);
 
-    // 2. Fetch Transactions for ANY of those accounts
     const rawTransactions = await db.ledgerEntry.findMany({
         where: {
             accountId: { in: accountIds }
@@ -33,7 +31,13 @@ export default async function TransactionsPage() {
         }
     });
 
-    // 3. Sanitize Data for Client
+    const currency = user.currency || "USD";
+    let exchangeRate = 1;
+    if (currency !== "USD") {
+        const rateData = await db.exchangeRate.findUnique({ where: { currency } });
+        if (rateData) exchangeRate = Number(rateData.rate);
+    }
+
     const transactions = rawTransactions.map(t => ({
         id: t.id,
         amount: Number(t.amount),
@@ -45,5 +49,11 @@ export default async function TransactionsPage() {
         accountName: (t.account?.type || 'External').toUpperCase() + " ••" + (t.account?.accountNumber?.slice(-4) || 'xxxx')
     }));
 
-    return <TransactionClient transactions={transactions} />;
+    return (
+        <TransactionClient
+            transactions={transactions}
+            currency={currency}
+            rate={exchangeRate}
+        />
+    );
 }

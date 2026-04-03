@@ -10,11 +10,9 @@ export default function UserSearch() {
     const pathname = usePathname();
     const { replace } = useRouter();
 
-    // 1. Create the search handler
     const handleSearch = (term: string) => {
         const params = new URLSearchParams(searchParams);
 
-        // Reset to page 1 on new search
         params.set('page', '1');
 
         if (term) {
@@ -25,7 +23,6 @@ export default function UserSearch() {
         replace(`${pathname}?${params.toString()}`);
     };
 
-    // 2. Debounce Logic (Memoized so it doesn't reset on re-renders)
     const debouncedSearch = useMemo(() => {
         let timeout: NodeJS.Timeout;
 
