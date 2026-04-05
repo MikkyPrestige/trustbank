@@ -51,7 +51,7 @@ export default function ForgotPasswordCard() {
 
                             <div className={styles.fieldGroup}>
                                 <div className={styles.inputContainer}>
-                                    <label className={styles.inputLabel}>Email Address</label>
+                                    {/* <label className={styles.inputLabel}>Email Address</label> */}
                                     <div className={styles.inputIcon}>
                                         <Mail size={18} />
                                     </div>
