@@ -221,12 +221,12 @@
 }
 
 .active {
-  background: rgba(var(--success-rgb), 0.1)
+  background: rgba(var(--success-rgb), 0.1);
   color: var(--success);
 }
 
 .inactive {
-  background: rgba(var(--danger-rgb), 0.1)
+  background: rgba(var(--danger-rgb), 0.1);
   color: var(--danger);
 }
 
