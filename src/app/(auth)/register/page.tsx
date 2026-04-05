@@ -10,5 +10,4 @@ export default async function RegisterPage() {
             <RegisterForm siteName={settings.site_name} />
         </Suspense>
     );
-    // return <RegisterForm siteName={settings.site_name} />
 }
