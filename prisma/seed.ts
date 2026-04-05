@@ -184,7 +184,7 @@ async function main() {
   const baseSettingsData = {
     site_name: "TrustBank",
     site_logo: "/logo.png",
-    announcement_active: "true",
+    announcement_active: true,
     announcement_text: "TrustBank was recently named 'Best Digital Bank 2026' by Global Finance Magazine.",
     announcement_contact_phone: "1-800-TRUST-VIP",
     nav_structure_json: JSON.stringify(SEED_MENUS),
