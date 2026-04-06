@@ -95,6 +95,7 @@
   padding: 1rem;
   border-bottom: 1px solid var(--border-subtle);
   vertical-align: middle;
+  text-wrap: nowrap;
 }
 
 .alignRight {
@@ -184,7 +185,7 @@
 }
 
 .btnIcon {
-  background: transparent;
+  background: var(--bg-surface);
   border: 1px solid var(--border-subtle);
   color: var(--text-muted);
   width: 2.5rem;
@@ -197,14 +198,27 @@
   transition: all 0.2s;
 }
 .btnIcon:hover {
-  background: rgba(var(--success-rgb), 0.1);
-  color: var(--success);
-  border: 1px solid rgba(var(--success-rgb), 0.3);
+ background: var(--sub-bg);
 }
-.btnDelete:hover {
+
+.iconBtnEdit {
+  background: rgba(59, 130, 246, 0.15);
+  color: var(--primary);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+.iconBtnEdit:hover {
+  background: var(--primary);
+  color: var(--text-invert);
+}
+
+.iconBtnDelete {
   background: rgba(var(--danger-rgb), 0.1);
   color: var(--danger);
   border: 1px solid rgba(var(--danger-rgb), 0.3);
+}
+.iconBtnDelete:hover {
+  background: var(--danger);
+  color: var(--text-invert);
 }
 
 .empty {

@@ -37,14 +37,14 @@ export default async function WireDetailsPage({ params }: PageProps) {
     return (
         <div className={styles.container}>
             <header className={styles.header}>
-                <div className={styles.headerContent}>
-                    <h1 className={styles.title}>Transaction Details</h1>
-                    <p className={styles.subtitle}>ID: {wire.id}</p>
-                </div>
                 <div className={styles.headerActions}>
                     <Link href="/admin/wires" className={styles.backBtn}>
                         <ArrowLeft size={16} /> Back to List
                     </Link>
+                </div>
+                <div className={styles.headerContent}>
+                    <h1 className={styles.title}>Transaction Details</h1>
+                    <p className={styles.subtitle}>ID: {wire.id}</p>
                 </div>
             </header>
 

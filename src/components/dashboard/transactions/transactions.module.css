@@ -5,6 +5,12 @@
   margin: 0 auto;
 }
 
+@media (max-width: 767px) {
+  .container {
+    padding: 1rem;
+  }
+}
+
 .header {
   margin-bottom: 2rem;
 }
@@ -63,7 +69,6 @@
   background: var(--border-subtle);
 }
 
-/* --- Search/Filter --- */
 .controlsBar {
   display: flex;
   justify-content: space-between;
@@ -127,7 +132,7 @@
   background: var(--sub-bg);
   border: 1px solid var(--border-subtle);
   color: var(--text-main);
-  /* border-radius: .7rem; */
+  border-radius: .5rem;
   font-size: 0.9rem;
   cursor: pointer;
 }
@@ -189,6 +194,7 @@
   color: var(--text-main);
   font-size: 0.9rem;
   vertical-align: middle;
+  text-wrap: nowrap;
 }
 .table td a,
 .table td button {
