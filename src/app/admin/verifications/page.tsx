@@ -20,9 +20,9 @@ export default async function VerificationsPage() {
                     <h1 className={styles.title}>KYC Applications</h1>
                     <p className={styles.subtitle}>Review identity documents and approve pending requests ({pendingUsers.length})</p>
                 </div>
-                    {/* <Link href="/admin" className={styles.backBtn}>
-                        <ArrowLeft size={18} /> Dashboard
-                    </Link> */}
+                {/* <Link href="/admin" className={styles.backBtn}>
+                    <ArrowLeft size={18} /> Dashboard
+                </Link> */}
             </header>
 
             <div className={styles.tableCard}>

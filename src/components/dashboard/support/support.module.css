@@ -31,8 +31,14 @@
   justify-content: center;
 }
 
+@media (max-width: 767px) {
+  .headerIcon{
+  display: none;
+  }
+}
+
 .title {
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   font-weight: 700;
   color: var(--text-main);
   margin: 0;
@@ -40,7 +46,7 @@
 
 .subtitle {
   color: var(--text-muted);
-  font-size: 0.9rem;
+  font-size: 1rem;
   margin: 0;
 }
 

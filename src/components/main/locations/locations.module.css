@@ -317,7 +317,7 @@
   }
   .listCol {
     height: auto;
-    overflow: visible;
+    overflow: auto;
   }
 }
 

@@ -3,12 +3,24 @@
   margin: 0 auto 1rem auto;
   width: 100%;
   animation: fadeIn 0.3s ease-out;
+  /* padding: 1rem; */
 }
 
 .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
   margin-bottom: 2rem;
   border-bottom: 1px solid var(--border);
   padding-bottom: 1rem;
+}
+
+@media (max-width: 767px) {
+  .header {
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
 }
 
 .title {
@@ -34,9 +46,19 @@
   font-size: 0.9rem;
 }
 
+@media (max-width: 996px) {
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .subtitle {
+    font-size: 0.85rem;
+  }
+}
+
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
   gap: 1.5rem;
   margin-bottom: 2rem;
 }
@@ -46,6 +68,7 @@
   border: 1px solid var(--border);
   border-radius: 1rem;
   overflow: hidden;
+  width: 100%;
 }
 
 .cardHeader {
@@ -89,7 +112,9 @@
 
 .inputWrapper {
   display: flex;
-  align-items: center;
+  align-items: stretch;
+  width: 100%;
+  max-width: 100%;
   border: 1px solid var(--border);
   border-radius: 0.5rem;
   background: var(--sub-bg);
@@ -103,6 +128,7 @@
 }
 
 .input {
+  box-sizing: border-box;
   padding: 0.6rem;
   border: 1px solid var(--border);
   border-radius: 0.5rem;
@@ -113,9 +139,7 @@
 }
 
 .inputWrapper .input {
-  border: none;
-  border-radius: 0;
-  box-shadow: none;
+  min-width: 0;
   flex: 1;
 }
 
@@ -126,7 +150,6 @@
   font-weight: 600;
   font-size: 1rem;
   border-right: 1px solid var(--border);
-  height: 100%;
   display: flex;
   align-items: center;
 }

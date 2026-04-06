@@ -16,7 +16,7 @@ export async function sendSecurityEmail(
   to: string,
   userName: string,
   type: 'LOCKED' | 'BLOCKED',
-  siteName: string = "Trust Capital"
+  siteName: string = "Trust Bank"
 ) {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
   const logoUrl = `${baseUrl}/logo.png`;

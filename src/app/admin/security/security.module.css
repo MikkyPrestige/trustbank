@@ -6,6 +6,12 @@
   animation: fadeIn 0.4s ease-out;
 }
 
+@media (max-width: 767px) {
+  .container {
+    padding: 1rem;
+  }
+}
+
 .header {
   display: flex;
   justify-content: space-between;
@@ -13,6 +19,14 @@
   margin-bottom: 2rem;
   border-bottom: 1px solid var(--border);
   padding-bottom: 1rem;
+}
+
+@media (max-width: 767px) {
+  .header {
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
 }
 
 .title {
@@ -31,8 +45,22 @@
 
 .subtitle {
   color: var(--text-muted);
-  margin: 6px 0 0 0;
+  margin: 0.3rem 0 0 0;
   font-size: 1rem;
+}
+
+@media (max-width: 996px) {
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .iconMain {
+    display: none;
+  }
+
+  .subtitle {
+    font-size: 0.85rem;
+  }
 }
 
 .logsBtn {

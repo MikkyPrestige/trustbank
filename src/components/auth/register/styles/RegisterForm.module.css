@@ -31,8 +31,8 @@
 }
 
 .formContainer {
-  width: 100%;
-  max-width: 1000px;
+  /* width: 100%; */
+  max-width: 1800px;
   position: relative;
   padding: 1rem;
   z-index: 10;

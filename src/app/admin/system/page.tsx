@@ -21,7 +21,7 @@ export default async function SystemRulesPage() {
 
     return (
         <div className={styles.container}>
-            <div className={styles.header}>
+            <header className={styles.header}>
                 <h1 className={styles.title}>
                     <Server size={28} className={styles.icon} />
                     System Configuration
@@ -33,7 +33,7 @@ export default async function SystemRulesPage() {
                         Changes here affect the live banking core immediately.
                     </span>
                 </p>
-            </div>
+            </header>
 
             <SystemRulesForm initialValues={values} />
         </div>

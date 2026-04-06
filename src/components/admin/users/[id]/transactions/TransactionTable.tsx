@@ -91,12 +91,12 @@ export default function TransactionTable({ transactions, currency, rate }: Trans
                                     </td>
                                     <td>
                                         <div className={styles.actions}>
-                                            <button onClick={() => setEditingTrx(t)} className={styles.btnIcon} title="Edit">
+                                            <button onClick={() => setEditingTrx(t)} className={`${styles.btnIcon} ${styles.iconBtnEdit}`} title="Edit">
                                                 <Pencil size={16} />
                                             </button>
                                             <button
                                                 onClick={() => handleDelete(t.id)}
-                                                className={`${styles.btnIcon} ${styles.btnDelete}`}
+                                                className={`${styles.btnIcon} ${styles.iconBtnDelete}`}
                                                 title="Delete"
                                                 disabled={deletingId === t.id}
                                             >

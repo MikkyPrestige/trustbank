@@ -166,6 +166,16 @@
   box-shadow: var(--shadow-card);
 }
 
+@media (max-width: 767px) {
+  .marketSection{
+  padding: 1rem 0;
+  }
+
+  .tableCard {
+    padding: 3rem 1rem 2rem 1rem;
+  }
+}
+
 .tableHeader {
   display: flex;
   justify-content: space-between;

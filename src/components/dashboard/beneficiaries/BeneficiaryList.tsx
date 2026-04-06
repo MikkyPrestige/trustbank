@@ -51,7 +51,6 @@ export default function BeneficiaryList({ beneficiaries }: { beneficiaries: Bene
     return (
         <div>
             <div className={styles.columnHeader}>
-                <h3 className={styles.columnTitle}>Your Contacts ({filtered.length})</h3>
                 <div className={styles.searchWrapper}>
                     <Search size={16} className={styles.searchIcon} />
                     <input
@@ -61,6 +60,7 @@ export default function BeneficiaryList({ beneficiaries }: { beneficiaries: Bene
                         className={styles.searchInput}
                     />
                 </div>
+                <h3 className={styles.columnTitle}>Your Contacts ({filtered.length})</h3>
             </div>
 
             {filtered.length === 0 ? (
