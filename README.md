@@ -1,4 +1,4 @@
-# TrustBank: High-Integrity Financial Engineering
+# TrustBank: | Full-Stack Banking Simulation
 
 TrustBank is a resilient, full-stack banking ecosystem designed for **100% financial truth**, defensive security, and absolute administrative accountability. Unlike standard banking simulations, TrustBank operates as a **Financial Ledger System**, where every movement of value is recorded as an immutable entry.
 
