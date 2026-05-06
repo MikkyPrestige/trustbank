@@ -66,7 +66,7 @@ function VerifyFormContent() {
         try {
             const res = await resendOtp(email);
             if (res.success) {
-                setSuccess("New code sent to your inbox.");
+                setSuccess("If an account with this email is not yet verified, a new code has been sent.");
             } else {
                 setError(res.error || "Failed to send code.");
             }

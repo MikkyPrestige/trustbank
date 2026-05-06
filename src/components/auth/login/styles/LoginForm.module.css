@@ -164,7 +164,7 @@
 
 .forgotLink:hover {
   text-decoration: underline;
-  color: var(--primary-hover)
+  color: var(--primary-hover);
 }
 
 .footer {
@@ -192,7 +192,7 @@
 }
 
 .primaryBtn:hover:not(:disabled) {
-   color: var(--primary-hover);
+  color: var(--primary-hover);
   transform: translateY(-1px);
 }
 
@@ -223,6 +223,12 @@
 .loginLinkText {
   color: var(--text-muted);
   font-style: italic;
+}
+
+.resendLink {
+  font-size: 0.875rem;
+  color: var( --text-muted);
+  text-decoration: underline;
 }
 
 .spin {

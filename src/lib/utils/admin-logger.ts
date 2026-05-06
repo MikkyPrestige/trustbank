@@ -31,7 +31,7 @@ export type AdminLogAction =
   | 'TICKET_REPLY' | 'CLOSE_TICKET'
 
     // ---  SECURITY EVENTS  ---
-  | 'LOGIN_FAILED' | 'BRUTE_FORCE_DETECTED' | 'SQL_INJECTION_ATTEMPT' | 'IP_BLOCKED' | 'UNAUTHORIZED_ACCESS'
+  | 'LOGIN_FAILED' | 'BRUTE_FORCE_DETECTED' | 'SQL_INJECTION_ATTEMPT' | 'IP_BLOCKED' | 'UNAUTHORIZED_ACCESS' |'RESEND_OTP_ATTEMPT'
 
   // --- Branches ---
   | 'CREATE_BRANCH' | 'UPDATE_BRANCH' | 'DELETE_BRANCH' | 'TOGGLE_BRANCH_STATUS'
@@ -58,7 +58,7 @@ export type AdminLogAction =
   | 'SYSTEM_SETTINGS_UPDATE';
 
 type LogLevel = 'INFO' | 'WARNING' | 'CRITICAL';
-type LogStatus = 'SUCCESS' | 'FAILED' | 'BLOCKED';
+type LogStatus = 'SUCCESS' | 'FAILED' | 'BLOCKED' | 'ATTEMPT';
 
 export async function logAdminAction(
   action: AdminLogAction,

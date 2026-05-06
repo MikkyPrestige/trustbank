@@ -1,7 +1,7 @@
 'use client';
 
-import { useActionState, useEffect, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useActionState, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { login } from '@/actions/user/login';
 import Link from 'next/link';
 import { Lock, Mail, ArrowRight, Eye, EyeOff, Loader2 } from 'lucide-react';
@@ -15,16 +15,9 @@ interface LoginFormProps {
 export default function LoginForm({ siteName, allowRegister }: LoginFormProps) {
     const [state, action, isPending] = useActionState(login, undefined);
     const [showPassword, setShowPassword] = useState(false);
-    const router = useRouter();
     const searchParams = useSearchParams();
 
     const callbackUrl = searchParams.get("callbackUrl");
-
-    useEffect(() => {
-        if (state?.redirect) {
-            router.push(state.redirect);
-        }
-    }, [state, router]);
 
     return (
         <div className={styles.pageWrapper}>
@@ -89,6 +82,10 @@ export default function LoginForm({ siteName, allowRegister }: LoginFormProps) {
                                 <>Sign In to Dashboard <ArrowRight size={18} /></>
                             )}
                         </button>
+
+                        <Link href="/resend-verification" className={styles.resendLink}>
+                            Didn’t receive a verification email?
+                        </Link>
 
                         {allowRegister ? (
                             <div className={styles.loginLink}>

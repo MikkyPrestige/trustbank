@@ -305,7 +305,7 @@ export async function registerUser(prevState: RegisterState, formData: FormData)
   });
   if (existingUser) {
       if (existingUser.emailVerified) {
-          return { message: "Email already registered. Please Login." };
+          return { success: true, message: "If an account with this email is not yet verified, a new code has been sent." };
       } else {
           return {
               success: false,

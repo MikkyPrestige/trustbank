@@ -68,8 +68,7 @@ export async function login(prevState: any, formData: FormData) {
 
      if (user && !user.emailVerified) {
          return {
-             message: "Account not verified.",
-             redirect: `/verify-email?email=${encodeURIComponent(email)}`
+             message: "Invalid email or password. If you haven't verified your account, check your inbox or request a new verification link.",
          };
       }
 

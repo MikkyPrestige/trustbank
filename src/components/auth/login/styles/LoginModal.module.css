@@ -271,6 +271,12 @@
   animation: sweep 2s infinite;
 }
 
+.resendLink {
+  font-size: 0.875rem;
+  color: var( --text-muted);
+  text-decoration: underline;
+}
+
 .spinner {
   animation:
     spin 1s linear infinite,

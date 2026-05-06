@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { signOut } from 'next-auth/react';
-import { Lock, Menu, ChevronDown, MapPin, Globe, TrendingUp, Phone, LayoutDashboard, User, LogOut } from "lucide-react";
+import { Lock, Menu, ChevronDown, Globe, Phone, LayoutDashboard, User, LogOut } from "lucide-react";
 import DesktopMenu from "./DesktopMenu";
 import MobileDrawer from "./MobileDrawer";
 import LoginModal from "@/components/auth/login/LoginModal";
@@ -15,7 +15,6 @@ import styles from "./Navbar.module.css";
 interface NavbarProps {
     settings: any;
     menus: any;
-    // topNav?: Array<{ label: string; href: string; icon?: string }>;
     user?: {
         name?: string | null;
         email?: string | null;
@@ -93,14 +92,6 @@ export default function Navbar({ settings, menus, user }: NavbarProps) {
                         </Link>
 
                         <div className={styles.topActions}>
-                            {/* {topNav?.map((item, idx) => (
-                                <Link key={idx} href={item.href} className={styles.topLink}>
-                                    {item.label === "Rates" && <TrendingUp size={16} className={styles.linkIcon} />}
-                                    {item.label === "Locations" && <MapPin size={16} className={styles.linkIcon} />}
-                                    {item.label}
-                                </Link>
-                            ))} */}
-
                             {settings.contact_phone && (
                                 <a href={`tel:${settings.contact_phone}`} className={styles.phoneLink}>
                                     <div className={styles.linkContent}>
@@ -109,14 +100,6 @@ export default function Navbar({ settings, menus, user }: NavbarProps) {
                                     </div>
                                 </a>
                             )}
-                            {/* {settings.contact_phone && (
-                                <a href={`tel:${settings.contact_phone}`} className={styles.mobileLink}>
-                                    <div className={styles.linkContent}>
-                                        <Phone size={20} />
-                                        <span>{settings.contact_phone}</span>
-                                    </div>
-                                </a>
-                            )} */}
 
                             <div className={styles.langSelector}>
                                 <Globe size={26} />

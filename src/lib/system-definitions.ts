@@ -29,6 +29,20 @@ security_lockout_duration: {
     group: "security",
     defaultValue: "5"
   },
+    otp_resend_max_attempts: {
+    label: "OTP Resend Max Attempts (per IP)",
+    type: "NUMBER",
+    group: "security",
+    defaultValue: "3",
+    description: "Number of resend OTP requests allowed before the IP is temporarily blocked."
+  },
+  otp_resend_window_minutes: {
+    label: "OTP Resend Window (Minutes)",
+    type: "NUMBER",
+    group: "security",
+    defaultValue: "10",
+    description: "Time window in minutes for counting OTP resend attempts."
+  },
 
   // --- FINANCIAL LIMITS ---
   limit_unverified_tx_max: {

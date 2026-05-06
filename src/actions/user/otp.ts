@@ -1,8 +1,10 @@
 'use server';
 
 import { db } from "@/lib/db";
-import { checkMaintenanceMode } from "@/lib/security";
+import { headers } from "next/headers";
 import { sendVerificationEmail } from "@/lib/mail";
+import { checkMaintenanceMode, checkOtpResendLimit } from "@/lib/security";
+import { logAdminAction } from "@/lib/utils/admin-logger";
 import { getSiteSettings } from "@/lib/content/get-settings";
 
 
@@ -47,15 +49,28 @@ export async function resendOtp(email: string) {
 
     if (!email) return { error: "Email is required" };
 
+// ---- IP‑based rate limiting ----
+const headersList = await headers();
+const ip = headersList.get("x-forwarded-for") || "Unknown IP";
+const rateLimit = await checkOtpResendLimit(ip);
+
+if (rateLimit.isBlocked) {
+    return {
+        error: "Too many requests. Please try again later."
+    };
+}
+
+await logAdminAction("RESEND_OTP_ATTEMPT", email, { ip }, "INFO", "ATTEMPT");
+
     try {
         const user = await db.user.findUnique({ where: { email } });
 
         if (!user) {
-            return { success: true, message: "If account exists, code sent." };
+            return { success: true, message: "If an account with this email is not yet verified, a new code has been sent." };
         }
 
         if (user.emailVerified) {
-            return { error: "This email is already verified. Please log in." };
+           return { success: true, message: "If an account with this email is not yet verified, a new code has been sent." };
         }
 
         const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
@@ -71,7 +86,7 @@ export async function resendOtp(email: string) {
 
         await sendVerificationEmail(email, otpCode, siteName);
 
-        return { success: true, message: "New verification code sent." };
+        return { success: true, message: "If an account with this email is not yet verified, a new code has been sent." };
 
     } catch (error) {
         console.error("Resend OTP Error:", error);

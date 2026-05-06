@@ -19,7 +19,6 @@ export async function getBooleanSetting(key: string, fallback: boolean): Promise
 export async function checkRateLimit(ip: string): Promise<boolean> {
     const WINDOW_MINUTES = await getSetting('security_lockout_duration', 15);
     const MAX_ATTEMPTS = await getSetting('security_max_attempts', 5);
-
     const windowStart = new Date(Date.now() - WINDOW_MINUTES * 60 * 1000);
 
     const failureCount = await db.adminLog.count({
@@ -39,7 +38,6 @@ export async function checkRateLimit(ip: string): Promise<boolean> {
 export async function getSecurityStatus(ip: string) {
     const WINDOW_MINUTES = await getSetting('security_lockout_duration', 15);
     const MAX_ATTEMPTS = await getSetting('security_max_attempts', 5);
-
     const windowStart = new Date(Date.now() - WINDOW_MINUTES * 60 * 1000);
 
     const failures = await db.adminLog.findMany({
@@ -70,6 +68,42 @@ export async function getSecurityStatus(ip: string) {
         attemptsRemaining: Math.max(0, MAX_ATTEMPTS - failureCount),
         remainingTime: remainingMinutes > 0 ? remainingMinutes : 0
     };
+}
+
+
+/**
+ * Rate limit for OTP resend requests per IP.
+ * Default: 3 attempts per 10 minutes.
+ */
+export async function checkOtpResendLimit(ip: string) {
+  const WINDOW_MINUTES = await getSetting('otp_resend_window_minutes', 10);
+  const MAX_ATTEMPTS = await getSetting('otp_resend_max_attempts', 3);
+  const windowStart = new Date(Date.now() - WINDOW_MINUTES * 60 * 1000);
+
+  const attempts = await db.adminLog.findMany({
+    where: {
+      ipAddress: ip,
+      action: 'RESEND_OTP_ATTEMPT',
+      createdAt: { gte: windowStart }
+    },
+    orderBy: { createdAt: 'desc' },
+  });
+
+  const count = attempts.length;
+  const isBlocked = count >= MAX_ATTEMPTS;
+  let remainingMinutes = 0;
+
+  if (isBlocked && attempts.length > 0) {
+    const lastAttempt = attempts[0].createdAt.getTime();
+    const unlockTime = lastAttempt + (WINDOW_MINUTES * 60 * 1000);
+    const diff = unlockTime - Date.now();
+    remainingMinutes = Math.ceil(diff / 60000);
+  }
+
+  return {
+    isBlocked,
+    remainingTime: remainingMinutes > 0 ? remainingMinutes : 0,
+  };
 }
 
 // CHECK Sender Limits

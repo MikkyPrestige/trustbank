@@ -9,8 +9,7 @@ export default async function LoginPage() {
 
     return (
         <Suspense fallback={<div>Loading form...</div>}>
-            return <LoginForm siteName={settings.site_name} allowRegister={isRegisterEnabled} />
+        <LoginForm siteName={settings.site_name} allowRegister={isRegisterEnabled} />
         </Suspense>
     )
-    // return <LoginForm siteName={settings.site_name} allowRegister={isRegisterEnabled} />
 }

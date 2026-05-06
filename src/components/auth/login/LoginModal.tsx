@@ -25,13 +25,6 @@ export default function LoginModal({ isOpen, onClose, onSwitchToRegister, siteNa
     const [focusedField, setFocusedField] = useState<string | null>(null);
     const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
 
-    useEffect(() => {
-        if (state?.redirect) {
-            onClose();
-            router.push(state.redirect);
-        }
-    }, [state, router, onClose]);
-
     // Close on ESC
     useEffect(() => {
         const handleEsc = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
@@ -136,6 +129,10 @@ export default function LoginModal({ isOpen, onClose, onSwitchToRegister, siteNa
                             <>Access Dashboard <ArrowRight size={18} /></>
                         )}
                     </button>
+
+                    <Link href="/resend-verification" className={styles.resendLink}>
+                        Didn’t receive a verification email?
+                    </Link>
 
                     <div className={styles.footer}>
                         New to {siteName}?
