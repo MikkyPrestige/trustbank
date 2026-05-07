@@ -10,6 +10,25 @@ import {
     TransactionStatus,
     UserRole
 } from "@prisma/client";
+import { z } from "zod";
+
+const sanitize = (str: string) => str.replace(/<[^>]*>/g, '');
+
+const loanApplicationSchema = z.object({
+  amount: z.coerce.number().min(500, "Minimum loan amount is $500"),
+  months: z.coerce.number().int().min(1, "Please select a term"),
+  reason: z.string().max(200).optional(),
+  pin: z.string().length(4, "PIN must be 4 digits"),
+  displayAmount: z.string().optional(),
+  displayCurrency: z.string().optional(),
+});
+
+const repaymentSchema = z.object({
+  loanId: z.string().min(1, "Loan ID is required"),
+  amount: z.coerce.number().positive("Amount must be positive"),
+  displayAmount: z.string().optional(),
+  displayCurrency: z.string().optional(),
+});
 
 export async function applyForLoan(prevState: any, formData: FormData) {
     const { success, message, user } = await getAuthenticatedUser();
@@ -20,15 +39,23 @@ export async function applyForLoan(prevState: any, formData: FormData) {
 
     if (!success || !user) return { message };
 
-    const amount = Number(formData.get("amount"));
-    const months = Number(formData.get("months"));
-    const reason = formData.get("reason") as string;
-    const pin = formData.get("pin") as string;
-    const displayAmount = formData.get("displayAmount") as string;
-    const displayCurrency = formData.get("displayCurrency") as string;
+  const rawData = {
+  amount: formData.get("amount") as string,
+  months: formData.get("months") as string,
+  reason: formData.get("reason") as string,
+  pin: formData.get("pin") as string,
+  displayAmount: formData.get("displayAmount") as string,
+  displayCurrency: formData.get("displayCurrency") as string,
+};
 
-    if (!amount || amount < 500) return { message: "Minimum loan requirement not met." };
-    if (!months) return { message: "Please select a term" };
+const validated = loanApplicationSchema.safeParse(rawData);
+if (!validated.success) {
+  return { message: validated.error.issues[0].message };
+}
+
+const { amount, months, reason: rawReason, pin, displayAmount, displayCurrency } = validated.data;
+
+const reason = rawReason ? sanitize(rawReason) : "";
 
     const pinValidation = await verifyPin(user.id, pin);
     if (!pinValidation.success) return { message: pinValidation.error };
@@ -74,7 +101,7 @@ export async function applyForLoan(prevState: any, formData: FormData) {
                     data: admins.map((admin) => ({
                         userId: admin.id,
                         title: "New Loan Application",
-                        message: `Loan Request: ${formatStr} from ${user.fullName || 'User'}`,
+                        message: `Loan Request: ${formatStr} from ${sanitize(user.fullName || 'User')}`,
                         type: "INFO",
                         link: `/admin/loans?id=${loan.id}`,
                         isRead: false
@@ -94,6 +121,7 @@ export async function applyForLoan(prevState: any, formData: FormData) {
     return { success: true, message: "Application Submitted Successfully" };
 }
 
+
 export async function repayLoan(prevState: any, formData: FormData) {
     const { success, message, user } = await getAuthenticatedUser();
 
@@ -108,15 +136,24 @@ export async function repayLoan(prevState: any, formData: FormData) {
         return { message: `🚫 ${permission.error}` };
     }
 
-    const loanId = formData.get("loanId") as string;
-    const amount = Number(formData.get("amount")); // USD
-    const displayAmount = formData.get("displayAmount") as string;
-    const displayCurrency = formData.get("displayCurrency") as string;
+   const rawData = {
+  loanId: formData.get("loanId") as string,
+  amount: formData.get("amount") as string,
+  displayAmount: formData.get("displayAmount") as string,
+  displayCurrency: formData.get("displayCurrency") as string,
+};
 
-    if (!amount || amount <= 0) return { message: "Invalid amount." };
+const validated = repaymentSchema.safeParse(rawData);
+if (!validated.success) {
+  return { message: validated.error.issues[0].message };
+}
 
-    const loan = await db.loan.findUnique({ where: { id: loanId } });
-    if (!loan || loan.status !== 'APPROVED') return { message: "Invalid loan." };
+const { loanId, amount, displayAmount, displayCurrency } = validated.data;
+
+   const loan = await db.loan.findUnique({
+    where: { id: loanId, userId: user.id }
+});
+if (!loan || loan.status !== 'APPROVED') return { message: "Invalid loan." };
 
     const remaining = Number(loan.totalRepayment) - Number(loan.repaidAmount);
     if (amount > remaining + 1) {

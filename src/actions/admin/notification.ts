@@ -25,10 +25,13 @@ export async function getNotifications() {
 
 export async function markAsRead(notificationId: string) {
     const session = await auth();
-    if (!session) return;
+    if (!session?.user?.id) return;
 
-    await db.notification.update({
-        where: { id: notificationId },
+    await db.notification.updateMany({
+        where: {
+             id: notificationId,
+             userId: session.user.id
+             },
         data: { isRead: true }
     });
 
@@ -41,7 +44,10 @@ export async function markAllAsRead() {
     if (!session?.user?.id) return;
 
     await db.notification.updateMany({
-        where: { userId: session.user.id, isRead: false },
+        where: {
+            userId: session.user.id,
+            isRead: false
+        },
         data: { isRead: true }
     });
 

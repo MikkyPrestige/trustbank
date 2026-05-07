@@ -106,6 +106,74 @@ export async function checkOtpResendLimit(ip: string) {
   };
 }
 
+/**
+ * Rate limit for password reset requests per IP.
+ */
+export async function checkPasswordResetLimit(ip: string) {
+  const WINDOW_MINUTES = await getSetting('password_reset_window_minutes', 10);
+  const MAX_ATTEMPTS = await getSetting('password_reset_max_attempts', 3);
+  const windowStart = new Date(Date.now() - WINDOW_MINUTES * 60 * 1000);
+
+  const attempts = await db.adminLog.findMany({
+    where: {
+      ipAddress: ip,
+      action: 'RESET_PASSWORD_ATTEMPT',
+      createdAt: { gte: windowStart }
+    },
+    orderBy: { createdAt: 'desc' },
+  });
+
+  const count = attempts.length;
+  const isBlocked = count >= MAX_ATTEMPTS;
+  let remainingMinutes = 0;
+
+  if (isBlocked && attempts.length > 0) {
+    const lastAttempt = attempts[0].createdAt.getTime();
+    const unlockTime = lastAttempt + (WINDOW_MINUTES * 60 * 1000);
+    const diff = unlockTime - Date.now();
+    remainingMinutes = Math.ceil(diff / 60000);
+  }
+
+  return {
+    isBlocked,
+    remainingTime: remainingMinutes > 0 ? remainingMinutes : 0,
+  };
+}
+
+/**
+ * Rate limit for new account registrations per IP.
+ */
+export async function checkRegisterLimit(ip: string) {
+  const WINDOW_MINUTES = await getSetting('register_window_minutes', 15);
+  const MAX_ATTEMPTS = await getSetting('register_max_attempts', 5);
+  const windowStart = new Date(Date.now() - WINDOW_MINUTES * 60 * 1000);
+
+  const attempts = await db.adminLog.findMany({
+    where: {
+      ipAddress: ip,
+      action: 'REGISTER_ATTEMPT',
+      createdAt: { gte: windowStart }
+    },
+    orderBy: { createdAt: 'desc' },
+  });
+
+  const count = attempts.length;
+  const isBlocked = count >= MAX_ATTEMPTS;
+  let remainingMinutes = 0;
+
+  if (isBlocked && attempts.length > 0) {
+    const lastAttempt = attempts[0].createdAt.getTime();
+    const unlockTime = lastAttempt + (WINDOW_MINUTES * 60 * 1000);
+    const diff = unlockTime - Date.now();
+    remainingMinutes = Math.ceil(diff / 60000);
+  }
+
+  return {
+    isBlocked,
+    remainingTime: remainingMinutes > 0 ? remainingMinutes : 0,
+  };
+}
+
 // CHECK Sender Limits
 export async function checkPermissions(
     userId: string,

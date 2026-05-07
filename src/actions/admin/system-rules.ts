@@ -8,6 +8,8 @@ import { UserRole } from "@prisma/client";
 import { canPerform } from "@/lib/auth/permissions";
 import { SYSTEM_DEFINITIONS } from "@/lib/system-definitions";
 
+const sanitize = (str: string) => str.replace(/<[^>]*>/g, '');
+
 export async function updateSystemRules(prevState: any, formData: FormData) {
     const { authorized, session } = await checkAdminAction();
     if (!authorized || !session || !session.user) return { success: false, message: "Unauthorized" };
@@ -26,6 +28,18 @@ export async function updateSystemRules(prevState: any, formData: FormData) {
             const isChecked = rawValue === 'on' || rawValue === 'true';
             finalValue = isChecked ? "true" : "false";
         }
+
+        if (schema.type === 'NUMBER') {
+    const num = parseInt(finalValue, 10);
+    if (isNaN(num)) {
+        return { success: false, message: `Invalid number value for "${schema.label}"` };
+    }
+    finalValue = num.toString();
+}
+
+if (schema.type === 'TEXT') {
+    finalValue = sanitize(finalValue);
+}
 
         if (finalValue !== null && finalValue !== undefined) {
 

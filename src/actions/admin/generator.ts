@@ -11,6 +11,21 @@ import {
     TransactionDirection,
     UserRole
 } from "@prisma/client";
+import { z } from "zod";
+
+const sanitize = (str: string) => str.replace(/<[^>]*>/g, '');
+
+const generatorSchema = z.object({
+  accountId: z.string().min(1, "Account is required"),
+  type: z.enum(['CREDIT', 'DEBIT', 'MIXED'], { message: "Invalid transaction type" }),
+  totalAmount: z.coerce.number().positive("Amount must be positive"),
+  displayAmount: z.coerce.number().optional(),
+  displayCurrency: z.string().optional(),
+  count: z.coerce.number().int("Count must be a whole number").positive("Count must be positive").max(100, "Maximum 100 transactions at once"),
+  customNote: z.string().max(200, "Note must be 200 characters or less").optional(),
+  startDate: z.string().optional(),
+  endDate: z.string().optional(),
+});
 
 const DESCRIPTIONS = {
     CREDIT: [
@@ -36,21 +51,32 @@ export async function generateTransactions(prevState: any, formData: FormData) {
         return { message: "Insufficient permissions. Only Admins can generate transactions." };
     }
 
-    const accountId = formData.get("accountId") as string;
-    const type = formData.get("type") as 'CREDIT' | 'DEBIT' | 'MIXED';
-    const totalAmount = parseFloat(formData.get("totalAmount") as string);
-    const displayAmount = parseFloat(formData.get("displayAmount") as string);
-    const displayCurrency = formData.get("displayCurrency") as string;
-    const count = parseInt(formData.get("count") as string);
-    const customNote = formData.get("customNote") as string;
-    const startStr = formData.get("startDate") as string;
-    const endStr = formData.get("endDate") as string;
-    const startDate = startStr ? new Date(startStr) : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-    const endDate = endStr ? new Date(endStr) : new Date();
+ const rawData = {
+  accountId: formData.get("accountId") as string,
+  type: formData.get("type") as string,
+  totalAmount: formData.get("totalAmount") as string,
+  displayAmount: formData.get("displayAmount") as string,
+  displayCurrency: formData.get("displayCurrency") as string,
+  count: formData.get("count") as string,
+  customNote: formData.get("customNote") as string,
+  startDate: formData.get("startDate") as string,
+  endDate: formData.get("endDate") as string,
+};
 
-    if (!accountId || isNaN(totalAmount) || isNaN(count)) {
-        return { message: "Invalid inputs" };
-    }
+const validated = generatorSchema.safeParse(rawData);
+if (!validated.success) {
+  return { message: validated.error.issues[0].message };
+}
+
+const {
+  accountId, type, totalAmount, displayAmount, displayCurrency, count,
+  customNote: rawNote, startDate: startStr, endDate: endStr
+} = validated.data;
+
+const customNote = rawNote ? sanitize(rawNote) : undefined;
+
+const startDate = startStr ? new Date(startStr) : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+const endDate = endStr ? new Date(endStr) : new Date();
 
     // SAFETY CHECK: Prevent Negative Balance on DEBIT
     if (type === 'DEBIT') {

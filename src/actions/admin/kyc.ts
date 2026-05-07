@@ -7,6 +7,8 @@ import { logAdminAction } from "@/lib/utils/admin-logger";
 import { canPerform } from "@/lib/auth/permissions";
 import { KycStatus, UserRole } from "@prisma/client";
 
+const sanitize = (str: string) => str.replace(/<[^>]*>/g, '');
+
 export async function processKyc(userId: string, decision: 'APPROVE' | 'REJECT', reason?: string) {
     const { authorized, session } = await checkAdminAction();
 
@@ -57,13 +59,14 @@ export async function processKyc(userId: string, decision: 'APPROVE' | 'REJECT',
 
         } else {
             if (!reason) return { success: false, message: "Rejection reason is required." };
+            const safeReason = sanitize(reason);
 
             await db.$transaction(async (tx) => {
                 await tx.user.update({
                     where: { id: userId },
                     data: {
                         kycStatus: KycStatus.FAILED,
-                        kycRejectionReason: reason
+                        kycRejectionReason: safeReason
                     }
                 });
             });
@@ -72,7 +75,7 @@ export async function processKyc(userId: string, decision: 'APPROVE' | 'REJECT',
                 data: {
                     userId: userId,
                     title: "Verification Rejected",
-                    message: `Your KYC documents were not accepted. Reason: ${reason}. Please upload valid documents to proceed.`,
+                    message: `Your KYC documents were not accepted. Reason: ${safeReason}. Please upload valid documents to proceed.`,
                     type: "ERROR",
                     link: "/dashboard/verify",
                     isRead: false
@@ -83,7 +86,7 @@ export async function processKyc(userId: string, decision: 'APPROVE' | 'REJECT',
                 "KYC_REJECT",
                 userId,
                 {
-                    reason: reason,
+                    reason: safeReason,
                     admin: session.user.email
                 },
                 "WARNING",

@@ -2,10 +2,19 @@
 
 import { getAuthenticatedUser } from "@/lib/auth/user-guard";
 import { db } from "@/lib/db";
+import { fileTypeFromBuffer } from 'file-type';
 import { checkMaintenanceMode } from "@/lib/security";
 import { revalidatePath } from "next/cache";
 import { uploadFileToCloud } from "@/lib/utils/upload";
 import { KycStatus, UserRole } from "@prisma/client";
+
+const sanitize = (str: string) => str.replace(/<[^>]*>/g, '');
+
+async function isValidImage(file: File): Promise<boolean> {
+  const buffer = Buffer.from(await file.arrayBuffer());
+  const result = await fileTypeFromBuffer(buffer);
+  return result?.mime.startsWith('image/') ?? false;
+}
 
 export async function submitKyc(prevState: any, formData: FormData) {
     const { success, message, user } = await getAuthenticatedUser();
@@ -30,13 +39,23 @@ export async function submitKyc(prevState: any, formData: FormData) {
         const idFrontFile = formData.get("idCardFront") as File;
         const idBackFile = formData.get("idCardBack") as File;
 
+                if (!passportFile || passportFile.size === 0) {
+            return { success: false, message: "Passport photo is required." };
+        }
+
      if (!idFrontFile || !idBackFile || idFrontFile.size === 0 || idBackFile.size === 0) {
             return { success: false, message: "Please upload both Front and Back of the ID Card." };
         }
 
-        if (!passportFile || passportFile.size === 0) {
-            return { success: false, message: "Passport photo is required." };
-        }
+       const [passportValid, frontValid, backValid] = await Promise.all([
+  isValidImage(passportFile),
+  isValidImage(idFrontFile),
+  isValidImage(idBackFile)
+]);
+
+if (!passportValid || !frontValid || !backValid) {
+  return { success: false, message: "Only valid image files are allowed." };
+}
 
      const [passportUrl, frontUrl, backUrl] = await Promise.all([
             uploadFileToCloud(passportFile, "avatars"),
@@ -66,7 +85,7 @@ export async function submitKyc(prevState: any, formData: FormData) {
                     data: admins.map((admin) => ({
                         userId: admin.id,
                         title: "KYC Submission Received",
-                        message: `User ${user.fullName || 'User'} submitted documents for verification.`,
+                        message: `User ${sanitize(user.fullName || 'User')} submitted documents for verification.`,
                         type: "INFO",
                         link: `/admin/users/${user.id}`,
                         isRead: false

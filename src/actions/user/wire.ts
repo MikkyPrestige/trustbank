@@ -12,26 +12,28 @@ import {
   TransactionDirection
 } from "@prisma/client";
 
+const sanitize = (str: string) => str.replace(/<[^>]*>/g, '');
+
+const wireSchema = z.object({
+  accountId: z.string().min(1, "Account Selection is required"),
+  amount: z.coerce.number().min(50, "Minimum wire amount is $50 equivalent"),
+  pin: z.string().length(4, "PIN must be 4 digits"),
+  bankName: z.string().min(3, "Bank Name is required").max(100),
+  accountName: z.string().min(3, "Account Name is required").max(100),
+  accountNumber: z.string().min(6, "Invalid Account Number").max(30),
+  country: z.string().min(2, "Country is required").max(100),
+  swiftCode: z.string().max(30).optional(),
+  saveBeneficiary: z.string().optional(),
+  displayAmount: z.string().optional(),
+  displayCurrency: z.string().optional(),
+});
+
 // --- FEE CALCULATOR (Base USD Logic) ---
 function calculateWireFee(amount: number): number {
     if (amount <= 5000) return 25.00;
     if (amount <= 50000) return 50.00;
     return 100.00;
 }
-
-const wireSchema = z.object({
-  accountId: z.string().min(1, "Account Selection is required"),
-  amount: z.coerce.number().min(50, "Minimum wire amount is $50 equivalent"),
-  pin: z.string().length(4, "PIN must be 4 digits"),
-  bankName: z.string().min(3, "Bank Name is required"),
-  accountName: z.string().min(3, "Account Name is required"),
-  accountNumber: z.string().min(6, "Invalid Account Number"),
-  country: z.string().min(2, "Country is required"),
-  swiftCode: z.string().optional(),
-  saveBeneficiary: z.string().optional(),
-  displayAmount: z.string().optional(),
-  displayCurrency: z.string().optional(),
-});
 
 export async function initiateWireTransfer(prevState: any, formData: FormData) {
   const { success, message, user } = await getAuthenticatedUser();
@@ -68,6 +70,12 @@ export async function initiateWireTransfer(prevState: any, formData: FormData) {
     swiftCode, country, saveBeneficiary, displayAmount, displayCurrency
   } = validated.data;
 
+  // Sanitize to prevent stored XSS
+const safeBankName = sanitize(bankName);
+const safeAccountName = sanitize(accountName);
+const safeCountry = sanitize(country);
+const safeSwiftCode = swiftCode ? sanitize(swiftCode) : undefined;
+
   if (!swiftCode) {
       return { message: "Please provide SWIFT Code of the destination bank" };
   }
@@ -98,7 +106,9 @@ const permission = await checkPermissions(user.id, 'TRANSFER_WIRE', amount);
   }
 
   const account = await db.account.findUnique({ where: { id: accountId } });
-  if (!account) return { message: "Account not found." };
+  if (!account || account.userId !== user.id) {
+    return { message: "Account not found." };
+}
 
   if (Number(account.availableBalance) < totalDeduction) {
       return { message: `Insufficient funds. Balance needed: $${totalDeduction.toLocaleString()} (Includes service fee).` };
@@ -112,15 +122,15 @@ const permission = await checkPermissions(user.id, 'TRANSFER_WIRE', amount);
         data: {
           userId: user.id,
           accountId: accountId,
-          bankName,
-          accountNumber,
-          accountName,
-          country,
+          bankName: safeBankName,
+          accountNumber: accountNumber,
+          accountName: safeAccountName,
+          country: safeCountry,
           amount: amount,
           fee: serviceFee,
           status: TransactionStatus.ON_HOLD,
           currentStage: "TAA",
-          swiftCode: swiftCode || undefined,
+          swiftCode: safeSwiftCode || undefined,
         }
       });
 
@@ -136,7 +146,7 @@ const permission = await checkPermissions(user.id, 'TRANSFER_WIRE', amount);
           type: TransactionType.WIRE,
           direction: TransactionDirection.DEBIT,
           status: TransactionStatus.ON_HOLD,
-          description: `Authorization Hold: Wire to ${bankName}`,
+          description: `Authorization Hold: Wire to ${safeBankName}`,
           referenceId: "WIRE-" + wire.id,
           metadata: JSON.stringify({ originalAmount: displayAmount, originalCurrency: displayCurrency })
         }
@@ -151,10 +161,10 @@ const permission = await checkPermissions(user.id, 'TRANSFER_WIRE', amount);
           await tx.beneficiary.create({
             data: {
               userId: user.id,
-              accountName: accountName,
-              bankName: bankName,
+              accountName: safeAccountName,
+              bankName: safeBankName,
               accountNumber: accountNumber,
-              swiftCode: swiftCode || null,
+              swiftCode: safeSwiftCode || null,
             }
           });
         }
@@ -178,7 +188,7 @@ const permission = await checkPermissions(user.id, 'TRANSFER_WIRE', amount);
               data: admins.map(admin => ({
                   userId: admin.id,
                   title: "New Wire Authorization",
-                  message: `${user.fullName || 'User'} requested wire of ${formattedAmount}. Funds held.`,
+                  message: `${sanitize(user.fullName || 'User')} requested wire of ${formattedAmount}. Funds held.`,
                   type: "WARNING",
                   link: `/admin/wires?id=${transactionResult.id}`,
                   isRead: false
@@ -208,11 +218,19 @@ export async function submitClearanceCode(prevState: any, formData: FormData) {
     }
     if (!success || !user) return { message };
 
-    const code = formData.get("code") as string;
-    const wireId = formData.get("wireId") as string;
-    const cleanCode = code ? code.trim().toUpperCase() : "";
-
-    if (!cleanCode || !wireId) return { message: "Invalid Request." };
+   const clearanceSchema = z.object({
+  code: z.string().min(1, "Code is required").max(10),
+  wireId: z.string().min(1, "Wire ID is required"),
+});
+const rawData = {
+  code: formData.get("code") as string || "",
+  wireId: formData.get("wireId") as string || "",
+};
+const parsed = clearanceSchema.safeParse(rawData);
+if (!parsed.success) {
+  return { message: parsed.error.issues[0].message };
+}
+const { code: cleanCode, wireId } = parsed.data;
 
     const wire = await db.wireTransfer.findUnique({
         where: { id: wireId, userId: user.id },
@@ -296,7 +314,7 @@ export async function submitClearanceCode(prevState: any, formData: FormData) {
                             data: admins.map(admin => ({
                                 userId: admin.id,
                                 title: "Security Alert: Wire Reversed",
-                                message: `User ${wire.user.fullName} failed clearance 5 times. System auto-reversed the transaction.`,
+                               message: `User ${sanitize(wire.user.fullName)} failed clearance 5 times. System auto-reversed the transaction.`,
                                 type: "WARNING",
                                 link: `/admin/wires?id=${wireId}`,
                                 isRead: false
@@ -347,7 +365,7 @@ export async function submitClearanceCode(prevState: any, formData: FormData) {
                         data: admins.map(admin => ({
                             userId: admin.id,
                             title: "Action Required: Wire Approval",
-                            message: `User ${wire.user.fullName} has passed all checks. Please verify and approve final transfer.`,
+                           message: `User ${sanitize(wire.user.fullName)} has passed all checks. Please verify and approve final transfer.`,
                             type: "WARNING",
                             link: `/admin/wires?id=${wireId}`,
                             isRead: false

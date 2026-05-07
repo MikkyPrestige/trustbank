@@ -4,6 +4,17 @@ import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { checkAdminAction } from "@/lib/auth/admin-auth";
 import { logAdminAction } from "@/lib/utils/admin-logger";
+import { z } from "zod";
+
+const sanitize = (str: string) => str.replace(/<[^>]*>/g, '');
+const sanitizeUrl = (str: string) => str.replace(/[^a-zA-Z0-9:/._\-+?=&%#]/g, '');
+
+const footerLinkSchema = z.object({
+  label: z.string().min(1, "Label is required").max(100),
+  href: z.string().min(1, "URL is required").max(500),
+  column: z.string().max(50).optional(),
+  order: z.coerce.number().int().nonnegative().optional(),
+});
 
 export async function createFooterLink(formData: FormData) {
     const auth = await checkAdminAction();
@@ -11,12 +22,23 @@ export async function createFooterLink(formData: FormData) {
         return { success: false, message: "Unauthorized" };
     }
 
-    const label = formData.get("label") as string;
-    const href = formData.get("href") as string;
-    const column = formData.get("column") as string;
-    const order = parseInt(formData.get("order") as string) || 0;
+const rawData = {
+  label: formData.get("label") as string,
+  href: formData.get("href") as string,
+  column: formData.get("column") as string,
+  order: formData.get("order") as string,
+};
 
-    if (!label || !href) return { success: false, message: "Label and URL required" };
+const validated = footerLinkSchema.safeParse(rawData);
+if (!validated.success) {
+  return { success: false, message: validated.error.issues[0].message };
+}
+
+const { label: rawLabel, href: rawHref, column: rawColumn, order } = validated.data;
+
+const label = sanitize(rawLabel);
+const href = sanitizeUrl(rawHref);
+const column = rawColumn ? sanitize(rawColumn) : "";
 
     try {
         await db.footerLink.create({ data: { label, href, column, order } });
@@ -43,36 +65,6 @@ export async function createFooterLink(formData: FormData) {
 }
 
 
-export async function deleteFooterLink(id: string) {
-    const auth = await checkAdminAction();
-    if (!auth.authorized || !auth.session || !auth.session.user) {
-        return { success: false, message: "Unauthorized" };
-    }
-
-    try {
-        const link = await db.footerLink.findUnique({ where: { id } });
-
-        await db.footerLink.delete({ where: { id } });
-
-        await logAdminAction(
-            "DELETE_FOOTER_LINK",
-            id,
-            {
-                label: link?.label || "Unknown",
-                action: "Deleted Footer Link",
-                admin: auth.session.user.email
-            },
-            "WARNING",
-            "SUCCESS"
-        );
-
-        revalidatePath('/');
-        return { success: true, message: "Link deleted" };
-    } catch (error) {
-        return { success: false, message: "Failed to delete" };
-    }
-}
-
 
 export async function updateFooterLink(id: string, formData: FormData) {
     const auth = await checkAdminAction();
@@ -80,12 +72,25 @@ export async function updateFooterLink(id: string, formData: FormData) {
         return { success: false, message: "Unauthorized" };
     }
 
-    const label = formData.get("label") as string;
-    const href = formData.get("href") as string;
-    const column = formData.get("column") as string;
-    const order = parseInt(formData.get("order") as string) || 0;
+const rawData = {
+  label: formData.get("label") as string,
+  href: formData.get("href") as string,
+  column: formData.get("column") as string,
+  order: formData.get("order") as string,
+};
 
-    if (!id || !label || !href) return { success: false, message: "Missing required fields" };
+const validated = footerLinkSchema.safeParse(rawData);
+if (!validated.success) {
+  return { success: false, message: validated.error.issues[0].message };
+}
+
+const { label: rawLabel, href: rawHref, column: rawColumn, order } = validated.data;
+
+const label = sanitize(rawLabel);
+const href = sanitizeUrl(rawHref);
+const column = rawColumn ? sanitize(rawColumn) : "";
+
+if (!id) return { success: false, message: "Missing link ID" };
 
     try {
         const updatedLink = await db.footerLink.update({
@@ -136,5 +141,36 @@ export async function updateFooterOrder(links: { id: string; order: number }[]) 
     } catch (error) {
         console.error("Order Update Error:", error);
         return { success: false, message: "Failed to save new order" };
+    }
+}
+
+
+export async function deleteFooterLink(id: string) {
+    const auth = await checkAdminAction();
+    if (!auth.authorized || !auth.session || !auth.session.user) {
+        return { success: false, message: "Unauthorized" };
+    }
+
+    try {
+        const link = await db.footerLink.findUnique({ where: { id } });
+
+        await db.footerLink.delete({ where: { id } });
+
+        await logAdminAction(
+            "DELETE_FOOTER_LINK",
+            id,
+            {
+                label: link?.label || "Unknown",
+                action: "Deleted Footer Link",
+                admin: auth.session.user.email
+            },
+            "WARNING",
+            "SUCCESS"
+        );
+
+        revalidatePath('/');
+        return { success: true, message: "Link deleted" };
+    } catch (error) {
+        return { success: false, message: "Failed to delete" };
     }
 }

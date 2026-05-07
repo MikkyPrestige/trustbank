@@ -4,6 +4,18 @@ import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { checkAdminAction } from "@/lib/auth/admin-auth";
 import { logAdminAction } from "@/lib/utils/admin-logger";
+import { z } from "zod";
+
+const sanitize = (str: string) => str.replace(/<[^>]*>/g, '');
+
+const jobSchema = z.object({
+  title: z.string().min(1, "Title is required").max(200),
+  department: z.string().min(1, "Department is required").max(100),
+  location: z.string().min(1, "Location is required").max(100),
+  type: z.string().max(50).optional(),
+  description: z.string().max(5000).optional(),
+  isActive: z.boolean().optional(),
+});
 
 export async function createJob(formData: FormData) {
     const auth = await checkAdminAction();
@@ -11,16 +23,32 @@ export async function createJob(formData: FormData) {
     if (!auth.authorized || !auth.session || !auth.session.user) {
         return { success: false, message: auth.message || "Unauthorized" };
     }
+const rawData = {
+  title: formData.get("title") as string,
+  department: formData.get("department") as string,
+  location: formData.get("location") as string,
+  type: formData.get("type") as string,
+  description: formData.get("description") as string,
+};
 
-    const title = formData.get("title") as string;
-    const department = formData.get("department") as string;
-    const location = formData.get("location") as string;
-    const type = formData.get("type") as string;
-    const description = formData.get("description") as string;
+const validated = jobSchema.safeParse(rawData);
+if (!validated.success) {
+  return { success: false, message: validated.error.issues[0].message };
+}
 
-    if (!title || !department || !location) {
-        return { success: false, message: "Missing required fields" };
-    }
+const {
+  title: rawTitle,
+  department: rawDept,
+  location: rawLoc,
+  type: rawType,
+  description: rawDesc,
+} = validated.data;
+
+const title = sanitize(rawTitle);
+const department = sanitize(rawDept);
+const location = sanitize(rawLoc);
+const type = rawType ? sanitize(rawType) : "";
+const description = rawDesc ? sanitize(rawDesc) : "";
 
     try {
         await db.jobListing.create({
@@ -59,16 +87,34 @@ export async function updateJob(id: string, formData: FormData) {
         return { success: false, message: auth.message || "Unauthorized" };
     }
 
-    const title = formData.get("title") as string;
-    const department = formData.get("department") as string;
-    const location = formData.get("location") as string;
-    const type = formData.get("type") as string;
-    const description = formData.get("description") as string;
-    const isActive = formData.get("isActive") === "on";
+const rawData = {
+  title: formData.get("title") as string,
+  department: formData.get("department") as string,
+  location: formData.get("location") as string,
+  type: formData.get("type") as string,
+  description: formData.get("description") as string,
+  isActive: formData.get("isActive") === "on",
+};
 
-    if (!title || !department || !location) {
-        return { success: false, message: "Title, Department, and Location are required" };
-    }
+const validated = jobSchema.safeParse(rawData);
+if (!validated.success) {
+  return { success: false, message: validated.error.issues[0].message };
+}
+
+const {
+  title: rawTitle,
+  department: rawDept,
+  location: rawLoc,
+  type: rawType,
+  description: rawDesc,
+  isActive,
+} = validated.data;
+
+const title = sanitize(rawTitle);
+const department = sanitize(rawDept);
+const location = sanitize(rawLoc);
+const type = rawType ? sanitize(rawType) : "";
+const description = rawDesc ? sanitize(rawDesc) : "";
 
     try {
         await db.jobListing.update({

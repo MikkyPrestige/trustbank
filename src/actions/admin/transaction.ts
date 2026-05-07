@@ -11,6 +11,17 @@ import {
     TransactionType,
     UserRole
 } from "@prisma/client";
+import { z } from "zod";
+
+const updateTransactionSchema = z.object({
+  transactionId: z.string().min(1, "Transaction ID is required"),
+  amount: z.coerce.number().min(0.01, "Amount must be at least 0.01"),
+  description: z.string().max(200, "Description must be 200 characters or less").optional(),
+  createdAt: z.string().datetime({ message: "Invalid date/time format" }),
+  direction: z.enum(["CREDIT", "DEBIT"], { message: "Direction must be CREDIT or DEBIT" }),
+});
+
+const sanitize = (str: string) => str.replace(/<[^>]*>/g, '');
 
 export async function deleteTransaction(transactionId: string) {
     const { authorized, session } = await checkAdminAction();
@@ -69,16 +80,27 @@ export async function updateTransaction(prevState: any, formData: FormData) {
         return { success: false, message: "Insufficient permissions. Only Admins can edit transactions." };
     }
 
-    const transactionId = formData.get("transactionId") as string;
-    const amount = parseFloat(formData.get("amount") as string);
-    const description = formData.get("description") as string;
-    const createdAt = formData.get("createdAt") as string;
-    const directionInput = formData.get("direction") as "CREDIT" | "DEBIT";
-    const newDirection = directionInput === 'CREDIT' ? TransactionDirection.CREDIT : TransactionDirection.DEBIT;
+  const rawData = {
+  transactionId: formData.get("transactionId") as string,
+  amount: formData.get("amount") as string,
+  description: formData.get("description") as string,
+  createdAt: formData.get("createdAt") as string,
+  direction: formData.get("direction") as string,
+};
 
-    const newType = newDirection === TransactionDirection.CREDIT
-        ? TransactionType.DEPOSIT
-        : TransactionType.WITHDRAWAL;
+const validated = updateTransactionSchema.safeParse(rawData);
+if (!validated.success) {
+  return { success: false, message: validated.error.issues[0].message };
+}
+
+const { transactionId, amount, description: rawDescription, createdAt, direction } = validated.data;
+
+const description = rawDescription ? sanitize(rawDescription) : undefined;
+
+ const newDirection = direction === 'CREDIT' ? TransactionDirection.CREDIT : TransactionDirection.DEBIT;
+const newType = newDirection === TransactionDirection.CREDIT
+    ? TransactionType.DEPOSIT
+    : TransactionType.WITHDRAWAL;
 
     try {
         await db.$transaction(async (tx) => {

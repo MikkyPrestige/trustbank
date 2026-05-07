@@ -2,14 +2,25 @@
 
 import { getAuthenticatedUser } from "@/lib/auth/user-guard";
 import { db } from "@/lib/db";
-import { checkMaintenanceMode } from "@/lib/security";
+import { z } from "zod";
+import { checkMaintenanceMode, verifyPin, getBooleanSetting } from "@/lib/security";
 import { revalidatePath } from "next/cache";
-import bcrypt from "bcryptjs";
 import {
     TransactionType,
     TransactionDirection,
     TransactionStatus
 } from "@prisma/client";
+
+const sanitize = (str: string) => str.replace(/<[^>]*>/g, '');
+
+const billSchema = z.object({
+  amount: z.coerce.number().min(0.01, "Amount must be at least 0.01"),
+  provider: z.string().min(1, "Provider is required").max(100),
+  accountNumber: z.string().max(50).optional(),
+  pin: z.string().length(4, "PIN must be exactly 4 digits"),
+  displayAmount: z.string().optional(),
+  displayCurrency: z.string().optional(),
+});
 
 export async function payBill(prevState: any, formData: FormData) {
     const { success, message, user: sessionUser } = await getAuthenticatedUser();
@@ -22,37 +33,51 @@ export async function payBill(prevState: any, formData: FormData) {
         return { message };
     }
 
-    const amount = Number(formData.get("amount"));
-    const provider = formData.get("provider") as string;
-    const rawPin = formData.get("pin") as string;
-    const accountNumber = formData.get("accountNumber") as string;
-    const displayAmount = formData.get("displayAmount") as string;
-    const displayCurrency = formData.get("displayCurrency") as string;
+    const billsEnabled = await getBooleanSetting('feature_bills_enabled', true);
+if (!billsEnabled) {
+  return { success: false, message: "Bill payments are temporarily disabled." };
+}
 
-    if (!amount || amount <= 0) return { success: false, message: "Invalid amount" };
+// Validate input
+const rawData = {
+  amount: formData.get("amount")?.toString() || "",
+  provider: formData.get("provider") as string,
+  accountNumber: formData.get("accountNumber") as string,
+  pin: formData.get("pin") as string,
+  displayAmount: formData.get("displayAmount") as string,
+  displayCurrency: formData.get("displayCurrency") as string,
+};
+
+const validated = billSchema.safeParse(rawData);
+if (!validated.success) {
+  return { success: false, message: validated.error.issues[0].message };
+}
+
+const { amount,
+    provider: rawProvider,
+    accountNumber: rawAccountNumber, pin, displayAmount, displayCurrency
+ } = validated.data;
+
+ // Sanitize strings that might be rendered
+ const provider = sanitize(rawProvider);
+const accountNumber = rawAccountNumber ? sanitize(rawAccountNumber) : undefined;
+
+// Secure PIN verification (with lockout)
+const pinValidation = await verifyPin(sessionUser.id, pin);
+if (!pinValidation.success) {
+  return { success: false, message: pinValidation.error };
+}
 
     try {
-        const dbUser = await db.user.findUnique({
-            where: { id: sessionUser.id }
-        });
 
-        if (!dbUser) return { success: false, message: "User not found" };
-
-        if (!dbUser.transactionPin) {
-            return { success: false, message: "Transaction PIN not set." };
-        }
-
-        const isPinValid = await bcrypt.compare(rawPin, dbUser.transactionPin);
-
-        if (!isPinValid) {
-            return { success: false, message: "Invalid PIN" };
-        }
 
         const billTxId = await db.$transaction(async (tx) => {
             const account = await tx.account.findFirst({
-                where: { userId: dbUser.id },
+                where: { userId: sessionUser.id, type: 'CHECKING' },
                 orderBy: { availableBalance: 'desc' }
             });
+
+            if (!account) throw new Error("No checking account available.");
 
             if (!account || Number(account.availableBalance) < amount) {
                 throw new Error("Insufficient funds");
@@ -88,7 +113,7 @@ export async function payBill(prevState: any, formData: FormData) {
 
         await db.notification.create({
             data: {
-                userId: dbUser.id,
+                userId: sessionUser.id,
                 title: "Bill Payment Successful",
                 message: `You successfully paid ${formatStr} to ${provider}.`,
                 type: "SUCCESS",

@@ -12,15 +12,17 @@ import {
   TransactionDirection
 } from "@prisma/client";
 
+const sanitize = (str: string) => str.replace(/<[^>]*>/g, '');
+
 const transferSchema = z.object({
-  sourceAccountId: z.string(),
+  sourceAccountId: z.string().min(1, "Source account required"),
   amount: z.coerce.number().min(0.01, "Minimum transfer is 0.01"),
   pin: z.string().length(4, "PIN must be 4 digits"),
-  accountName: z.string().min(1, "Name is required"),
-  accountNumber: z.string().min(6, "Invalid Account Number"),
-  bankName: z.string().min(1, "Bank Name is required"),
-  routingNumber: z.string().optional(),
-  note: z.string().optional(),
+  accountName: z.string().min(1, "Name is required").max(100),
+  accountNumber: z.string().min(6, "Invalid Account Number").max(30),
+  bankName: z.string().min(1, "Bank Name is required").max(100),
+  routingNumber: z.string().max(30).optional(),
+  note: z.string().max(200).optional(),
   saveBeneficiary: z.string().optional(),
   displayAmount: z.string().optional(),
   displayCurrency: z.string().optional(),
@@ -49,6 +51,12 @@ export async function processTransfer(prevState: any, formData: FormData) {
         accountNumber, bankName, saveBeneficiary, note, routingNumber,
         displayAmount, displayCurrency
     } = validated.data;
+
+    // Sanitize user-supplied strings
+const safeAccountName = sanitize(accountName);
+const safeBankName = sanitize(bankName);
+const safeNote = note ? sanitize(note) : undefined;
+const safeRoutingNumber = routingNumber ? sanitize(routingNumber) : undefined;
 
     const pinValidation = await verifyPin(user.id, pin);
     if (!pinValidation.success) {
@@ -104,7 +112,7 @@ export async function processTransfer(prevState: any, formData: FormData) {
             });
 
             const senderRefId = "TRX-" + Math.floor(Math.random() * 100000000);
-            const senderDesc = `Transfer to ${accountName}` + (note ? ` - ${note}` : ``);
+            const senderDesc = `Transfer to ${safeAccountName}` + (safeNote ? ` - ${safeNote}` : ``);
 
             const senderTx = await tx.ledgerEntry.create({
                 data: {
@@ -134,7 +142,7 @@ export async function processTransfer(prevState: any, formData: FormData) {
                 });
 
                 const receiverRefId = "RCV-" + Math.floor(Math.random() * 100000000);
-                const receiverDesc = `Received from ${user.fullName}` + (note ? ` - ${note}` : ``);
+                const receiverDesc = `Received from ${sanitize(user.fullName)}` + (safeNote ? ` - ${safeNote}` : ``);
 
                 const receiverTx = await tx.ledgerEntry.create({
                     data: {
@@ -160,10 +168,10 @@ export async function processTransfer(prevState: any, formData: FormData) {
                     await tx.beneficiary.create({
                         data: {
                             userId: user.id,
-                            accountName: accountName,
+                            accountName: safeAccountName,
                             accountNumber: accountNumber,
-                            bankName: bankName,
-                            routingNumber: routingNumber || null,
+                            bankName: safeBankName,
+                            routingNumber: safeRoutingNumber || null,
                         }
                     });
                 }
@@ -184,7 +192,7 @@ export async function processTransfer(prevState: any, formData: FormData) {
             data: {
                 userId: user.id,
                 title: "Transfer Sent",
-                message: `You successfully sent ${notificationAmount} to ${accountName}.`,
+                message: `You successfully sent ${notificationAmount} to ${safeAccountName}.`,
                 type: "SUCCESS",
                 link: `/dashboard/transactions/${result.senderTxId}`,
                 isRead: false
@@ -196,7 +204,7 @@ export async function processTransfer(prevState: any, formData: FormData) {
                 data: {
                     userId: result.destUserId,
                     title: "Money Received",
-                    message: `You received $${amount.toLocaleString()} (approx) from ${user.fullName}.`,
+                    message: `You received $${amount.toLocaleString()} (approx) from ${sanitize(user.fullName)}.`,
                     type: "SUCCESS",
                     link: `/dashboard/transactions/${result.receiverTxId}`,
                     isRead: false
@@ -214,7 +222,7 @@ export async function processTransfer(prevState: any, formData: FormData) {
                 data: admins.map((admin) => ({
                     userId: admin.id,
                     title: "Local Transfer Alert",
-                    message: `User ${user.fullName} transferred $${amount.toLocaleString()} to ${accountName} (${bankName}).`,
+                   message: `User ${sanitize(user.fullName)} transferred $${amount.toLocaleString()} to ${safeAccountName} (${safeBankName}).`,
                     type: "INFO",
                     link: `/admin/users/${user.id}`,
                     isRead: false

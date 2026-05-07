@@ -37,7 +37,7 @@ export default function ManagedCard({ card, userName, siteName }: ManagedCardPro
 
         startTransition(async () => {
             try {
-                const result = await toggleCardFreeze(card.id, statusBeforeToggle);
+                const result = await toggleCardFreeze(card.id);
 
                 if (result.success) {
                     toast.success(result.message || (nextStatus === 'ACTIVE' ? "Card Unfrozen" : "Card Frozen"));

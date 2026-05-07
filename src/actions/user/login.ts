@@ -12,6 +12,8 @@ import { UAParser } from "ua-parser-js";
 import { db } from "@/lib/db";
 import { compare } from "bcryptjs";
 
+const sanitize = (str: string) => str.replace(/<[^>]*>/g, '');
+
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(1, "Password is required"),
@@ -34,11 +36,12 @@ export async function login(prevState: any, formData: FormData) {
   const { email, password, callbackUrl } = loginSchema.parse(rawData);
   const headersList = await headers();
   const ip = headersList.get("x-forwarded-for") || "Unknown IP";
+  const safeIp = sanitize(ip);
   const userAgent = headersList.get("user-agent") || "";
 
-  const security = await getSecurityStatus(ip);
+  const security = await getSecurityStatus(safeIp);
   if (security.isBlocked) {
-      await logAdminAction("IP_BLOCKED", email, { reason: "Rate Limit Exceeded", ip }, "CRITICAL", "BLOCKED");
+      await logAdminAction("IP_BLOCKED", email, { reason: "Rate Limit Exceeded", ip: safeIp }, "CRITICAL", "BLOCKED");
       return {
           message: `Too many failed attempts. Please try again in ${security.remainingTime} minutes.`
       };
@@ -80,7 +83,7 @@ export async function login(prevState: any, formData: FormData) {
 
           const parser = new UAParser(userAgent);
           const result = parser.getResult();
-          const device = `${result.browser.name || 'Web'} on ${result.os.name || 'Unknown OS'}`;
+          const device = sanitize(`${result.browser.name || 'Web'} on ${result.os.name || 'Unknown OS'}`);
 
           await db.notification.create({
               data: {
@@ -107,7 +110,7 @@ export async function login(prevState: any, formData: FormData) {
     if (error instanceof AuthError) {
       switch (error.type) {
         case "CredentialsSignin":
-          await logAdminAction("LOGIN_FAILED", email, { reason: "Invalid Credentials", ip }, "WARNING", "FAILED");
+          await logAdminAction("LOGIN_FAILED", email, { reason: "Invalid Credentials", ip: safeIp }, "WARNING", "FAILED");
 
           let attempts = 0;
           let userForNotify = null;
@@ -122,7 +125,7 @@ export async function login(prevState: any, formData: FormData) {
               userForNotify = updatedUser;
           } catch (e) { }
 
-          const freshStatus = await getSecurityStatus(ip);
+          const freshStatus = await getSecurityStatus(safeIp);
           if (freshStatus.isBlocked) {
              if (userForNotify) {
                  try {
@@ -130,7 +133,7 @@ export async function login(prevState: any, formData: FormData) {
                          data: {
                              userId: userForNotify.id,
                              title: "Network Access Suspended",
-                             message: `Security Alert: We detected unusual activity from your IP (${ip}). Access temporarily blocked for ${freshStatus.remainingTime} minutes.`,
+                             message: `Security Alert: We detected unusual activity from your IP (${safeIp}). Access temporarily blocked for ${freshStatus.remainingTime} minutes.`,
                              type: "WARNING",
                              link: "/security",
                              isRead: false

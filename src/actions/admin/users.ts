@@ -16,8 +16,25 @@ import { checkAdminAction } from "@/lib/auth/admin-auth";
 import { canPerform } from "@/lib/auth/permissions";
 import { z } from "zod";
 
+const sanitize = (str: string) => str.replace(/<[^>]*>/g, '');
+
+const createUserSchema = z.object({
+  email: z.string().email("Invalid email address").max(100),
+  fullName: z.string().min(2, "Name is required").max(100),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+  phone: z.string().max(30, "Phone must be 30 characters or less").optional(),
+  address: z.string().max(200, "Address must be 200 characters or less").optional(),
+  city: z.string().max(100, "City must be 100 characters or less").optional(),
+  country: z.string().max(100, "Country must be 100 characters or less").optional(),
+  zipCode: z.string().max(20, "Zip code must be 20 characters or less").optional(),
+  occupation: z.string().max(100, "Occupation must be 100 characters or less").optional(),
+  gender: z.string().max(20, "Gender must be 20 characters or less").optional(),
+  taxId: z.string().max(50, "Tax ID must be 50 characters or less").optional(),
+  dateOfBirth: z.string().optional(),
+});
+
 const resetSchema = z.object({
-    userId: z.string(),
+    userId: z.string().min(1, "User ID is required"),
     newPassword: z.string().min(6, "Password must be at least 6 characters"),
 });
 
@@ -55,20 +72,48 @@ export async function adminCreateUser(formData: FormData) {
     if (!authorized || !session || !session.user) return { success: false, message: "Unauthorized" };
     if (!canPerform(session.user.role as UserRole, 'MONEY')) return { success: false, message: "Insufficient permissions. Only Admins can perform this actions" };
 
-    const email = formData.get("email") as string;
-    const fullName = formData.get("fullName") as string;
-    const password = formData.get("password") as string;
-    const phone = formData.get("phone") as string;
-    const address = formData.get("address") as string;
-    const city = formData.get("city") as string;
-    const country = formData.get("country") as string;
-    const zipCode = formData.get("zipCode") as string;
-    const occupation = formData.get("occupation") as string;
-    const gender = formData.get("gender") as string;
-    const taxId = formData.get("taxId") as string;
-    const dateOfBirthStr = formData.get("dateOfBirth") as string;
+    const rawData = {
+  email: formData.get("email") as string,
+  fullName: formData.get("fullName") as string,
+  password: formData.get("password") as string,
+  phone: formData.get("phone") as string || undefined,
+  address: formData.get("address") as string || undefined,
+  city: formData.get("city") as string || undefined,
+  country: formData.get("country") as string || undefined,
+  zipCode: formData.get("zipCode") as string || undefined,
+  occupation: formData.get("occupation") as string || undefined,
+  gender: formData.get("gender") as string || undefined,
+  taxId: formData.get("taxId") as string || undefined,
+  dateOfBirth: formData.get("dateOfBirth") as string || undefined,
+};
 
-    if (!email || !password || !fullName) return { success: false, message: "Missing required fields" };
+const validated = createUserSchema.safeParse(rawData);
+if (!validated.success) {
+  return { success: false, message: validated.error.issues[0].message };
+}
+
+const { email,
+    fullName,
+    password,
+    phone,
+    address,
+    city,
+    country,
+    zipCode,
+    occupation,
+    gender,
+    taxId,
+    dateOfBirth: dateOfBirthStr
+} = validated.data;
+
+// Sanitise text that will be displayed or stored
+const safeFullName = sanitize(fullName);
+const safeAddress = address ? sanitize(address) : undefined;
+const safeCity = city ? sanitize(city) : undefined;
+const safeCountry = country ? sanitize(country) : undefined;
+const safeOccupation = occupation ? sanitize(occupation) : undefined;
+const safeTaxId = taxId ? sanitize(taxId) : undefined;
+const safeZipCode = zipCode ? sanitize(zipCode) : undefined;
 
     const existing = await db.user.findUnique({ where: { email } });
     if (existing) return { success: false, message: "Email already in use." };
@@ -82,14 +127,41 @@ export async function adminCreateUser(formData: FormData) {
         const newUser = await db.$transaction(async (tx) => {
             return await tx.user.create({
                 data: {
-                    email, fullName, passwordHash: hashedPassword, role: UserRole.CLIENT, status: UserStatus.ACTIVE,
-                    transactionPin: "0000", phone: phone || undefined, address: address || undefined,
-                    city: city || undefined, country: country || undefined, zipCode: zipCode || undefined,
-                    occupation: occupation || undefined, gender: gender || null, dateOfBirth: dateOfBirthStr ? new Date(dateOfBirthStr) : null, taxId: taxId || undefined,
+                    email,
+                    fullName: safeFullName,
+                    passwordHash: hashedPassword,
+                    role: UserRole.CLIENT, status: UserStatus.ACTIVE,
+                    transactionPin: Math.floor(1000 + Math.random() * 9000).toString(),
+                    phone: phone || undefined,
+                    address: safeAddress || undefined,
+                    city: safeCity || undefined,
+                    country: safeCountry || undefined,
+                    zipCode: safeZipCode || undefined,
+                    occupation: safeOccupation || undefined,
+                    gender: gender || null,
+                    dateOfBirth: dateOfBirthStr ? new Date(dateOfBirthStr) : null,
+                    taxId: safeTaxId || undefined,
                     accounts: {
                         create: [
-                            { accountName: `${fullName} - Checking`, type: AccountType.CHECKING, accountNumber: checkingNum, routingNumber: routingNum, availableBalance: 0, currentBalance: 0, currency: "USD", status: AccountStatus.ACTIVE, isPrimary: true },
-                            { accountName: `${fullName} - Savings`, type: AccountType.SAVINGS, accountNumber: savingsNum, routingNumber: routingNum, availableBalance: 0, currentBalance: 0, currency: "USD", status: AccountStatus.ACTIVE, isPrimary: false }
+                            { accountName: `${safeFullName} - Checking`,
+                            type: AccountType.CHECKING,
+                            accountNumber: checkingNum,
+                            routingNumber: routingNum,
+                            availableBalance: 0,
+                            currentBalance: 0,
+                            currency: "USD",
+                            status: AccountStatus.ACTIVE, isPrimary: true
+                        },
+                            { accountName: `${safeFullName} - Savings`,
+                            type: AccountType.SAVINGS,
+                            accountNumber: savingsNum,
+                            routingNumber: routingNum,
+                            availableBalance: 0,
+                            currentBalance: 0,
+                            currency: "USD",
+                            status: AccountStatus.ACTIVE,
+                            isPrimary: false
+                        }
                         ]
                     }
                 }
@@ -129,6 +201,10 @@ export async function toggleUserStatus(userId: string, newStatus: string) {
     const { authorized, session } = await checkAdminAction();
 
     if (!authorized || !session || !session.user) return { success: false, message: "Unauthorized" };
+
+    if (userId === session.user.id) {
+  return { success: false, message: "You cannot modify your own status." };
+}
 
     if (!canPerform(session.user.role as UserRole, 'MONEY')) return { success: false, message: "Insufficient permissions. Only Admins can perform this actions" };
 
@@ -256,8 +332,14 @@ export async function adminIssueCard(userId: string) {
         await db.$transaction(async (tx) => {
             await tx.card.create({
                 data: {
-                    userId, type: CardType.VISA, cardNumber, cvv, expiryDate,
-                    pin: user.transactionPin || "0000", status: CardStatus.ACTIVE, isPhysical: false
+                    userId,
+                    type: CardType.VISA,
+                    cardNumber,
+                    cvv,
+                    expiryDate,
+                    pin: user.transactionPin || Math.floor(1000 + Math.random() * 9000).toString(),
+                    status: CardStatus.ACTIVE,
+                    isPhysical: false
                 }
             });
         });

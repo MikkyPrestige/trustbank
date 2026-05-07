@@ -4,10 +4,20 @@ import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { checkAdminAction } from "@/lib/auth/admin-auth";
 import { logAdminAction } from "@/lib/utils/admin-logger";
+import { z } from "zod";
 
 interface ExchangeRateResponse {
     rates: Record<string, number>;
 }
+
+const sanitize = (str: string) => str.replace(/<[^>]*>/g, '');
+
+const currencySchema = z.object({
+  code: z.string().min(1, "Code is required").max(10),
+  flag: z.string().max(100),
+  rate: z.coerce.number().positive("Rate must be positive"),
+});
+
 
 export async function getExchangeRates() {
     try {
@@ -79,13 +89,21 @@ export async function createCurrency(formData: FormData) {
         return { success: false, message: auth.message || "Unauthorized" };
     }
 
-    const code = formData.get("code") as string;
-    const flag = formData.get("flag") as string;
-    const rate = parseFloat(formData.get("rate") as string);
+   const rawData = {
+  code: formData.get("code") as string,
+  flag: formData.get("flag") as string,
+  rate: formData.get("rate") as string,
+};
 
-    if (!code || !flag || isNaN(rate)) {
-        return { success: false, message: "Missing or invalid currency fields" };
-    }
+const validated = currencySchema.safeParse(rawData);
+if (!validated.success) {
+  return { success: false, message: validated.error.issues[0].message };
+}
+
+const { code: rawCode, flag: rawFlag, rate } = validated.data;
+
+const code = sanitize(rawCode).toUpperCase();
+const flag = sanitize(rawFlag);
 
     try {
         await db.currency.create({
@@ -125,17 +143,24 @@ export async function updateCurrencyRate(id: string, rate: number) {
         return { success: false, message: "Unauthorized" };
     }
 
+    const rateSchema = z.number().positive("Rate must be positive");
+const validatedRate = rateSchema.safeParse(rate);
+if (!validatedRate.success) {
+  return { success: false, message: "Invalid rate value" };
+}
+const safeRate = validatedRate.data;
+
     try {
         const currency = await db.currency.update({
             where: { id },
-            data: { rate }
+            data: { rate: safeRate }
         });
 
         await logAdminAction(
             "UPDATE_CURRENCY_RATE",
             currency.code,
             {
-                newRate: rate,
+                newRate: safeRate,
                 action: "Updated exchange rate",
                 admin: auth.session.user.email
             },

@@ -9,24 +9,27 @@ import { revalidatePath } from "next/cache";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { UserStatus } from "@prisma/client";
+import { fileTypeFromBuffer } from 'file-type';
+
+const sanitize = (str: string) => str.replace(/<[^>]*>/g, '');
 
 const profileSchema = z.object({
-    fullName: z.string().min(2, "Name is required").optional(),
-    occupation: z.string().optional(),
-    gender: z.string().optional(),
-    dateOfBirth: z.string().optional(),
-    phone: z.string().optional(),
-    taxId: z.string().optional(),
-    address: z.string().optional(),
-    city: z.string().optional(),
-    state: z.string().optional(),
-    country: z.string().optional(),
-    zipCode: z.string().optional(),
-    nokName: z.string().optional(),
-    nokPhone: z.string().optional(),
-    nokRelationship: z.string().optional(),
-    nokEmail: z.string().email("Invalid email").optional().or(z.literal("")),
-    nokAddress: z.string().optional(),
+    fullName: z.string().min(2, "Name is required").max(100).optional(),
+    occupation: z.string().max(100).optional(),
+    gender: z.string().max(20).optional(),
+    dateOfBirth: z.string().max(10).optional(),
+    phone: z.string().max(30).optional(),
+    taxId: z.string().max(50).optional(),
+    address: z.string().max(200).optional(),
+    city: z.string().max(100).optional(),
+    state: z.string().max(100).optional(),
+    country: z.string().max(100).optional(),
+    zipCode: z.string().max(20).optional(),
+    nokName: z.string().max(100).optional(),
+    nokPhone: z.string().max(30).optional(),
+    nokRelationship: z.string().max(50).optional(),
+    nokEmail: z.string().email("Invalid email").max(100).optional().or(z.literal("")),
+    nokAddress: z.string().max(200).optional(),
     image: z.string().optional(),
     passportUrl: z.string().optional(),
     idCardUrl: z.string().optional(),
@@ -42,8 +45,13 @@ const pinSchema = z.object({
     newPin: z.string().length(4, "PIN must be exactly 4 digits"),
 });
 
-
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
+
+async function isValidImage(file: File): Promise<boolean> {
+  const buffer = Buffer.from(await file.arrayBuffer());
+  const result = await fileTypeFromBuffer(buffer);
+  return result?.mime.startsWith('image/') ?? false;
+}
 
 export async function updateAvatar(formData: FormData) {
    const { success, message, user } = await getAuthenticatedUser();
@@ -62,6 +70,12 @@ export async function updateAvatar(formData: FormData) {
     if (file.size > MAX_FILE_SIZE) {
         return { success: false, message: "File is too large. Max 10MB." };
     }
+
+    // Validate that the file is an actual image
+const isImage = await isValidImage(file);
+if (!isImage) {
+    return { success: false, message: "Only image files are allowed." };
+}
 
     let secureUrl = "";
 
@@ -101,15 +115,31 @@ export async function updateProfile(prevState: any, formData: FormData) {
         return { message: "Invalid inputs. Please check your data." };
     }
 
-    const { dateOfBirth, ...otherData } = validated.data;
+    const rawUpdateData = validated.data;
+
+const safeData = {
+  fullName: rawUpdateData.fullName ? sanitize(rawUpdateData.fullName) : undefined,
+  occupation: rawUpdateData.occupation ? sanitize(rawUpdateData.occupation) : undefined,
+  gender: rawUpdateData.gender ? sanitize(rawUpdateData.gender) : undefined,
+  phone: rawUpdateData.phone ? sanitize(rawUpdateData.phone) : undefined,
+  taxId: rawUpdateData.taxId ? sanitize(rawUpdateData.taxId) : undefined,
+  address: rawUpdateData.address ? sanitize(rawUpdateData.address) : undefined,
+  city: rawUpdateData.city ? sanitize(rawUpdateData.city) : undefined,
+  state: rawUpdateData.state ? sanitize(rawUpdateData.state) : undefined,
+  country: rawUpdateData.country ? sanitize(rawUpdateData.country) : undefined,
+  zipCode: rawUpdateData.zipCode ? sanitize(rawUpdateData.zipCode) : undefined,
+  nokName: rawUpdateData.nokName ? sanitize(rawUpdateData.nokName) : undefined,
+  nokPhone: rawUpdateData.nokPhone ? sanitize(rawUpdateData.nokPhone) : undefined,
+  nokRelationship: rawUpdateData.nokRelationship ? sanitize(rawUpdateData.nokRelationship) : undefined,
+  nokEmail: rawUpdateData.nokEmail,
+  nokAddress: rawUpdateData.nokAddress ? sanitize(rawUpdateData.nokAddress) : undefined,
+  dateOfBirth: rawUpdateData.dateOfBirth ? new Date(rawUpdateData.dateOfBirth) : undefined,
+};
 
     try {
         await db.user.update({
             where: { id: user.id },
-            data: {
-                ...otherData,
-                dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : undefined
-            }
+            data: { ...safeData }
         });
 
         try {
@@ -123,7 +153,7 @@ export async function updateProfile(prevState: any, formData: FormData) {
                     data: admins.map((admin) => ({
                         userId: admin.id,
                         title: "User Profile Updated",
-                        message: `User ${user.fullName || 'Client'} updated their profile details.`,
+                        message: `User ${sanitize(user.fullName || 'Client')} updated their profile details.`,
                         type: "INFO",
                         link: `/admin/users/${user.id}`,
                         isRead: false

@@ -2,8 +2,10 @@
 
 import { db } from "@/lib/db";
 import { z } from "zod";
+import { fileTypeFromBuffer } from 'file-type';
+import { headers } from "next/headers";
 import bcrypt from "bcryptjs";
-import { checkMaintenanceMode, getBooleanSetting, hashPin } from "@/lib/security";
+import { checkMaintenanceMode, getBooleanSetting, hashPin, checkRegisterLimit } from "@/lib/security";
 import { getSiteSettings } from "@/lib/content/get-settings";
 import { uploadFileToCloud } from "@/lib/utils/upload";
 import { sendVerificationEmail } from "@/lib/mail";
@@ -17,32 +19,40 @@ import {
   CardStatus,
   KycStatus
 } from "@prisma/client";
+import { logAdminAction } from "@/lib/utils/admin-logger";
 
+const sanitize = (str: string) => str.replace(/<[^>]*>/g, '');
 
 const registerSchema = z.object({
-  fullName: z.string().min(2, "Name is required"),
-  email: z.string().email("Invalid email"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  fullName: z.string().min(2, "Name is required").max(100),
+  email: z.string().email("Invalid email").max(100),
+  password: z.string().min(6, "Password must be at least 6 characters").max(128),
   pin: z.string().length(4, "PIN must be exactly 4 digits"),
-  phone: z.string().optional(),
-  dateOfBirth: z.string().optional(),
-  gender: z.string().optional(),
-  occupation: z.string().optional(),
-  taxId: z.string().optional(),
-  country: z.string().optional(),
-  city: z.string().optional(),
-  state: z.string().optional(),
-  address: z.string().optional(),
-  zipCode: z.string().optional(),
-  nokName: z.string().optional(),
-  nokPhone: z.string().optional(),
-  nokEmail: z.string().email("Invalid NOK email").optional().or(z.literal("")),
-  nokAddress: z.string().optional(),
-  nokRelationship: z.string().optional(),
-  docType: z.string().optional(),
-  currency: z.string().optional(),
-  callbackUrl: z.string().optional(),
+  phone: z.string().max(30).optional(),
+  dateOfBirth: z.string().max(10).optional(),
+  gender: z.string().max(20).optional(),
+  occupation: z.string().max(100).optional(),
+  taxId: z.string().max(50).optional(),
+  country: z.string().max(100).optional(),
+  city: z.string().max(100).optional(),
+  state: z.string().max(100).optional(),
+  address: z.string().max(200).optional(),
+  zipCode: z.string().max(20).optional(),
+  nokName: z.string().max(100).optional(),
+  nokPhone: z.string().max(30).optional(),
+  nokEmail: z.string().email("Invalid NOK email").max(100).optional().or(z.literal("")),
+  nokAddress: z.string().max(200).optional(),
+  nokRelationship: z.string().max(50).optional(),
+  docType: z.string().max(20).optional(),
+  currency: z.string().max(10).optional(),
+  callbackUrl: z.string().max(500).optional(),
 });
+
+async function isValidImage(file: File): Promise<boolean> {
+  const buffer = Buffer.from(await file.arrayBuffer());
+  const result = await fileTypeFromBuffer(buffer);
+  return result?.mime.startsWith('image/') ?? false;
+}
 
 export type RegisterState = {
   message?: string;
@@ -102,16 +112,28 @@ export async function registerUser(prevState: RegisterState, formData: FormData)
   const settings = await getSiteSettings();
   const siteName = settings.site_name;
 
+    if (await checkMaintenanceMode()) {
+        return { success: false, message: "System is currently under maintenance. Please try again later." };
+    }
+
+        // IP‑based rate limiting for registration
+const headersList = await headers();
+const ip = headersList.get("x-forwarded-for") || "Unknown IP";
+const registerLimit = await checkRegisterLimit(ip);
+
+if (registerLimit.isBlocked) {
+    return {
+        success: false,
+        message: "Too many registration attempts. Please try again later."
+    };
+}
+
   const isRegistrationEnabled = await getBooleanSetting('feature_register_enabled', true);
   if (!isRegistrationEnabled) {
         return {
             success: false,
             message: "Registration is currently closed. Please check back later."
         };
-    }
-
-  if (await checkMaintenanceMode()) {
-        return { success: false, message: "System is currently under maintenance. Please try again later." };
     }
 
   const validated = registerSchema.safeParse(rawData);
@@ -126,6 +148,23 @@ export async function registerUser(prevState: RegisterState, formData: FormData)
   }
 
   const data = validated.data;
+  const safeData = {
+  ...data,
+  fullName: sanitize(data.fullName),
+  phone: data.phone ? sanitize(data.phone) : undefined,
+  occupation: data.occupation ? sanitize(data.occupation) : undefined,
+  gender: data.gender ? sanitize(data.gender) : undefined,
+  taxId: data.taxId ? sanitize(data.taxId) : undefined,
+  country: data.country ? sanitize(data.country) : undefined,
+  city: data.city ? sanitize(data.city) : undefined,
+  state: data.state ? sanitize(data.state) : undefined,
+  address: data.address ? sanitize(data.address) : undefined,
+  zipCode: data.zipCode ? sanitize(data.zipCode) : undefined,
+  nokName: data.nokName ? sanitize(data.nokName) : undefined,
+  nokPhone: data.nokPhone ? sanitize(data.nokPhone) : undefined,
+  nokAddress: data.nokAddress ? sanitize(data.nokAddress) : undefined,
+  nokRelationship: data.nokRelationship ? sanitize(data.nokRelationship) : undefined,
+};
   const callbackUrl = data.callbackUrl || "/dashboard";
 
   const idFrontFile = formData.get("idDocumentFront") as File;
@@ -143,6 +182,19 @@ export async function registerUser(prevState: RegisterState, formData: FormData)
   if (hasBack && idBackFile.size > MAX_INDIVIDUAL_SIZE) return { message: "ID Back is too large (Max 10MB)." };
   if (passportFile && passportFile.size > MAX_INDIVIDUAL_SIZE) return { message: "Passport Photo is too large (Max 10MB)." };
 
+  // Validate that provided files are actually images (magic byte check)
+if (hasFront || hasBack || (passportFile && passportFile.size > 0)) {
+  const fileChecks = [];
+  if (hasFront) fileChecks.push(isValidImage(idFrontFile));
+  if (hasBack) fileChecks.push(isValidImage(idBackFile));
+  if (passportFile && passportFile.size > 0) fileChecks.push(isValidImage(passportFile));
+
+  const results = await Promise.all(fileChecks);
+  if (!results.every(Boolean)) {
+    return { message: "Only valid image files are allowed." };
+  }
+}
+
   const totalSize = (idFrontFile?.size || 0) + (idBackFile?.size || 0) + (passportFile?.size || 0);
   if (totalSize > MAX_TOTAL_SIZE) {
       return { message: "Total upload size exceeds 25MB. Please use smaller files." };
@@ -152,6 +204,8 @@ export async function registerUser(prevState: RegisterState, formData: FormData)
   let idCardBackUrl: string | null = null;
   let userImageUrl: string | null = null;
   let kycStatus: KycStatus = KycStatus.NOT_SUBMITTED;
+
+  await logAdminAction("REGISTER_ATTEMPT", rawData.email as string, { ip }, "INFO", "ATTEMPT");
 
   try {
       if (hasFront) {
@@ -197,8 +251,8 @@ export async function registerUser(prevState: RegisterState, formData: FormData)
     const newUserId = await db.$transaction(async (tx) => {
         const newUser = await tx.user.create({
             data: {
-                email: data.email,
-                fullName: data.fullName,
+                email: safeData.email,
+                fullName: safeData.fullName,
                 passwordHash: hashedPassword,
                 transactionPin: hashedPin,
                 role: UserRole.CLIENT,
@@ -210,22 +264,22 @@ export async function registerUser(prevState: RegisterState, formData: FormData)
                 idCardUrl: idCardUrl,
                 idCardBackUrl: idCardBackUrl,
                 kycStatus: kycStatus,
-                phone: data.phone || null,
-                dateOfBirth: data.dateOfBirth ? new Date(data.dateOfBirth) : null,
-                gender: data.gender || null,
-                occupation: data.occupation || null,
-                taxId: data.taxId || null,
-                country: data.country || null,
-                city: data.city || null,
-                state: data.state || null,
-                address: data.address || null,
-                zipCode: data.zipCode || null,
-                nokName: data.nokName || null,
-                nokPhone: data.nokPhone || null,
-                nokEmail: data.nokEmail || null,
-                nokAddress: data.nokAddress || null,
-                nokRelationship: data.nokRelationship || null,
-                currency: data.currency || "USD",
+                phone: safeData.phone || null,
+                dateOfBirth: safeData.dateOfBirth ? new Date(safeData.dateOfBirth) : null,
+                gender: safeData.gender || null,
+                occupation: safeData.occupation || null,
+                taxId: safeData.taxId || null,
+                country: safeData.country || null,
+                city: safeData.city || null,
+                state: safeData.state || null,
+                address: safeData.address || null,
+                zipCode: safeData.zipCode || null,
+                nokName: safeData.nokName || null,
+                nokPhone: safeData.nokPhone || null,
+                nokEmail: safeData.nokEmail || null,
+                nokAddress: safeData.nokAddress || null,
+                nokRelationship: safeData.nokRelationship || null,
+                currency: safeData.currency || "USD",
             },
             select: { id: true, email: true }
         });
@@ -235,7 +289,7 @@ export async function registerUser(prevState: RegisterState, formData: FormData)
                 userId: newUser.id,
                 accountNumber: savingsNum,
                 routingNumber: routingNum,
-                accountName: data.fullName,
+                accountName: safeData.fullName,
                 type: AccountType.SAVINGS,
                 status: AccountStatus.ACTIVE,
                 isPrimary: true
@@ -247,7 +301,7 @@ export async function registerUser(prevState: RegisterState, formData: FormData)
                 userId: newUser.id,
                 accountNumber: checkingNum,
                 routingNumber: routingNum,
-                accountName: data.fullName,
+                accountName: safeData.fullName,
                 type: AccountType.CHECKING,
                 status: AccountStatus.ACTIVE,
                 isPrimary: false
@@ -303,19 +357,13 @@ export async function registerUser(prevState: RegisterState, formData: FormData)
           const existingUser = await db.user.findUnique({
       where: { email: data.email }
   });
-  if (existingUser) {
-      if (existingUser.emailVerified) {
-          return { success: true, message: "If an account with this email is not yet verified, a new code has been sent." };
-      } else {
-          return {
-              success: false,
-              isUnverified: true,
-              email: data.email,
-              callbackUrl: callbackUrl,
-              message: "Account exists but is not verified."
-          };
-      }
-  }
+
+if (existingUser) {
+    return {
+        success: true,
+        message: "If an account with this email is not yet verified, a new code has been sent."
+    };
+}
         }
         return { message: "System busy (Collision). Please try again." };
       }

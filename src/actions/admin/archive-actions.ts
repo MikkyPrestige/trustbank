@@ -4,6 +4,10 @@ import { db } from "@/lib/db";
 import { checkAdminAction } from "@/lib/auth/admin-auth";
 import { revalidatePath } from "next/cache";
 import { UserStatus } from "@prisma/client";
+import { z } from "zod";
+import { UserRole } from "@prisma/client";
+
+const idSchema = z.string().min(1);
 
 export async function restoreUser(userId: string) {
        const auth = await checkAdminAction();
@@ -12,13 +16,21 @@ export async function restoreUser(userId: string) {
             return { success: false, message: auth.message || "Unauthorized" };
         }
 
+        const validatedId = idSchema.safeParse(userId);
+if (!validatedId.success) return { success: false, message: "Invalid user ID" };
+const safeUserId = validatedId.data;
+
     try {
        const user = await db.user.findUnique({
-            where: { id: userId },
-            select: { email: true }
+            where: { id: safeUserId },
+            select: { email: true, status: true }
         });
 
         if (!user) return { success: false, message: "User not found." };
+
+        if (user.status !== UserStatus.ARCHIVED) {
+    return { success: false, message: "Only archived users can be restored." };
+}
 
         let cleanEmail = user.email;
         if (cleanEmail.startsWith("deleted-")) {
@@ -56,6 +68,7 @@ export async function restoreUser(userId: string) {
     }
 }
 
+
 export async function deleteUserPermanently(userId: string) {
        const auth = await checkAdminAction();
 
@@ -63,16 +76,26 @@ export async function deleteUserPermanently(userId: string) {
             return { success: false, message: auth.message || "Unauthorized" };
         }
 
-    try {
+        const validatedId = idSchema.safeParse(userId);
+if (!validatedId.success) return { success: false, message: "Invalid user ID" };
+const safeUserId = validatedId.data;
 
-        await db.user.delete({
-            where: { id: userId }
-        });
+if (auth.session.user.id === safeUserId) {
+    return { success: false, message: "You cannot permanently delete your own account." };
+}
 
-        revalidatePath("/admin/users");
-        return { success: true, message: "User permanently deleted." };
-    } catch (error) {
-        console.error("Delete Error:", error);
-        return { success: false, message: "Failed. Ensure user has no active transaction dependencies." };
-    }
+const target = await db.user.findUnique({
+    where: { id: safeUserId },
+    select: { id: true, status: true, role: true }
+});
+
+if (!target) return { success: false, message: "User not found." };
+if (target.status !== UserStatus.ARCHIVED) {
+    return { success: false, message: "Only archived users can be permanently deleted." };
+}
+if (target.role === UserRole.SUPER_ADMIN) {
+    return { success: false, message: "Cannot delete a Super Admin." };
+}
+
+await db.user.delete({ where: { id: safeUserId } });
 }

@@ -4,6 +4,24 @@ import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { checkAdminAction } from "@/lib/auth/admin-auth";
 import { logAdminAction } from "@/lib/utils/admin-logger";
+import { z } from "zod";
+
+const sanitize = (str: string) => str.replace(/<[^>]*>/g, '');
+
+const branchSchema = z.object({
+  name: z.string().min(1, "Name is required").max(100),
+  address: z.string().min(1, "Address is required").max(200),
+  city: z.string().min(1, "City is required").max(100),
+  phone: z.string().max(30).optional(),
+  email: z.string().email("Invalid email").max(100).optional().or(z.literal('')),
+  hours: z.string().max(200).optional(),
+  lat: z.coerce.number().optional(),
+  lng: z.coerce.number().optional(),
+  hasAtm: z.boolean().optional(),
+  hasDriveThru: z.boolean().optional(),
+  hasNotary: z.boolean().optional(),
+  isActive: z.boolean().optional(),
+});
 
 export async function createBranch(formData: FormData) {
     const auth = await checkAdminAction();
@@ -11,26 +29,38 @@ export async function createBranch(formData: FormData) {
     if (!auth.authorized || !auth.session || !auth.session.user) {
         return { success: false, message: auth.message || "Unauthorized" };
     }
+const rawData = {
+  name: formData.get("name") as string,
+  address: formData.get("address") as string,
+  city: formData.get("city") as string,
+  phone: formData.get("phone") as string,
+  email: formData.get("email") as string,
+  hours: formData.get("hours") as string,
+  lat: formData.get("lat") as string,
+  lng: formData.get("lng") as string,
+  hasAtm: formData.get("hasAtm") === "on",
+  hasDriveThru: formData.get("hasDriveThru") === "on",
+  hasNotary: formData.get("hasNotary") === "on",
+};
 
-    const name = formData.get("name") as string;
-    const address = formData.get("address") as string;
-    const city = formData.get("city") as string;
-    const phone = formData.get("phone") as string;
-    const email = formData.get("email") as string;
-    const hours = formData.get("hours") as string;
-    const lat = parseFloat(formData.get("lat") as string);
-    const lng = parseFloat(formData.get("lng") as string);
-    const hasAtm = formData.get("hasAtm") === "on";
-    const hasDriveThru = formData.get("hasDriveThru") === "on";
-    const hasNotary = formData.get("hasNotary") === "on";
+const validated = branchSchema.safeParse(rawData);
+if (!validated.success) {
+  return { success: false, message: validated.error.issues[0].message };
+}
 
-    if (!name || !address || !city) {
-        return { success: false, message: "Name, Address, and City are required" };
-    }
+const {
+  name: rawName, address: rawAddr, city: rawCity, phone, email, hours,
+  lat, lng, hasAtm, hasDriveThru, hasNotary
+} = validated.data;
+
+const name = sanitize(rawName);
+const address = sanitize(rawAddr);
+const city = sanitize(rawCity);
+const safePhone = phone ?? "";
 
     try {
         await db.branch.create({
-            data: { name, address, city, phone, email, hours, lat, lng, hasAtm, hasDriveThru, hasNotary, isActive: true }
+            data: { name, address, city, phone: safePhone, email, hours, lat, lng, hasAtm, hasDriveThru, hasNotary, isActive: true }
         });
 
         await logAdminAction(
@@ -61,18 +91,34 @@ export async function updateBranch(id: string, formData: FormData) {
         return { success: false, message: auth.message || "Unauthorized" };
     }
 
-    const name = formData.get("name") as string;
-    const address = formData.get("address") as string;
-    const city = formData.get("city") as string;
-    const phone = formData.get("phone") as string;
-    const email = formData.get("email") as string;
-    const hours = formData.get("hours") as string;
-    const lat = parseFloat(formData.get("lat") as string);
-    const lng = parseFloat(formData.get("lng") as string);
-    const isActive = formData.get("isActive") === "on";
-    const hasAtm = formData.get("hasAtm") === "on";
-    const hasDriveThru = formData.get("hasDriveThru") === "on";
-    const hasNotary = formData.get("hasNotary") === "on";
+const rawData = {
+  name: formData.get("name") as string,
+  address: formData.get("address") as string,
+  city: formData.get("city") as string,
+  phone: formData.get("phone") as string,
+  email: formData.get("email") as string,
+  hours: formData.get("hours") as string,
+  lat: formData.get("lat") as string,
+  lng: formData.get("lng") as string,
+  hasAtm: formData.get("hasAtm") === "on",
+  hasDriveThru: formData.get("hasDriveThru") === "on",
+  hasNotary: formData.get("hasNotary") === "on",
+  isActive: formData.get("isActive") === "on",
+};
+
+const validated = branchSchema.safeParse(rawData);
+if (!validated.success) {
+  return { success: false, message: validated.error.issues[0].message };
+}
+
+const {
+  name: rawName, address: rawAddr, city: rawCity, phone, email, hours,
+  lat, lng, hasAtm, hasDriveThru, hasNotary, isActive
+} = validated.data;
+
+const name = sanitize(rawName);
+const address = sanitize(rawAddr);
+const city = sanitize(rawCity);
 
     try {
         await db.branch.update({

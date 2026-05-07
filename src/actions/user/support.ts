@@ -7,16 +7,19 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { UserRole } from "@prisma/client";
 
+const sanitize = (str: string) => str.replace(/<[^>]*>/g, '');
+
 const ticketSchema = z.object({
-  subject: z.string().min(3, "Subject must be at least 3 characters"),
-  message: z.string().min(10, "Please describe your issue in detail (min 10 chars)."),
+  subject: z.string().min(3, "Subject must be at least 3 characters").max(100),
+  message: z.string().min(10, "Please describe your issue in detail (min 10 chars).").max(2000),
   priority: z.enum(["LOW", "NORMAL", "HIGH"]).optional(),
 });
 
 const replySchema = z.object({
-    ticketId: z.string().min(1),
-    message: z.string().min(1, "Message cannot be empty"),
+    ticketId: z.string().min(1, "Ticket ID is required"),
+    message: z.string().min(1, "Message cannot be empty").max(2000),
 });
+
 
 export async function createTicket(prevState: any, formData: FormData) {
  const { success, message, user } = await getAuthenticatedUser();
@@ -38,17 +41,21 @@ export async function createTicket(prevState: any, formData: FormData) {
 
   const { subject, priority, message: ticketMessage } = validated.data;
 
+  // Sanitize to prevent stored XSS
+const safeSubject = sanitize(subject);
+const safeMessage = sanitize(ticketMessage);
+
   try {
     const ticket = await db.ticket.create({
         data: {
           userId: user.id,
-          subject,
+          subject: safeSubject,
           priority,
           status: "OPEN",
           messages: {
             create: {
               sender: "USER",
-              message: ticketMessage
+              message: safeMessage
             }
           }
         }
@@ -65,7 +72,7 @@ export async function createTicket(prevState: any, formData: FormData) {
                 data: admins.map((admin) => ({
                     userId: admin.id,
                     title: "New Support Ticket",
-                    message: `New Ticket: "${subject}" from ${user.fullName || 'User'}`,
+                    message: `New Ticket: "${safeSubject}" from ${sanitize(user.fullName || 'User')}`,
                     type: "INFO",
                     link: `/admin/support/${ticket.id}`,
                     isRead: false
@@ -110,12 +117,14 @@ export async function replyToTicket(prevState: any, formData: FormData) {
 
         if (!ticket) return { message: "Ticket not found" };
 
+        const safeReply = sanitize(replyMessage);
+
         await db.$transaction(async (tx) => {
             await tx.ticketMessage.create({
                 data: {
                     ticketId,
                     sender: "USER",
-                    message: replyMessage
+                    message: safeReply
                 }
             });
 
@@ -136,7 +145,7 @@ export async function replyToTicket(prevState: any, formData: FormData) {
                     data: admins.map(admin => ({
                         userId: admin.id,
                         title: "New Support Reply",
-                        message: `User ${user.fullName || 'Customer'} replied to ticket #${ticketId.slice(-4)}`,
+                        message: `User ${sanitize(user.fullName || 'Customer')} replied to ticket #${ticketId.slice(-4)}`,
                         type: "INFO",
                         link: `/admin/support/${ticketId}`,
                         isRead: false

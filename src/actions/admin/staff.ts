@@ -7,6 +7,25 @@ import bcrypt from "bcryptjs";
 import { UserRole, UserStatus } from "@prisma/client";
 import { checkAdminAction } from "@/lib/auth/admin-auth";
 import { canPerform } from "@/lib/auth/permissions";
+import { z } from "zod";
+
+const sanitize = (str: string) => str.replace(/<[^>]*>/g, '');
+
+const staffCreateSchema = z.object({
+  email: z.string().email("Invalid email address").max(100),
+  fullName: z.string().min(2, "Name is required").max(100),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+  role: z.nativeEnum(UserRole).refine(val => val !== UserRole.SUPER_ADMIN, {
+    message: "Cannot create Super Admin via web portal."
+  }),
+});
+
+const promoteSchema = z.object({
+  email: z.string().email("Invalid email address"),
+  role: z.nativeEnum(UserRole).refine(val => val !== UserRole.SUPER_ADMIN, {
+    message: "Cannot promote to Super Admin via web portal."
+  }),
+});
 
 export async function createStaffAccount(formData: FormData) {
     const { authorized, session } = await checkAdminAction();
@@ -19,16 +38,20 @@ export async function createStaffAccount(formData: FormData) {
         return { success: false, message: "Unauthorized: Super Admin access required." };
     }
 
-    const email = formData.get("email") as string;
-    const fullName = formData.get("fullName") as string;
-    const password = formData.get("password") as string;
-    const role = formData.get("role") as UserRole;
+    const rawData = {
+  email: formData.get("email") as string,
+  fullName: formData.get("fullName") as string,
+  password: formData.get("password") as string,
+  role: formData.get("role") as string,
+};
 
-    if (!email || !password || !role) return { success: false, message: "Missing fields" };
+const validated = staffCreateSchema.safeParse(rawData);
+if (!validated.success) {
+  return { success: false, message: validated.error.issues[0].message };
+}
 
-    if (role === UserRole.SUPER_ADMIN) {
-        return { success: false, message: "Cannot create Super Admin via web portal." };
-    }
+const { email, fullName: rawFullName, password, role } = validated.data;
+const fullName = sanitize(rawFullName);
 
     const existing = await db.user.findUnique({ where: { email } });
     if (existing) return { success: false, message: "Email already in use." };
@@ -43,7 +66,7 @@ export async function createStaffAccount(formData: FormData) {
                 passwordHash: hashedPassword,
                 role: role,
                 status: UserStatus.ACTIVE,
-                transactionPin: "0000",
+                transactionPin: Math.floor(1000 + Math.random() * 9000).toString(),
             }
         });
 
@@ -75,6 +98,7 @@ export async function createStaffAccount(formData: FormData) {
     return { success: true, message: `${role} account created successfully.` };
 }
 
+
 export async function removeStaffAccount(staffId: string) {
     const { authorized, session } = await checkAdminAction();
 
@@ -85,6 +109,10 @@ export async function removeStaffAccount(staffId: string) {
     if (!canPerform(session.user.role as UserRole, 'ADMIN_MGMT')) {
         return { success: false, message: "Unauthorized: Super Admin access required." };
     }
+
+    if (staffId === session.user.id) {
+  return { success: false, message: "You cannot revoke your own privileges." };
+}
 
     try {
         const target = await db.user.findUnique({ where: { id: staffId } });
@@ -130,6 +158,7 @@ export async function removeStaffAccount(staffId: string) {
     return { success: true, message: "Staff access revoked. User is now a Client." };
 }
 
+
 export async function promoteUserToStaff(formData: FormData) {
     const { authorized, session } = await checkAdminAction();
 
@@ -141,20 +170,27 @@ export async function promoteUserToStaff(formData: FormData) {
         return { success: false, message: "Unauthorized: Super Admin access required." };
     }
 
-    const email = formData.get("email") as string;
-    const role = formData.get("role") as UserRole;
+const rawData = {
+  email: formData.get("email") as string,
+  role: formData.get("role") as string,
+};
 
-    if (!email || !role) return { success: false, message: "Missing email or role." };
+const validated = promoteSchema.safeParse(rawData);
+if (!validated.success) {
+  return { success: false, message: validated.error.issues[0].message };
+}
 
-    if (role === UserRole.SUPER_ADMIN) {
-        return { success: false, message: "Cannot promote to Super Admin via web portal." };
-    }
+const { email, role } = validated.data;
 
     const user = await db.user.findUnique({ where: { email } });
     if (!user) return { success: false, message: "User not found." };
 
     if (user.role === UserRole.SUPER_ADMIN) return { success: false, message: "Cannot modify Super Admin." };
     if (user.role === role) return { success: false, message: `User is already a ${role}.` };
+
+    if (session.user.email === email) {
+  return { success: false, message: "You cannot modify your own role." };
+}
 
     try {
         await db.user.update({

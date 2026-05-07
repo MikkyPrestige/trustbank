@@ -5,6 +5,8 @@ import { revalidatePath } from "next/cache";
 import { checkAdminAction } from "@/lib/auth/admin-auth";
 import { logAdminAction } from "@/lib/utils/admin-logger";
 
+const sanitize = (str: string) => str.replace(/<[^>]*>/g, '');
+
 /**
  * METADATA MAPPING
  */
@@ -1081,6 +1083,10 @@ export async function updateSiteSettings(formData: FormData) {
             break;
             default: finalValue = stringValue;
         }
+
+        if (meta.type === 'STRING' || meta.type === 'IMAGE') {
+    finalValue = sanitize(finalValue);
+}
 
         const mainPrefixes = ['site_', 'contact_', 'address_', 'announcement_', 'nav_', 'auth_', 'routing', 'swift'];
         const contentPrefixes = ['hero_', 'home_', 'guide_', 'global_stat_', 'partner_', 'rate_', 'learn_', 'about_', 'support_', 'rates_', 'dashboard_', 'security_', 'help_', 'careers_', 'locations_', 'press_', 'invest_', 'legal_', 'footer_', 'social_'];

@@ -12,6 +12,29 @@ import {
     TransactionStatus,
     TransactionDirection
 } from "@prisma/client";
+import { z } from "zod";
+import { verifyPin } from "@/lib/security";
+
+const sanitize = (str: string) => str.replace(/<[^>]*>/g, '');
+
+const tradeSchema = z.object({
+  type: z.enum(["BUY", "SELL"], { message: "Invalid trade type" }),
+  currency: z.string().min(1).max(10),
+  amount: z.coerce.number().positive("Amount must be positive"),
+  displayAmount: z.string().optional(),
+  displayCurrency: z.string().optional(),
+});
+
+const transferCryptoSchema = z.object({
+  symbol: z.string().min(1).max(10),
+  amount: z.coerce.number().positive("Amount must be positive"),
+  recipient: z.string().min(1).max(100),
+  pin: z.string().length(4, "PIN must be 4 digits"),
+});
+
+const walletSchema = z.object({
+  symbol: z.string().min(1).max(10),
+});
 
 
 export async function tradeCrypto(prevState: any, formData: FormData) {
@@ -28,21 +51,28 @@ export async function tradeCrypto(prevState: any, formData: FormData) {
     const permission = await checkPermissions(user.id, 'CRYPTO_TRADE');
     if (!permission.allowed) return { message: `🚫 ${permission.error}` };
 
-    const type = formData.get("type") as "BUY" | "SELL";
-    const symbol = formData.get("currency") as string;
+   const rawTrade = {
+  type: formData.get("type") as string,
+  currency: formData.get("currency") as string,
+  amount: formData.get("amount") as string,
+  displayAmount: formData.get("displayAmount") as string,
+  displayCurrency: formData.get("displayCurrency") as string,
+};
 
-    const inputAmount = Number(formData.get("amount"));
+const validatedTrade = tradeSchema.safeParse(rawTrade);
+if (!validatedTrade.success) {
+  return { message: validatedTrade.error.issues[0].message };
+}
 
-    const displayAmount = formData.get("displayAmount") as string;
-    const displayCurrency = formData.get("displayCurrency") as string;
+const { type, currency: symbol, amount: inputAmount, displayAmount, displayCurrency } = validatedTrade.data;
 
-    if (!inputAmount || inputAmount <= 0) return { message: "Invalid amount" };
+const safeSymbol = sanitize(symbol);
 
     const { assets: marketData } = await getLiveMarketData();
-    const targetCoin = marketData.find(coin => coin.symbol === symbol);
+    const targetCoin = marketData.find(coin => coin.symbol === safeSymbol);
 
     let currentPrice = targetCoin?.price || 0;
-    if (symbol === 'HYPE' && currentPrice === 0) currentPrice = 25;
+    if (safeSymbol === 'HYPE' && currentPrice === 0) currentPrice = 25;
 
     if (!currentPrice || currentPrice <= 0) return { message: "Price unavailable. Try again." };
 
@@ -60,7 +90,7 @@ export async function tradeCrypto(prevState: any, formData: FormData) {
         if (!account) return { message: "No USD account found." };
 
         let asset = await db.cryptoAsset.findUnique({
-            where: { userId_symbol: { userId: user.id, symbol } }
+            where: { userId_symbol: { userId: user.id, symbol: safeSymbol } }
         });
 
         const cryptoAmount = inputAmount / currentPrice;
@@ -103,7 +133,7 @@ export async function tradeCrypto(prevState: any, formData: FormData) {
                 });
             } else {
                 await tx.cryptoAsset.create({
-                    data: { userId: user.id, symbol, quantity: newQty, avgBuyPrice: newAvgPrice }
+                    data: { userId: user.id, symbol: safeSymbol, quantity: newQty, avgBuyPrice: newAvgPrice }
                 });
             }
 
@@ -111,7 +141,7 @@ export async function tradeCrypto(prevState: any, formData: FormData) {
                 data: {
                     userId: user.id,
                     type: type,
-                    symbol,
+                    symbol: safeSymbol,
                     amount: cryptoAmount,
                     priceAtTime: currentPrice,
                     totalUsd: inputAmount
@@ -125,7 +155,7 @@ export async function tradeCrypto(prevState: any, formData: FormData) {
                     type: type === "BUY" ? TransactionType.CRYPTO_BUY : TransactionType.CRYPTO_SELL,
                     direction: type === "BUY" ? TransactionDirection.DEBIT : TransactionDirection.CREDIT,
                     status: TransactionStatus.COMPLETED,
-                    description: type === "BUY" ? `Bought ${cryptoAmount.toFixed(6)} ${symbol}` : `Sold ${cryptoAmount.toFixed(6)} ${symbol}`,
+                    description: type === "BUY" ? `Bought ${cryptoAmount.toFixed(6)} ${safeSymbol}` : `Sold ${cryptoAmount.toFixed(6)} ${safeSymbol}`,
                     referenceId: `${type}-${Date.now()}`,
                     metadata: JSON.stringify({ originalAmount: displayAmount, originalCurrency: displayCurrency })
                 }
@@ -142,7 +172,7 @@ export async function tradeCrypto(prevState: any, formData: FormData) {
             data: {
                 userId: user.id,
                 title: `Crypto ${type === "BUY" ? "Purchase" : "Sale"} Successful`,
-                message: `You successfully ${type === "BUY" ? "bought" : "sold"} ${cryptoAmount.toFixed(6)} ${symbol} for ${formatMoney}.`,
+                message: `You successfully ${type === "BUY" ? "bought" : "sold"} ${cryptoAmount.toFixed(6)} ${safeSymbol} for ${formatMoney}.`,
                 type: "SUCCESS",
                 link: `/dashboard/transactions/${ledgerId}`,
                 isRead: false
@@ -172,15 +202,30 @@ export async function transferCrypto(prevState: any, formData: FormData) {
     const permission = await checkPermissions(sessionUser.id, 'CRYPTO_TRANSFER');
     if (!permission.allowed) return { message: `🚫 ${permission.error}` };
 
-    const symbol = formData.get("symbol") as string;
-    const amount = Number(formData.get("amount"));
-    const recipient = formData.get("recipient") as string;
-    const pin = formData.get("pin") as string;
+  const rawTransfer = {
+  symbol: formData.get("symbol") as string,
+  amount: formData.get("amount") as string,
+  recipient: formData.get("recipient") as string,
+  pin: formData.get("pin") as string,
+};
 
-    if (!amount || amount <= 0) return { message: "Invalid amount" };
+const validatedTransfer = transferCryptoSchema.safeParse(rawTransfer);
+if (!validatedTransfer.success) {
+  return { message: validatedTransfer.error.issues[0].message };
+}
+
+const { symbol, amount, recipient: rawRecipient, pin } = validatedTransfer.data;
+
+const recipient = sanitize(rawRecipient);
+const safeSymbol = sanitize(symbol);
+
+const pinValidation = await verifyPin(sessionUser.id, pin);
+if (!pinValidation.success) {
+  return { message: pinValidation.error };
+}
 
     const { assets: marketData } = await getLiveMarketData();
-    const targetCoin = marketData.find(c => c.symbol === symbol);
+    const targetCoin = marketData.find(c => c.symbol === safeSymbol);
     const price = targetCoin?.price || 0;
     const usdValue = amount * price;
 
@@ -189,13 +234,6 @@ export async function transferCrypto(prevState: any, formData: FormData) {
 
         if (!sender) return { message: "User not found." };
         if (sender.status === UserStatus.FROZEN) return { message: "🚫 Account Frozen." };
-
-        if (!sender.transactionPin) return { message: "Transaction PIN not set." };
-
-        const isPinValid = await bcrypt.compare(pin, sender.transactionPin);
-        if (!isPinValid) {
-             return { message: "Invalid Security PIN" };
-        }
 
         let recipientUser = null;
         if (recipient.includes("@")) {
@@ -212,7 +250,7 @@ export async function transferCrypto(prevState: any, formData: FormData) {
 
         const result: TransferResult = await db.$transaction(async (tx) => {
             const senderAsset = await tx.cryptoAsset.findUnique({
-                where: { userId_symbol: { userId: sender.id, symbol } }
+                where: { userId_symbol: { userId: sender.id, symbol: safeSymbol } }
             });
 
             if (!senderAsset || Number(senderAsset.quantity) < amount) {
@@ -225,7 +263,7 @@ export async function transferCrypto(prevState: any, formData: FormData) {
             });
 
             await tx.cryptoTransaction.create({
-                data: { userId: sender.id, type: "SEND", symbol, amount, priceAtTime: price, totalUsd: usdValue }
+                data: { userId: sender.id, type: "SEND", symbol: safeSymbol, amount, priceAtTime: price, totalUsd: usdValue }
             });
 
             const senderAccount = await tx.account.findFirst({ where: { userId: sender.id } });
@@ -238,7 +276,7 @@ export async function transferCrypto(prevState: any, formData: FormData) {
                         type: TransactionType.CRYPTO_SEND,
                         direction: TransactionDirection.DEBIT,
                         status: TransactionStatus.COMPLETED,
-                        description: `Sent ${amount} ${symbol} to ${recipient}`,
+                        description: `Sent ${amount} ${safeSymbol} to ${recipient}`,
                         referenceId: `CSEND-${Date.now()}`
                     }
                 });
@@ -251,13 +289,13 @@ export async function transferCrypto(prevState: any, formData: FormData) {
             if (recipientUser) {
                 recipientUserId = recipientUser.id;
                 await tx.cryptoAsset.upsert({
-                    where: { userId_symbol: { userId: recipientUser.id, symbol } },
+                    where: { userId_symbol: { userId: recipientUser.id, symbol: safeSymbol } },
                     update: { quantity: { increment: amount } },
-                    create: { userId: recipientUser.id, symbol, quantity: amount, avgBuyPrice: 0 }
+                    create: { userId: recipientUser.id, symbol: safeSymbol, quantity: amount, avgBuyPrice: 0 }
                 });
 
                 await tx.cryptoTransaction.create({
-                    data: { userId: recipientUser.id, type: "RECEIVE", symbol, amount, priceAtTime: price, totalUsd: usdValue }
+                    data: { userId: recipientUser.id, type: "RECEIVE", symbol: safeSymbol, amount, priceAtTime: price, totalUsd: usdValue }
                 });
 
                 const recipientAccount = await tx.account.findFirst({ where: { userId: recipientUser.id } });
@@ -268,7 +306,7 @@ export async function transferCrypto(prevState: any, formData: FormData) {
                             type: TransactionType.CRYPTO_RECEIVE,
                             direction: TransactionDirection.CREDIT,
                             status: TransactionStatus.COMPLETED,
-                            description: `Received ${amount} ${symbol} from ${sender.email}`,
+                            description: `Received ${amount} ${safeSymbol} from ${sender.email}`,
                             referenceId: `CRECV-${Date.now()}`
                         }
                     });
@@ -283,7 +321,7 @@ export async function transferCrypto(prevState: any, formData: FormData) {
             data: {
                 userId: sender.id,
                 title: "Crypto Sent",
-                message: `You sent ${amount} ${symbol} to ${recipient}.`,
+                message: `You sent ${amount} ${safeSymbol} to ${recipient}.`,
                 type: "SUCCESS",
                 link: result.senderLedgerId ? `/dashboard/transactions/${result.senderLedgerId}` : "/dashboard/crypto",
                 isRead: false
@@ -295,7 +333,7 @@ export async function transferCrypto(prevState: any, formData: FormData) {
                 data: {
                     userId: result.recipientUserId,
                     title: "Crypto Received",
-                    message: `You received ${amount} ${symbol} from ${sender.email}.`,
+                    message: `You received ${amount} ${safeSymbol} from ${sender.email}.`,
                     type: "SUCCESS",
                     link: result.recipientLedgerId ? `/dashboard/transactions/${result.recipientLedgerId}` : "/dashboard/crypto",
                     isRead: false
@@ -308,7 +346,7 @@ export async function transferCrypto(prevState: any, formData: FormData) {
     }
 
     revalidatePath("/dashboard/crypto");
-    return { success: true, message: `Successfully sent ${amount} ${symbol}` };
+    return { success: true, message: `Successfully sent ${amount} ${safeSymbol}` };
 }
 
 export async function generateWallet(prevState: any, formData: FormData) {
@@ -325,8 +363,12 @@ export async function generateWallet(prevState: any, formData: FormData) {
     const permission = await checkPermissions(user.id, 'WALLET_GEN');
    if (!permission.allowed) return { message: `🚫 ${permission.error}` };
 
-    const symbol = formData.get("symbol") as string;
-    if (!symbol) return { success: false, message: "Currency required" };
+  const symbolRaw = formData.get("symbol") as string;
+const parsedSymbol = walletSchema.safeParse({ symbol: symbolRaw });
+if (!parsedSymbol.success) {
+  return { success: false, message: "Currency required" };
+}
+const symbol = sanitize(parsedSymbol.data.symbol);
 
     try {
         const existing = await db.cryptoAsset.findFirst({

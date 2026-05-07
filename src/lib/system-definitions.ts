@@ -43,6 +43,34 @@ security_lockout_duration: {
     defaultValue: "10",
     description: "Time window in minutes for counting OTP resend attempts."
   },
+  password_reset_max_attempts: {
+  label: "Password Reset Max Attempts (per IP)",
+  type: "NUMBER",
+  group: "security",
+  defaultValue: "3",
+  description: "Number of password reset requests allowed before the IP is temporarily blocked."
+},
+password_reset_window_minutes: {
+  label: "Password Reset Window (Minutes)",
+  type: "NUMBER",
+  group: "security",
+  defaultValue: "10",
+  description: "Time window in minutes for counting password reset attempts."
+},
+register_max_attempts: {
+  label: "Registration Max Attempts (per IP)",
+  type: "NUMBER",
+  group: "security",
+  defaultValue: "5",
+  description: "Number of registration attempts allowed before the IP is temporarily blocked."
+},
+register_window_minutes: {
+  label: "Registration Window (Minutes)",
+  type: "NUMBER",
+  group: "security",
+  defaultValue: "15",
+  description: "Time window in minutes for counting registration attempts."
+},
 
   // --- FINANCIAL LIMITS ---
   limit_unverified_tx_max: {

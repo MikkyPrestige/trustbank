@@ -4,25 +4,56 @@ import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { checkAdminAction } from "@/lib/auth/admin-auth";
 import { logAdminAction } from "@/lib/utils/admin-logger";
+import { z } from "zod";
+
+const sanitize = (str: string) => str.replace(/<[^>]*>/g, '');
+
+const reportSchema = z.object({
+  title: z.string().min(1, "Title is required").max(200),
+  summary: z.string().max(2000).optional(),
+  fileUrl: z.string().url("Invalid URL").max(500),
+  type: z.string().max(50).optional(),
+  date: z.string().optional(),
+});
 
 export async function createReport(formData: FormData) {
     const { authorized, session } = await checkAdminAction();
     if (!authorized || !session || !session.user) return { success: false, message: "Unauthorized" };
 
-    const title = formData.get("title") as string;
-    const summary = formData.get("summary") as string;
-    const fileUrl = formData.get("fileUrl") as string;
-    const type = formData.get("type") as string;
-    const dateStr = formData.get("date") as string;
+const rawData = {
+  title: formData.get("title") as string,
+  summary: formData.get("summary") as string,
+  fileUrl: formData.get("fileUrl") as string,
+  type: formData.get("type") as string,
+  date: formData.get("date") as string,
+};
 
-    if (!title || !fileUrl) return { success: false, message: "Title and File URL are required" };
+const validated = reportSchema.safeParse(rawData);
+if (!validated.success) {
+  return { success: false, message: validated.error.issues[0].message };
+}
+
+const {
+    title: rawTitle,
+    summary: rawSummary,
+    fileUrl,
+    type: rawType,
+    date: dateStr
+} = validated.data;
+
+const title = sanitize(rawTitle);
+const summary = rawSummary ? sanitize(rawSummary) : undefined;
+const type = rawType ? sanitize(rawType) : undefined;
 
     try {
         await db.financialReport.create({
-            data: {
-                title, summary, fileUrl, type,
+           data: {
+                title,
+                summary: summary ?? "",
+                fileUrl,
+                type,
                 date: dateStr ? new Date(dateStr) : new Date()
-            }
+           }
         });
 
         await logAdminAction(
@@ -45,13 +76,30 @@ export async function updateReport(id: string, formData: FormData) {
     const { authorized, session } = await checkAdminAction();
     if (!authorized || !session || !session.user) return { success: false, message: "Unauthorized" };
 
-    const title = formData.get("title") as string;
-    const summary = formData.get("summary") as string;
-    const fileUrl = formData.get("fileUrl") as string;
-    const type = formData.get("type") as string;
-    const dateStr = formData.get("date") as string;
+ const rawData = {
+  title: formData.get("title") as string,
+  summary: formData.get("summary") as string,
+  fileUrl: formData.get("fileUrl") as string,
+  type: formData.get("type") as string,
+  date: formData.get("date") as string,
+};
 
-    if (!title || !fileUrl) return { success: false, message: "Title and File URL are required" };
+const validated = reportSchema.safeParse(rawData);
+if (!validated.success) {
+  return { success: false, message: validated.error.issues[0].message };
+}
+
+const {
+    title: rawTitle,
+    summary: rawSummary,
+    fileUrl,
+    type: rawType,
+    date: dateStr
+} = validated.data;
+
+const title = sanitize(rawTitle);
+const summary = rawSummary ? sanitize(rawSummary) : undefined;
+const type = rawType ? sanitize(rawType) : undefined;
 
     try {
         const updatedReport = await db.financialReport.update({

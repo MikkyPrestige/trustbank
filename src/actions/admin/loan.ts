@@ -13,6 +13,8 @@ import {
     UserStatus
 } from "@prisma/client";
 
+const sanitize = (str: string) => str.replace(/<[^>]*>/g, '');
+
 export async function processLoan(loanId: string, decision: 'APPROVED' | 'REJECTED') {
     const { authorized, session } = await checkAdminAction();
 
@@ -51,6 +53,7 @@ export async function processLoan(loanId: string, decision: 'APPROVED' | 'REJECT
 
         const userAmount = Number(loan.amount) * rate;
         const formattedAmount = new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(userAmount);
+        const safeReason = loan?.reason ? sanitize(loan.reason) : '';
 
         if (decision === 'REJECTED') {
             await db.$transaction(async (tx) => {
@@ -76,7 +79,7 @@ export async function processLoan(loanId: string, decision: 'APPROVED' | 'REJECT
                 loanId,
                 {
                     amount: Number(loan.amount),
-                    reason: "Admin decision",
+                    reason: safeReason,
                     admin: session.user.email
                 },
                 "WARNING",
@@ -121,7 +124,7 @@ export async function processLoan(loanId: string, decision: 'APPROVED' | 'REJECT
                         type: TransactionType.DEPOSIT,
                         direction: TransactionDirection.CREDIT,
                         status: TransactionStatus.COMPLETED,
-                        description: `Loan Disbursement: ${loan.reason}`,
+                        description: `Loan Disbursement: ${safeReason}`,
                         referenceId: `LOAN-${loan.id.slice(-8).toUpperCase()}`,
                         metadata: JSON.stringify({
                             adminId: session.user.id,

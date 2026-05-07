@@ -1,41 +1,58 @@
 'use server';
 
 import { db } from "@/lib/db";
-import { checkMaintenanceMode } from "@/lib/security";
-import { getSiteSettings } from "@/lib/content/get-settings";
-import { sendPasswordResetEmail } from "@/lib/mail";
+import { headers } from "next/headers";
 import crypto from "crypto";
 import bcrypt from "bcryptjs";
-import { headers } from "next/headers";
 import { UAParser } from "ua-parser-js";
+import { z } from "zod";
+import { logAdminAction } from "@/lib/utils/admin-logger";
+import { checkMaintenanceMode, checkPasswordResetLimit } from "@/lib/security";
+import { getSiteSettings } from "@/lib/content/get-settings";
+import { sendPasswordResetEmail } from "@/lib/mail";
+
+
+const sanitize = (str: string) => str.replace(/<[^>]*>/g, '');
 
 export type ResetState = {
     message?: string;
     success?: boolean;
 };
 
+const passwordChangesSchema = z.object({
+  password: z.string().min(6, "Password must be at least 6 characters"),
+  confirmPassword: z.string(),
+}).refine(data => data.password === data.confirmPassword, {
+  message: "Passwords do not match",
+  path: ["confirmPassword"],
+});
+
+const emailSchema = z.string().email("Please enter a valid email address");
+
 export async function resetPassword(
     token: string,
     prevState: ResetState,
     formData: FormData
 ): Promise<ResetState> {
-    const password = formData.get("password") as string;
-    const confirm = formData.get("confirmPassword") as string;
-
        if (await checkMaintenanceMode()) {
         return { success: false, message: "System is currently under maintenance. Please try again later." };
     }
 
-    if (!password || password.length < 6) {
-        return { message: "Password must be at least 6 characters." };
-    }
-    if (password !== confirm) {
-        return { message: "Passwords do not match." };
-    }
+  const rawData = {
+  password: formData.get("password") as string,
+  confirmPassword: formData.get("confirmPassword") as string,
+};
 
+const validated = passwordChangesSchema.safeParse(rawData);
+if (!validated.success) {
+  return { message: validated.error.issues[0].message };
+}
+const { password } = validated.data;
+
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
     const user = await db.user.findFirst({
         where: {
-            passwordResetToken: token,
+            passwordResetToken: hashedToken,
             passwordResetExpires: { gt: new Date() }
         }
     });
@@ -61,7 +78,7 @@ export async function resetPassword(
         const userAgent = headersList.get("user-agent") || "";
         const parser = new UAParser(userAgent);
         const result = parser.getResult();
-        const device = `${result.browser.name || 'Web'} on ${result.os.name || 'Unknown OS'}`;
+        const device = sanitize(`${result.browser.name || 'Web'} on ${result.os.name || 'Unknown OS'}`);
 
         await db.notification.create({
             data: {
@@ -83,7 +100,6 @@ export async function resetPassword(
 
 
 export async function requestPasswordReset(prevState: any, formData: FormData) {
-  const email = formData.get("email") as string;
   const settings = await getSiteSettings();
   const siteName = settings.site_name;
 
@@ -91,28 +107,46 @@ export async function requestPasswordReset(prevState: any, formData: FormData) {
         return { success: false, message: "System is currently under maintenance. Please try again later." };
     }
 
-  if (!email || !email.includes("@")) {
-    return { message: "Please enter a valid email address." };
-  }
+ const email = formData.get("email") as string;
+const emailValidation = emailSchema.safeParse(email);
+if (!emailValidation.success) {
+  return { message: "Please enter a valid email address." };
+}
+const safeEmail = emailValidation.data;
 
-  const user = await db.user.findUnique({ where: { email } });
+const genericMessage = { success: true, message: "If an account with that email exists, a reset link has been sent." };
+
+// IP‑based rate limiting
+const headersList = await headers();
+const ip = headersList.get("x-forwarded-for") || "Unknown IP";
+const rateLimit = await checkPasswordResetLimit(ip);
+
+if (rateLimit.isBlocked) {
+    return { success: false, message: "Too many requests. Please try again later." };
+}
+
+// Log the attempt
+await logAdminAction("RESET_PASSWORD_ATTEMPT", safeEmail, { ip }, "INFO", "ATTEMPT");
+
+  const user = await db.user.findUnique({ where: { email: safeEmail } });
 
   if (!user) {
-    return { success: true, message: "If an account exists, a reset link has been sent." };
+    return genericMessage;
   }
 
   const token = crypto.randomBytes(32).toString("hex");
+  const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
   const expires = new Date(Date.now() + 3600000);
 
   await db.user.update({
     where: { id: user.id },
     data: {
-      passwordResetToken: token,
+      passwordResetToken: hashedToken,
       passwordResetExpires: expires
     }
   });
 
-  await sendPasswordResetEmail(user.email, token, siteName);
+  await sendPasswordResetEmail(safeEmail, token, siteName);
 
-  return { success: true, message: "Check your email for the reset link." };
+  return genericMessage;
 }

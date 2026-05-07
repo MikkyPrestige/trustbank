@@ -6,6 +6,9 @@ import { logAdminAction } from "@/lib/utils/admin-logger";
 import { revalidatePath } from "next/cache";
 import { canPerform } from "@/lib/auth/permissions";
 import { UserRole } from "@prisma/client";
+import { z } from "zod";
+
+const sanitize = (str: string) => str.replace(/<[^>]*>/g, '');
 
 export async function adminReplyTicket(ticketId: string, message: string) {
   const { authorized, session } = await checkAdminAction();
@@ -18,7 +21,12 @@ export async function adminReplyTicket(ticketId: string, message: string) {
       return { success: false, message: "Insufficient permissions." };
   }
 
-  if(!message.trim()) return { success: false, message: "Message required" };
+  const messageSchema = z.string().min(1, "Message required").max(2000);
+const parsed = messageSchema.safeParse(message);
+if (!parsed.success) {
+  return { success: false, message: parsed.error.issues[0].message };
+}
+const cleanMessage = sanitize(parsed.data);
 
   try {
     const ticketInfo = await db.$transaction(async (tx) => {
@@ -26,7 +34,7 @@ export async function adminReplyTicket(ticketId: string, message: string) {
             data: {
                 ticketId,
                 sender: "ADMIN",
-                message
+                message: cleanMessage
             }
         });
 

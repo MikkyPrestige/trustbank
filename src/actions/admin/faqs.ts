@@ -4,6 +4,16 @@ import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { checkAdminAction } from "@/lib/auth/admin-auth";
 import { logAdminAction } from "@/lib/utils/admin-logger";
+import { z } from "zod";
+
+const sanitize = (str: string) => str.replace(/<[^>]*>/g, '');
+
+const faqSchema = z.object({
+  question: z.string().min(1, "Question is required").max(300),
+  answer: z.string().min(1, "Answer is required").max(5000),
+  category: z.string().max(50).optional(),
+  order: z.coerce.number().int().nonnegative().optional(),
+});
 
 export async function createFaq(formData: FormData) {
     const auth = await checkAdminAction();
@@ -12,14 +22,23 @@ export async function createFaq(formData: FormData) {
         return { success: false, message: auth.message || "Unauthorized" };
     }
 
-    const question = formData.get("question") as string;
-    const answer = formData.get("answer") as string;
-    const category = formData.get("category") as string;
-    const order = parseInt(formData.get("order") as string) || 0;
+const rawData = {
+  question: formData.get("question") as string,
+  answer: formData.get("answer") as string,
+  category: formData.get("category") as string,
+  order: formData.get("order") as string,
+};
 
-    if (!question || !answer) {
-        return { success: false, message: "Question and Answer are required" };
-    }
+const validated = faqSchema.safeParse(rawData);
+if (!validated.success) {
+  return { success: false, message: validated.error.issues[0].message };
+}
+
+const { question: rawQuestion, answer: rawAnswer, category: rawCategory, order } = validated.data;
+
+const question = sanitize(rawQuestion);
+const answer = sanitize(rawAnswer);
+const category = rawCategory ? sanitize(rawCategory) : "";
 
     try {
         await db.faqItem.create({
@@ -54,14 +73,25 @@ export async function updateFaq(id: string, formData: FormData) {
         return { success: false, message: auth.message || "Unauthorized" };
     }
 
-    const question = formData.get("question") as string;
-    const answer = formData.get("answer") as string;
-    const category = formData.get("category") as string;
-    const order = parseInt(formData.get("order") as string) || 0;
+const rawData = {
+  question: formData.get("question") as string,
+  answer: formData.get("answer") as string,
+  category: formData.get("category") as string,
+  order: formData.get("order") as string,
+};
 
-    if (!question || !answer) {
-        return { success: false, message: "Question and Answer are required" };
-    }
+const validated = faqSchema.safeParse(rawData);
+if (!validated.success) {
+  return { success: false, message: validated.error.issues[0].message };
+}
+
+const { question: rawQuestion, answer: rawAnswer, category: rawCategory, order } = validated.data;
+
+const question = sanitize(rawQuestion);
+const answer = sanitize(rawAnswer);
+const category = rawCategory ? sanitize(rawCategory) : "";
+
+if (!id) return { success: false, message: "Missing FAQ ID" };
 
     try {
         await db.faqItem.update({

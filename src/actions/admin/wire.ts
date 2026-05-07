@@ -119,6 +119,18 @@ export async function adminRejectWire(wireId: string) {
     }
 
     try {
+            // Verify user status before rejecting
+    const existingWire = await db.wireTransfer.findUnique({
+        where: { id: wireId },
+        include: { user: true }
+    });
+    if (!existingWire) return { success: false, message: "Wire not found" };
+    if (existingWire.user.status === UserStatus.ARCHIVED) {
+        return { success: false, message: "Action Denied: User account is archived." };
+    }
+    if (existingWire.user.status === UserStatus.FROZEN) {
+        return { success: false, message: "Action Denied: User account is frozen." };
+    }
         const meta = await getWireMetadata(wireId);
 
         await db.$transaction(async (tx) => {
@@ -372,6 +384,10 @@ export async function generateClearanceCodes(wireId: string) {
     if (wire.user.status === UserStatus.ARCHIVED) {
         return { message: "Action Denied: User is archived." };
     }
+
+    if (wire.user.status === UserStatus.FROZEN) {
+    return { message: "Action Denied: User account is frozen." };
+}
 
     const taa = generateCode("TAA");
     const cot = generateCode("COT");
