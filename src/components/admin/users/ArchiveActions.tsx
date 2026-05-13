@@ -22,7 +22,7 @@ export default function ArchiveActions({ userId }: { userId: string }) {
 
         setLoading('DELETE');
         const res = await deleteUserPermanently(userId);
-        if (!res.success) alert(res.message);
+        if (res && !res.success) alert(res.message);
         setLoading(null);
     };
 

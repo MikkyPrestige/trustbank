@@ -91,43 +91,6 @@
   flex-direction: column;
   gap: 1.5rem;
 }
-/* .splitLayout {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 2rem;
-} */
-
-/* @media (min-width: 900px) {
-  .splitLayout {
-    grid-template-columns: 1fr 1fr;
-    gap: 3rem;
-    align-items: start;
-  }
-
-  .colLeft {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-
-  .colLeft {
-    position: relative;
-  }
-  .colLeft::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    right: -1.5rem;
-    bottom: 0;
-    width: 1px;
-    background: linear-gradient(
-      to bottom,
-      transparent,
-      var(--border),
-      transparent
-    );
-  }
-} */
 
 .fieldGroup {
   display: flex;
