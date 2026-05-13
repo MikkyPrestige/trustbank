@@ -1,6 +1,7 @@
 import { db } from "@/lib/db";
 import { KycStatus, TransactionDirection, TransactionType } from "@prisma/client";
 import { hash, compare } from "bcryptjs";
+import { logSecurityEvent } from "@/lib/utils/security-logger";
 
 export async function getSetting(key: string, fallback: number): Promise<number> {
     const setting = await db.systemSettings.findUnique({ where: { key } });
@@ -11,167 +12,6 @@ export async function getBooleanSetting(key: string, fallback: boolean): Promise
     const setting = await db.systemSettings.findUnique({ where: { key } });
     if (!setting) return fallback;
     return setting.value === 'true';
-}
-
-/**
- * Checks if an IP is currently blocked due to excessive failures.
- */
-export async function checkRateLimit(ip: string): Promise<boolean> {
-    const WINDOW_MINUTES = await getSetting('security_lockout_duration', 15);
-    const MAX_ATTEMPTS = await getSetting('security_max_attempts', 5);
-    const windowStart = new Date(Date.now() - WINDOW_MINUTES * 60 * 1000);
-
-    const failureCount = await db.adminLog.count({
-        where: {
-            ipAddress: ip,
-            action: 'LOGIN_FAILED',
-            createdAt: { gte: windowStart }
-        }
-    });
-
-    return failureCount >= MAX_ATTEMPTS;
-}
-
-/**
- * Returns details for the UI (e.g. "3 attempts remaining")
- */
-export async function getSecurityStatus(ip: string) {
-    const WINDOW_MINUTES = await getSetting('security_lockout_duration', 15);
-    const MAX_ATTEMPTS = await getSetting('security_max_attempts', 5);
-    const windowStart = new Date(Date.now() - WINDOW_MINUTES * 60 * 1000);
-
-    const failures = await db.adminLog.findMany({
-        where: {
-            ipAddress: ip,
-            action: 'LOGIN_FAILED',
-            createdAt: { gte: windowStart }
-        },
-        orderBy: { createdAt: 'desc' }
-    });
-
-    const failureCount = failures.length;
-    const isBlocked = failureCount >= MAX_ATTEMPTS;
-
-    let remainingMinutes = 0;
-
-    if (isBlocked && failures.length > 0) {
-        const lastFailureTime = failures[0].createdAt.getTime();
-        const unlockTime = lastFailureTime + (WINDOW_MINUTES * 60 * 1000);
-        const diff = unlockTime - Date.now();
-
-        // Convert to minutes (round up)
-        remainingMinutes = Math.ceil(diff / 60000);
-    }
-
-    return {
-        isBlocked,
-        attemptsRemaining: Math.max(0, MAX_ATTEMPTS - failureCount),
-        remainingTime: remainingMinutes > 0 ? remainingMinutes : 0
-    };
-}
-
-
-/**
- * Rate limit for OTP resend requests per IP.
- * Default: 3 attempts per 10 minutes.
- */
-export async function checkOtpResendLimit(ip: string) {
-  const WINDOW_MINUTES = await getSetting('otp_resend_window_minutes', 10);
-  const MAX_ATTEMPTS = await getSetting('otp_resend_max_attempts', 3);
-  const windowStart = new Date(Date.now() - WINDOW_MINUTES * 60 * 1000);
-
-  const attempts = await db.adminLog.findMany({
-    where: {
-      ipAddress: ip,
-      action: 'RESEND_OTP_ATTEMPT',
-      createdAt: { gte: windowStart }
-    },
-    orderBy: { createdAt: 'desc' },
-  });
-
-  const count = attempts.length;
-  const isBlocked = count >= MAX_ATTEMPTS;
-  let remainingMinutes = 0;
-
-  if (isBlocked && attempts.length > 0) {
-    const lastAttempt = attempts[0].createdAt.getTime();
-    const unlockTime = lastAttempt + (WINDOW_MINUTES * 60 * 1000);
-    const diff = unlockTime - Date.now();
-    remainingMinutes = Math.ceil(diff / 60000);
-  }
-
-  return {
-    isBlocked,
-    remainingTime: remainingMinutes > 0 ? remainingMinutes : 0,
-  };
-}
-
-/**
- * Rate limit for password reset requests per IP.
- */
-export async function checkPasswordResetLimit(ip: string) {
-  const WINDOW_MINUTES = await getSetting('password_reset_window_minutes', 10);
-  const MAX_ATTEMPTS = await getSetting('password_reset_max_attempts', 3);
-  const windowStart = new Date(Date.now() - WINDOW_MINUTES * 60 * 1000);
-
-  const attempts = await db.adminLog.findMany({
-    where: {
-      ipAddress: ip,
-      action: 'RESET_PASSWORD_ATTEMPT',
-      createdAt: { gte: windowStart }
-    },
-    orderBy: { createdAt: 'desc' },
-  });
-
-  const count = attempts.length;
-  const isBlocked = count >= MAX_ATTEMPTS;
-  let remainingMinutes = 0;
-
-  if (isBlocked && attempts.length > 0) {
-    const lastAttempt = attempts[0].createdAt.getTime();
-    const unlockTime = lastAttempt + (WINDOW_MINUTES * 60 * 1000);
-    const diff = unlockTime - Date.now();
-    remainingMinutes = Math.ceil(diff / 60000);
-  }
-
-  return {
-    isBlocked,
-    remainingTime: remainingMinutes > 0 ? remainingMinutes : 0,
-  };
-}
-
-/**
- * Rate limit for new account registrations per IP.
- */
-export async function checkRegisterLimit(ip: string) {
-  const WINDOW_MINUTES = await getSetting('register_window_minutes', 15);
-  const MAX_ATTEMPTS = await getSetting('register_max_attempts', 5);
-  const windowStart = new Date(Date.now() - WINDOW_MINUTES * 60 * 1000);
-
-  const attempts = await db.adminLog.findMany({
-    where: {
-      ipAddress: ip,
-      action: 'REGISTER_ATTEMPT',
-      createdAt: { gte: windowStart }
-    },
-    orderBy: { createdAt: 'desc' },
-  });
-
-  const count = attempts.length;
-  const isBlocked = count >= MAX_ATTEMPTS;
-  let remainingMinutes = 0;
-
-  if (isBlocked && attempts.length > 0) {
-    const lastAttempt = attempts[0].createdAt.getTime();
-    const unlockTime = lastAttempt + (WINDOW_MINUTES * 60 * 1000);
-    const diff = unlockTime - Date.now();
-    remainingMinutes = Math.ceil(diff / 60000);
-  }
-
-  return {
-    isBlocked,
-    remainingTime: remainingMinutes > 0 ? remainingMinutes : 0,
-  };
 }
 
 // CHECK Sender Limits
@@ -305,7 +145,6 @@ export async function verifyPin(userId: string, pin: string) {
     } else {
         isValid = (pin === storedPin);
 
-        // AUTO-MIGRATE: If valid plain text, upgrade to hash immediately
         if (isValid) {
             const secureHash = await hash(pin, 10);
             await db.user.update({
@@ -328,6 +167,14 @@ export async function verifyPin(userId: string, pin: string) {
 
     const newCount = user.failedPinAttempts + 1;
     const isLockedNow = newCount >= 5;
+
+    // Log the failed attempt
+await logSecurityEvent({
+  action: "PIN_FAILED",
+  level: "WARNING",
+  details: { attemptsRemaining: 5 - newCount },
+  userId: userId,
+});
 
     await db.user.update({
         where: { id: userId },
@@ -366,6 +213,14 @@ export async function verifyPin(userId: string, pin: string) {
                 }))
             });
         }
+
+        await logSecurityEvent({
+  action: "PIN_LOCKOUT",
+  level: "CRITICAL",
+  details: { reason: "5 failed PIN attempts" },
+  userId: userId,
+});
+
         return { success: false, error: "Too many failed attempts. Account locked for 15 minutes." };
     }
 

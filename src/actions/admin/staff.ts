@@ -8,6 +8,7 @@ import { UserRole, UserStatus } from "@prisma/client";
 import { checkAdminAction } from "@/lib/auth/admin-auth";
 import { canPerform } from "@/lib/auth/permissions";
 import { z } from "zod";
+import { logSecurityEvent } from "@/lib/utils/security-logger";
 
 const sanitize = (str: string) => str.replace(/<[^>]*>/g, '');
 
@@ -89,6 +90,19 @@ const fullName = sanitize(rawFullName);
             "SUCCESS"
         );
 
+        await logSecurityEvent({
+  action: "ADMIN_CREATE_STAFF",
+  level: "CRITICAL",
+  details: {
+    targetUserId: newUser.id,
+    role,
+    email,
+    adminEmail: session.user.email,
+  },
+  adminId: session.user.id,
+  userId: newUser.id,
+});
+
     } catch (err) {
         console.error(err);
         return { success: false, message: "Failed to create staff account." };
@@ -148,6 +162,19 @@ export async function removeStaffAccount(staffId: string) {
             "WARNING",
             "SUCCESS"
         );
+
+        await logSecurityEvent({
+  action: "ADMIN_REVOKE_STAFF",
+  level: "CRITICAL",
+  details: {
+    targetUserId: staffId,
+    email: target.email,
+    previousRole: target.role,
+    adminEmail: session.user.email,
+  },
+  adminId: session.user.id,
+  userId: staffId,
+});
 
     } catch (err) {
         console.error("Remove Staff Error:", err);
@@ -220,6 +247,20 @@ const { email, role } = validated.data;
             "WARNING",
             "SUCCESS"
         );
+
+        await logSecurityEvent({
+  action: "ADMIN_PROMOTE_STAFF",
+  level: "CRITICAL",
+  details: {
+    targetUserId: user.id,
+    email: user.email,
+    oldRole: user.role,
+    newRole: role,
+    adminEmail: session.user.email,
+  },
+  adminId: session.user.id,
+  userId: user.id,
+});
 
     } catch (err) {
         return { success: false, message: "Database update failed." };

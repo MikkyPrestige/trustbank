@@ -73,7 +73,7 @@
   background: rgba(var(--danger-rgb), 0.1);
   color: var(--danger);
   border: 1px solid rgba(var(--danger-rgb), 0.3);
-  padding: 1rem;
+  padding: 1rem 0.5rem;
   border-radius: 1rem;
   font-size: 0.9rem;
   text-align: center;

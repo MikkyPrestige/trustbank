@@ -7,6 +7,7 @@ import { logAdminAction } from "@/lib/utils/admin-logger";
 import { UserRole } from "@prisma/client";
 import { canPerform } from "@/lib/auth/permissions";
 import { SYSTEM_DEFINITIONS } from "@/lib/system-definitions";
+import { logSecurityEvent } from "@/lib/utils/security-logger";
 
 const sanitize = (str: string) => str.replace(/<[^>]*>/g, '');
 
@@ -85,6 +86,16 @@ if (schema.type === 'TEXT') {
             "CRITICAL",
             "SUCCESS"
         );
+
+        await logSecurityEvent({
+  action: "ADMIN_SYSTEM_RULES_UPDATE",
+  level: "CRITICAL",
+  details: {
+    changesCount,
+    adminEmail: session.user.email,
+  },
+  adminId: session.user.id,
+});
 
         revalidatePath("/admin/settings");
         return { success: true, message: "System Rules Updated Successfully" };

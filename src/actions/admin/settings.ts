@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { checkAdminAction } from "@/lib/auth/admin-auth";
 import { logAdminAction } from "@/lib/utils/admin-logger";
+import { logSecurityEvent } from "@/lib/utils/security-logger";
 
 const sanitize = (str: string) => str.replace(/<[^>]*>/g, '');
 
@@ -1164,10 +1165,20 @@ for (const asset of assetsToSync) {
 }
     );
 
-        await logAdminAction("SYSTEM_SETTINGS_UPDATE", existing.id, {
+        await logAdminAction("SYSTEM_SETTINGS_UPDATE",
+            existing.id, {
             action: "Full Settings & Asset Sync",
             admin: session.user.email
         }, "INFO", "SUCCESS");
+
+        await logSecurityEvent({
+  action: "ADMIN_SITE_SETTINGS_UPDATE",
+  level: "WARNING",
+  details: {
+    adminEmail: session.user.email,
+  },
+  adminId: session.user.id,
+});
 
         revalidatePath('/', 'layout');
         return { success: true, message: "All settings and assets saved successfully" };

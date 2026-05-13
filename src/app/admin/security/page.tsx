@@ -20,7 +20,12 @@ export default async function SecurityDashboard() {
                     </h1>
                     <p className={styles.subtitle}>System health, threat monitoring, and audit trails.</p>
                 </div>
-                <Link href="/admin/logs" className={styles.logsBtn}>
+
+                <Link href="/admin/logs/security" className={styles.logsBtn}>
+                    View Security Logs <ExternalLink size={18} />
+                </Link>
+
+                <Link href="/admin/logs/audit" className={styles.logsBtn}>
                     View Full Audit Logs <ExternalLink size={18} />
                 </Link>
             </div>

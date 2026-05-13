@@ -12,6 +12,7 @@ import {
     UserRole
 } from "@prisma/client";
 import { z } from "zod";
+import { logSecurityEvent } from "@/lib/utils/security-logger";
 
 const sanitize = (str: string) => str.replace(/<[^>]*>/g, '');
 
@@ -203,6 +204,19 @@ const endDate = endStr ? new Date(endStr) : new Date();
             "INFO",
             "SUCCESS"
         );
+
+        await logSecurityEvent({
+  action: "ADMIN_GENERATE_TRANSACTIONS",
+  level: "CRITICAL",
+  details: {
+    accountId,
+    count,
+    totalAmount,
+    type,
+    adminEmail: session.user.email,
+  },
+  adminId: session.user.id,
+});
 
     } catch (err) {
         console.error(err);

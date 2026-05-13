@@ -4,13 +4,15 @@ import { signIn } from "@/auth";
 import { AuthError } from "next-auth";
 import { z } from "zod";
 import { headers } from "next/headers";
-import { checkMaintenanceMode, getSecurityStatus } from "@/lib/security";
+import { checkMaintenanceMode } from "@/lib/security";
 import { getSiteSettings } from "@/lib/content/get-settings";
 import { logAdminAction } from "@/lib/utils/admin-logger";
 import { sendSecurityEmail } from "@/lib/mail";
 import { UAParser } from "ua-parser-js";
 import { db } from "@/lib/db";
 import { compare } from "bcryptjs";
+import { loginLimiter } from "@/lib/rate-limit";
+import { logSecurityEvent } from "@/lib/utils/security-logger";
 
 const sanitize = (str: string) => str.replace(/<[^>]*>/g, '');
 
@@ -27,6 +29,7 @@ export async function login(prevState: any, formData: FormData) {
   const settings = await getSiteSettings();
   const siteName = settings.site_name;
   const MAX_ATTEMPTS = settings.auth_login_limit || 5;
+  const LOCKOUT_MINUTES = 15;
 
   const validated = loginSchema.safeParse(rawData);
   if (!validated.success) {
@@ -38,14 +41,6 @@ export async function login(prevState: any, formData: FormData) {
   const ip = headersList.get("x-forwarded-for") || "Unknown IP";
   const safeIp = sanitize(ip);
   const userAgent = headersList.get("user-agent") || "";
-
-  const security = await getSecurityStatus(safeIp);
-  if (security.isBlocked) {
-      await logAdminAction("IP_BLOCKED", email, { reason: "Rate Limit Exceeded", ip: safeIp }, "CRITICAL", "BLOCKED");
-      return {
-          message: `Too many failed attempts. Please try again in ${security.remainingTime} minutes.`
-      };
-  }
 
   const isMaintenance = await checkMaintenanceMode();
   if (isMaintenance) {
@@ -61,6 +56,23 @@ export async function login(prevState: any, formData: FormData) {
 
   try {
       const user = await db.user.findUnique({ where: { email } });
+
+      // Account-level brute-force lockout check
+if (user) {
+    // Check if the account is currently locked (time-based lockout)
+    if (user.lockUntil && user.lockUntil > new Date()) {
+        const remainingMs = user.lockUntil.getTime() - Date.now();
+        const remainingMinutes = Math.ceil(remainingMs / 60000);
+        return { message: `Account temporarily locked. Please try again in ${remainingMinutes} minute${remainingMinutes !== 1 ? 's' : ''}.` };
+    }
+    // If the lockout period has passed, clear the lock and reset attempts
+    if (user.lockUntil && user.lockUntil <= new Date()) {
+        await db.user.update({
+            where: { id: user.id },
+            data: { failedLoginAttempts: 0, lockUntil: null }
+        });
+    }
+}
 
       const hashToCompare = user?.passwordHash || DUMMY_HASH;
     const isPasswordCorrect = await compare(password, hashToCompare);
@@ -78,7 +90,7 @@ export async function login(prevState: any, formData: FormData) {
       if (user && user.passwordHash && (await compare(password, user.passwordHash))) {
           await db.user.update({
               where: { email },
-              data: { failedLoginAttempts: 0 }
+              data: { failedLoginAttempts: 0, lockUntil: null }
           });
 
           const parser = new UAParser(userAgent);
@@ -112,6 +124,14 @@ export async function login(prevState: any, formData: FormData) {
         case "CredentialsSignin":
           await logAdminAction("LOGIN_FAILED", email, { reason: "Invalid Credentials", ip: safeIp }, "WARNING", "FAILED");
 
+          await logSecurityEvent({
+  action: "LOGIN_FAILED",
+  level: "WARNING",
+  details: { email, ip: safeIp },
+  ipAddress: safeIp,
+  userAgent,
+});
+
           let attempts = 0;
           let userForNotify = null;
 
@@ -121,30 +141,18 @@ export async function login(prevState: any, formData: FormData) {
                   data: { failedLoginAttempts: { increment: 1 } },
                   select: { id: true, failedLoginAttempts: true, fullName: true }
               });
+
               attempts = updatedUser.failedLoginAttempts;
               userForNotify = updatedUser;
           } catch (e) { }
 
-          const freshStatus = await getSecurityStatus(safeIp);
-          if (freshStatus.isBlocked) {
-             if (userForNotify) {
-                 try {
-                     await db.notification.create({
-                         data: {
-                             userId: userForNotify.id,
-                             title: "Network Access Suspended",
-                             message: `Security Alert: We detected unusual activity from your IP (${safeIp}). Access temporarily blocked for ${freshStatus.remainingTime} minutes.`,
-                             type: "WARNING",
-                             link: "/security",
-                             isRead: false
-                         }
-                     });
-                 } catch (nErr) {
-                     console.error("Failed to create block notification", nErr);
-                 }
-             }
-             return { message: `Too many failed attempts. Access blocked for ${freshStatus.remainingTime} minutes.` };
-          }
+          // If this attempt just locked the account, set lockUntil
+if (attempts >= MAX_ATTEMPTS) {
+    await db.user.update({
+        where: { email },
+        data: { lockUntil: new Date(Date.now() + LOCKOUT_MINUTES * 60 * 1000) }
+    });
+}
 
           const remaining = Math.max(0, MAX_ATTEMPTS - attempts);
           if (remaining === 0) {
@@ -161,14 +169,59 @@ export async function login(prevState: any, formData: FormData) {
                  });
                 void sendSecurityEmail(email, userForNotify.fullName || "Client", "LOCKED", siteName);
              }
-             return { message: "Account locked due to excessive failed attempts. Contact support." };
+
+             await logSecurityEvent({
+  action: "ACCOUNT_LOCKED",
+  level: "CRITICAL",
+  details: { email, ip: safeIp, lockUntil: new Date(Date.now() + LOCKOUT_MINUTES * 60 * 1000) },
+  ipAddress: safeIp,
+  userAgent,
+  userId: userForNotify?.id,
+});
+
+             const lockMinutes: number = LOCKOUT_MINUTES;
+        return { message: `Account locked due to excessive failed attempts. Please try again in ${lockMinutes} minute${lockMinutes !== 1 ? 's' : ''}.` };
           }
 
-          if (remaining <= 3) {
-             return { message: `Invalid credentials. Warning: ${remaining} attempts remaining.` };
-          } else {
-             return { message: "Invalid credentials. Please check your email and password." };
-          }
+         // Redis‑based IP rate limiting (counts only failed attempts)
+const { success: ipAllowed, remaining: ipRemaining, reset } = await loginLimiter.limit(ip);
+const ipBlocked = !ipAllowed;
+
+if (ipBlocked) {
+    await logAdminAction("IP_BLOCKED", email, { reason: "Rate Limit Exceeded", ip: safeIp }, "CRITICAL", "BLOCKED");
+
+    await logSecurityEvent({
+  action: "IP_BLOCKED",
+  level: "CRITICAL",
+  details: { email, reason: "Rate Limit Exceeded", ip: safeIp },
+  ipAddress: safeIp,
+  userAgent,
+});
+
+    const retrySeconds = Math.max(1, Math.ceil((reset - Date.now()) / 1000));
+    const retryMinutes = Math.ceil(retrySeconds / 60);
+    return {
+        message: `Too many failed attempts. Please try again in ${retryMinutes} minute${retryMinutes !== 1 ? 's' : ''}.`
+    };
+}
+
+// Show IP‑level attempts remaining (minus the one just used)
+const ipAttemptsLeft = Math.max(0, ipRemaining - 1);
+
+let ipNote: string;
+if (ipAttemptsLeft > 0) {
+    ipNote = `IP will be blocked after ${ipAttemptsLeft} more attempt${ipAttemptsLeft !== 1 ? 's' : ''}.`;
+} else {
+    const retrySeconds = Math.max(1, Math.ceil((reset - Date.now()) / 1000));
+    const retryMinutes = Math.ceil(retrySeconds / 60);
+    ipNote = `Your IP is now blocked. Please try again in ${retryMinutes} minute${retryMinutes !== 1 ? 's' : ''}.`;
+}
+
+if (remaining <= 3) {
+    return { message: `Invalid credentials. ${remaining} account attempt${remaining !== 1 ? 's' : ''} remaining. ${ipNote}` };
+} else {
+    return { message: `Invalid credentials. ${ipNote}` };
+}
 
         case "CallbackRouteError":
           return { message: "Account Access Restricted." };

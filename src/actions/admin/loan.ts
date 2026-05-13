@@ -12,6 +12,7 @@ import {
     UserRole,
     UserStatus
 } from "@prisma/client";
+import { logSecurityEvent } from "@/lib/utils/security-logger";
 
 const sanitize = (str: string) => str.replace(/<[^>]*>/g, '');
 
@@ -85,6 +86,20 @@ export async function processLoan(loanId: string, decision: 'APPROVED' | 'REJECT
                 "WARNING",
                 "SUCCESS"
             );
+
+            await logSecurityEvent({
+  action: "ADMIN_LOAN_REJECT",
+  level: "WARNING",
+  details: {
+    loanId,
+    userId: loan.userId,
+    amount: Number(loan.amount),
+    reason: safeReason,
+    adminEmail: session.user.email,
+  },
+  adminId: session.user.id,
+  userId: loan.userId,
+});
         }
 
         else {
@@ -156,6 +171,20 @@ export async function processLoan(loanId: string, decision: 'APPROVED' | 'REJECT
                 "INFO",
                 "SUCCESS"
             );
+
+            await logSecurityEvent({
+  action: "ADMIN_LOAN_APPROVE",
+  level: "CRITICAL",
+  details: {
+    loanId,
+    userId: loan.userId,
+    amount: Number(loan.amount),
+    reason: safeReason,
+    adminEmail: session.user.email,
+  },
+  adminId: session.user.id,
+  userId: loan.userId,
+});
         }
 
     } catch (error) {

@@ -6,6 +6,7 @@ import { revalidatePath } from "next/cache";
 import { UserStatus } from "@prisma/client";
 import { z } from "zod";
 import { UserRole } from "@prisma/client";
+import { logSecurityEvent } from "@/lib/utils/security-logger";
 
 const idSchema = z.string().min(1);
 
@@ -59,6 +60,18 @@ const safeUserId = validatedId.data;
             }
         });
 
+        await logSecurityEvent({
+  action: "ADMIN_RESTORE_USER",
+  level: "WARNING",
+  details: {
+    targetUserId: safeUserId,
+    restoredEmail: cleanEmail,
+    adminEmail: auth.session.user.email,
+  },
+  adminId: auth.session.user.id,
+  userId: safeUserId,
+});
+
         revalidatePath("/admin/users");
         return { success: true, message: "User restored successfully." };
 
@@ -98,4 +111,15 @@ if (target.role === UserRole.SUPER_ADMIN) {
 }
 
 await db.user.delete({ where: { id: safeUserId } });
+
+await logSecurityEvent({
+  action: "ADMIN_PERMANENT_DELETE_USER",
+  level: "CRITICAL",
+  details: {
+    targetUserId: safeUserId,
+    adminEmail: auth.session.user.email,
+  },
+  adminId: auth.session.user.id,
+  userId: safeUserId,
+});
 }

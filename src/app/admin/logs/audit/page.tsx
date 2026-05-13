@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import styles from "./logs.module.css";
+import styles from "./auditLogs.module.css";
 import { ShieldAlert, User, ChevronLeft, ChevronRight, Globe, AlertTriangle, CheckCircle, XCircle } from "lucide-react";
 import Link from "next/link";
 import { requireAdmin } from "@/lib/auth/admin-auth";

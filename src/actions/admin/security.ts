@@ -3,6 +3,7 @@
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { checkAdminAction } from "@/lib/auth/admin-auth";
+import { logSecurityEvent } from "@/lib/utils/security-logger";
 
 export async function revokeUserSessions(userId: string) {
         const { authorized, session } = await checkAdminAction();
@@ -19,6 +20,17 @@ export async function revokeUserSessions(userId: string) {
                 tokenVersion: { increment: 1 }
             }
         });
+
+        await logSecurityEvent({
+  action: "ADMIN_REVOKE_SESSIONS",
+  level: "WARNING",
+  details: {
+    targetUserId: userId,
+    adminEmail: session.user.email,
+  },
+  adminId: session.user.id,
+  userId: userId,
+});
 
         // Clear cache
         revalidatePath("/admin/users");

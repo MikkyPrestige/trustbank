@@ -12,6 +12,7 @@ import {
     UserRole
 } from "@prisma/client";
 import { z } from "zod";
+import { logSecurityEvent } from "@/lib/utils/security-logger";
 
 const updateTransactionSchema = z.object({
   transactionId: z.string().min(1, "Transaction ID is required"),
@@ -59,6 +60,16 @@ export async function deleteTransaction(transactionId: string) {
             "WARNING",
             "SUCCESS"
         );
+
+        await logSecurityEvent({
+  action: "ADMIN_DELETE_TRANSACTION",
+  level: "CRITICAL",
+  details: {
+    transactionId,
+    adminEmail: session.user.email,
+  },
+  adminId: session.user.id,
+});
 
     } catch (err) {
         console.error("Delete Error:", err);
@@ -148,6 +159,19 @@ const newType = newDirection === TransactionDirection.CREDIT
             "INFO",
             "SUCCESS"
         );
+
+        await logSecurityEvent({
+  action: "ADMIN_UPDATE_TRANSACTION",
+  level: "WARNING",
+  details: {
+    transactionId,
+    amount,
+    description,
+    direction: newDirection,
+    adminEmail: session.user.email,
+  },
+  adminId: session.user.id,
+});
 
     } catch (err) {
         console.error("Update Error:", err);

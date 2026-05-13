@@ -7,10 +7,11 @@ import bcrypt from "bcryptjs";
 import { UAParser } from "ua-parser-js";
 import { z } from "zod";
 import { logAdminAction } from "@/lib/utils/admin-logger";
-import { checkMaintenanceMode, checkPasswordResetLimit } from "@/lib/security";
+import { checkMaintenanceMode } from "@/lib/security";
 import { getSiteSettings } from "@/lib/content/get-settings";
 import { sendPasswordResetEmail } from "@/lib/mail";
-
+import { passwordResetLimiter } from "@/lib/rate-limit";
+import { logSecurityEvent } from "@/lib/utils/security-logger";
 
 const sanitize = (str: string) => str.replace(/<[^>]*>/g, '');
 
@@ -34,9 +35,18 @@ export async function resetPassword(
     prevState: ResetState,
     formData: FormData
 ): Promise<ResetState> {
+
        if (await checkMaintenanceMode()) {
         return { success: false, message: "System is currently under maintenance. Please try again later." };
     }
+
+const headersList = await headers();
+const ip = headersList.get("x-forwarded-for") || "Unknown IP";
+const safeIp = sanitize(ip);
+const userAgent = headersList.get("user-agent") || "";
+const parser = new UAParser(userAgent);
+const result = parser.getResult();
+const device = sanitize(`${result.browser.name || 'Web'} on ${result.os.name || 'Unknown OS'}`);
 
   const rawData = {
   password: formData.get("password") as string,
@@ -73,13 +83,16 @@ const { password } = validated.data;
         }
     });
 
-    try {
-        const headersList = await headers();
-        const userAgent = headersList.get("user-agent") || "";
-        const parser = new UAParser(userAgent);
-        const result = parser.getResult();
-        const device = sanitize(`${result.browser.name || 'Web'} on ${result.os.name || 'Unknown OS'}`);
+    await logSecurityEvent({
+  action: "PASSWORD_RESET_SUCCESS",
+  level: "WARNING",
+  details: { userId: user.id, email: user.email },
+  ipAddress: safeIp,
+  userAgent,
+  userId: user.id,
+});
 
+    try {
         await db.notification.create({
             data: {
                 userId: user.id,
@@ -116,13 +129,26 @@ const safeEmail = emailValidation.data;
 
 const genericMessage = { success: true, message: "If an account with that email exists, a reset link has been sent." };
 
-// IP‑based rate limiting
+// Redis‑based rate limiting
 const headersList = await headers();
 const ip = headersList.get("x-forwarded-for") || "Unknown IP";
-const rateLimit = await checkPasswordResetLimit(ip);
 
-if (rateLimit.isBlocked) {
-    return { success: false, message: "Too many requests. Please try again later." };
+const { success: allowed, reset } = await passwordResetLimiter.limit(ip);
+if (!allowed) {
+    const retrySeconds = Math.max(1, Math.ceil((reset - Date.now()) / 1000));
+    const retryMinutes = Math.ceil(retrySeconds / 60);
+
+        await logSecurityEvent({
+        action: "PASSWORD_RESET_BLOCKED",
+        level: "WARNING",
+        details: { email: safeEmail, ip },
+        ipAddress: ip,
+    });
+
+    return {
+        success: false,
+        message: `Too many requests. Please try again in ${retryMinutes} minute${retryMinutes !== 1 ? 's' : ''}.`
+    };
 }
 
 // Log the attempt

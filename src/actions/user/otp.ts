@@ -3,10 +3,12 @@
 import { db } from "@/lib/db";
 import { headers } from "next/headers";
 import { sendVerificationEmail } from "@/lib/mail";
-import { checkMaintenanceMode, checkOtpResendLimit } from "@/lib/security";
+import { checkMaintenanceMode } from "@/lib/security";
 import { logAdminAction } from "@/lib/utils/admin-logger";
 import { getSiteSettings } from "@/lib/content/get-settings";
 import { z } from "zod";
+import { otpResendLimiter } from "@/lib/rate-limit";
+import { logSecurityEvent } from "@/lib/utils/security-logger";
 
 const emailSchema = z.string().email("Invalid email address").max(100);
 const otpCodeSchema = z.string().regex(/^\d{6}$/, "Code must be a 6‑digit number");
@@ -69,15 +71,24 @@ if (!emailCheck.success) {
 }
 const safeEmail = emailCheck.data;
 
-
-// ---- IP‑based rate limiting ----
+// ---- Redis‑based rate limiting ----
 const headersList = await headers();
 const ip = headersList.get("x-forwarded-for") || "Unknown IP";
-const rateLimit = await checkOtpResendLimit(ip);
 
-if (rateLimit.isBlocked) {
+const { success: allowed, reset } = await otpResendLimiter.limit(ip);
+if (!allowed) {
+    const retrySeconds = Math.max(1, Math.ceil((reset - Date.now()) / 1000));
+    const retryMinutes = Math.ceil(retrySeconds / 60);
+
+      await logSecurityEvent({
+      action: "RESEND_OTP_BLOCKED",
+      level: "WARNING",
+      details: { email: safeEmail, ip },
+      ipAddress: ip,
+    });
+
     return {
-        error: "Too many requests. Please try again later."
+        error: `Too many requests. Please try again in ${retryMinutes} minute${retryMinutes !== 1 ? 's' : ''}.`
     };
 }
 

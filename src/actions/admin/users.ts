@@ -15,6 +15,7 @@ import {
 import { checkAdminAction } from "@/lib/auth/admin-auth";
 import { canPerform } from "@/lib/auth/permissions";
 import { z } from "zod";
+import { logSecurityEvent } from "@/lib/utils/security-logger";
 
 const sanitize = (str: string) => str.replace(/<[^>]*>/g, '');
 
@@ -187,6 +188,14 @@ const safeZipCode = zipCode ? sanitize(zipCode) : undefined;
             "SUCCESS"
         );
 
+await logSecurityEvent({
+  action: "ADMIN_CREATE_USER",
+  level: "INFO",
+  details: { email, createdUserId: newUser.id },
+  adminId: session.user.id,
+  userId: newUser.id,
+});
+
     } catch (err) {
         console.error("Create User Error:", err);
         return { success: false, message: "Database error. Failed to create user." };
@@ -256,6 +265,19 @@ export async function toggleUserStatus(userId: string, newStatus: string) {
             "SUCCESS"
         );
 
+        await logSecurityEvent({
+  action: "ADMIN_USER_STATUS_CHANGE",
+  level: (newStatus === 'FROZEN' || newStatus === 'SUSPENDED') ? "CRITICAL" : "WARNING",
+  details: {
+    targetUserId: userId,
+    oldStatus: targetUser?.status,
+    newStatus,
+    adminEmail: session.user.email,
+  },
+  adminId: session.user.id,
+  userId: userId,
+});
+
     } catch (err) {
         console.error("Status Update Error:", err);
         return { success: false, message: "Failed to update status." };
@@ -302,6 +324,18 @@ export async function deleteUser(userId: string) {
             "CRITICAL",
             "SUCCESS"
         );
+
+        await logSecurityEvent({
+  action: "ADMIN_DELETE_USER",
+  level: "CRITICAL",
+  details: {
+    targetUserId: userId,
+    originalEmail: targetUser.email,
+    adminEmail: session.user.email,
+  },
+  adminId: session.user.id,
+  userId: userId,
+});
 
     } catch (err) {
         console.error("Delete User Error:", err);
@@ -364,6 +398,18 @@ export async function adminIssueCard(userId: string) {
             "SUCCESS"
         );
 
+
+        await logSecurityEvent({
+  action: "ADMIN_ISSUE_CARD",
+  level: "WARNING",
+  details: {
+    targetUserId: userId,
+    adminEmail: session.user.email,
+  },
+  adminId: session.user.id,
+  userId: userId,
+});
+
     } catch (err) {
         console.error(err);
         return { message: "Failed to issue card" };
@@ -372,7 +418,6 @@ export async function adminIssueCard(userId: string) {
     revalidatePath("/admin/users");
     return { success: true, message: "New Card Issued" };
 }
-
 
 export async function adminResetPassword(prevState: any, formData: FormData) {
     const { authorized, session } = await checkAdminAction();
@@ -413,6 +458,17 @@ export async function adminResetPassword(prevState: any, formData: FormData) {
                 }
             });
         });
+
+        await logSecurityEvent({
+  action: "ADMIN_PASSWORD_RESET",
+  level: "CRITICAL",
+  details: {
+    targetUserId: userId,
+    adminEmail: session.user.email,
+  },
+  adminId: session.user.id,
+  userId: userId,
+});
 
         await db.notification.create({
             data: {
@@ -458,6 +514,18 @@ export async function unlockUserSecurity(userId: string) {
                 failedLoginAttempts: 0,
             }
         });
+
+        await logSecurityEvent({
+  action: "ADMIN_UNLOCK_USER",
+  level: "WARNING",
+  details: {
+    targetUserId: userId,
+    previousStatus: user.status,
+    adminEmail: session.user.email,
+  },
+  adminId: session.user.id,
+  userId: userId,
+});
 
         try {
             await db.adminLog.deleteMany({

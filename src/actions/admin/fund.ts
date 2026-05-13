@@ -12,6 +12,7 @@ import {
     UserRole
 } from "@prisma/client";
 import { z } from "zod";
+import { logSecurityEvent } from "@/lib/utils/security-logger";
 
 const sanitize = (str: string) => str.replace(/<[^>]*>/g, '');
 
@@ -146,6 +147,21 @@ const safeDescription = sanitize(rawDescription?.trim() || (safeType === 'CREDIT
             "INFO",
             "SUCCESS"
         );
+
+        await logSecurityEvent({
+  action: safeType === 'CREDIT' ? "ADMIN_MANUAL_CREDIT" : "ADMIN_MANUAL_DEBIT",
+  level: "CRITICAL",
+  details: {
+    accountId: safeAccountId,
+    amount: safeAmount,
+    type: safeType,
+    description: safeDescription,
+    adminEmail: adminUser.email,
+    balanceAfter: finalBalance,
+  },
+  adminId: adminUser.id,
+  userId: userIdForNotification || undefined,
+});
 
     } catch (err: any) {
         console.error("Funding Error:", err);

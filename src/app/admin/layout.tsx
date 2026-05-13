@@ -17,7 +17,8 @@ import {
     MessageSquareText,
     Settings,
     Lock,
-    Server
+    Server,
+    AlertTriangle
 } from "lucide-react";
 
 export default async function AdminLayout({
@@ -93,15 +94,19 @@ export default async function AdminLayout({
                         <>
                             <div className={styles.separator}></div>
 
-                            <Link href="/admin/security" className={styles.navLink}>
-                                <Lock size={18} /> Security
-                            </Link>
-
                             <Link href="/admin/system" className={styles.navLink}>
                                 <Server size={18} /> System Rules
                             </Link>
 
-                            <Link href="/admin/logs" className={styles.navLink}>
+                            <Link href="/admin/security" className={styles.navLink}>
+                                <Lock size={18} /> Security
+                            </Link>
+
+                            <Link href="/admin/logs/security" className={styles.navLink}>
+                                <AlertTriangle size={18} /> Security Logs
+                            </Link>
+
+                            <Link href="/admin/logs/audit" className={styles.navLink}>
                                 <ShieldAlert size={18} /> Audit Logs
                             </Link>
                         </>

@@ -6,6 +6,7 @@ import { checkMaintenanceMode } from "@/lib/security";
 import { revalidatePath } from "next/cache";
 import { CardStatus, KycStatus } from "@prisma/client";
 import { z } from "zod";
+import { logSecurityEvent } from "@/lib/utils/security-logger";
 
 const sanitize = (str: string) => str.replace(/<[^>]*>/g, '');
 const cardIdSchema = z.string().min(1, "Card ID is required");
@@ -74,6 +75,16 @@ let newStatus: CardStatus;
                 }
             }
         });
+
+        await logSecurityEvent({
+  action: newStatus === CardStatus.BLOCKED ? "CARD_FROZEN" : "CARD_UNFROZEN",
+  level: "WARNING",
+  userId: user.id,
+  details: {
+    cardId: safeCardId,
+    newStatus,
+  },
+});
 
     } catch (error) {
         console.error("Card Toggle Error", error);

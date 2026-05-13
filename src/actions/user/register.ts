@@ -5,7 +5,7 @@ import { z } from "zod";
 import { fileTypeFromBuffer } from 'file-type';
 import { headers } from "next/headers";
 import bcrypt from "bcryptjs";
-import { checkMaintenanceMode, getBooleanSetting, hashPin, checkRegisterLimit } from "@/lib/security";
+import { checkMaintenanceMode, getBooleanSetting, hashPin } from "@/lib/security";
 import { getSiteSettings } from "@/lib/content/get-settings";
 import { uploadFileToCloud } from "@/lib/utils/upload";
 import { sendVerificationEmail } from "@/lib/mail";
@@ -20,6 +20,8 @@ import {
   KycStatus
 } from "@prisma/client";
 import { logAdminAction } from "@/lib/utils/admin-logger";
+import { registerLimiter } from "@/lib/rate-limit";
+import { logSecurityEvent } from "@/lib/utils/security-logger";
 
 const sanitize = (str: string) => str.replace(/<[^>]*>/g, '');
 
@@ -116,17 +118,29 @@ export async function registerUser(prevState: RegisterState, formData: FormData)
         return { success: false, message: "System is currently under maintenance. Please try again later." };
     }
 
-        // IP‑based rate limiting for registration
+// Redis‑based rate limiting for registration
 const headersList = await headers();
 const ip = headersList.get("x-forwarded-for") || "Unknown IP";
-const registerLimit = await checkRegisterLimit(ip);
 
-if (registerLimit.isBlocked) {
+const { success: allowed, reset } = await registerLimiter.limit(ip);
+if (!allowed) {
+    const retrySeconds = Math.max(1, Math.ceil((reset - Date.now()) / 1000));
+    const retryMinutes = Math.ceil(retrySeconds / 60);
+
+    await logSecurityEvent({
+      action: "REGISTER_BLOCKED",
+      level: "WARNING",
+      details: { ip },
+      ipAddress: ip,
+    });
+
     return {
         success: false,
-        message: "Too many registration attempts. Please try again later."
+        message: `Too many registration attempts. Please try again in ${retryMinutes} minute${retryMinutes !== 1 ? 's' : ''}.`
     };
 }
+
+  await logAdminAction("REGISTER_ATTEMPT", rawData.email as string, { ip }, "INFO", "ATTEMPT");
 
   const isRegistrationEnabled = await getBooleanSetting('feature_register_enabled', true);
   if (!isRegistrationEnabled) {
@@ -204,8 +218,6 @@ if (hasFront || hasBack || (passportFile && passportFile.size > 0)) {
   let idCardBackUrl: string | null = null;
   let userImageUrl: string | null = null;
   let kycStatus: KycStatus = KycStatus.NOT_SUBMITTED;
-
-  await logAdminAction("REGISTER_ATTEMPT", rawData.email as string, { ip }, "INFO", "ATTEMPT");
 
   try {
       if (hasFront) {

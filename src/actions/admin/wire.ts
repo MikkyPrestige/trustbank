@@ -13,6 +13,7 @@ import {
     Prisma,
     UserStatus
 } from "@prisma/client";
+import { logSecurityEvent } from "@/lib/utils/security-logger";
 
 const generateCode = (prefix: string) => {
     return `${prefix}-${Math.floor(1000 + Math.random() * 9000)}`;
@@ -96,6 +97,17 @@ export async function adminSetWireCode(formData: FormData) {
             "INFO",
             "SUCCESS"
         );
+
+        await logSecurityEvent({
+  action: "ADMIN_WIRE_CODE_UPDATE",
+  level: "WARNING",
+  details: {
+    wireId,
+    stage,
+    adminEmail: session?.user?.email,
+  },
+  adminId: session?.user?.id,
+});
 
     } catch (error) {
         return { success: false, message: "Failed to update code" };
@@ -201,6 +213,16 @@ export async function adminRejectWire(wireId: string) {
             "WARNING",
             "SUCCESS"
         );
+
+        await logSecurityEvent({
+  action: "ADMIN_WIRE_REJECT",
+  level: "CRITICAL",
+  details: {
+    wireId,
+    adminEmail: session.user.email,
+  },
+  adminId: session.user.id,
+});
 
         revalidatePath("/admin/wires");
         revalidatePath("/dashboard");
@@ -354,6 +376,16 @@ export async function adminCompleteWire(input: string | FormData) {
             "SUCCESS"
         );
 
+        await logSecurityEvent({
+  action: "ADMIN_WIRE_COMPLETE",
+  level: "CRITICAL",
+  details: {
+    wireId,
+    adminEmail: session?.user?.email,
+  },
+  adminId: session?.user?.id,
+});
+
     } catch (error: any) {
         console.error("Completion Error:", error);
         return { success: false, message: error.message || "Failed to complete wire" };
@@ -411,6 +443,16 @@ export async function generateClearanceCodes(wireId: string) {
         "INFO",
         "SUCCESS"
     );
+
+    await logSecurityEvent({
+  action: "ADMIN_GENERATE_CODES",
+  level: "WARNING",
+  details: {
+    wireId,
+    adminEmail: session?.user?.email,
+  },
+  adminId: session?.user?.id,
+});
 
     revalidatePath("/admin");
     revalidatePath("/admin/users");

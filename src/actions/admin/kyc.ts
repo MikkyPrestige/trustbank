@@ -6,6 +6,7 @@ import { checkAdminAction } from "@/lib/auth/admin-auth";
 import { logAdminAction } from "@/lib/utils/admin-logger";
 import { canPerform } from "@/lib/auth/permissions";
 import { KycStatus, UserRole } from "@prisma/client";
+import { logSecurityEvent } from "@/lib/utils/security-logger";
 
 const sanitize = (str: string) => str.replace(/<[^>]*>/g, '');
 
@@ -57,6 +58,17 @@ export async function processKyc(userId: string, decision: 'APPROVE' | 'REJECT',
                 "SUCCESS"
             );
 
+            await logSecurityEvent({
+  action: "ADMIN_KYC_APPROVE",
+  level: "INFO",
+  details: {
+    targetUserId: userId,
+    adminEmail: session.user.email,
+  },
+  adminId: session.user.id,
+  userId: userId,
+});
+
         } else {
             if (!reason) return { success: false, message: "Rejection reason is required." };
             const safeReason = sanitize(reason);
@@ -92,6 +104,18 @@ export async function processKyc(userId: string, decision: 'APPROVE' | 'REJECT',
                 "WARNING",
                 "SUCCESS"
             );
+
+            await logSecurityEvent({
+  action: "ADMIN_KYC_REJECT",
+  level: "WARNING",
+  details: {
+    targetUserId: userId,
+    reason: safeReason,
+    adminEmail: session.user.email,
+  },
+  adminId: session.user.id,
+  userId: userId,
+});
         }
 
     } catch (error) {

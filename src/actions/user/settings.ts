@@ -10,6 +10,7 @@ import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { UserStatus } from "@prisma/client";
 import { fileTypeFromBuffer } from 'file-type';
+import { logSecurityEvent } from "@/lib/utils/security-logger";
 
 const sanitize = (str: string) => str.replace(/<[^>]*>/g, '');
 
@@ -217,6 +218,12 @@ export async function changePassword(prevState: any, formData: FormData) {
             }
         });
 
+    await logSecurityEvent({
+  action: "USER_PASSWORD_CHANGE",
+  level: "WARNING",
+  userId: user.id,
+});
+
     } catch (err) {
         return { message: "Failed to change password." };
     }
@@ -269,6 +276,12 @@ export async function changePin(prevState: any, formData: FormData) {
                 isRead: false
             }
         });
+
+        await logSecurityEvent({
+  action: "USER_PIN_CHANGE",
+  level: "WARNING",
+  userId: user.id,
+});
 
     } catch (err) {
         console.error("Change PIN Error:", err);
@@ -382,6 +395,15 @@ export async function closeAccount(password: string) {
                 emailVerified: null,
             }
         });
+
+        await logSecurityEvent({
+  action: "USER_ACCOUNT_CLOSED",
+  level: "CRITICAL",
+  userId: user.id,
+  details: {
+    email: dbUser.email,
+  },
+});
 
         revalidatePath("/");
         return { success: true };
