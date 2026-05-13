@@ -63,6 +63,7 @@ export default function ResetPasswordForm({ token }: Props) {
                     )}
 
                     <form action={action}>
+                        <input type="hidden" name="token" value={token} />
                         <div className={styles.fieldGroup}>
                             <div className={styles.inputWrapper}>
                                 <label className={styles.label}>New Password</label>
