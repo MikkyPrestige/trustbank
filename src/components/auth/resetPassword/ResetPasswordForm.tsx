@@ -1,6 +1,6 @@
 'use client';
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import Link from "next/link";
 import { Lock, CheckCircle, AlertCircle, ArrowRight, Loader2, KeyRound } from "lucide-react";
 import styles from "./resetPassword.module.css";
@@ -16,7 +16,9 @@ const initialState = {
 };
 
 export default function ResetPasswordForm({ token }: Props) {
-    const resetWithToken = resetPassword.bind(null, token);
+    const [tokenValue] = useState(token);
+    const resetWithToken = resetPassword.bind(null, tokenValue);
+
     const [state, action, isPending] = useActionState(resetWithToken, initialState);
 
     if (state.success) {
@@ -63,7 +65,7 @@ export default function ResetPasswordForm({ token }: Props) {
                     )}
 
                     <form action={action}>
-                        <input type="hidden" name="token" value={token} />
+                        <input type="hidden" name="token" value={tokenValue} />
                         <div className={styles.fieldGroup}>
                             <div className={styles.inputWrapper}>
                                 <label className={styles.label}>New Password</label>

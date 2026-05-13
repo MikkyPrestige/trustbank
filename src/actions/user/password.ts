@@ -60,6 +60,7 @@ if (!validated.success) {
 const { password } = validated.data;
 
     const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+
     const user = await db.user.findFirst({
         where: {
             passwordResetToken: hashedToken,
@@ -132,8 +133,8 @@ const genericMessage = { success: true, message: "If an account with that email 
 // Redis‑based rate limiting
 const headersList = await headers();
 const ip = headersList.get("x-forwarded-for") || "Unknown IP";
-
 const { success: allowed, reset } = await passwordResetLimiter.limit(ip);
+
 if (!allowed) {
     const retrySeconds = Math.max(1, Math.ceil((reset - Date.now()) / 1000));
     const retryMinutes = Math.ceil(retrySeconds / 60);
@@ -161,13 +162,13 @@ await logAdminAction("RESET_PASSWORD_ATTEMPT", safeEmail, { ip }, "INFO", "ATTEM
   }
 
   const token = crypto.randomBytes(32).toString("hex");
-  const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+  const hashed = crypto.createHash("sha256").update(token).digest("hex");
   const expires = new Date(Date.now() + 3600000);
 
   await db.user.update({
     where: { id: user.id },
     data: {
-      passwordResetToken: hashedToken,
+      passwordResetToken: hashed,
       passwordResetExpires: expires
     }
   });
