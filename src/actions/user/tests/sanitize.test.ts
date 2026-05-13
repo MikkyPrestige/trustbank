@@ -1,6 +1,5 @@
 import { describe, it, expect } from 'vitest';
 
-// A standalone sanitize function identical to the one used across actions
 const sanitize = (str: string) => str.replace(/<[^>]*>/g, '');
 
 describe('sanitize helper', () => {

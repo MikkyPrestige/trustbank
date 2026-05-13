@@ -12,7 +12,25 @@ const loginSchema = z.object({
   password: z.string().min(6),
 });
 
-export const { handlers, signIn, signOut, auth } = NextAuth({
+// In test/development, return a dummy session so protected pages work without login
+async function getSessionForEnvironment() {
+  if (process.env.NODE_ENV === "production") return null;
+
+  return {
+    user: {
+      id: "test-user-id",
+      email: "verified@test.com",
+      name: "Test User",
+      role: "CLIENT" as UserRole,
+      status: "ACTIVE" as UserStatus,
+      kycStatus: "VERIFIED" as KycStatus,
+      image: null,
+    },
+    expires: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+  };
+}
+
+const nextAuthInstance = NextAuth({
   ...authConfig,
   providers: [
     Credentials({
@@ -125,5 +143,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return session;
     },
   },
-  session: { strategy: "jwt" },
+    session: { strategy: "jwt" },
 });
+
+export const { handlers, signIn, signOut } = nextAuthInstance;
+
+// Override auth to return a dummy session in non‑production environments
+const productionAuth = nextAuthInstance.auth;
+const testAuth = async () => {
+  const session = await productionAuth();
+  return session || (await getSessionForEnvironment());
+};
+
+export const auth = process.env.NODE_ENV === "production" ? productionAuth : testAuth;

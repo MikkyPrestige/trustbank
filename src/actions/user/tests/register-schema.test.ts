@@ -1,7 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { z } from 'zod';
 
-// Exact copy from register.ts
 const registerSchema = z.object({
   fullName: z.string().min(2, "Name is required").max(100),
   email: z.string().email("Invalid email").max(100),

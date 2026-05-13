@@ -1,7 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { z } from 'zod';
 
-// Define the enum first so the schemas can reference it
 const UserRole = {
   CLIENT: 'CLIENT',
   ADMIN: 'ADMIN',
@@ -9,7 +8,6 @@ const UserRole = {
   SUPPORT: 'SUPPORT',
 } as const;
 
-// Exact copies from admin/staff.ts
 const staffCreateSchema = z.object({
   email: z.string().email("Invalid email address").max(100),
   fullName: z.string().min(2, "Name is required").max(100),

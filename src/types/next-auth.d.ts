@@ -28,3 +28,11 @@ declare module "next-auth/jwt" {
     kycStatus: KycStatus;
   }
 }
+
+
+declare module 'next-auth' {
+  export const signIn: any;
+  export const signOut: any;
+  export const auth: any;
+  export const handlers: { GET: any; POST: any };
+}

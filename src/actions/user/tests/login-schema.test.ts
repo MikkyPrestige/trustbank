@@ -1,7 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { z } from 'zod';
 
-// Extract the schema exactly as it is in login.ts
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(1, "Password is required"),

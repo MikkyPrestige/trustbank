@@ -13,6 +13,8 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
+      'next-auth': path.resolve(__dirname, './src/tests/__mocks__/next-auth'),
+      '@/auth': path.resolve(__dirname, './src/tests/__mocks__/auth'),
     },
   },
 });

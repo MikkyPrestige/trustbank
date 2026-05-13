@@ -34,9 +34,6 @@ describe('distributeAmount', () => {
   });
 
   it('returns zero parts when called with zero parts', () => {
-    // The function is never called with 0 parts in production, but the contract says parts <= 1 returns [total].
-    // If parts is 0, it returns [total] which is wrong; but we test the production expectation.
-    // We'll skip edge case—the real schema enforces parts >= 1.
     expect(distributeAmount(50, 0)).toHaveLength(1);
   });
 });

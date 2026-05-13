@@ -1,9 +1,5 @@
 import { describe, it, expect } from 'vitest';
 
-// We'll test the limiter settings that are defined in src/lib/rate-limit.ts.
-// The limiters are created with slidingWindow(count, duration).
-// We'll verify that the expected values match our security requirements.
-
 describe('Rate‑limit configuration', () => {
   it('Login limiter has sliding window of 5 attempts per 15 minutes', () => {
     const loginWindow = { count: 5, duration: '15 m' };

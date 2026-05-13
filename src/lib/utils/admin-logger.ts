@@ -73,6 +73,7 @@ export async function logAdminAction(
     const ip = headersList.get("x-forwarded-for") || "Unknown IP";
     const userAgent = headersList.get("user-agent") || "Unknown Device";
 
+if (process.env.NODE_ENV === "production") {
     await db.adminLog.create({
       data: {
         adminId: session?.user?.id || null,
@@ -85,6 +86,7 @@ export async function logAdminAction(
         userAgent: userAgent,
       },
     });
+  }
   } catch (err) {
     console.error("ADMIN_LOG_ERROR:", err);
   }

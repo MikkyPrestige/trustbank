@@ -1,14 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import crypto from 'crypto';
 
-/**
- * We replicate the hashing logic from password.ts:
- * 1. Generate a random 32-byte token.
- * 2. Hash it with SHA‑256.
- * 3. Store the hash in the DB.
- * 4. On verification, hash the provided token and compare.
- */
-
 function hashToken(token: string): string {
   return crypto.createHash('sha256').update(token).digest('hex');
 }
