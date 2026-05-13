@@ -28,8 +28,8 @@ export default function ImageUploader({ value, onChange, label = "Upload Image" 
 
             const res = await uploadMediaAction(formData);
 
-            if (res.error) {
-                alert(res.error);
+            if (!res.success) {
+                alert(res.message);
             } else if (res.url) {
                 onChange(res.url);
             }
