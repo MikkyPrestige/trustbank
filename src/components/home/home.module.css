@@ -1909,6 +1909,7 @@
   object-fit: contain;
   filter: grayscale(100%) opacity(0.6);
   transition: all 0.3s ease;
+  border-radius: 8px;
 }
 
 .logoItem:hover .logoImage {

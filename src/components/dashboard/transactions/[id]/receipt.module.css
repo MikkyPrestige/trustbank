@@ -70,6 +70,7 @@
 .logoImage {
   object-fit: contain;
   object-position: left center;
+  border-radius: 8px;
 }
 
 .bankName {

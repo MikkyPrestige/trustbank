@@ -11,6 +11,7 @@
 .logoImage {
   object-fit: contain;
   display: block;
+  border-radius: 8px;
 }
 
 .mobileToggleBtn {

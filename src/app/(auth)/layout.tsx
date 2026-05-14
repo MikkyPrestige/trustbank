@@ -14,6 +14,7 @@ export default async function AuthLayout({ children }: { children: React.ReactNo
                         alt={settings.site_logo_alt}
                         width={160}
                         height={40}
+                        className={styles.logoImage}
                     />
                 </Link>
             </header>

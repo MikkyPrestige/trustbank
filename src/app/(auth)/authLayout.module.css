@@ -26,6 +26,12 @@
   transform: scale(1.02);
 }
 
+.logoImage {
+  object-fit: contain;
+  display: block;
+  border-radius: 10px;
+}
+
 .mainContent {
   flex: 1;
   display: flex;

@@ -40,10 +40,6 @@ export default async function SiteHeader({ settings }: { settings: any }) {
             settings={settings}
             menus={dynamicMenus}
             user={session?.user}
-            // topNav={[
-            //     { label: settings.nav_rates_label, href: settings.nav_rates_link },
-            //     { label: settings.nav_locations_label, href: settings.nav_locations_link }
-            // ]}
         />
     );
 }

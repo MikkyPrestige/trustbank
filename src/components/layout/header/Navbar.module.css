@@ -32,6 +32,7 @@
 }
 .logoImage {
   object-fit: contain;
+  border-radius: 8px;
 }
 
 .topActions {

@@ -104,7 +104,7 @@ export default function Footer({ settings, links = [] }: FooterProps) {
                                     alt={settings.site_logo_alt}
                                     width={140}
                                     height={40}
-                                    style={{ objectFit: 'contain' }}
+                                    style={{ objectFit: 'contain', borderRadius: "8px" }}
                                 />
                             </div>
                             <div className={styles.addressBox}>

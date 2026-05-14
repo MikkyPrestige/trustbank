@@ -23,7 +23,6 @@
   gap: 1rem;
   padding: 0 1rem 1rem 1rem;
   border-bottom: 1px solid var(--border-subtle);
-  /* margin-bottom: 1rem; */
 }
 
 .brandLogo {
@@ -31,6 +30,7 @@
   width: auto;
   height: 3rem;
   max-width: 7rem;
+  border-radius: 8px;
 }
 
 .brandBadge {
