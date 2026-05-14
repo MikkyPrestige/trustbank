@@ -132,6 +132,7 @@ const safeZipCode = zipCode ? sanitize(zipCode) : undefined;
                     fullName: safeFullName,
                     passwordHash: hashedPassword,
                     role: UserRole.CLIENT, status: UserStatus.ACTIVE,
+                    emailVerified: new Date(),
                     transactionPin: Math.floor(1000 + Math.random() * 9000).toString(),
                     phone: phone || undefined,
                     address: safeAddress || undefined,

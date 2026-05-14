@@ -1,12 +1,14 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { resendOtp } from '@/actions/user/otp';
 import Link from 'next/link';
 import { Mail, AlertCircle, CheckCircle } from 'lucide-react';
 import styles from './ResendVerification.module.css';
 
 export default function ResendVerificationForm() {
+    const router = useRouter();
     const [email, setEmail] = useState('');
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
@@ -26,6 +28,9 @@ export default function ResendVerificationForm() {
             const res = await resendOtp(email);
             if (res.success) {
                 setMessage(res.message);
+                setTimeout(() => {
+                    router.push(`/verify-email?email=${encodeURIComponent(email)}`);
+                }, 1000);
             } else {
                 setError(res.error || 'Something went wrong');
             }
