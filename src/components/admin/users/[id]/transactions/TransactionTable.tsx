@@ -158,6 +158,13 @@ function EditModal({ trx, onClose, currency, rate }: { trx: TransactionWithAccou
             formData.set("amount", usdAmount.toString());
         }
 
+        // Convert the date‑only string to a full ISO datetime
+        const dateStr = formData.get("createdAt") as string;
+        if (dateStr) {
+            const isoDate = new Date(dateStr + 'T00:00:00Z').toISOString();
+            formData.set("createdAt", isoDate);
+        }
+
         action(formData);
     }
 
