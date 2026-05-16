@@ -25,9 +25,10 @@ const MAX_TOTAL_SIZE = 25 * 1024 * 1024;   // 25 mb
 
 interface RegisterFormProps {
     siteName?: string;
+    isLoggedIn?: boolean;
 }
 
-export default function RegisterForm({ siteName }: RegisterFormProps) {
+export default function RegisterForm({ siteName, isLoggedIn }: RegisterFormProps) {
     const [state, action, isPending] = useActionState(registerUser, initialState);
     const [fileError, setFileError] = useState<string | null>(null);
     const router = useRouter();
@@ -45,6 +46,12 @@ export default function RegisterForm({ siteName }: RegisterFormProps) {
     const [passportFile, setPassportFile] = useState<string | null>(null);
     const [sizes, setSizes] = useState({ passport: 0, front: 0, back: 0 });
     const callbackUrl = searchParams.get('callbackUrl') || '';
+
+    useEffect(() => {
+        if (isLoggedIn) {
+            router.push('/dashboard');
+        }
+    }, [isLoggedIn, router]);
 
     useEffect(() => {
         if (state?.requireOtp) {

@@ -5,30 +5,12 @@ import { z } from "zod";
 import bcrypt from "bcryptjs";
 import { db } from "@/lib/db";
 import { UserStatus, KycStatus, UserRole } from "@prisma/client";
-import { headers } from "next/headers";
+import { headers, cookies  } from "next/headers";
 
 const loginSchema = z.object({
   email: z.string().email(),
   password: z.string().min(6),
 });
-
-// In test/development, return a dummy session so protected pages work without login
-async function getSessionForEnvironment() {
-  if (process.env.NODE_ENV === "production") return null;
-
-  return {
-    user: {
-      id: "test-user-id",
-      email: "verified@test.com",
-      name: "Test User",
-      role: "CLIENT" as UserRole,
-      status: "ACTIVE" as UserStatus,
-      kycStatus: "VERIFIED" as KycStatus,
-      image: null,
-    },
-    expires: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-  };
-}
 
 const nextAuthInstance = NextAuth({
   ...authConfig,
@@ -147,12 +129,37 @@ const nextAuthInstance = NextAuth({
 });
 
 export const { handlers, signIn, signOut } = nextAuthInstance;
+const realAuth = nextAuthInstance.auth;
 
-// Override auth to return a dummy session in non‑production environments
-const productionAuth = nextAuthInstance.auth;
-const testAuth = async () => {
-  const session = await productionAuth();
-  return session || (await getSessionForEnvironment());
-};
 
-export const auth = process.env.NODE_ENV === "production" ? productionAuth : testAuth;
+export async function auth() {
+  const realSession = await realAuth();
+
+  if (realSession) return realSession;
+  if (process.env.NODE_ENV === 'production') return null;
+
+  // In test/development, only return the dummy session if the test cookie is present
+  try {
+    const cookieStore = await cookies();
+    const testCookie = cookieStore.get('test-auth');
+    if (testCookie?.value === 'true') {
+      return {
+        user: {
+          id: 'test-user-id',
+          email: 'verified@test.com',
+          name: 'Test User',
+          role: 'CLIENT',
+          status: 'ACTIVE',
+          kycStatus: 'VERIFIED',
+          image: null,
+        },
+        expires: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+      };
+    }
+  } catch {
+    // fall through
+  }
+
+  // No session at all
+  return null;
+}
