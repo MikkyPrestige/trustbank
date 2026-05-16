@@ -1,23 +1,44 @@
 'use client';
 
-import { useActionState, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { login } from '@/actions/user/login';
+import { useActionState, useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useSearchParams, useRouter } from 'next/navigation';
+import { login } from '@/actions/user/login';
 import { Lock, Mail, ArrowRight, Eye, EyeOff, Loader2 } from 'lucide-react';
 import styles from './styles/LoginForm.module.css';
 
 interface LoginFormProps {
     siteName?: string;
     allowRegister: boolean;
+    isLoggedIn?: boolean;
 }
 
-export default function LoginForm({ siteName, allowRegister }: LoginFormProps) {
+export default function LoginForm({ siteName, allowRegister, isLoggedIn }: LoginFormProps) {
+    const router = useRouter();
     const [state, action, isPending] = useActionState(login, undefined);
     const [showPassword, setShowPassword] = useState(false);
     const searchParams = useSearchParams();
 
-    const callbackUrl = searchParams.get("callbackUrl");
+    const callbackUrl = (searchParams.get("callbackUrl") || "/dashboard") as string;
+
+    useEffect(() => {
+        if (isLoggedIn) {
+            router.push('/dashboard');
+        }
+    }, [isLoggedIn, router]);
+
+    if (isLoggedIn) {
+        return (
+            <div className={styles.pageWrapper}>
+                <div className={styles.loaderContainer}>
+                    <div className={styles.loaderInner}>
+                        <Loader2 size={48} className={styles.spinner} />
+                        <p className={styles.loaderText}>Redirecting to dashboard…</p>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className={styles.pageWrapper}>

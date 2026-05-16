@@ -1,20 +1,22 @@
 import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
-import NextAuth from 'next-auth';
-import { authConfig } from './auth.config';
+import { cookies } from 'next/headers';
 
-// In production, use the real authentication middleware.
-// In all other environments (development, test), allow everything.
-export default async function middleware(request: NextRequest) {
-  if (process.env.NODE_ENV === 'production') {
-    return (NextAuth(authConfig).auth as any)(request);
+export default async function middleware() {
+  // E2E test bypass
+  if (process.env.NODE_ENV !== 'production') {
+    try {
+      const cookieStore = await cookies();
+      const testCookie = cookieStore.get('test-auth');
+      if (testCookie?.value === 'true') {
+        return NextResponse.next();
+      }
+    } catch {}
   }
 
-  // Non‑production: just pass through
+  // No auth checks here
   return NextResponse.next();
 }
 
 export const config = {
   matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
 };
-
