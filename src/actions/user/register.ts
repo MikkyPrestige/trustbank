@@ -372,8 +372,11 @@ if (hasFront || hasBack || (passportFile && passportFile.size > 0)) {
 
 if (existingUser) {
     return {
-        success: true,
-        message: "If an account with this email is not yet verified, a new code has been sent."
+        success: false,
+        isUnverified: true,
+        email: data.email,
+        callbackUrl: callbackUrl,
+        message: "Account pending verification. Redirecting..."
     };
 }
         }
