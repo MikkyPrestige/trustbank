@@ -73,6 +73,7 @@ const nextConfig = {
       https://unpkg.com
       https://res.cloudinary.com
       https://ui-avatars.com
+      https://buysellstartups.com
       https://nominatim.openstreetmap.org
       https://translate.google.com
       https://translate.googleapis.com

@@ -10,7 +10,6 @@ export default async function FinalCTA() {
     return (
         <section className={styles.ctaSection}>
             <div className={styles.container}>
-
                 <div className={styles.ctaCardWrapper}>
                     <div className={styles.ctaMeshGradient}></div>
 
