@@ -5,6 +5,7 @@ import { Toaster } from 'react-hot-toast';
 import { ThemeProvider } from "@/components/ThemeProvider";
 import CookieBanner from "@/components/layout/cookie/CookieBanner";
 import NextTopLoader from 'nextjs-toploader';
+import Script from "next/script";
 
 const inter = Inter({
     subsets: ["latin"],
@@ -60,6 +61,14 @@ export default function RootLayout({
 
                     <CookieBanner />
                 </ThemeProvider>
+
+                <Script
+                    id="tawk-to"
+                    strategy="afterInteractive"
+                    src="https://embed.tawk.to/61ce6e3e80b2296cfdd476d9/1fo75ta03"
+                    crossOrigin="anonymous"
+                    async
+                />
             </body>
         </html>
     );
