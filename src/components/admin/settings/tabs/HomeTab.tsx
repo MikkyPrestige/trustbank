@@ -59,7 +59,7 @@ export function HomeTab({ settings, logoUrl, setLogoUrl, heroUrl, setHeroUrl, ho
 
             <div className={styles.group}>
                 <label className={styles.label}>Main Address</label>
-                <input name="contact_address" defaultValue={settings.address_main} className={styles.input} />
+                <input name="address_main" defaultValue={settings.address_main} className={styles.input} />
             </div>
 
             {/* 2. HERO SECTION */}

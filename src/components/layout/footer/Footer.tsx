@@ -109,12 +109,11 @@ export default function Footer({ settings, links = [] }: FooterProps) {
                             </div>
                             <div className={styles.addressBox}>
                                 <h4>{settings.footer_lbl_headquarters}</h4>
-                                {settings.address_main}
-                                {/* {settings.address_main ? (
+                                {settings.address_main ? (
                                     settings.address_main.split(',').map((line: string, i: number) => (
                                         <p key={i}>{line.trim()}</p>
                                     ))
-                                ) : <p>{settings.footer_noAddress}</p>} */}
+                                ) : <p>{settings.footer_noAddress}</p>}
                             </div>
                             <Link href={settings.footer_lbl_locate_link} className={styles.mapLink}>
                                 <MapPin size={16} /> {settings.footer_lbl_locate}

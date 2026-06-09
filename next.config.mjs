@@ -58,16 +58,22 @@ const nextConfig = {
       https://nominatim.openstreetmap.org
       https://maps.googleapis.com
       https://translate.googleapis.com
-      https://translate-pa.googleapis.com;
+      https://translate-pa.googleapis.com
+      https://*.tawk.to
+      wss://*.tawk.to;
     script-src 'self' 'unsafe-eval' 'unsafe-inline'
       https://maps.googleapis.com
       https://translate.google.com
       https://translate.googleapis.com
-      https://translate-pa.googleapis.com;
+      https://translate-pa.googleapis.com
+      https://*.tawk.to
+      https://cdn.jsdelivr.net;
     style-src 'self' 'unsafe-inline'
       https://fonts.googleapis.com
       https://translate.googleapis.com
-      https://www.gstatic.com;
+      https://www.gstatic.com
+      https://embed.tawk.to
+      https://*.tawk.to;
     img-src 'self' blob: data:
       https://*.basemaps.cartocdn.com
       https://unpkg.com
@@ -79,11 +85,14 @@ const nextConfig = {
       https://translate.googleapis.com
       https://www.google.com
       https://www.gstatic.com
-      https://fonts.gstatic.com;
-    font-src 'self' data: https://fonts.gstatic.com;
+      https://fonts.gstatic.com
+      https://*.tawk.to
+      https://tawk.link;
+    font-src 'self' data: https://fonts.gstatic.com https://*.tawk.to;
     frame-src 'self'
       https://www.google.com
-      https://translate.google.com;
+      https://translate.google.com
+      https://*.tawk.to;
     object-src 'none';
     base-uri 'self';
     form-action 'self';
