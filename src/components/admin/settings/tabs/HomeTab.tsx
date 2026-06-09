@@ -47,6 +47,21 @@ export function HomeTab({ settings, logoUrl, setLogoUrl, heroUrl, setHeroUrl, ho
                 <textarea name="site_logo_alt" defaultValue={settings.site_logo_alt} className={styles.textarea} />
             </div>
 
+            <div className={styles.group}>
+                <label className={styles.label}>Contact Phone</label>
+                <input name="contact_phone" defaultValue={settings.contact_phone} className={styles.input} />
+            </div>
+
+            <div className={styles.group}>
+                <label className={styles.label}>Contact Email</label>
+                <input name="contact_email" defaultValue={settings.contact_email} className={styles.input} />
+            </div>
+
+            <div className={styles.group}>
+                <label className={styles.label}>Main Address</label>
+                <input name="contact_address" defaultValue={settings.address_main} className={styles.input} />
+            </div>
+
             {/* 2. HERO SECTION */}
             <div className={styles.fullWidth}>
                 <hr className={styles.divider} />
@@ -1113,7 +1128,7 @@ export function HomeTab({ settings, logoUrl, setLogoUrl, heroUrl, setHeroUrl, ho
                     <input name="home_cta_google_link" defaultValue={settings.home_cta_google_link} className={styles.input} />
                 </div>
             </div>
-                    <div className={styles.groupHeader}><strong>Web Link</strong></div>
+            <div className={styles.groupHeader}><strong>Web Link</strong></div>
             <div className={styles.group}>
                 <label className={styles.label}>Text</label>
                 <input name="home_cta_web_text" defaultValue={settings.home_cta_web_text} className={styles.input} />

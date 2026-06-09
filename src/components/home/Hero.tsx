@@ -64,11 +64,11 @@ export default function Hero({ siteName, badgeText, imgSrc, imgAlt, title, subti
                     </div>
                 </div>
 
-                <div className={styles.saleBadge}>
+                {/* <div className={styles.saleBadge}>
                     <a href="https://buysellstartups.com/listings/trust-bank-mpbxxa5g" target="_blank" rel="noopener">
                         <img src="https://buysellstartups.com/api/badge/trust-bank-mpbxxa5g" alt="For Sale on Buy Sell Startups" width="280" height="68" />
                     </a>
-                </div>
+                </div> */}
             </div>
         </section>
     );
