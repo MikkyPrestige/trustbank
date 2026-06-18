@@ -1,10 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useRouter } from "next/navigation";
 import Image from 'next/image';
-import { processKyc } from '@/actions/admin/kyc';
-import { Check, X, AlertTriangle, User, FileText, ShieldCheck, Ban, ExternalLink } from 'lucide-react';
+import { processKyc, adminUploadKyc } from '@/actions/admin/kyc';
+import { Check, X, AlertTriangle, User, FileText, ShieldCheck, Ban, ExternalLink, Upload, Loader2 } from 'lucide-react';
 import styles from './users.module.css';
 
 export default function KycReviewSection({ user }: { user: any }) {
@@ -13,12 +13,19 @@ export default function KycReviewSection({ user }: { user: any }) {
     const [rejectReason, setRejectReason] = useState("");
     const [showRejectInput, setShowRejectInput] = useState(false);
 
+    // Upload state
+    const [uploadLoading, setUploadLoading] = useState(false);
+    const [passportFile, setPassportFile] = useState<File | null>(null);
+    const [idFrontFile, setIdFrontFile] = useState<File | null>(null);
+    const [idBackFile, setIdBackFile] = useState<File | null>(null);
+    const passportRef = useRef<HTMLInputElement>(null);
+    const idFrontRef = useRef<HTMLInputElement>(null);
+    const idBackRef = useRef<HTMLInputElement>(null);
+
     const isPending = user.kycStatus === 'PENDING';
     const isVerified = user.kycStatus === 'VERIFIED';
     const isFailed = user.kycStatus === 'FAILED';
     const isNotSubmitted = user.kycStatus === 'NOT_SUBMITTED';
-
-    if (isNotSubmitted) return null;
 
     const renderPreview = (url: string | null, alt: string) => {
         if (!url) return <div className={styles.placeholderBox}>No Document</div>;
@@ -67,6 +74,102 @@ export default function KycReviewSection({ user }: { user: any }) {
             setLoading(false);
         }
     };
+
+    const handleUpload = async () => {
+        if (!passportFile || !idFrontFile || !idBackFile) {
+            alert("Please select all three documents: Passport, ID Front, and ID Back.");
+            return;
+        }
+
+        setUploadLoading(true);
+        const fd = new FormData();
+        fd.append("passport", passportFile);
+        fd.append("idCardFront", idFrontFile);
+        fd.append("idCardBack", idBackFile);
+
+        const res = await adminUploadKyc(user.id, fd);
+        if (res?.success) {
+            router.refresh();
+        } else {
+            alert(res?.message || "Upload failed");
+            setUploadLoading(false);
+        }
+    };
+
+    const uploadForm = (
+        <div className={styles.uploadSection}>
+            <div className={styles.uploadGrid}>
+                <div className={styles.uploadField}>
+                    <p className={styles.kycLabel}>Passport Photo</p>
+                    <button type="button" className={styles.filePickBtn} onClick={() => passportRef.current?.click()}>
+                        <Upload size={14} />
+                        {passportFile ? passportFile.name : 'Choose file'}
+                    </button>
+                    <input
+                        ref={passportRef}
+                        type="file"
+                        accept="image/*"
+                        hidden
+                        onChange={(e) => setPassportFile(e.target.files?.[0] || null)}
+                    />
+                </div>
+                <div className={styles.uploadField}>
+                    <p className={styles.kycLabel}>ID Card – Front</p>
+                    <button type="button" className={styles.filePickBtn} onClick={() => idFrontRef.current?.click()}>
+                        <Upload size={14} />
+                        {idFrontFile ? idFrontFile.name : 'Choose file'}
+                    </button>
+                    <input
+                        ref={idFrontRef}
+                        type="file"
+                        accept="image/*"
+                        hidden
+                        onChange={(e) => setIdFrontFile(e.target.files?.[0] || null)}
+                    />
+                </div>
+                <div className={styles.uploadField}>
+                    <p className={styles.kycLabel}>ID Card – Back</p>
+                    <button type="button" className={styles.filePickBtn} onClick={() => idBackRef.current?.click()}>
+                        <Upload size={14} />
+                        {idBackFile ? idBackFile.name : 'Choose file'}
+                    </button>
+                    <input
+                        ref={idBackRef}
+                        type="file"
+                        accept="image/*"
+                        hidden
+                        onChange={(e) => setIdBackFile(e.target.files?.[0] || null)}
+                    />
+                </div>
+            </div>
+            <button
+                className={`${styles.btnApprove} ${uploadLoading ? styles.btnDisabled : ''}`}
+                onClick={handleUpload}
+                disabled={uploadLoading || !passportFile || !idFrontFile || !idBackFile}
+            >
+                {uploadLoading ? <Loader2 size={18} className={styles.spin} /> : <Upload size={18} />}
+                {uploadLoading ? 'Uploading...' : 'Upload & Verify'}
+            </button>
+        </div>
+    );
+
+    // NOT_SUBMITTED: show upload form only
+    if (isNotSubmitted) {
+        return (
+            <div className={styles.kycContainer}>
+                <div className={styles.kycHeader}>
+                    <h3 className={styles.kycTitle}>
+                        <Upload size={20} className={styles.labelIcon} /> Upload KYC Documents
+                    </h3>
+                    <span className={`${styles.kycBadge} ${styles.NOT_SUBMITTED}`}>NOT SUBMITTED</span>
+                </div>
+                <p className={styles.uploadNote}>
+                    This user has not submitted KYC documents. You can upload on their behalf and they will be verified immediately.
+                </p>
+                {uploadForm}
+            </div>
+        );
+    }
 
     return (
         <div className={styles.kycContainer}>
@@ -148,8 +251,15 @@ export default function KycReviewSection({ user }: { user: any }) {
             )}
 
             {isFailed && user.kycRejectionReason && (
-                <div className={styles.rejectionReason} >
+                <div className={styles.rejectionReason}>
                     <strong>Rejection Reason:</strong> {user.kycRejectionReason}
+                </div>
+            )}
+
+            {isFailed && (
+                <div className={styles.reuploadSection}>
+                    <p className={styles.uploadNote}>Re-upload documents on behalf of this user:</p>
+                    {uploadForm}
                 </div>
             )}
         </div>
