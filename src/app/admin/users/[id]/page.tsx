@@ -10,7 +10,8 @@ import KycReviewSection from "@/components/admin/users/[id]/KycReviewSection";
 import LocalTransferList from "@/components/admin/users/[id]/LocalTransferList";
 import ActivityLog from "@/components/admin/users/[id]/ActivityLog";
 import RevokeSessionButton from "@/components/admin/users/[id]/RevokeSessionButton";
-import { CreditCard, Activity, User, MapPin, HeartHandshake, Heart, History, Wallet, ArrowLeft, ArrowRightLeft, ShieldAlert, Lock, Mail, Phone, Briefcase, Calendar, Hash, AlertTriangle } from "lucide-react";
+import AdminEditUserForm from "@/components/admin/users/[id]/AdminEditUserForm";
+import { CreditCard, Activity, User, MapPin, HeartHandshake, Heart, History, Wallet, ArrowLeft, ArrowRightLeft, ShieldAlert, Lock, Mail, Phone, Briefcase, Hash, AlertTriangle } from "lucide-react";
 import { requireAdmin } from "@/lib/auth/admin-auth";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -145,13 +146,12 @@ export default async function UserDetailsPage({ params }: { params: Promise<{ id
                             <label><Briefcase size={16} className={styles.labelIcon} /> Occupation</label>
                             <input disabled defaultValue={user.occupation || 'N/A'} className={styles.input} />
                         </div>
-                        <div className={styles.field}>
-                            <label><Calendar size={16} className={styles.labelIcon} /> Date of Birth</label>
-                            <input disabled defaultValue={formatDate(user.dateOfBirth)} className={styles.input} />
-                        </div>
-                        <div className={styles.field}>
-                            <label><User size={16} className={styles.labelIcon} /> Gender</label>
-                            <input disabled defaultValue={user.gender || 'N/A'} className={styles.input} />
+                        <div className={styles.field} style={{ gridColumn: '1 / -1' }}>
+                            <AdminEditUserForm
+                                userId={user.id}
+                                currentDob={user.dateOfBirth ? new Date(user.dateOfBirth).toISOString().split('T')[0] : null}
+                                currentGender={user.gender}
+                            />
                         </div>
                         <div className={styles.field}>
                             <label><Hash size={16} className={styles.labelIcon} /> Tax ID</label>

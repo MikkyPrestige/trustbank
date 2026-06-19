@@ -1,0 +1,94 @@
+.banner {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1.25rem;
+  border-radius: 0.6rem;
+  margin-bottom: 1.25rem;
+  border: 1px solid transparent;
+  animation: slideDown 0.3s ease-out;
+}
+
+.icon {
+  flex-shrink: 0;
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+.content strong {
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.content span {
+  opacity: 0.85;
+}
+
+.reason {
+  font-style: italic;
+  font-weight: 500 !important;
+  opacity: 1 !important;
+}
+
+.cta {
+  flex-shrink: 0;
+  padding: 0.45rem 1rem;
+  border-radius: 0.4rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: opacity 0.2s;
+}
+
+.cta:hover {
+  opacity: 0.85;
+}
+
+/* --- Variants --- */
+
+.warning {
+  background: color-mix(in srgb, var(--warning, #f59e0b), transparent 88%);
+  border-color: color-mix(in srgb, var(--warning, #f59e0b), transparent 60%);
+  color: color-mix(in srgb, var(--warning, #f59e0b), #000 30%);
+}
+
+.ctaWarning {
+  background: var(--warning, #f59e0b);
+  color: #fff;
+}
+
+.pending {
+  background: color-mix(in srgb, var(--primary, #3b82f6), transparent 88%);
+  border-color: color-mix(in srgb, var(--primary, #3b82f6), transparent 60%);
+  color: var(--primary, #3b82f6);
+}
+
+.failed {
+  background: color-mix(in srgb, var(--danger, #ef4444), transparent 88%);
+  border-color: color-mix(in srgb, var(--danger, #ef4444), transparent 60%);
+  color: color-mix(in srgb, var(--danger, #ef4444), #000 20%);
+}
+
+.ctaDanger {
+  background: var(--danger, #ef4444);
+  color: #fff;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

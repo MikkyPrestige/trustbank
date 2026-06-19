@@ -4,7 +4,7 @@ import { headers } from "next/headers";
 
 export type AdminLogAction =
   // --- User Management ---
-  | 'CREATE_USER' | 'UPDATE_STATUS' | 'DELETE_USER' | 'ARCHIVED_USER' | 'RESET_PASSWORD'
+  | 'CREATE_USER' | 'UPDATE_STATUS' | 'DELETE_USER' | 'ARCHIVED_USER' | 'RESET_PASSWORD' | 'RESET_PIN' | 'EDIT_USER_PROFILE'
 
   // --- Transactions ---
   | 'MANUAL_CREDIT' | 'MANUAL_DEBIT' | 'GENERATE_TRX' | 'DELETE_TRX' | 'EDIT_TRX'
@@ -19,7 +19,7 @@ export type AdminLogAction =
   | 'APPROVE_LOAN' | 'REJECT_LOAN' | 'LOAN_UPDATE'
 
   // --- KYC  ---
-  | 'KYC_APPROVE' | 'KYC_REJECT'
+  | 'KYC_APPROVE' | 'KYC_REJECT' | 'KYC_ADMIN_UPLOAD'
 
   // --- Crypto & Investments  ---
   | 'CRYPTO_UPDATE' | 'INVESTMENT_UPDATE'

@@ -463,6 +463,13 @@
   cursor: not-allowed;
 }
 
+.lockedNote {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 400;
+  font-style: italic;
+}
+
 .spin {
   animation: spin 1s linear infinite;
 }

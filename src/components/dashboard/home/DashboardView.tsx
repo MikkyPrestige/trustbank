@@ -13,6 +13,7 @@ import BalanceCard from "./BalanceCard";
 import NoActivity from "./NoActivity";
 import NotificationDropdown from "./NotificationDropdown";
 import DashboardBanner from "./DashboardBanner";
+import KycVerificationBanner from "./KycVerificationBanner";
 import PromoSidebar from "./PromoSidebar";
 import SidebarFooter from "./SidebarFooter";
 import styles from "../dashboard.module.css";
@@ -108,6 +109,11 @@ export default function DashboardView({
                     </div>
                 </div>
             )}
+
+            <KycVerificationBanner
+                kycStatus={user.kycStatus}
+                kycRejectionReason={user.kycRejectionReason}
+            />
 
             <div className={styles.dashboardBanner}>
                 <DashboardBanner

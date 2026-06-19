@@ -118,10 +118,13 @@ export async function updateProfile(prevState: any, formData: FormData) {
 
     const rawUpdateData = validated.data;
 
+    // Lock DOB and gender once KYC is verified — they must match the verified ID
+    const isKycVerified = user.kycStatus === 'VERIFIED';
+
 const safeData = {
   fullName: rawUpdateData.fullName ? sanitize(rawUpdateData.fullName) : undefined,
   occupation: rawUpdateData.occupation ? sanitize(rawUpdateData.occupation) : undefined,
-  gender: rawUpdateData.gender ? sanitize(rawUpdateData.gender) : undefined,
+  gender: (!isKycVerified && rawUpdateData.gender) ? sanitize(rawUpdateData.gender) : undefined,
   phone: rawUpdateData.phone ? sanitize(rawUpdateData.phone) : undefined,
   taxId: rawUpdateData.taxId ? sanitize(rawUpdateData.taxId) : undefined,
   address: rawUpdateData.address ? sanitize(rawUpdateData.address) : undefined,
@@ -134,7 +137,7 @@ const safeData = {
   nokRelationship: rawUpdateData.nokRelationship ? sanitize(rawUpdateData.nokRelationship) : undefined,
   nokEmail: rawUpdateData.nokEmail,
   nokAddress: rawUpdateData.nokAddress ? sanitize(rawUpdateData.nokAddress) : undefined,
-  dateOfBirth: rawUpdateData.dateOfBirth ? new Date(rawUpdateData.dateOfBirth) : undefined,
+  dateOfBirth: (!isKycVerified && rawUpdateData.dateOfBirth) ? new Date(rawUpdateData.dateOfBirth) : undefined,
 };
 
     try {

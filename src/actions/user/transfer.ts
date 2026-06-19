@@ -87,11 +87,13 @@ const safeRoutingNumber = routingNumber ? sanitize(routingNumber) : undefined;
         where: { accountNumber: accountNumber }
     });
 
-    if (destinationAccount) {
-        const inboundCheck = await checkInboundLimit(destinationAccount.userId, amount);
-        if (!inboundCheck.allowed) {
-            return { message: `🚫 Recipient Cannot Accept Funds: ${inboundCheck.error}` };
-        }
+    if (!destinationAccount) {
+        return { message: "Account not found. Please verify the account number." };
+    }
+
+    const inboundCheck = await checkInboundLimit(destinationAccount.userId, amount);
+    if (!inboundCheck.allowed) {
+        return { message: `🚫 Recipient Cannot Accept Funds: ${inboundCheck.error}` };
     }
 
     try {

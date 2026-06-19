@@ -25,6 +25,7 @@ interface SettingsUser {
     taxId?: string | null;
     dateOfBirth?: Date | string | null;
     gender?: string | null;
+    kycStatus?: string | null;
     nokName?: string | null;
     nokPhone?: string | null;
     nokEmail?: string | null;
@@ -185,28 +186,50 @@ export default function SettingsTabs({ user }: { user: SettingsUser }) {
                                 </div>
                             </div>
                             {/* READ-ONLY FIELDS */}
-                            <div className={styles.grid}>
-                                <div className={styles.group}>
-                                    <label>Full Name</label>
-                                    <input defaultValue={user.fullName} disabled className={styles.inputDisabled} />
-                                </div>
-                                <div className={styles.group}>
-                                    <label>Email Address</label>
-                                    <input defaultValue={user.email} disabled className={styles.inputDisabled} />
-                                </div>
-                                <div className={styles.group}>
-                                    <label>Date of Birth</label>
-                                    <input
-                                        defaultValue={user.dateOfBirth ? new Date(user.dateOfBirth).toISOString().split('T')[0] : ''}
-                                        disabled
-                                        className={styles.inputDisabled}
-                                    />
-                                </div>
-                                <div className={styles.group}>
-                                    <label>Gender</label>
-                                    <input defaultValue={user.gender || ''} disabled className={styles.inputDisabled} />
-                                </div>
-                            </div>
+                            {(() => {
+                                const isKycVerified = user.kycStatus === 'VERIFIED';
+                                const dobValue = user.dateOfBirth ? new Date(user.dateOfBirth).toISOString().split('T')[0] : '';
+                                return (
+                                    <div className={styles.grid}>
+                                        <div className={styles.group}>
+                                            <label>Full Name</label>
+                                            <input defaultValue={user.fullName} disabled className={styles.inputDisabled} />
+                                        </div>
+                                        <div className={styles.group}>
+                                            <label>Email Address</label>
+                                            <input defaultValue={user.email} disabled className={styles.inputDisabled} />
+                                        </div>
+                                        <div className={styles.group}>
+                                            <label>
+                                                Date of Birth
+                                                {isKycVerified && <span className={styles.lockedNote}> — Identity verified, contact support to change</span>}
+                                            </label>
+                                            {isKycVerified ? (
+                                                <input defaultValue={dobValue} disabled className={styles.inputDisabled} />
+                                            ) : (
+                                                <input name="dateOfBirth" type="date" defaultValue={dobValue} className={styles.input} />
+                                            )}
+                                        </div>
+                                        <div className={styles.group}>
+                                            <label>
+                                                Gender
+                                                {isKycVerified && <span className={styles.lockedNote}> — Identity verified, contact support to change</span>}
+                                            </label>
+                                            {isKycVerified ? (
+                                                <input defaultValue={user.gender || ''} disabled className={styles.inputDisabled} />
+                                            ) : (
+                                                <select name="gender" defaultValue={user.gender || ''} className={styles.input}>
+                                                    <option value="">Select...</option>
+                                                    <option value="Male">Male</option>
+                                                    <option value="Female">Female</option>
+                                                    <option value="Non-Binary">Non-Binary</option>
+                                                    <option value="Other">Other</option>
+                                                </select>
+                                            )}
+                                        </div>
+                                    </div>
+                                );
+                            })()}
                             {/* EDITABLE CONTACT FIELDS */}
                             <div className={styles.divider}>Contact Details</div>
                             <div className={styles.grid}>

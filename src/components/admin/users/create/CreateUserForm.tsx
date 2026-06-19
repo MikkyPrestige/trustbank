@@ -2,17 +2,28 @@
 
 import { adminCreateUser } from '@/actions/admin/users';
 import styles from './create-user.module.css';
-import { Save, User, Mail, Lock, Phone, MapPin, Globe, Briefcase, Calendar, Users } from 'lucide-react';
+import { Save, User, Mail, Lock, Phone, MapPin, Globe, Briefcase, Calendar, Users, Upload, ShieldCheck } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import toast from 'react-hot-toast';
 
 export default function CreateUserForm() {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
+    const [passportFile, setPassportFile] = useState<File | null>(null);
+    const [idFrontFile, setIdFrontFile] = useState<File | null>(null);
+    const [idBackFile, setIdBackFile] = useState<File | null>(null);
+    const passportRef = useRef<HTMLInputElement>(null);
+    const idFrontRef = useRef<HTMLInputElement>(null);
+    const idBackRef = useRef<HTMLInputElement>(null);
 
     async function handleSubmit(formData: FormData) {
         setLoading(true);
+
+        // Attach KYC files if selected
+        if (passportFile) formData.append("passport", passportFile);
+        if (idFrontFile) formData.append("idCardFront", idFrontFile);
+        if (idBackFile) formData.append("idCardBack", idBackFile);
 
         try {
             const result = await adminCreateUser(formData);
@@ -149,6 +160,39 @@ export default function CreateUserForm() {
                             </div>
                         </div>
 
+                    </div>
+
+                    <hr className={styles.divider} />
+
+                    <h3 className={styles.sectionTitle}>
+                        <ShieldCheck size={18} style={{ display: 'inline', marginRight: '0.5rem', verticalAlign: 'middle' }} />
+                        KYC Documents <span style={{ fontWeight: 400, fontSize: '0.85rem', color: 'var(--text-muted)' }}>(Optional — user will be verified immediately)</span>
+                    </h3>
+                    <div className={styles.grid}>
+                        <div className={styles.formGroup}>
+                            <label>Passport Photo</label>
+                            <button type="button" className={styles.filePickBtn} onClick={() => passportRef.current?.click()}>
+                                <Upload size={14} />
+                                {passportFile ? passportFile.name : 'Choose file'}
+                            </button>
+                            <input ref={passportRef} type="file" accept="image/*" hidden onChange={(e) => setPassportFile(e.target.files?.[0] || null)} />
+                        </div>
+                        <div className={styles.formGroup}>
+                            <label>ID Card – Front</label>
+                            <button type="button" className={styles.filePickBtn} onClick={() => idFrontRef.current?.click()}>
+                                <Upload size={14} />
+                                {idFrontFile ? idFrontFile.name : 'Choose file'}
+                            </button>
+                            <input ref={idFrontRef} type="file" accept="image/*" hidden onChange={(e) => setIdFrontFile(e.target.files?.[0] || null)} />
+                        </div>
+                        <div className={styles.formGroup}>
+                            <label>ID Card – Back</label>
+                            <button type="button" className={styles.filePickBtn} onClick={() => idBackRef.current?.click()}>
+                                <Upload size={14} />
+                                {idBackFile ? idBackFile.name : 'Choose file'}
+                            </button>
+                            <input ref={idBackRef} type="file" accept="image/*" hidden onChange={(e) => setIdBackFile(e.target.files?.[0] || null)} />
+                        </div>
                     </div>
 
                     <div className={styles.actions}>

@@ -10,8 +10,11 @@ import {
     AccountType,
     AccountStatus,
     CardType,
-    CardStatus
+    CardStatus,
+    KycStatus
 } from "@prisma/client";
+import { uploadFileToCloud } from "@/lib/utils/upload";
+import { hashPin } from "@/lib/security";
 import { checkAdminAction } from "@/lib/auth/admin-auth";
 import { canPerform } from "@/lib/auth/permissions";
 import { z } from "zod";
@@ -37,6 +40,11 @@ const createUserSchema = z.object({
 const resetSchema = z.object({
     userId: z.string().min(1, "User ID is required"),
     newPassword: z.string().min(6, "Password must be at least 6 characters"),
+});
+
+const resetPinSchema = z.object({
+    userId: z.string().min(1, "User ID is required"),
+    newPin: z.string().length(4, "PIN must be exactly 4 digits").regex(/^\d{4}$/, "PIN must be 4 numeric digits"),
 });
 
 async function generateUniqueNumber(prefix: string, model: 'account' | 'card'): Promise<string> {
@@ -72,6 +80,12 @@ export async function adminCreateUser(formData: FormData) {
 
     if (!authorized || !session || !session.user) return { success: false, message: "Unauthorized" };
     if (!canPerform(session.user.role as UserRole, 'MONEY')) return { success: false, message: "Insufficient permissions. Only Admins can perform this actions" };
+
+    // Check for KYC files early so we can report clearly if upload fails
+    const passportFile = formData.get("passport") as File | null;
+    const idFrontFile = formData.get("idCardFront") as File | null;
+    const idBackFile = formData.get("idCardBack") as File | null;
+    const hasKycFiles = !!(passportFile?.size && idFrontFile?.size && idBackFile?.size);
 
     const rawData = {
   email: formData.get("email") as string,
@@ -118,6 +132,8 @@ const safeZipCode = zipCode ? sanitize(zipCode) : undefined;
 
     const existing = await db.user.findUnique({ where: { email } });
     if (existing) return { success: false, message: "Email already in use." };
+
+    let kycUploaded = false;
 
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -197,12 +213,44 @@ await logSecurityEvent({
   userId: newUser.id,
 });
 
+        // Optional KYC upload — upload files and verify immediately
+        if (hasKycFiles) {
+            try {
+                const [passportUrl, frontUrl, backUrl] = await Promise.all([
+                    uploadFileToCloud(passportFile!, "avatars"),
+                    uploadFileToCloud(idFrontFile!, "kyc"),
+                    uploadFileToCloud(idBackFile!, "kyc"),
+                ]);
+
+                await db.user.update({
+                    where: { id: newUser.id },
+                    data: {
+                        passportUrl,
+                        idCardUrl: frontUrl,
+                        idCardBackUrl: backUrl,
+                        kycStatus: KycStatus.VERIFIED,
+                    }
+                });
+
+                kycUploaded = true;
+            } catch (uploadErr) {
+                console.error("KYC Upload Error during user creation:", uploadErr);
+            }
+        }
+
     } catch (err) {
         console.error("Create User Error:", err);
         return { success: false, message: "Database error. Failed to create user." };
     }
 
     revalidatePath("/admin/users");
+
+    if (kycUploaded) {
+        return { success: true, message: "User created and identity verified successfully." };
+    }
+    if (hasKycFiles) {
+        return { success: true, message: "User created, but KYC upload failed. Please upload documents from the user profile page." };
+    }
     return { success: true, message: "User created with Checking & Savings accounts." };
 }
 
@@ -497,6 +545,108 @@ export async function adminResetPassword(prevState: any, formData: FormData) {
 
     revalidatePath("/admin/users");
     return { success: true, message: "Password reset successfully." };
+}
+
+export async function adminResetPin(prevState: any, formData: FormData) {
+    const { authorized, session } = await checkAdminAction();
+
+    if (!authorized || !session || !session.user) {
+        return { success: false, message: "Unauthorized" };
+    }
+    if (!canPerform(session.user.role as UserRole, 'MONEY')) {
+        return { success: false, message: "Insufficient permissions." };
+    }
+
+    const rawData = Object.fromEntries(formData.entries());
+    const validated = resetPinSchema.safeParse(rawData);
+    if (!validated.success) return { success: false, message: validated.error.issues[0].message };
+
+    const { userId, newPin } = validated.data;
+
+    try {
+        const target = await db.user.findUnique({ where: { id: userId } });
+        if (!target) return { success: false, message: "User not found." };
+        if (target.role === UserRole.SUPER_ADMIN) {
+            return { success: false, message: "Cannot reset Super Admin PIN." };
+        }
+
+        const hashedPin = await hashPin(newPin);
+
+        await db.user.update({
+            where: { id: userId },
+            data: {
+                transactionPin: hashedPin,
+                failedPinAttempts: 0,
+                pinLockedUntil: null,
+            }
+        });
+
+        await db.notification.create({
+            data: {
+                userId,
+                title: "Transaction PIN Reset",
+                message: "Your transaction PIN was reset by an administrator. If you did not request this, contact support immediately.",
+                type: "WARNING",
+                link: "/dashboard/settings",
+                isRead: false,
+            }
+        });
+
+        await logAdminAction("RESET_PIN", userId, { admin: session.user.email }, "WARNING", "SUCCESS");
+
+        await logSecurityEvent({
+            action: "ADMIN_PIN_RESET",
+            level: "CRITICAL",
+            details: { targetUserId: userId, adminEmail: session.user.email },
+            adminId: session.user.id,
+            userId,
+        });
+
+    } catch (err) {
+        console.error("Admin Reset PIN Error:", err);
+        return { success: false, message: "Failed to reset PIN." };
+    }
+
+    revalidatePath(`/admin/users/${userId}`);
+    return { success: true, message: "Transaction PIN reset successfully." };
+}
+
+export async function adminEditUser(userId: string, formData: FormData) {
+    const { authorized, session } = await checkAdminAction();
+
+    if (!authorized || !session || !session.user) return { success: false, message: "Unauthorized" };
+    if (!canPerform(session.user.role as UserRole, 'EDIT')) return { success: false, message: "Insufficient permissions." };
+
+    const dateOfBirth = formData.get("dateOfBirth") as string | null;
+    const gender = formData.get("gender") as string | null;
+
+    try {
+        const targetUser = await db.user.findUnique({ where: { id: userId } });
+        if (!targetUser) return { success: false, message: "User not found." };
+
+        await db.user.update({
+            where: { id: userId },
+            data: {
+                ...(dateOfBirth ? { dateOfBirth: new Date(dateOfBirth) } : {}),
+                ...(gender ? { gender: sanitize(gender) } : {}),
+            }
+        });
+
+        await logAdminAction(
+            "EDIT_USER_PROFILE",
+            userId,
+            { fields: "dateOfBirth, gender", admin: session.user.email },
+            "INFO",
+            "SUCCESS"
+        );
+
+    } catch (err) {
+        console.error("Admin Edit User Error:", err);
+        return { success: false, message: "Failed to update user profile." };
+    }
+
+    revalidatePath(`/admin/users/${userId}`);
+    return { success: true, message: "User profile updated successfully." };
 }
 
 export async function unlockUserSecurity(userId: string) {

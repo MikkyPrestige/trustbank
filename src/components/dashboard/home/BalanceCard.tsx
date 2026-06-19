@@ -63,7 +63,7 @@ export default function BalanceCard({
     const isNeutral = trend === 0;
 
     const handleTransfer = () => {
-        router.push('/dashboard/transfer');
+        router.push('/dashboard/wire');
     };
 
     const copyToClipboard = (text: string) => {
