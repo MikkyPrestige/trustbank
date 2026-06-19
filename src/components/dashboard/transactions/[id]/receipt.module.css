@@ -1,18 +1,14 @@
-.container {
-  max-width: 600px;
-  width: 60%;
-  padding: 1rem;
-}
-
-@media (max-width: 991px) {
-  .container {
-    width: 80%;
-  }
+/* ── Page wrapper ── */
+.pageWrapper {
+  max-width: 560px;
+  width: 100%;
+  padding: 1.5rem 1rem;
+  margin: 0 auto;
 }
 
 @media (max-width: 600px) {
-  .container {
-    width: 100%;
+  .pageWrapper {
+    padding: 1rem 0.5rem;
   }
 }
 
@@ -23,224 +19,287 @@
 .backLink {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.4rem;
   color: var(--text-muted);
   text-decoration: none;
+  font-size: 0.875rem;
   font-weight: 500;
-  font-size: 0.9rem;
   transition: color 0.2s;
 }
-.backLink:hover {
-  color: var(--text-main);
-}
+.backLink:hover { color: var(--text-main); }
 
+/* ── Receipt card ── */
 .receiptCard {
   background: var(--bg-card);
-  border-radius: 1rem;
-  box-shadow: var(--shadow-card);
   border: 1px solid var(--border);
-  max-width: 600px;
-  position: relative;
-  padding: 1rem 2rem;
+  border-radius: 0.75rem;
+  box-shadow: var(--shadow-card);
   overflow: hidden;
 }
 
+/* ── Bank header ── */
 .bankHeader {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 1rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 2px dashed var(--border-subtle);
+  padding: 1.25rem 1.5rem 1rem;
 }
 
-.brandColumn {
+.brandCol {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  min-height: 2rem;
+  align-items: center;
 }
 
-.logoContainer {
+.logoWrap {
   position: relative;
-  width: 8rem;
-  height: 2rem;
+  width: 120px;
+  height: 32px;
 }
 
-.logoImage {
+.logoImg {
   object-fit: contain;
   object-position: left center;
-  border-radius: 8px;
 }
 
 .bankName {
-  font-weight: 800;
-  font-size: 1.5rem;
+  font-size: 1.1rem;
+  font-weight: 900;
   letter-spacing: -0.5px;
   color: var(--text-main);
-  line-height: 1;
 }
 
-.headerRight {
-  text-align: right;
+.receiptMeta {
   display: flex;
   flex-direction: column;
+  align-items: flex-end;
   gap: 0.2rem;
-  justify-content: center;
-  height: 2rem;
 }
 
-.receiptLabel {
-  font-size: 0.5rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+.receiptTitle {
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
   color: var(--text-muted);
-  font-weight: 700;
+  text-transform: uppercase;
 }
 
-.receiptId {
+.refNumber {
   font-family: monospace;
   font-size: 0.8rem;
-  color: var(--text-muted);
+  font-weight: 700;
+  color: var(--text-main);
 }
 
-.receiptHeader {
+/* ── Dividers ── */
+.dashedDivider {
+  border: none;
+  border-top: 2px dashed var(--border-subtle);
+  margin: 0;
+}
+
+.solidDivider {
+  border: none;
+  border-top: 1px solid var(--border-subtle);
+  margin: 0;
+}
+
+/* ── Amount section ── */
+.amountSection {
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 0.4rem;
+  padding: 1.5rem 1.5rem 1.25rem;
   text-align: center;
-  margin-bottom: 1rem;
 }
 
-.iconBox {
-  width: 2rem;
-  height: 2rem;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.amount {
-  font-size: 2rem;
+.statusDot {
+  font-size: 0.65rem;
   font-weight: 800;
-  color: var(--text-main);
-  margin: 0.5rem;
-  letter-spacing: -1px;
+  letter-spacing: 2px;
+  padding: 0.3rem 0.75rem;
+  border-radius: 2rem;
+  text-transform: uppercase;
 }
 
-.creditText {
-  color: var(--success);
-}
-
-.statusBadge {
-  padding: 0.3rem 0.5rem;
-  border-radius: 1rem;
-  font-size: 0.8rem;
-  font-weight: 600;
-  text-transform: capitalize;
-}
-
-.success {
-  background: rgba(var(--success-rgb), 0.1);
+.statusSuccess {
+  background: rgba(var(--success-rgb), 0.12);
   color: var(--success);
   border: 1px solid rgba(var(--success-rgb), 0.3);
 }
-.pending {
-  background: rgba(var(--accent-rgb), 0.1);
+.statusPending {
+  background: rgba(var(--accent-rgb), 0.12);
   color: var(--accent);
   border: 1px solid rgba(var(--accent-rgb), 0.3);
 }
-.failed {
-  background: rgba(var(--danger-rgb), 0.1);
+.statusFailed {
+  background: rgba(var(--danger-rgb), 0.12);
   color: var(--danger);
   border: 1px solid rgba(var(--danger-rgb), 0.3);
 }
 
-.divider {
-  height: 1px;
-  background: var(--border-subtle);
-  margin: 1rem 0;
-  width: 100%;
+.amountHero {
+  font-size: 2.6rem;
+  font-weight: 900;
+  letter-spacing: -1.5px;
+  line-height: 1;
+  margin-top: 0.35rem;
 }
 
-.detailsList {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 1rem;
+.amountCredit { color: var(--success); }
+.amountDebit  { color: var(--text-main); }
+.amountStruck {
+  text-decoration: line-through;
+  color: var(--text-muted);
 }
 
-.detailRow {
+.usdEquiv {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 0.15rem;
+}
+
+/* ── Section blocks ── */
+.section {
+  padding: 1rem 1.5rem;
+}
+
+.sectionTitle {
+  font-size: 0.6rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin: 0 0 0.75rem 0;
+}
+
+/* ── Data rows ── */
+.row {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  font-size: 0.85rem;
+  gap: 1rem;
+  padding: 0.55rem 0;
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 0.83rem;
 }
 
-.label {
+.row:last-child {
+  border-bottom: none;
+}
+
+.rowLabel {
   color: var(--text-muted);
-  font-weight: 500;
-}
-
-.value {
-  color: var(--text-main);
   font-weight: 600;
-  text-align: right;
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+  padding-top: 1px;
 }
-.valueHighlight {
+
+.rowValue {
   color: var(--text-main);
-  font-weight: 700;
-  font-size: 1rem;
+  font-weight: 500;
   text-align: right;
+  word-break: break-all;
 }
 
-.multiValue {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-}
-.subValue {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-  margin-top: 2px;
+.rowValueBold {
+  font-weight: 700;
 }
 
+.mono {
+  font-family: monospace;
+  letter-spacing: 1px;
+}
+
+/* ── Actions (Print / Share) ── */
 .footer {
-  margin-top: 1rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--border-subtle);
   display: flex;
-  gap: 2rem;
+  gap: 1rem;
   justify-content: center;
+  padding: 1rem 1.5rem;
 }
 
 .actionBtn {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: .5rem 1rem;
+  padding: 0.6rem 1.4rem;
   border-radius: 0.5rem;
   border: 1px solid var(--sub-divider);
   background: var(--sub-bg);
   color: var(--text-muted);
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 0.875rem;
   cursor: pointer;
   transition: all 0.2s;
 }
-
 .actionBtn:hover {
   background: var(--sub-hover);
   border-color: var(--border-subtle);
   color: var(--text-main);
 }
 
-.disclaimer {
-  margin-top: 1rem;
+/* ── Receipt footer ── */
+.receiptFooter {
+  background: var(--sub-bg);
+  border-top: 1px solid var(--border-subtle);
+  padding: 1rem 1.5rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  align-items: center;
   text-align: center;
-  font-size: 0.75rem;
+}
+
+.fdic {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.fdicBadge {
+  border: 2px solid var(--text-muted);
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 900;
+  letter-spacing: 1px;
   color: var(--text-muted);
-  opacity: 0.7;
+  padding: 2px 6px;
+  flex-shrink: 0;
+}
+
+.fdicText {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  text-align: left;
+  line-height: 1.4;
+}
+
+.disclaimer {
+  font-size: 0.72rem;
+  color: var(--text-muted);
   line-height: 1.5;
+  max-width: 400px;
+  margin: 0;
+}
+
+.printedOn {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  opacity: 0.65;
+  margin: 0;
+  font-style: italic;
+}
+
+/* ── Print styles ── */
+@media print {
+  .headerNav, .footer { display: none; }
+  .pageWrapper { padding: 0; max-width: 100%; }
+  .receiptCard {
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+  }
 }

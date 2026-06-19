@@ -17,6 +17,78 @@
   flex-shrink: 0;
 }
 
+/* Mobile top bar — hidden on desktop */
+.mobileBar {
+  display: none;
+}
+
+.mobileLogo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+}
+
+.mobileBarRight {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.mobileExitBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.75rem;
+  border-radius: 0.4rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-body);
+  text-decoration: none;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  transition: all 0.2s;
+}
+
+.mobileExitBtn:hover {
+  background: rgba(var(--danger-rgb), 0.1);
+  color: var(--danger);
+  border-color: rgba(var(--danger-rgb), 0.3);
+}
+
+.hamburger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  border: 1px solid var(--border);
+  border-radius: 0.4rem;
+  background: var(--bg-card);
+  color: var(--text-main);
+  cursor: pointer;
+}
+
+/* Drawer overlay */
+.drawerOverlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 99;
+}
+
+/* Close button inside drawer — hidden on desktop */
+.drawerClose {
+  display: none;
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0.25rem;
+}
+
 .brand {
   display: flex;
   align-items: center;
@@ -276,27 +348,47 @@
   .layoutContainer {
     flex-direction: column;
   }
-  .nav {
-    width: 100%;
-    height: auto;
-    position: relative;
-    border-right: none;
-    border-bottom: 1px solid var(--border);
-  }
-  .navLinks {
+
+  /* Show mobile top bar */
+  .mobileBar {
     display: flex;
-    flex-direction: row;
-    overflow-x: auto;
-    padding: 0.75rem 0;
-    gap: 1rem;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 98;
   }
 
-  .navLink {
-    padding: 0.75rem 1rem;
-    font-size: 1rem;
+  .drawerOverlay {
+    display: block;
   }
+
+  /* Nav becomes a slide-in drawer */
+  .nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 240px;
+    z-index: 100;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    border-right: 1px solid var(--border);
+  }
+
+  .drawerOpen {
+    transform: translateX(0);
+  }
+
+  .drawerClose {
+    display: flex;
+  }
+
   .navExit {
-    display: none;
+    display: block;
   }
 }
 

@@ -1,25 +1,8 @@
 import { auth } from "@/auth";
 import { requireAdmin } from "@/lib/auth/admin-auth";
 import { getSiteSettings } from "@/lib/content/get-settings";
-import Link from "next/link";
-import Image from "next/image";
+import AdminNav from "./AdminNav";
 import styles from "./admin.module.css";
-import {
-    LayoutDashboard,
-    Users,
-    FileCheck,
-    Globe,
-    Banknote,
-    Activity,
-    ShieldAlert,
-    LogOut,
-    IdCard,
-    MessageSquareText,
-    Settings,
-    Lock,
-    Server,
-    AlertTriangle
-} from "lucide-react";
 
 export default async function AdminLayout({
     children,
@@ -29,97 +12,15 @@ export default async function AdminLayout({
     await requireAdmin();
     const session = await auth();
     const role = session?.user?.role;
-
     const settings = await getSiteSettings();
 
     return (
         <div className={styles.layoutContainer}>
-            <nav className={styles.nav}>
-                <div className={styles.brand}>
-                    <Image
-                        src={settings.site_logo || "/logo.png"}
-                        alt={settings.site_name || "TrustBank"}
-                        width={120}
-                        height={32}
-                        className={styles.brandLogo}
-                    />
-                    <span className={styles.brandBadge}>ADMIN</span>
-                </div>
-
-                <div className={styles.navLinks}>
-                    {/* 1. OVERVIEW */}
-                    <Link href="/admin" className={styles.navLink}>
-                        <LayoutDashboard size={18} /> Overview
-                    </Link>
-
-                    <div className={styles.separator}></div>
-
-                    {/* 2. PEOPLE MANAGEMENT */}
-                    {role === 'SUPER_ADMIN' && (
-                        <Link href="/admin/staff" className={styles.navLink}>
-                            <IdCard size={18} /> Staff
-                        </Link>
-                    )}
-                    <Link href="/admin/users" className={styles.navLink}>
-                        <Users size={18} /> Users
-                    </Link>
-                    <Link href="/admin/verifications" className={styles.navLink}>
-                        <FileCheck size={18} /> KYC
-                    </Link>
-                    <div className={styles.separator}></div>
-
-                    {/* 3. FINANCIAL QUEUES */}
-                    <Link href="/admin/wires" className={styles.navLink}>
-                        <Globe size={18} /> Wires
-                    </Link>
-                    <Link href="/admin/loans" className={styles.navLink}>
-                        <Banknote size={18} /> Loans
-                    </Link>
-
-                    <div className={styles.separator}></div>
-
-                    {/* 4. SYSTEM TOOLS */}
-                    <Link href="/admin/support" className={styles.navLink}>
-                        <MessageSquareText size={18} /> Tickets
-                    </Link>
-                    <Link href="/admin/generator" className={styles.navLink}>
-                        <Activity size={18} /> TXNs
-                    </Link>
-                    <Link href="/admin/settings" className={styles.navLink}>
-                        <Settings size={18} /> Site Settings
-                    </Link>
-
-                    {/* 5. INFRASTRUCTURE (Super Admin Only) */}
-                    {role === 'SUPER_ADMIN' && (
-                        <>
-                            <div className={styles.separator}></div>
-
-                            <Link href="/admin/system" className={styles.navLink}>
-                                <Server size={18} /> System Rules
-                            </Link>
-
-                            <Link href="/admin/security" className={styles.navLink}>
-                                <Lock size={18} /> Security
-                            </Link>
-
-                            <Link href="/admin/logs/security" className={styles.navLink}>
-                                <AlertTriangle size={18} /> Security Logs
-                            </Link>
-
-                            <Link href="/admin/logs/audit" className={styles.navLink}>
-                                <ShieldAlert size={18} /> Audit Logs
-                            </Link>
-                        </>
-                    )}
-                </div>
-
-                <div className={styles.navExit}>
-                    <Link href="/dashboard" className={styles.exitLink}>
-                        <LogOut size={16} /> Exit Console
-                    </Link>
-                </div>
-            </nav>
-
+            <AdminNav
+                role={role}
+                logoUrl={settings.site_logo}
+                siteName={settings.site_name}
+            />
             <main className={styles.mainContent}>
                 {children}
             </main>

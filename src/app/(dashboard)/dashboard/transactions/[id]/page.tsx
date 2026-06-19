@@ -4,7 +4,7 @@ import { getSiteSettings } from "@/lib/content/get-settings";
 import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { ChevronLeft, Clock, AlertTriangle, ArrowDownLeft, ArrowUpRight, XCircle } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import styles from "../../../../../components/dashboard/transactions/[id]/receipt.module.css";
 import ReceiptActions from "@/components/dashboard/transactions/[id]/ReceiptActions";
 
@@ -19,12 +19,12 @@ export default async function TransactionDetailsPage({ params }: PageProps) {
 
     const [transaction, user, settings] = await Promise.all([
         db.ledgerEntry.findUnique({
-            where: { id: id },
+            where: { id },
             include: { account: true },
         }),
         db.user.findUnique({
             where: { id: session.user.id },
-            select: { currency: true }
+            select: { currency: true, fullName: true }
         }),
         getSiteSettings()
     ]);
@@ -39,27 +39,28 @@ export default async function TransactionDetailsPage({ params }: PageProps) {
     }
 
     const convertedAmount = Number(transaction.amount) * exchangeRate;
-
     const isDebit = transaction.direction === "DEBIT";
-    const isPending = transaction.status === "PENDING" || transaction.status === "ON_HOLD";
     const isSuccess = transaction.status === "COMPLETED";
-    const isFailed = transaction.status === 'FAILED' || transaction.status === 'REVERSED';
+    const isPending = transaction.status === "PENDING" || transaction.status === "ON_HOLD";
+    const isFailed = transaction.status === "FAILED" || transaction.status === "REVERSED";
 
     const dateObj = new Date(transaction.createdAt);
-    const dateStr = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-    const timeStr = dateObj.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    const dateStr = dateObj.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+    const timeStr = dateObj.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true });
+
+    const now = new Date();
+    const printedStr = now.toLocaleDateString("en-US", { weekday: "long", day: "numeric", month: "long", year: "numeric" })
+        + " " + now.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true });
 
     const bankName = settings.site_name || "TrustBank";
+    const refCode = transaction.id.slice(-8).toUpperCase();
+    const maskedAccount = `••••••••${transaction.account.accountNumber.slice(-4)}`;
 
-    const getStatusStyle = () => {
-        if (isFailed) return styles.failed;
-        if (isSuccess) return styles.success;
-        if (isPending) return styles.pending;
-        return styles.failed;
-    };
+    const statusLabel = isSuccess ? "SUCCESSFUL" : isFailed ? transaction.status === "REVERSED" ? "REVERSED" : "DECLINED" : "PENDING";
+    const statusClass = isSuccess ? styles.statusSuccess : isFailed ? styles.statusFailed : styles.statusPending;
 
     return (
-        <div className={styles.container}>
+        <div className={styles.pageWrapper}>
             <div className={styles.headerNav}>
                 <Link href="/dashboard/transactions" className={styles.backLink}>
                     <ChevronLeft size={18} /> Back to History
@@ -67,93 +68,115 @@ export default async function TransactionDetailsPage({ params }: PageProps) {
             </div>
 
             <div className={styles.receiptCard}>
+
+                {/* ── Bank Header ── */}
                 <div className={styles.bankHeader}>
-                    <div className={styles.brandColumn}>
+                    <div className={styles.brandCol}>
                         {settings.site_logo ? (
-                            <div className={styles.logoContainer}>
-                                <Image
-                                    src={settings.site_logo}
-                                    alt={bankName}
-                                    fill
-                                    className={styles.logoImage}
-                                    priority
-                                    sizes="200px"
-                                />
+                            <div className={styles.logoWrap}>
+                                <Image src={settings.site_logo} alt={bankName} fill className={styles.logoImg} priority sizes="160px" />
                             </div>
                         ) : (
-                            <h2 className={styles.bankName}>{bankName}</h2>
+                            <span className={styles.bankName}>{bankName.toUpperCase()}</span>
                         )}
                     </div>
-
-                    <div className={styles.headerRight}>
-                        <span className={styles.receiptLabel}>Transaction Receipt</span>
-                        <span className={styles.receiptId}>#{transaction.id.slice(-8).toUpperCase()}</span>
+                    <div className={styles.receiptMeta}>
+                        <span className={styles.receiptTitle}>TRANSACTION RECEIPT</span>
+                        <span className={styles.refNumber}>REF: {refCode}</span>
                     </div>
                 </div>
 
+                <div className={styles.dashedDivider} />
 
-                <div className={styles.receiptHeader}>
-                    <div className={`${styles.iconBox} ${getStatusStyle()}`}>
-                        {isFailed ? <XCircle size={28} /> :
-                            isSuccess ? (isDebit ? <ArrowUpRight size={28} /> : <ArrowDownLeft size={28} />) :
-                                isPending ? <Clock size={28} /> :
-                                    <AlertTriangle size={28} />}
+                {/* ── Amount hero ── */}
+                <div className={styles.amountSection}>
+                    <span className={`${styles.statusDot} ${statusClass}`}>{statusLabel}</span>
+                    <div className={`${styles.amountHero} ${isDebit ? styles.amountDebit : styles.amountCredit} ${isFailed ? styles.amountStruck : ""}`}>
+                        {isDebit ? "−" : "+"}{new Intl.NumberFormat("en-US", { style: "currency", currency }).format(convertedAmount)}
                     </div>
-
-                    <h1
-                        className={`${styles.amount} ${isDebit ? '' : styles.creditText}`}
-                        style={isFailed ? { textDecoration: 'line-through', color: 'var(--text-muted)' } : {}}
-                    >
-                        {isDebit ? "-" : "+"}{new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(convertedAmount)}
-                    </h1>
-
-                    <span className={`${styles.statusBadge} ${getStatusStyle()}`}>
-                        {transaction.status === 'COMPLETED' ? 'Successful' :
-                            isFailed ? 'Declined / Voided' :
-                                transaction.status.replace(/_/g, ' ')}
-                    </span>
-                </div>
-
-                <div className={styles.divider}></div>
-
-                <div className={styles.detailsList}>
-                    <div className={styles.detailRow}>
-                        <span className={styles.label}>Beneficiary / Source</span>
-                        <span className={styles.valueHighlight}>{transaction.description}</span>
-                    </div>
-
-                    <div className={styles.detailRow}>
-                        <span className={styles.label}>Transaction Date</span>
-                        <div className={styles.multiValue}>
-                            <span>{dateStr}</span>
-                            <span className={styles.subValue}>{timeStr}</span>
-                        </div>
-                    </div>
-
                     {currency !== "USD" && (
-                        <div className={styles.detailRow}>
-                            <span className={styles.label}>Exchange Rate Applied</span>
-                            <span className={styles.value}>1 USD = {exchangeRate} {currency}</span>
+                        <span className={styles.usdEquiv}>
+                            ≈ {new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(Number(transaction.amount))} USD
+                        </span>
+                    )}
+                </div>
+
+                <div className={styles.dashedDivider} />
+
+                {/* ── Sender ── */}
+                <div className={styles.section}>
+                    <p className={styles.sectionTitle}>SENDER</p>
+                    <div className={styles.row}>
+                        <span className={styles.rowLabel}>NAME</span>
+                        <span className={styles.rowValue}>{user?.fullName || "Account Holder"}</span>
+                    </div>
+                    <div className={styles.row}>
+                        <span className={styles.rowLabel}>ACCOUNT TYPE</span>
+                        <span className={styles.rowValue}>{transaction.account.type}</span>
+                    </div>
+                    <div className={styles.row}>
+                        <span className={styles.rowLabel}>ACCOUNT NUMBER</span>
+                        <span className={`${styles.rowValue} ${styles.mono}`}>{maskedAccount}</span>
+                    </div>
+                    <div className={styles.row}>
+                        <span className={styles.rowLabel}>BANK</span>
+                        <span className={styles.rowValue}>{bankName}</span>
+                    </div>
+                </div>
+
+                <div className={styles.solidDivider} />
+
+                {/* ── Transaction Details ── */}
+                <div className={styles.section}>
+                    <p className={styles.sectionTitle}>TRANSACTION DETAILS</p>
+                    <div className={styles.row}>
+                        <span className={styles.rowLabel}>DESCRIPTION</span>
+                        <span className={`${styles.rowValue} ${styles.rowValueBold}`}>{transaction.description || "—"}</span>
+                    </div>
+                    <div className={styles.row}>
+                        <span className={styles.rowLabel}>TYPE</span>
+                        <span className={styles.rowValue}>{transaction.type.replace(/_/g, " ")}</span>
+                    </div>
+                    <div className={styles.row}>
+                        <span className={styles.rowLabel}>DIRECTION</span>
+                        <span className={styles.rowValue}>{isDebit ? "DEBIT" : "CREDIT"}</span>
+                    </div>
+                    <div className={styles.row}>
+                        <span className={styles.rowLabel}>DATE</span>
+                        <span className={styles.rowValue}>{dateStr}</span>
+                    </div>
+                    <div className={styles.row}>
+                        <span className={styles.rowLabel}>TIME</span>
+                        <span className={styles.rowValue}>{timeStr}</span>
+                    </div>
+                    <div className={styles.row}>
+                        <span className={styles.rowLabel}>REFERENCE</span>
+                        <span className={`${styles.rowValue} ${styles.mono}`}>{refCode}</span>
+                    </div>
+                    {currency !== "USD" && (
+                        <div className={styles.row}>
+                            <span className={styles.rowLabel}>EXCHANGE RATE</span>
+                            <span className={styles.rowValue}>1 USD = {exchangeRate} {currency}</span>
                         </div>
                     )}
-
-                    <div className={styles.detailRow}>
-                        <span className={styles.label}>Type</span>
-                        <span className={styles.value}>{transaction.type.replace(/_/g, " ")}</span>
-                    </div>
-
-                    <div className={styles.detailRow}>
-                        <span className={styles.label}>Payment Method</span>
-                        <span className={styles.value}>
-                            {transaction.account.type} •• {transaction.account.accountNumber.slice(-4)}
-                        </span>
-                    </div>
                 </div>
 
+                <div className={styles.dashedDivider} />
+
+                {/* ── Actions ── */}
                 <ReceiptActions />
 
-                <div className={styles.disclaimer}>
-                    This receipt is generated automatically by {bankName} Systems.
+                {/* ── Footer ── */}
+                <div className={styles.receiptFooter}>
+                    <div className={styles.fdic}>
+                        <div className={styles.fdicBadge}>FDIC</div>
+                        <span className={styles.fdicText}>Member FDIC. Deposits insured up to $250,000.</span>
+                    </div>
+                    <p className={styles.disclaimer}>
+                        This receipt is generated automatically by {bankName} secure systems.
+                        If you did not authorise this transaction, contact support immediately.
+                    </p>
+                    <p className={styles.printedOn}>Printed on {printedStr}</p>
                 </div>
             </div>
         </div>
