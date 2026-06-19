@@ -14,6 +14,7 @@ import {
     KycStatus
 } from "@prisma/client";
 import { uploadFileToCloud } from "@/lib/utils/upload";
+import { hashPin } from "@/lib/security";
 import { checkAdminAction } from "@/lib/auth/admin-auth";
 import { canPerform } from "@/lib/auth/permissions";
 import { z } from "zod";
@@ -39,6 +40,11 @@ const createUserSchema = z.object({
 const resetSchema = z.object({
     userId: z.string().min(1, "User ID is required"),
     newPassword: z.string().min(6, "Password must be at least 6 characters"),
+});
+
+const resetPinSchema = z.object({
+    userId: z.string().min(1, "User ID is required"),
+    newPin: z.string().length(4, "PIN must be exactly 4 digits").regex(/^\d{4}$/, "PIN must be 4 numeric digits"),
 });
 
 async function generateUniqueNumber(prefix: string, model: 'account' | 'card'): Promise<string> {
@@ -539,6 +545,70 @@ export async function adminResetPassword(prevState: any, formData: FormData) {
 
     revalidatePath("/admin/users");
     return { success: true, message: "Password reset successfully." };
+}
+
+export async function adminResetPin(prevState: any, formData: FormData) {
+    const { authorized, session } = await checkAdminAction();
+
+    if (!authorized || !session || !session.user) {
+        return { success: false, message: "Unauthorized" };
+    }
+    if (!canPerform(session.user.role as UserRole, 'MONEY')) {
+        return { success: false, message: "Insufficient permissions." };
+    }
+
+    const rawData = Object.fromEntries(formData.entries());
+    const validated = resetPinSchema.safeParse(rawData);
+    if (!validated.success) return { success: false, message: validated.error.issues[0].message };
+
+    const { userId, newPin } = validated.data;
+
+    try {
+        const target = await db.user.findUnique({ where: { id: userId } });
+        if (!target) return { success: false, message: "User not found." };
+        if (target.role === UserRole.SUPER_ADMIN) {
+            return { success: false, message: "Cannot reset Super Admin PIN." };
+        }
+
+        const hashedPin = await hashPin(newPin);
+
+        await db.user.update({
+            where: { id: userId },
+            data: {
+                transactionPin: hashedPin,
+                failedPinAttempts: 0,
+                pinLockedUntil: null,
+            }
+        });
+
+        await db.notification.create({
+            data: {
+                userId,
+                title: "Transaction PIN Reset",
+                message: "Your transaction PIN was reset by an administrator. If you did not request this, contact support immediately.",
+                type: "WARNING",
+                link: "/dashboard/settings",
+                isRead: false,
+            }
+        });
+
+        await logAdminAction("RESET_PIN", userId, { admin: session.user.email }, "WARNING", "SUCCESS");
+
+        await logSecurityEvent({
+            action: "ADMIN_PIN_RESET",
+            level: "CRITICAL",
+            details: { targetUserId: userId, adminEmail: session.user.email },
+            adminId: session.user.id,
+            userId,
+        });
+
+    } catch (err) {
+        console.error("Admin Reset PIN Error:", err);
+        return { success: false, message: "Failed to reset PIN." };
+    }
+
+    revalidatePath(`/admin/users/${userId}`);
+    return { success: true, message: "Transaction PIN reset successfully." };
 }
 
 export async function adminEditUser(userId: string, formData: FormData) {

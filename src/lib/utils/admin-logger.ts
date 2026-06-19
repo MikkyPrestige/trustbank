@@ -4,7 +4,7 @@ import { headers } from "next/headers";
 
 export type AdminLogAction =
   // --- User Management ---
-  | 'CREATE_USER' | 'UPDATE_STATUS' | 'DELETE_USER' | 'ARCHIVED_USER' | 'RESET_PASSWORD' | 'EDIT_USER_PROFILE'
+  | 'CREATE_USER' | 'UPDATE_STATUS' | 'DELETE_USER' | 'ARCHIVED_USER' | 'RESET_PASSWORD' | 'RESET_PIN' | 'EDIT_USER_PROFILE'
 
   // --- Transactions ---
   | 'MANUAL_CREDIT' | 'MANUAL_DEBIT' | 'GENERATE_TRX' | 'DELETE_TRX' | 'EDIT_TRX'

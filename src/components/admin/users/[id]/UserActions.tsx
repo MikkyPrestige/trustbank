@@ -15,6 +15,7 @@ import {
 import { useRouter } from 'next/navigation';
 import styles from "./users.module.css";
 import ResetPasswordModal from '@/components/admin/auth/ResetPasswordModal';
+import ResetPinModal from '@/components/admin/auth/ResetPinModal';
 import { UserStatus } from '@prisma/client';
 import toast from 'react-hot-toast';
 
@@ -28,6 +29,7 @@ interface UserActionsProps {
 export default function UserActions({ userId, status, siteName = "TrustBank", isLocked }: UserActionsProps) {
     const [loading, setLoading] = useState(false);
     const [showReset, setShowReset] = useState(false);
+    const [showResetPin, setShowResetPin] = useState(false);
     const [showStatusMenu, setShowStatusMenu] = useState(false);
     const router = useRouter();
 
@@ -113,6 +115,15 @@ export default function UserActions({ userId, status, siteName = "TrustBank", is
                     <KeyRound size={16} /> <span className={styles.btnText}>Reset Pass</span>
                 </button>
 
+                <button
+                    onClick={() => setShowResetPin(true)}
+                    disabled={loading}
+                    className={`${styles.actionBtn} ${styles.resetBtn}`}
+                    title="Reset Transaction PIN"
+                >
+                    <KeyRound size={16} /> <span className={styles.btnText}>Reset PIN</span>
+                </button>
+
                 <div className={styles.dropdownWrapper}>
                     <button
                         onClick={() => setShowStatusMenu(!showStatusMenu)}
@@ -163,6 +174,13 @@ export default function UserActions({ userId, status, siteName = "TrustBank", is
                     userId={userId}
                     onClose={() => setShowReset(false)}
                     siteName={siteName}
+                />
+            )}
+
+            {showResetPin && (
+                <ResetPinModal
+                    userId={userId}
+                    onClose={() => setShowResetPin(false)}
                 />
             )}
 
