@@ -48,7 +48,7 @@ export default function Sidebar({ data }: SidebarProps) {
     return (
         <>
             <div className={styles.mobileHeader}>
-                <Link href="/dashboard">
+                <Link href="/">
                     <Image src={logoSource} alt={siteTitle} width={140} height={40} className={styles.logoImage} />
                 </Link>
                 <button onClick={() => setIsMobileOpen(true)} className={styles.mobileToggleBtn}>
@@ -69,7 +69,7 @@ export default function Sidebar({ data }: SidebarProps) {
                     <X size={20} />
                 </button>
                 <div className={styles.logoArea}>
-                    <Link href="/dashboard" onClick={() => setIsMobileOpen(false)}>
+                    <Link href="/" onClick={() => setIsMobileOpen(false)}>
                         <Image src={logoSource} alt={siteTitle} width={160} height={45} className={styles.logoImage} />
                     </Link>
                 </div>
