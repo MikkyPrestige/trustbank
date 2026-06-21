@@ -45,12 +45,12 @@ export default async function TransactionDetailsPage({ params }: PageProps) {
     const isFailed = transaction.status === "FAILED" || transaction.status === "REVERSED";
 
     const dateObj = new Date(transaction.createdAt);
-    const dateStr = dateObj.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
-    const timeStr = dateObj.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true });
+    const dateStr = dateObj.toLocaleDateString("en-US", { timeZone: "UTC", month: "long", day: "numeric", year: "numeric" });
+    const timeStr = dateObj.toLocaleTimeString("en-US", { timeZone: "UTC", hour: "2-digit", minute: "2-digit", hour12: true });
 
     const now = new Date();
-    const printedStr = now.toLocaleDateString("en-US", { weekday: "long", day: "numeric", month: "long", year: "numeric" })
-        + " " + now.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true });
+    const printedStr = now.toLocaleDateString("en-US", { timeZone: "UTC", weekday: "long", day: "numeric", month: "long", year: "numeric" })
+        + " " + now.toLocaleTimeString("en-US", { timeZone: "UTC", hour: "2-digit", minute: "2-digit", hour12: true });
 
     const bankName = settings.site_name || "TrustBank";
     const refCode = transaction.id.slice(-8).toUpperCase();
