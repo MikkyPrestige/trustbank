@@ -71,7 +71,7 @@ export default async function AdminTransactionReceiptPage({ params }: PageProps)
     let adminNote: string | null = null;
     if (entry.metadata) {
         try {
-            const meta = JSON.parse(entry.metadata);
+            const meta = JSON.parse(entry.metadata as string);
             if (meta.adminId) adminNote = `Administrative action by staff (ID: ${meta.adminId})`;
         } catch { }
     }
