@@ -67,7 +67,7 @@ export default async function TransactionDetailsPage({ params }: PageProps) {
                 </Link>
             </div>
 
-            <div className={styles.receiptCard}>
+            <div className={styles.receiptCard} id="receipt-card">
 
                 {/* ── Bank Header ── */}
                 <div className={styles.bankHeader}>

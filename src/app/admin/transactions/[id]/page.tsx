@@ -74,7 +74,7 @@ export default async function AdminTransactionReceiptPage({ params }: PageProps)
                 </Link>
             </div>
 
-            <div className={styles.receiptCard}>
+            <div className={styles.receiptCard} id="receipt-card">
 
                 {/* Bank header */}
                 <div className={styles.bankHeader}>
@@ -160,12 +160,6 @@ export default async function AdminTransactionReceiptPage({ params }: PageProps)
                         <span className={styles.rowLabel}>REFERENCE</span>
                         <span className={`${styles.rowValue} ${styles.mono}`}>{refCode}</span>
                     </div>
-                    {entry.referenceId && (
-                        <div className={styles.row}>
-                            <span className={styles.rowLabel}>INTERNAL REF</span>
-                            <span className={`${styles.rowValue} ${styles.mono}`}>{entry.referenceId}</span>
-                        </div>
-                    )}
                     {currency !== "USD" && (
                         <div className={styles.row}>
                             <span className={styles.rowLabel}>EXCHANGE RATE</span>
