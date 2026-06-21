@@ -76,12 +76,12 @@ export default function Sidebar({ data }: SidebarProps) {
 
                 <nav className={styles.navMenu}>
                     <p className={styles.navLabel}>Personal Banking</p>
-                    <NavItem href="/dashboard" icon={LayoutDashboard} label="Overview" active={pathname === '/dashboard'} />
-                    <NavItem href="/dashboard/transactions" icon={History} label="Transactions" active={pathname.includes('/transactions')} />
+                    <NavItem href="/dashboard" icon={LayoutDashboard} label="Overview" active={pathname === '/dashboard'} onClose={() => setIsMobileOpen(false)} />
+                    <NavItem href="/dashboard/transactions" icon={History} label="Transactions" active={pathname.includes('/transactions')} onClose={() => setIsMobileOpen(false)} />
 
                     <div className={styles.divider}></div>
                     <p className={styles.navLabel}>Money & Assets</p>
-                    <NavItem href="/dashboard/transfer" icon={ArrowRightLeft} label="Transfer" active={pathname.includes('/transfer')} />
+                    <NavItem href="/dashboard/transfer" icon={ArrowRightLeft} label="Transfer" active={pathname.includes('/transfer')} onClose={() => setIsMobileOpen(false)} />
                     <NavItem
                         href="/dashboard/wire"
                         icon={Globe}
@@ -89,30 +89,31 @@ export default function Sidebar({ data }: SidebarProps) {
                         active={pathname.includes('/wire')}
                         count={wireTotal}
                         badgeVariant={wireBadgeVariant}
+                        onClose={() => setIsMobileOpen(false)}
                     />
-                    <NavItem href="/dashboard/beneficiaries" icon={Users} label="Beneficiaries" active={pathname.includes('/beneficiaries')} />
-                    <NavItem href="/dashboard/cards" icon={CreditCard} label="Cards" active={pathname.includes('/cards')} />
-                    <NavItem href="/dashboard/crypto" icon={Bitcoin} label="Crypto" active={pathname.includes('/crypto')} />
-                    <NavItem href="/dashboard/loans" icon={Landmark} label="Loans" active={pathname.includes('/loans')} />
-                    <NavItem href="/dashboard/bills" icon={Banknote} label="Bills" active={pathname.includes('/bills')} />
+                    <NavItem href="/dashboard/beneficiaries" icon={Users} label="Beneficiaries" active={pathname.includes('/beneficiaries')} onClose={() => setIsMobileOpen(false)} />
+                    <NavItem href="/dashboard/cards" icon={CreditCard} label="Cards" active={pathname.includes('/cards')} onClose={() => setIsMobileOpen(false)} />
+                    <NavItem href="/dashboard/crypto" icon={Bitcoin} label="Crypto" active={pathname.includes('/crypto')} onClose={() => setIsMobileOpen(false)} />
+                    <NavItem href="/dashboard/loans" icon={Landmark} label="Loans" active={pathname.includes('/loans')} onClose={() => setIsMobileOpen(false)} />
+                    <NavItem href="/dashboard/bills" icon={Banknote} label="Bills" active={pathname.includes('/bills')} onClose={() => setIsMobileOpen(false)} />
 
                     <div className={styles.divider}></div>
 
                     <p className={styles.navLabel}>Preferences</p>
-                    <NavItem href="/dashboard/settings" icon={Settings} label="Settings" active={pathname.includes('/settings')} />
-                    <NavItem href="/dashboard/support" icon={HelpCircle} label="Help Center" active={pathname.includes('/help')} />
+                    <NavItem href="/dashboard/settings" icon={Settings} label="Settings" active={pathname.includes('/settings')} onClose={() => setIsMobileOpen(false)} />
+                    <NavItem href="/dashboard/support" icon={HelpCircle} label="Help Center" active={pathname.includes('/help')} onClose={() => setIsMobileOpen(false)} />
 
                     {data.isAdmin && (
                         <>
                             <div className={styles.divider}></div>
                             <p className={`${styles.navLabel} ${styles.adminLabel}`}>Admin Panel</p>
 
-                            <NavItem href="/admin" icon={ShieldCheck} label="Overview" active={pathname === '/admin'} variant="admin" />
-                            <NavItem href="/admin/users" icon={Users} label="Clients" active={pathname.includes('/admin/users')} variant="admin" />
-                            <NavItem href="/admin/wires" icon={FileText} label="Approvals" active={pathname.includes('/admin/wires')} variant="admin" />
+                            <NavItem href="/admin" icon={ShieldCheck} label="Overview" active={pathname === '/admin'} variant="admin" onClose={() => setIsMobileOpen(false)} />
+                            <NavItem href="/admin/users" icon={Users} label="Clients" active={pathname.includes('/admin/users')} variant="admin" onClose={() => setIsMobileOpen(false)} />
+                            <NavItem href="/admin/wires" icon={FileText} label="Approvals" active={pathname.includes('/admin/wires')} variant="admin" onClose={() => setIsMobileOpen(false)} />
 
                             {data.isSuperAdmin && (
-                                <NavItem href="/admin/staff" icon={IdCard} label="Staff" active={pathname.includes('/admin/staff')} variant="admin" />
+                                <NavItem href="/admin/staff" icon={IdCard} label="Staff" active={pathname.includes('/admin/staff')} variant="admin" onClose={() => setIsMobileOpen(false)} />
                             )}
                         </>
                     )}
@@ -170,13 +171,14 @@ export default function Sidebar({ data }: SidebarProps) {
 }
 
 function NavItem({
-    href, icon: Icon, label, active, variant, count, badgeVariant
+    href, icon: Icon, label, active, variant, count, badgeVariant, onClose
 }: {
-    href: string, icon: any, label: string, active: boolean, variant?: 'admin' | 'default', count?: number, badgeVariant?: 'danger' | 'default'
+    href: string, icon: any, label: string, active: boolean, variant?: 'admin' | 'default', count?: number, badgeVariant?: 'danger' | 'default', onClose?: () => void
 }) {
     return (
         <Link
             href={href}
+            onClick={onClose}
             className={`${styles.navItem} ${active ? styles.active : ''} ${variant === 'admin' ? styles.adminItem : ''}`}
         >
             <Icon size={20} className={styles.navIcon} />

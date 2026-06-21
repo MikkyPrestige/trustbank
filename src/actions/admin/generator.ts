@@ -225,7 +225,7 @@ const endDate = endStr ? new Date(endStr) : new Date();
 
     revalidatePath("/admin/users");
 
-    return { success: true, message: `Successfully generated ${count} transactions.` };
+    return { success: true, message: `Successfully generated ${count} transactions.`, userId: userIdForNotification };
 }
 
 // HELPER

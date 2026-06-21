@@ -566,6 +566,22 @@
   border-color: var(--primary);
 }
 
+.receiptLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--primary);
+  text-decoration: none;
+  margin-top: 0.4rem;
+  transition: opacity 0.2s;
+}
+.receiptLink:hover {
+  opacity: 0.75;
+  text-decoration: underline;
+}
+
 .emptySmall {
   text-align: center;
   padding: 1rem;

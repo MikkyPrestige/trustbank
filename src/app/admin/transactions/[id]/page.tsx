@@ -1,75 +1,82 @@
-import { auth } from "@/auth";
+export const dynamic = 'force-dynamic';
+
 import { db } from "@/lib/db";
 import { getSiteSettings } from "@/lib/content/get-settings";
-import { redirect, notFound } from "next/navigation";
+import { requireAdmin } from "@/lib/auth/admin-auth";
+import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { ChevronLeft } from "lucide-react";
-import styles from "../../../../../components/dashboard/transactions/[id]/receipt.module.css";
+import styles from "./adminReceipt.module.css";
 import ReceiptActions from "@/components/dashboard/transactions/[id]/ReceiptActions";
 
 interface PageProps {
     params: Promise<{ id: string }>;
 }
 
-export default async function TransactionDetailsPage({ params }: PageProps) {
+export default async function AdminTransactionReceiptPage({ params }: PageProps) {
     const { id } = await params;
-    const session = await auth();
-    if (!session?.user?.id) redirect("/login");
+    await requireAdmin();
 
-    const [transaction, user, settings] = await Promise.all([
+    const [entry, settings] = await Promise.all([
         db.ledgerEntry.findUnique({
             where: { id },
-            include: { account: true },
-        }),
-        db.user.findUnique({
-            where: { id: session.user.id },
-            select: { currency: true, fullName: true }
+            include: {
+                account: {
+                    include: {
+                        user: { select: { fullName: true, currency: true, id: true } }
+                    }
+                }
+            }
         }),
         getSiteSettings()
     ]);
 
-    if (!transaction || transaction.account.userId !== session.user.id) return notFound();
+    if (!entry) return notFound();
 
-    const currency = user?.currency || "USD";
+    const user = entry.account.user;
+    const currency = user.currency || "USD";
     let exchangeRate = 1;
     if (currency !== "USD") {
         const rateData = await db.exchangeRate.findUnique({ where: { currency } });
         if (rateData) exchangeRate = Number(rateData.rate);
     }
 
-    const convertedAmount = Number(transaction.amount) * exchangeRate;
-    const isDebit = transaction.direction === "DEBIT";
-    const isSuccess = transaction.status === "COMPLETED";
-    const isPending = transaction.status === "PENDING" || transaction.status === "ON_HOLD";
-    const isFailed = transaction.status === "FAILED" || transaction.status === "REVERSED";
+    const convertedAmount = Number(entry.amount) * exchangeRate;
+    const isDebit = entry.direction === "DEBIT";
+    const isSuccess = entry.status === "COMPLETED";
+    const isPending = entry.status === "PENDING" || entry.status === "ON_HOLD";
+    const isFailed = entry.status === "FAILED" || entry.status === "REVERSED";
 
-    const dateObj = new Date(transaction.createdAt);
+    const dateObj = new Date(entry.createdAt);
     const dateStr = dateObj.toLocaleDateString("en-US", { timeZone: "UTC", month: "long", day: "numeric", year: "numeric" });
     const timeStr = dateObj.toLocaleTimeString("en-US", { timeZone: "UTC", hour: "2-digit", minute: "2-digit", hour12: true });
 
     const now = new Date();
-    const printedStr = now.toLocaleDateString("en-US", { timeZone: "UTC", weekday: "long", day: "numeric", month: "long", year: "numeric" })
-        + " " + now.toLocaleTimeString("en-US", { timeZone: "UTC", hour: "2-digit", minute: "2-digit", hour12: true });
+    const printedStr = now.toLocaleDateString("en-US", {
+        timeZone: "UTC", weekday: "long", day: "numeric", month: "long", year: "numeric"
+    }) + " " + now.toLocaleTimeString("en-US", { timeZone: "UTC", hour: "2-digit", minute: "2-digit", hour12: true });
 
     const bankName = settings.site_name || "TrustBank";
-    const refCode = transaction.id.slice(-8).toUpperCase();
-    const maskedAccount = `••••••••${transaction.account.accountNumber.slice(-4)}`;
+    const refCode = entry.id.slice(-8).toUpperCase();
+    const maskedAccount = `••••••••${entry.account.accountNumber.slice(-4)}`;
 
-    const statusLabel = isSuccess ? "SUCCESSFUL" : isFailed ? transaction.status === "REVERSED" ? "REVERSED" : "DECLINED" : "PENDING";
+    const statusLabel = isSuccess ? "SUCCESSFUL" : isFailed
+        ? (entry.status === "REVERSED" ? "REVERSED" : "DECLINED")
+        : "PENDING";
     const statusClass = isSuccess ? styles.statusSuccess : isFailed ? styles.statusFailed : styles.statusPending;
 
     return (
         <div className={styles.pageWrapper}>
             <div className={styles.headerNav}>
-                <Link href="/dashboard/transactions" className={styles.backLink}>
-                    <ChevronLeft size={18} /> Back to History
+                <Link href={`/admin/users/${user.id}/transactions`} className={styles.backLink}>
+                    <ChevronLeft size={18} /> Back to Transactions
                 </Link>
             </div>
 
             <div className={styles.receiptCard} id="receipt-card">
 
-                {/* ── Bank Header ── */}
+                {/* Bank header */}
                 <div className={styles.bankHeader}>
                     <div className={styles.brandCol}>
                         {settings.site_logo ? (
@@ -88,7 +95,7 @@ export default async function TransactionDetailsPage({ params }: PageProps) {
 
                 <div className={styles.dashedDivider} />
 
-                {/* ── Amount hero ── */}
+                {/* Amount hero */}
                 <div className={styles.amountSection}>
                     <span className={`${styles.statusDot} ${statusClass}`}>{statusLabel}</span>
                     <div className={`${styles.amountHero} ${isDebit ? styles.amountDebit : styles.amountCredit} ${isFailed ? styles.amountStruck : ""}`}>
@@ -96,23 +103,23 @@ export default async function TransactionDetailsPage({ params }: PageProps) {
                     </div>
                     {currency !== "USD" && (
                         <span className={styles.usdEquiv}>
-                            ≈ {new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(Number(transaction.amount))} USD
+                            ≈ {new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(Number(entry.amount))} USD
                         </span>
                     )}
                 </div>
 
                 <div className={styles.dashedDivider} />
 
-                {/* ── Sender ── */}
+                {/* Account holder */}
                 <div className={styles.section}>
-                    <p className={styles.sectionTitle}>SENDER</p>
+                    <p className={styles.sectionTitle}>ACCOUNT HOLDER</p>
                     <div className={styles.row}>
                         <span className={styles.rowLabel}>NAME</span>
-                        <span className={styles.rowValue}>{user?.fullName || "Account Holder"}</span>
+                        <span className={styles.rowValue}>{user.fullName}</span>
                     </div>
                     <div className={styles.row}>
                         <span className={styles.rowLabel}>ACCOUNT TYPE</span>
-                        <span className={styles.rowValue}>{transaction.account.type}</span>
+                        <span className={styles.rowValue}>{entry.account.type}</span>
                     </div>
                     <div className={styles.row}>
                         <span className={styles.rowLabel}>ACCOUNT NUMBER</span>
@@ -126,16 +133,16 @@ export default async function TransactionDetailsPage({ params }: PageProps) {
 
                 <div className={styles.solidDivider} />
 
-                {/* ── Transaction Details ── */}
+                {/* Transaction details */}
                 <div className={styles.section}>
                     <p className={styles.sectionTitle}>TRANSACTION DETAILS</p>
                     <div className={styles.row}>
                         <span className={styles.rowLabel}>DESCRIPTION</span>
-                        <span className={`${styles.rowValue} ${styles.rowValueBold}`}>{transaction.description || "—"}</span>
+                        <span className={`${styles.rowValue} ${styles.rowValueBold}`}>{entry.description || "—"}</span>
                     </div>
                     <div className={styles.row}>
                         <span className={styles.rowLabel}>TYPE</span>
-                        <span className={styles.rowValue}>{transaction.type.replace(/_/g, " ")}</span>
+                        <span className={styles.rowValue}>{entry.type.replace(/_/g, " ")}</span>
                     </div>
                     <div className={styles.row}>
                         <span className={styles.rowLabel}>DIRECTION</span>
@@ -163,10 +170,9 @@ export default async function TransactionDetailsPage({ params }: PageProps) {
 
                 <div className={styles.dashedDivider} />
 
-                {/* ── Actions ── */}
                 <ReceiptActions />
 
-                {/* ── Footer ── */}
+                {/* Footer */}
                 <div className={styles.receiptFooter}>
                     <div className={styles.fdic}>
                         <div className={styles.fdicBadge}>FDIC</div>

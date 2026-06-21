@@ -24,6 +24,7 @@
     "dotenv": "^17.4.2",
     "file-type": "^22.0.1",
     "framer-motion": "^12.26.2",
+    "html2canvas": "^1.4.1",
     "jspdf": "^4.2.1",
     "jspdf-autotable": "^5.0.7",
     "leaflet": "^1.9.4",

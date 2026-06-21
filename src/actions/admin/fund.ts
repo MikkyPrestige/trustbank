@@ -75,6 +75,7 @@ const safeDescription = sanitize(rawDescription?.trim() || (safeType === 'CREDIT
 
     let userIdForNotification = "";
     let finalBalance = 0;
+    let entryId = "";
 
     try {
         await db.$transaction(async (tx) => {
@@ -100,7 +101,7 @@ const safeDescription = sanitize(rawDescription?.trim() || (safeType === 'CREDIT
                 }
             });
 
-            await tx.ledgerEntry.create({
+            const entry = await tx.ledgerEntry.create({
                 data: {
                     accountId: safeAccountId,
                     amount: safeAmount,
@@ -117,6 +118,7 @@ const safeDescription = sanitize(rawDescription?.trim() || (safeType === 'CREDIT
                     })
                 }
             });
+            entryId = entry.id;
         });
 
         if (userIdForNotification) {
@@ -173,5 +175,5 @@ const safeDescription = sanitize(rawDescription?.trim() || (safeType === 'CREDIT
         revalidatePath(`/admin/users/${safeAccountId}`);
     } catch (e) {}
 
-    return { success: true, message: "Balance updated successfully." };
+    return { success: true, message: "Balance updated successfully.", entryId };
 }

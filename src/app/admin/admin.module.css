@@ -397,3 +397,9 @@
     grid-template-columns: 1fr;
   }
 }
+
+@media print {
+  .nav, .mobileBar, .drawerOverlay { display: none !important; }
+  .layoutContainer { display: block; }
+  .mainContent { padding: 0; max-width: 100%; }
+}

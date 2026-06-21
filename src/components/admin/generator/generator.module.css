@@ -162,6 +162,23 @@
   animation: spin 0.6s linear infinite;
 }
 
+.receiptLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  margin-top: 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--primary);
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+.receiptLink:hover {
+  opacity: 0.75;
+  text-decoration: underline;
+}
+
 @media (max-width: 600px) {
   .title {
     font-size: 1.5rem;

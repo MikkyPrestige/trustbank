@@ -120,6 +120,9 @@ export default async function UserDetailsPage({ params }: { params: Promise<{ id
                 </div>
 
                 <div className={styles.headerActions}>
+                    <Link href={`/admin/users/${user.id}/transactions`} className={styles.viewBtn}>
+                        <History size={14} /> Transactions
+                    </Link>
                     <RevokeSessionButton userId={user.id} userName={user.fullName} />
                     <UserActions
                         userId={user.id}

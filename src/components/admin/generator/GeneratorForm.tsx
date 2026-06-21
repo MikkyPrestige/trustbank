@@ -2,7 +2,8 @@
 
 import { useActionState, useEffect, useState } from "react";
 import { generateTransactions } from "@/actions/admin/generator";
-import { Loader2, Wand2 } from "lucide-react";
+import { Loader2, Wand2, ReceiptText } from "lucide-react";
+import Link from "next/link";
 import toast from "react-hot-toast";
 import styles from "./generator.module.css";
 
@@ -14,13 +15,18 @@ interface GeneratorFormProps {
 export default function GeneratorForm({ accounts, rateMap }: GeneratorFormProps) {
     const [state, action, isPending] = useActionState(generateTransactions, undefined);
     const [selectedAccountId, setSelectedAccountId] = useState("");
+    const [lastUserId, setLastUserId] = useState<string | null>(null);
 
     const currentContext = selectedAccountId ? rateMap[selectedAccountId] : { currency: "USD", rate: 1 };
 
     useEffect(() => {
         if (state?.message) {
-            if (state.success) toast.success(state.message);
-            else toast.error(state.message);
+            if (state.success) {
+                toast.success(state.message);
+                if (state.userId) setLastUserId(state.userId);
+            } else {
+                toast.error(state.message);
+            }
         }
     }, [state]);
 
@@ -136,6 +142,12 @@ export default function GeneratorForm({ accounts, rateMap }: GeneratorFormProps)
                 {isPending ? <Loader2 className={styles.spin} size={20} /> : <Wand2 size={20} />}
                 {isPending ? "Generating..." : "Generate History"}
             </button>
+
+            {lastUserId && !isPending && (
+                <Link href={`/admin/users/${lastUserId}/transactions`} className={styles.receiptLink}>
+                    <ReceiptText size={15} /> View Generated Transactions
+                </Link>
+            )}
         </form>
     );
 }
