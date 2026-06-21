@@ -190,7 +190,7 @@ export default async function AdminTransactionReceiptPage({ params }: PageProps)
                     )}
                 </div>
 
-                {adminNote && (
+                /* {adminNote && (
                     <>
                         <div className={styles.solidDivider} />
                         <div className={styles.section}>
@@ -201,7 +201,7 @@ export default async function AdminTransactionReceiptPage({ params }: PageProps)
                             </div>
                         </div>
                     </>
-                )}
+                )} */
 
                 <div className={styles.dashedDivider} />
 
