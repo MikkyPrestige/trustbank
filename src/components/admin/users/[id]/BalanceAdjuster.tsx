@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import { adjustUserBalance } from "@/actions/admin/fund";
-import { PlusCircle, MinusCircle, Loader2 } from 'lucide-react';
+import { PlusCircle, MinusCircle, Loader2, Receipt } from 'lucide-react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import styles from './users.module.css';
 import toast from 'react-hot-toast';
@@ -17,6 +18,7 @@ export default function BalanceAdjuster({ accountId, currency, rate }: BalanceAd
     const [amount, setAmount] = useState('');
     const [desc, setDesc] = useState('');
     const [loading, setLoading] = useState(false);
+    const [lastEntryId, setLastEntryId] = useState<string | null>(null);
     const router = useRouter();
 
     const handleAdjust = async (type: 'CREDIT' | 'DEBIT') => {
@@ -44,6 +46,7 @@ export default function BalanceAdjuster({ accountId, currency, rate }: BalanceAd
             if (res?.success) {
                 setAmount('');
                 setDesc('');
+                if (res.entryId) setLastEntryId(res.entryId);
                 toast.success(`Successfully ${type === 'CREDIT' ? 'added' : 'deducted'} ${rawAmount} ${currency}`);
                 router.refresh();
             } else {
@@ -101,6 +104,12 @@ export default function BalanceAdjuster({ accountId, currency, rate }: BalanceAd
                 className={styles.descInput}
                 disabled={loading}
             />
+
+            {lastEntryId && (
+                <Link href={`/admin/transactions/${lastEntryId}`} className={styles.receiptLink}>
+                    <Receipt size={13} /> View Receipt
+                </Link>
+            )}
         </div>
     );
 }

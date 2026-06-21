@@ -1,0 +1,277 @@
+.pageWrapper {
+  max-width: 560px;
+  width: 100%;
+  padding: 1.5rem 1rem;
+  margin: 0 auto;
+}
+
+@media (max-width: 600px) {
+  .pageWrapper { padding: 1rem 0.5rem; }
+}
+
+.headerNav { margin-bottom: 1rem; }
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+.backLink:hover { color: var(--text-main); }
+
+/* ── Receipt card ── */
+.receiptCard {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+
+/* ── Admin banner ── */
+.adminBanner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1.5rem;
+  background: rgba(var(--accent-rgb), 0.08);
+  border-bottom: 1px solid rgba(var(--accent-rgb), 0.2);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: var(--accent);
+  text-transform: uppercase;
+}
+
+/* ── Bank header ── */
+.bankHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 1.25rem 1.5rem 1rem;
+}
+
+.brandCol {
+  display: flex;
+  align-items: center;
+}
+
+.logoWrap {
+  position: relative;
+  width: 120px;
+  height: 32px;
+}
+
+.logoImg {
+  object-fit: contain;
+  object-position: left center;
+}
+
+.bankName {
+  font-size: 1.1rem;
+  font-weight: 900;
+  letter-spacing: -0.5px;
+  color: var(--text-main);
+}
+
+.receiptMeta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.2rem;
+}
+
+.receiptTitle {
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.refNumber {
+  font-family: monospace;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+/* ── Dividers ── */
+.dashedDivider {
+  border: none;
+  border-top: 2px dashed var(--border-subtle);
+  margin: 0;
+}
+
+.solidDivider {
+  border: none;
+  border-top: 1px solid var(--border-subtle);
+  margin: 0;
+}
+
+/* ── Amount section ── */
+.amountSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 1.5rem 1.5rem 1.25rem;
+  text-align: center;
+}
+
+.statusDot {
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  padding: 0.3rem 0.75rem;
+  border-radius: 2rem;
+  text-transform: uppercase;
+}
+
+.statusSuccess {
+  background: rgba(var(--success-rgb), 0.12);
+  color: var(--success);
+  border: 1px solid rgba(var(--success-rgb), 0.3);
+}
+.statusPending {
+  background: rgba(var(--accent-rgb), 0.12);
+  color: var(--accent);
+  border: 1px solid rgba(var(--accent-rgb), 0.3);
+}
+.statusFailed {
+  background: rgba(var(--danger-rgb), 0.12);
+  color: var(--danger);
+  border: 1px solid rgba(var(--danger-rgb), 0.3);
+}
+
+.amountHero {
+  font-size: 2.6rem;
+  font-weight: 900;
+  letter-spacing: -1.5px;
+  line-height: 1;
+  margin-top: 0.35rem;
+}
+
+.amountCredit { color: var(--success); }
+.amountDebit  { color: var(--text-main); }
+.amountStruck {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+.usdEquiv {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 0.15rem;
+}
+
+/* ── Sections ── */
+.section {
+  padding: 1rem 1.5rem;
+}
+
+.sectionTitle {
+  font-size: 0.6rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin: 0 0 0.75rem 0;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 0.55rem 0;
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 0.83rem;
+}
+
+.row:last-child { border-bottom: none; }
+
+.rowLabel {
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+  padding-top: 1px;
+}
+
+.rowValue {
+  color: var(--text-main);
+  font-weight: 500;
+  text-align: right;
+  word-break: break-all;
+}
+
+.rowValueBold { font-weight: 700; }
+
+.mono {
+  font-family: monospace;
+  letter-spacing: 1px;
+}
+
+/* ── Footer ── */
+.receiptFooter {
+  background: var(--sub-bg);
+  border-top: 1px solid var(--border-subtle);
+  padding: 1rem 1.5rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  align-items: center;
+  text-align: center;
+}
+
+.fdic {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.fdicBadge {
+  border: 2px solid var(--text-muted);
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 900;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+  padding: 2px 6px;
+  flex-shrink: 0;
+}
+
+.fdicText {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  text-align: left;
+  line-height: 1.4;
+}
+
+.disclaimer {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  max-width: 420px;
+  margin: 0;
+}
+
+.printedOn {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  opacity: 0.65;
+  margin: 0;
+  font-style: italic;
+}
+
+@media print {
+  .headerNav, .adminBanner { display: none; }
+  .pageWrapper { padding: 0; max-width: 100%; }
+  .receiptCard { border: none; box-shadow: none; border-radius: 0; }
+}

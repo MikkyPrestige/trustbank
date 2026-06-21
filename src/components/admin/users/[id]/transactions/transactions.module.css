@@ -201,6 +201,17 @@
  background: var(--sub-bg);
 }
 
+.iconBtnReceipt {
+  background: rgba(var(--success-rgb), 0.1);
+  color: var(--success);
+  border: 1px solid rgba(var(--success-rgb), 0.3);
+  text-decoration: none;
+}
+.iconBtnReceipt:hover {
+  background: var(--success);
+  color: var(--text-invert);
+}
+
 .iconBtnEdit {
   background: rgba(59, 130, 246, 0.15);
   color: var(--primary);

@@ -3,7 +3,8 @@
 import { useState, useActionState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { deleteTransaction, updateTransaction } from "@/actions/admin/transaction";
-import { Pencil, Trash2, X, Calendar, FileText, DollarSign, ArrowUpRight, ArrowDownLeft, ArrowLeftRight, Wallet, Loader2 } from "lucide-react";
+import { Pencil, Trash2, X, Calendar, FileText, DollarSign, ArrowUpRight, ArrowDownLeft, ArrowLeftRight, Wallet, Loader2, Receipt } from "lucide-react";
+import Link from "next/link";
 import toast from "react-hot-toast";
 import styles from "./transactions.module.css";
 import { LedgerEntry, Account } from "@prisma/client";
@@ -91,6 +92,9 @@ export default function TransactionTable({ transactions, currency, rate }: Trans
                                     </td>
                                     <td>
                                         <div className={styles.actions}>
+                                            <Link href={`/admin/transactions/${t.id}`} className={`${styles.btnIcon} ${styles.iconBtnReceipt}`} title="View Receipt">
+                                                <Receipt size={16} />
+                                            </Link>
                                             <button onClick={() => setEditingTrx(t)} className={`${styles.btnIcon} ${styles.iconBtnEdit}`} title="Edit">
                                                 <Pencil size={16} />
                                             </button>
