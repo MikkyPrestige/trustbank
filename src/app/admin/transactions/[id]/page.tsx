@@ -190,6 +190,19 @@ export default async function AdminTransactionReceiptPage({ params }: PageProps)
                     )}
                 </div>
 
+                {adminNote && (
+                    <div className={styles.adminNote}>
+                        <div className={styles.solidDivider} />
+                        <div className={styles.section}>
+                            <p className={styles.sectionTitle}>ADMINISTRATIVE NOTE</p>
+                            <div className={styles.row}>
+                                <span className={styles.rowLabel}>NOTE</span>
+                                <span className={styles.rowValue}>{adminNote}</span>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
                 <div className={styles.dashedDivider} />
 
                 <ReceiptActions />
