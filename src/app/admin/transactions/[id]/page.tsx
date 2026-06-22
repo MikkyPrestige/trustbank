@@ -24,7 +24,7 @@ export default async function AdminTransactionReceiptPage({ params }: PageProps)
             include: {
                 account: {
                     include: {
-                        user: { select: { fullName: true, currency: true, id: true } }
+                        user: { select: { fullName: true, currency: true, id: true, timezone: true } }
                     }
                 }
             }
@@ -48,14 +48,15 @@ export default async function AdminTransactionReceiptPage({ params }: PageProps)
     const isPending = entry.status === "PENDING" || entry.status === "ON_HOLD";
     const isFailed = entry.status === "FAILED" || entry.status === "REVERSED";
 
+    const tz = user.timezone || "America/New_York";
     const dateObj = new Date(entry.createdAt);
-    const dateStr = dateObj.toLocaleDateString("en-US", { timeZone: "UTC", month: "long", day: "numeric", year: "numeric" });
-    const timeStr = dateObj.toLocaleTimeString("en-US", { timeZone: "UTC", hour: "2-digit", minute: "2-digit", hour12: true });
+    const dateStr = dateObj.toLocaleDateString("en-US", { timeZone: tz, month: "long", day: "numeric", year: "numeric" });
+    const timeStr = dateObj.toLocaleTimeString("en-US", { timeZone: tz, hour: "2-digit", minute: "2-digit", hour12: true });
 
     const now = new Date();
     const printedStr = now.toLocaleDateString("en-US", {
-        timeZone: "UTC", weekday: "long", day: "numeric", month: "long", year: "numeric"
-    }) + " " + now.toLocaleTimeString("en-US", { timeZone: "UTC", hour: "2-digit", minute: "2-digit", hour12: true });
+        timeZone: tz, weekday: "long", day: "numeric", month: "long", year: "numeric"
+    }) + " " + now.toLocaleTimeString("en-US", { timeZone: tz, hour: "2-digit", minute: "2-digit", hour12: true });
 
     const bankName = settings.site_name || "TrustBank";
     const refCode = entry.id.slice(-8).toUpperCase();
