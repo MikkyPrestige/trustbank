@@ -24,7 +24,7 @@ export default async function TransactionDetailsPage({ params }: PageProps) {
         }),
         db.user.findUnique({
             where: { id: session.user.id },
-            select: { currency: true, fullName: true }
+            select: { currency: true, fullName: true, timezone: true }
         }),
         getSiteSettings()
     ]);
@@ -44,13 +44,14 @@ export default async function TransactionDetailsPage({ params }: PageProps) {
     const isPending = transaction.status === "PENDING" || transaction.status === "ON_HOLD";
     const isFailed = transaction.status === "FAILED" || transaction.status === "REVERSED";
 
+    const tz = user?.timezone || "America/New_York";
     const dateObj = new Date(transaction.createdAt);
-    const dateStr = dateObj.toLocaleDateString("en-US", { timeZone: "UTC", month: "long", day: "numeric", year: "numeric" });
-    const timeStr = dateObj.toLocaleTimeString("en-US", { timeZone: "UTC", hour: "2-digit", minute: "2-digit", hour12: true });
+    const dateStr = dateObj.toLocaleDateString("en-US", { timeZone: tz, month: "long", day: "numeric", year: "numeric" });
+    const timeStr = dateObj.toLocaleTimeString("en-US", { timeZone: tz, hour: "2-digit", minute: "2-digit", hour12: true });
 
     const now = new Date();
-    const printedStr = now.toLocaleDateString("en-US", { timeZone: "UTC", weekday: "long", day: "numeric", month: "long", year: "numeric" })
-        + " " + now.toLocaleTimeString("en-US", { timeZone: "UTC", hour: "2-digit", minute: "2-digit", hour12: true });
+    const printedStr = now.toLocaleDateString("en-US", { timeZone: tz, weekday: "long", day: "numeric", month: "long", year: "numeric" })
+        + " " + now.toLocaleTimeString("en-US", { timeZone: tz, hour: "2-digit", minute: "2-digit", hour12: true });
 
     const bankName = settings.site_name || "TrustBank";
     const refCode = transaction.id.slice(-8).toUpperCase();

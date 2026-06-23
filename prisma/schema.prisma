@@ -125,6 +125,7 @@ model User {
   passwordResetExpires DateTime?
   transactionPin       String?
   currency             String   @default("USD")
+  timezone             String   @default("America/New_York")
   emailAlerts          Boolean  @default(true)
   smsAlerts            Boolean  @default(false)
   lastIp               String?

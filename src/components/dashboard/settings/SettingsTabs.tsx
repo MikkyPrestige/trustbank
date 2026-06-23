@@ -9,6 +9,7 @@ import styles from './styles/settings.module.css';
 import toast from 'react-hot-toast';
 import { signOut } from "next-auth/react";
 import CurrencySelector from "./CurrencySelector";
+import TimezoneSelector from "./TimezoneSelector";
 
 interface SettingsUser {
     id: string;
@@ -32,6 +33,7 @@ interface SettingsUser {
     nokRelationship?: string | null;
     nokAddress?: string | null;
     currency?: string;
+    timezone?: string;
 }
 
 const initialState = { message: '', success: false };
@@ -429,6 +431,10 @@ export default function SettingsTabs({ user }: { user: SettingsUser }) {
                                 </div>
                             </div>
                             <CurrencySelector currentCurrency={user.currency || "USD"} />
+                        </div>
+
+                        <div className={styles.card}>
+                            <TimezoneSelector currentTimezone={user.timezone || "America/New_York"} />
                         </div>
 
                         {/* DANGER ZONE */}

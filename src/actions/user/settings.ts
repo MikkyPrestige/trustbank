@@ -3,6 +3,7 @@
 import { auth } from "@/auth";
 import { getAuthenticatedUser } from "@/lib/auth/user-guard";
 import { db } from "@/lib/db";
+import { TIMEZONES } from "@/lib/constants/timezones";
 import { checkMaintenanceMode, hashPin } from "@/lib/security";
 import { uploadFileToCloud } from "@/lib/utils/upload";
 import { revalidatePath } from "next/cache";
@@ -414,5 +415,23 @@ export async function closeAccount(password: string) {
     } catch (error) {
         console.error("Close Account Error:", error);
         return { error: "System error. Please contact support if this persists." };
+    }
+}
+export async function updateUserTimezone(timezone: string) {
+    const session = await auth();
+    if (!session?.user?.email) return { success: false, message: "Not authenticated." };
+
+    const valid = TIMEZONES.some(t => t.value === timezone);
+    if (!valid) return { success: false, message: "Invalid timezone." };
+
+    try {
+        await db.user.update({
+            where: { email: session.user.email },
+            data: { timezone }
+        });
+        revalidatePath("/dashboard/settings");
+        return { success: true, message: "Timezone updated." };
+    } catch {
+        return { success: false, message: "Failed to update timezone." };
     }
 }
