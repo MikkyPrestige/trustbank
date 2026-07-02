@@ -51,9 +51,33 @@ export default function Sidebar({ data }: SidebarProps) {
                 <Link href="/">
                     <Image src={logoSource} alt={siteTitle} width={140} height={40} className={styles.logoImage} />
                 </Link>
-                <button onClick={() => setIsMobileOpen(true)} className={styles.mobileToggleBtn}>
-                    <Menu size={24} className={styles.menuIcon} />
-                </button>
+
+                <div className={styles.mobileHeaderActions}>
+                    <Link href="/dashboard/profile" className={styles.mobileAvatarLink}>
+                        <div className={styles.mobileAvatar}>
+                            {data.user.image ? (
+                                <Image
+                                    src={data.user.image}
+                                    alt="Profile"
+                                    width={36}
+                                    height={36}
+                                    className={styles.mobileAvatarImg}
+                                />
+                            ) : (
+                                data.user.name.charAt(0).toUpperCase()
+                            )}
+                        </div>
+
+                        <div className={`${styles.mobileStatusDot} ${data.user.isFrozen ? styles.dotFrozen :
+                            isVerified ? styles.dotVerified :
+                                styles.dotPending
+                            }`} />
+                    </Link>
+
+                    <button onClick={() => setIsMobileOpen(true)} className={styles.mobileToggleBtn}>
+                        <Menu size={24} className={styles.menuIcon} />
+                    </button>
+                </div>
             </div>
 
             <div
@@ -120,7 +144,7 @@ export default function Sidebar({ data }: SidebarProps) {
                 </nav>
 
                 <div className={styles.userProfile}>
-                    <Link href="/dashboard/profile" className={styles.avatarWrapper}>
+                    <Link href="/dashboard/profile" className={styles.avatarWrapper} onClick={() => setIsMobileOpen(false)}>
                         <div className={styles.avatar}>
                             {data.user.image ? (
                                 <Image
@@ -142,7 +166,7 @@ export default function Sidebar({ data }: SidebarProps) {
                     </Link>
 
                     <div className={styles.userInfo}>
-                        <Link href="/dashboard/profile" className={styles.userName}>
+                        <Link href="/dashboard/profile" className={styles.userName} onClick={() => setIsMobileOpen(false)}>
                             {data.user.name}
                         </Link>
 
@@ -153,7 +177,7 @@ export default function Sidebar({ data }: SidebarProps) {
                                         <Lock size={10} /> Frozen
                                     </span>
                                 ) : (
-                                    <Link href="/dashboard/verify" className={styles.kycLink}>
+                                    <Link href="/dashboard/verify" className={styles.kycLink} onClick={() => setIsMobileOpen(false)}>
                                         Complete KYC →
                                     </Link>
                                 )}
@@ -163,6 +187,7 @@ export default function Sidebar({ data }: SidebarProps) {
 
                     <button onClick={() => signOut({ callbackUrl: '/login' })} className={styles.logoutBtn}>
                         <LogOut size={18} />
+                        <span className={styles.logoutLabel}>Log Out</span>
                     </button>
                 </div>
             </aside>
