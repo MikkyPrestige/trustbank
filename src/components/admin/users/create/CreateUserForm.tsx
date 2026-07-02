@@ -170,7 +170,7 @@ export default function CreateUserForm() {
                     </h3>
                     <div className={styles.grid}>
                         <div className={styles.formGroup}>
-                            <label>Passport Photo</label>
+                            <label>Passport Photo <span style={{ fontWeight: 400, color: 'var(--text-muted)' }}>(Optional)</span></label>
                             <button type="button" className={styles.filePickBtn} onClick={() => passportRef.current?.click()}>
                                 <Upload size={14} />
                                 {passportFile ? passportFile.name : 'Choose file'}
