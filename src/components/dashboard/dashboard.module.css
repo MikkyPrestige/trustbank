@@ -650,6 +650,7 @@
 .txDate {
   color: var(--text-muted);
   font-size: 0.85rem;
+  white-space: nowrap;
 }
 
 .txAmount {
