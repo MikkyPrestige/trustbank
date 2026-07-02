@@ -13,7 +13,7 @@ export async function getNotifications() {
 
   try {
     const notifications = await db.notification.findMany({
-      where: { userId: user.id },
+      where: { userId: user.id, isRead: false },
       orderBy: { createdAt: 'desc' },
       take: 20
     });
