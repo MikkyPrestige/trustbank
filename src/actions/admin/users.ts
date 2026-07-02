@@ -85,7 +85,7 @@ export async function adminCreateUser(formData: FormData) {
     const passportFile = formData.get("passport") as File | null;
     const idFrontFile = formData.get("idCardFront") as File | null;
     const idBackFile = formData.get("idCardBack") as File | null;
-    const hasKycFiles = !!(passportFile?.size && idFrontFile?.size && idBackFile?.size);
+    const hasKycFiles = !!(idFrontFile?.size && idBackFile?.size);
 
     const rawData = {
   email: formData.get("email") as string,
@@ -216,18 +216,22 @@ await logSecurityEvent({
         // Optional KYC upload — upload files and verify immediately
         if (hasKycFiles) {
             try {
-                const [passportUrl, frontUrl, backUrl] = await Promise.all([
-                    uploadFileToCloud(passportFile!, "avatars"),
+                const uploadPromises: Promise<string>[] = [
                     uploadFileToCloud(idFrontFile!, "kyc"),
                     uploadFileToCloud(idBackFile!, "kyc"),
-                ]);
+                ];
+                if (passportFile?.size) {
+                    uploadPromises.push(uploadFileToCloud(passportFile, "avatars"));
+                }
+
+                const [frontUrl, backUrl, passportUrl] = await Promise.all(uploadPromises);
 
                 await db.user.update({
                     where: { id: newUser.id },
                     data: {
-                        passportUrl,
                         idCardUrl: frontUrl,
                         idCardBackUrl: backUrl,
+                        ...(passportUrl ? { passportUrl } : {}),
                         kycStatus: KycStatus.VERIFIED,
                     }
                 });
