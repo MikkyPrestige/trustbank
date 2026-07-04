@@ -252,11 +252,11 @@ model WireTransfer {
   amount          Decimal @db.Decimal(19, 4)
   currency        String  @default("USD")
   status          TransactionStatus @default(ON_HOLD)
-  currentStage    String            @default("TAA")
-  taaCode         String?
-  cotCode         String?
-  imfCode         String?
-  ijyCode         String?
+  currentStage    String            @default("CTR")
+  ctrCode         String?
+  sarCode         String?
+  sdnCode         String?
+  cftCode         String?
   failedAttempts  Int      @default(0)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt

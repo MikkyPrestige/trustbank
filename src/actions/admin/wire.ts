@@ -69,10 +69,10 @@ export async function adminSetWireCode(formData: FormData) {
         }
 
         const updateData: any = {};
-        if (stage === 'TAA') updateData.taaCode = code;
-        if (stage === 'COT') updateData.cotCode = code;
-        if (stage === 'IMF') updateData.imfCode = code;
-        if (stage === 'IJY') updateData.ijyCode = code;
+        if (stage === 'CTR') updateData.ctrCode = code;
+        if (stage === 'SAR') updateData.sarCode = code;
+        if (stage === 'SDN') updateData.sdnCode = code;
+        if (stage === 'CFT') updateData.cftCode = code;
 
         const updatedWire = await db.wireTransfer.update({
             where: { id: wireId },
@@ -421,25 +421,25 @@ export async function generateClearanceCodes(wireId: string) {
     return { message: "Action Denied: User account is frozen." };
 }
 
-    const taa = generateCode("TAA");
-    const cot = generateCode("COT");
-    const imf = generateCode("IMF");
-    const ijy = generateCode("IJY");
+    const ctr = generateCode("CTR");
+    const sar = generateCode("SAR");
+    const sdn = generateCode("SDN");
+    const cft = generateCode("CFT");
 
     await db.wireTransfer.update({
         where: { id: wireId },
         data: {
-            taaCode: taa,
-            cotCode: cot,
-            imfCode: imf,
-            ijyCode: ijy,
+            ctrCode: ctr,
+            sarCode: sar,
+            sdnCode: sdn,
+            cftCode: cft,
         }
     });
 
     await logAdminAction(
         "GENERATE_CODES",
         wireId,
-        { taa, cot, imf, ijy, admin: session?.user?.email },
+        { ctr, sar, sdn, cft, admin: session?.user?.email },
         "INFO",
         "SUCCESS"
     );
@@ -459,6 +459,6 @@ export async function generateClearanceCodes(wireId: string) {
 
     return {
         message: "Codes Generated",
-        codes: { taa, cot, imf, ijy }
+        codes: { ctr, sar, sdn, cft }
     };
 }

@@ -138,7 +138,7 @@ export default function WireForm({
                                 <ShieldAlert size={16} /> ACTION REQUIRED
                             </p>
                             <p className={styles.complianceText}>
-                                International compliance requires <strong>Clearance Verification</strong> (COT/IMF Codes) before funds are released.
+                                International compliance requires <strong>Clearance Verification</strong> (CTR/SAR/SDN/CFT Codes) before funds are released.
                             </p>
                         </div>
                     </div>

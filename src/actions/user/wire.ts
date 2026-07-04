@@ -129,7 +129,7 @@ const permission = await checkPermissions(user.id, 'TRANSFER_WIRE', amount);
           amount: amount,
           fee: serviceFee,
           status: TransactionStatus.ON_HOLD,
-          currentStage: "TAA",
+          currentStage: "CTR",
           swiftCode: safeSwiftCode || undefined,
         }
       });
@@ -254,17 +254,17 @@ const { code: cleanCode, wireId } = parsed.data;
     let nextStage = "";
     let isFinalStage = false;
 
-    if (wire.currentStage === 'TAA') {
-        requiredCode = wire.taaCode || "";
-        nextStage = 'COT';
-    } else if (wire.currentStage === 'COT') {
-        requiredCode = wire.cotCode || "";
-        nextStage = 'IMF';
-    } else if (wire.currentStage === 'IMF') {
-        requiredCode = wire.imfCode || "";
-        nextStage = 'IJY';
-    } else if (wire.currentStage === 'IJY') {
-        requiredCode = wire.ijyCode || "";
+    if (wire.currentStage === 'CTR') {
+        requiredCode = wire.ctrCode || "";
+        nextStage = 'SAR';
+    } else if (wire.currentStage === 'SAR') {
+        requiredCode = wire.sarCode || "";
+        nextStage = 'SDN';
+    } else if (wire.currentStage === 'SDN') {
+        requiredCode = wire.sdnCode || "";
+        nextStage = 'CFT';
+    } else if (wire.currentStage === 'CFT') {
+        requiredCode = wire.cftCode || "";
         isFinalStage = true;
     }
 

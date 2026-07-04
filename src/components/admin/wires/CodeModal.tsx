@@ -12,7 +12,7 @@ export default function CodeModal({ wire, onClose }: { wire: WireTransfer, onClo
     const router = useRouter();
     const [code, setCode] = useState('');
     const [loading, setLoading] = useState(false);
-    const currentStage = wire.currentStage || 'TAA';
+    const currentStage = wire.currentStage || 'CTR';
     const isReadyForApproval = currentStage === 'PENDING_APPROVAL' || currentStage === 'COMPLETE' || currentStage === 'PENDING_AUTH';
 
     const handleSubmit = async (e: React.FormEvent) => {

@@ -74,12 +74,12 @@ export default function WireManager({ wires, currency = "USD", rate = 1 }: WireM
 
                             {(isActive || isWaiting) && (
                                 <div className={styles.codeBox}>
-                                    {wire.taaCode && (
+                                    {wire.ctrCode && (
                                         <div className={styles.codesGrid}>
-                                            <span>TAA: <strong>{wire.taaCode}</strong></span>
-                                            <span>COT: <strong>{wire.cotCode}</strong></span>
-                                            <span>IMF: <strong>{wire.imfCode}</strong></span>
-                                            <span>IJY: <strong>{wire.ijyCode}</strong></span>
+                                            <span>CTR: <strong>{wire.ctrCode}</strong></span>
+                                            <span>SAR: <strong>{wire.sarCode}</strong></span>
+                                            <span>SDN: <strong>{wire.sdnCode}</strong></span>
+                                            <span>CFT: <strong>{wire.cftCode}</strong></span>
                                         </div>
                                     )}
 
@@ -90,7 +90,7 @@ export default function WireManager({ wires, currency = "USD", rate = 1 }: WireM
                                             className={styles.genBtn}
                                         >
                                             {loadingId === wire.id ? <Loader2 className={styles.spin} size={14} /> : <ShieldCheck size={16} />}
-                                            {wire.taaCode ? 'Regenerate Codes' : 'Generate Codes'}
+                                            {wire.ctrCode ? 'Regenerate Codes' : 'Generate Codes'}
                                         </button>
                                     )}
                                 </div>

@@ -51,7 +51,7 @@ The system is built upon a **"Failure-First"** architecture, assuming that netwo
 
 #### 3. Admin Command Center
 * **God-View Dashboard:** Monitoring for total bank liquidity and high-risk anomaly detection.
-* **The Clearing House:** UI for Admins to manage pending transfers and generate single-use, time-bound **TAA / COT / IJY** codes.
+* **The Clearing House:** UI for Admins to manage pending transfers and generate single-use, time-bound **CTR / SAR / SDN / CFT** codes.
 * **Immutable Audit Logs:** Forensic-grade recording of every admin action, including IP addresses and change hashes.
 
 ---

