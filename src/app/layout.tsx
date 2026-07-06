@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     openGraph: {
         title: "Trust Bank - Banking for the Future",
         description: "Secure, fast, and modern banking for everyone.",
-        type: 'website'
+        type: 'website',
         images: [
             {
                 url: "https://trustremittance.online/logo.png",
