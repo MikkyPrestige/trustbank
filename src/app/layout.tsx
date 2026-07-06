@@ -19,6 +19,17 @@ export const metadata: Metadata = {
     icons: {
         icon: "/favicon.ico",
     },
+    openGraph: {
+        title: "Trust Bank - Banking for the Future",
+        description: "Secure, fast, and modern banking for everyone.",
+        images: [
+            {
+                url: "https://trustremittance.online/logo.png",
+                alt: "Trust Bank",
+            },
+        ],
+    },
+};
 };
 
 export default function RootLayout({
