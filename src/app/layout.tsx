@@ -16,12 +16,19 @@ const inter = Inter({
 export const metadata: Metadata = {
     title: "Trust Bank - Banking for the Future",
     description: "Secure, fast, and modern banking for everyone.",
+    keywords: [
+        'digital banking platform',
+        'fintech app',
+        'banking software',
+    ],
+    template: '%s | Trust Bank',
     icons: {
         icon: "/favicon.ico",
     },
     openGraph: {
         title: "Trust Bank - Banking for the Future",
         description: "Secure, fast, and modern banking for everyone.",
+        type: 'website'
         images: [
             {
                 url: "https://trustremittance.online/logo.png",
