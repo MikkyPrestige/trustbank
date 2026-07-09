@@ -125,7 +125,7 @@ export default function Sidebar({ data }: SidebarProps) {
 
                     <p className={styles.navLabel}>Preferences</p>
                     <NavItem href="/dashboard/settings" icon={Settings} label="Settings" active={pathname.includes('/settings')} onClose={() => setIsMobileOpen(false)} />
-                    <NavItem href="/dashboard/support" icon={HelpCircle} label="Help Center" active={pathname.includes('/help')} onClose={() => setIsMobileOpen(false)} />
+                    <NavItem href="/dashboard/support" icon={HelpCircle} label="Help Center" active={pathname.includes('/support')} onClose={() => setIsMobileOpen(false)} />
 
                     {data.isAdmin && (
                         <>
