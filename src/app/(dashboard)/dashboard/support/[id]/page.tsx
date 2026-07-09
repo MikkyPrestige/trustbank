@@ -25,6 +25,11 @@ export default async function TicketDetailsPage({
 
     if (!ticket) return notFound();
 
+    await db.notification.updateMany({
+        where: { userId: session.user.id, isRead: false, link: `/dashboard/support/${id}` },
+        data: { isRead: true }
+    });
+
     const getStatusColor = (status: string) => {
         switch (status) {
             case 'OPEN': return 'var(--primary)';

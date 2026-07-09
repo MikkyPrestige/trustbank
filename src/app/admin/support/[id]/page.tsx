@@ -13,7 +13,7 @@ export default async function TicketDetailPage({
 }) {
     const { id } = await params;
 
-    const { authorized } = await checkAdminAction();
+    const { authorized, session } = await checkAdminAction();
     if (!authorized) redirect("/dashboard");
 
     const ticket = await db.ticket.findUnique({
@@ -29,6 +29,13 @@ export default async function TicketDetailPage({
     });
 
     if (!ticket) return notFound();
+
+    if (session?.user?.id) {
+        await db.notification.updateMany({
+            where: { userId: session.user.id, isRead: false, link: `/admin/support/${id}` },
+            data: { isRead: true }
+        });
+    }
 
     return (
         <div className={styles.container}>

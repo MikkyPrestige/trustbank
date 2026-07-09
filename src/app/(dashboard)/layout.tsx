@@ -16,7 +16,7 @@ export default async function DashboardLayout({
     const session = await auth();
     if (!session?.user?.email) redirect("/login");
 
-    const [user, actionCount, waitingCount, settings, isMaintenance] = await Promise.all([
+    const [user, actionCount, waitingCount, supportUnreadCount, settings, isMaintenance] = await Promise.all([
         db.user.findUnique({
             where: { email: session.user.email },
             select: {
@@ -29,6 +29,9 @@ export default async function DashboardLayout({
         }),
         db.wireTransfer.count({
             where: { userId: session.user.id, status: 'PENDING_AUTH' }
+        }),
+        db.notification.count({
+            where: { userId: session.user.id, isRead: false, link: { startsWith: '/dashboard/support' } }
         }),
         getSiteSettings(),
         checkMaintenanceMode()
@@ -58,7 +61,8 @@ export default async function DashboardLayout({
         },
         counts: {
             actionRequired: actionCount,
-            pendingReview: waitingCount
+            pendingReview: waitingCount,
+            supportUnread: supportUnreadCount
         },
         isAdmin: user.role === UserRole.ADMIN || user.role === UserRole.SUPER_ADMIN || user.role === UserRole.SUPPORT,
         isSuperAdmin: user.role === UserRole.SUPER_ADMIN,

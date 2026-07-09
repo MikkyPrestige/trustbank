@@ -146,6 +146,18 @@
   transform: translateX(4px);
 }
 
+.navBadge {
+  margin-left: auto;
+  background: var(--danger);
+  color: var(--text-invert);
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 50px;
+  min-width: 1.5rem;
+  text-align: center;
+}
+
 .separator {
   height: 1px;
   background: var(--border);

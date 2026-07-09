@@ -27,9 +27,10 @@ interface AdminNavProps {
     role?: string;
     logoUrl?: string;
     siteName?: string;
+    ticketUnreadCount?: number;
 }
 
-export default function AdminNav({ role, logoUrl, siteName }: AdminNavProps) {
+export default function AdminNav({ role, logoUrl, siteName, ticketUnreadCount = 0 }: AdminNavProps) {
     const [isOpen, setIsOpen] = useState(false);
     const close = () => setIsOpen(false);
 
@@ -105,6 +106,9 @@ export default function AdminNav({ role, logoUrl, siteName }: AdminNavProps) {
 
                     <Link href="/admin/support" className={styles.navLink} onClick={close}>
                         <MessageSquareText size={18} /> Tickets
+                        {ticketUnreadCount > 0 && (
+                            <span className={styles.navBadge}>{ticketUnreadCount}</span>
+                        )}
                     </Link>
                     <Link href="/admin/generator" className={styles.navLink} onClick={close}>
                         <Activity size={18} /> TXNs

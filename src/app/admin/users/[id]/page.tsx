@@ -11,6 +11,7 @@ import LocalTransferList from "@/components/admin/users/[id]/LocalTransferList";
 import ActivityLog from "@/components/admin/users/[id]/ActivityLog";
 import RevokeSessionButton from "@/components/admin/users/[id]/RevokeSessionButton";
 import AdminEditUserForm from "@/components/admin/users/[id]/AdminEditUserForm";
+import AdminNewTicketButton from "@/components/admin/users/[id]/AdminNewTicketButton";
 import { CreditCard, Activity, User, MapPin, HeartHandshake, Heart, History, Wallet, ArrowLeft, ArrowRightLeft, ShieldAlert, Lock, Mail, Phone, Briefcase, Hash, AlertTriangle } from "lucide-react";
 import { requireAdmin } from "@/lib/auth/admin-auth";
 import Link from "next/link";
@@ -123,6 +124,7 @@ export default async function UserDetailsPage({ params }: { params: Promise<{ id
                     <Link href={`/admin/users/${user.id}/transactions`} className={styles.viewBtn}>
                         <History size={14} /> Transactions
                     </Link>
+                    <AdminNewTicketButton userId={user.id} userName={user.fullName} />
                     <RevokeSessionButton userId={user.id} userName={user.fullName} />
                     <UserActions
                         userId={user.id}
