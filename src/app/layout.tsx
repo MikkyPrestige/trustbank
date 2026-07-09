@@ -14,14 +14,16 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-    title: "Trust Bank - Banking for the Future",
+    title: {
+        default: "Trust Bank - Banking for the Future",
+        template: '%s | Trust Bank',
+    },
     description: "Secure, fast, and modern banking for everyone.",
     keywords: [
         'digital banking platform',
         'fintech app',
         'banking software',
     ],
-    template: '%s | Trust Bank',
     icons: {
         icon: "/favicon.ico",
     },
