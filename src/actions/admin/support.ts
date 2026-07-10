@@ -10,6 +10,84 @@ import { z } from "zod";
 
 const sanitize = (str: string) => str.replace(/<[^>]*>/g, '');
 
+const newTicketSchema = z.object({
+  userId: z.string().min(1, "User is required"),
+  subject: z.string().min(3, "Subject must be at least 3 characters").max(100),
+  message: z.string().min(10, "Please write at least 10 characters").max(2000),
+});
+
+export async function adminCreateTicket(formData: FormData) {
+  const { authorized, session } = await checkAdminAction();
+
+  if (!authorized || !session || !session.user) {
+      return { success: false, message: "Unauthorized" };
+  }
+
+  if (!canPerform(session.user.role as UserRole, 'EDIT')) {
+      return { success: false, message: "Insufficient permissions." };
+  }
+
+  const rawData = {
+    userId: formData.get("userId") as string,
+    subject: formData.get("subject") as string,
+    message: formData.get("message") as string,
+  };
+  const parsed = newTicketSchema.safeParse(rawData);
+  if (!parsed.success) {
+    return { success: false, message: parsed.error.issues[0].message };
+  }
+  const { userId, subject, message } = parsed.data;
+  const safeSubject = sanitize(subject);
+  const safeMessage = sanitize(message);
+
+  try {
+    const targetUser = await db.user.findUnique({ where: { id: userId } });
+    if (!targetUser) return { success: false, message: "User not found." };
+
+    const ticket = await db.ticket.create({
+        data: {
+            userId,
+            subject: safeSubject,
+            status: "OPEN",
+            messages: {
+                create: {
+                    sender: "ADMIN",
+                    message: safeMessage
+                }
+            }
+        }
+    });
+
+    await db.notification.create({
+        data: {
+            userId,
+            title: "New Message from Support",
+            message: safeSubject,
+            type: "INFO",
+            link: `/dashboard/support/${ticket.id}`,
+            isRead: false
+        }
+    });
+
+    await logAdminAction(
+        "CREATE_TICKET",
+        ticket.id,
+        { userId, subject: safeSubject, admin: session.user.email },
+        "INFO",
+        "SUCCESS"
+    );
+
+    revalidatePath("/admin/support");
+    revalidatePath(`/admin/users/${userId}`);
+
+    return { success: true, message: "Message sent.", ticketId: ticket.id };
+
+  } catch (error) {
+    console.error("Admin Create Ticket Error:", error);
+    return { success: false, message: "Failed to create ticket." };
+  }
+}
+
 export async function adminReplyTicket(ticketId: string, message: string) {
   const { authorized, session } = await checkAdminAction();
 

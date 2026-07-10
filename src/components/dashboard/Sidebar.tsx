@@ -24,6 +24,7 @@ interface SidebarProps {
         counts: {
             actionRequired: number;
             pendingReview: number;
+            supportUnread: number;
         };
         isAdmin: boolean;
         isSuperAdmin: boolean;
@@ -125,7 +126,15 @@ export default function Sidebar({ data }: SidebarProps) {
 
                     <p className={styles.navLabel}>Preferences</p>
                     <NavItem href="/dashboard/settings" icon={Settings} label="Settings" active={pathname.includes('/settings')} onClose={() => setIsMobileOpen(false)} />
-                    <NavItem href="/dashboard/support" icon={HelpCircle} label="Help Center" active={pathname.includes('/support')} onClose={() => setIsMobileOpen(false)} />
+                    <NavItem
+                        href="/dashboard/support"
+                        icon={HelpCircle}
+                        label="Help Center"
+                        active={pathname.includes('/support')}
+                        count={data.counts.supportUnread}
+                        badgeVariant="danger"
+                        onClose={() => setIsMobileOpen(false)}
+                    />
 
                     {data.isAdmin && (
                         <>
