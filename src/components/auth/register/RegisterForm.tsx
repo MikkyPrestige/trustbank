@@ -53,19 +53,6 @@ export default function RegisterForm({ siteName, isLoggedIn }: RegisterFormProps
         }
     }, [isLoggedIn, router]);
 
-    if (isLoggedIn) {
-        return (
-            <div className={styles.pageWrapper}>
-                <div className={styles.loaderContainer}>
-                    <div className={styles.loaderInner}>
-                        <Loader2 size={48} className={styles.spinner} />
-                        <p className={styles.loaderText}>Redirecting to dashboard…</p>
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
     useEffect(() => {
         if (state?.requireOtp) {
             setShowOtp(true);
@@ -95,6 +82,19 @@ export default function RegisterForm({ siteName, isLoggedIn }: RegisterFormProps
             }, 1500);
         }
     }, [state, router]);
+
+    if (isLoggedIn) {
+        return (
+            <div className={styles.pageWrapper}>
+                <div className={styles.loaderContainer}>
+                    <div className={styles.loaderInner}>
+                        <Loader2 size={48} className={styles.spinner} />
+                        <p className={styles.loaderText}>Redirecting to dashboard…</p>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     const handleFormSubmit = (formData: FormData) => {
         setFileError(null);

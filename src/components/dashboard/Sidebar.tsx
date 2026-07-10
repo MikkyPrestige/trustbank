@@ -130,7 +130,7 @@ export default function Sidebar({ data }: SidebarProps) {
                         href="/dashboard/support"
                         icon={HelpCircle}
                         label="Help Center"
-                        active={pathname.includes('/help')}
+                        active={pathname.includes('/support')}
                         count={data.counts.supportUnread}
                         badgeVariant="danger"
                         onClose={() => setIsMobileOpen(false)}

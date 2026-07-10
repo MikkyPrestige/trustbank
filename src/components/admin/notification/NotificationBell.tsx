@@ -25,6 +25,7 @@ export default function NotificationBell() {
     // Sound & Tracking Refs
     const previousCountRef = useRef(0);
     const isFirstLoadRef = useRef(true);
+    const pendingDismissRef = useRef<Set<string>>(new Set());
 
     const playSound = () => {
         const audio = new Audio('/sound/notification.mp3');
@@ -35,10 +36,22 @@ export default function NotificationBell() {
         const fetchNotes = async () => {
             try {
                 const data = await getNotifications();
-                setNotifications(data);
+
+                // Drop anything just dismissed locally - a poll in flight before the
+                // dismiss committed server-side would otherwise bring it back briefly.
+                const visible = data.filter((n: Notification) => !pendingDismissRef.current.has(n.id));
+
+                // Once the server no longer returns a dismissed id, the write has landed;
+                // stop guarding it so future re-notifications with that id aren't hidden forever.
+                const incomingIds = new Set(data.map((n: Notification) => n.id));
+                pendingDismissRef.current.forEach((id) => {
+                    if (!incomingIds.has(id)) pendingDismissRef.current.delete(id);
+                });
+
+                setNotifications(visible);
                 setLoading(false);
 
-                const unreadCount = data.filter((n: Notification) => !n.isRead).length;
+                const unreadCount = visible.filter((n: Notification) => !n.isRead).length;
                 const prevCount = previousCountRef.current;
 
                 // Play sound if new unread messages arrive (skip on first load)
@@ -69,11 +82,13 @@ export default function NotificationBell() {
     }, []);
 
     const handleDismiss = async (id: string, link: string | null) => {
+        pendingDismissRef.current.add(id);
         setNotifications(prev => prev.filter(n => n.id !== id));
         await markAsRead(id);
     };
 
     const handleMarkAllRead = async () => {
+        notifications.forEach((n) => pendingDismissRef.current.add(n.id));
         setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
         await markAllAsRead();
     };
