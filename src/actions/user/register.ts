@@ -218,26 +218,29 @@ if (hasFront || hasBack || (passportFile && passportFile.size > 0)) {
   let idCardBackUrl: string | null = null;
   let userImageUrl: string | null = null;
   let kycStatus: KycStatus = KycStatus.NOT_SUBMITTED;
+  let kycUploadFailed = false;
 
   try {
       if (hasFront) {
           try {
               idCardUrl = await uploadFileToCloud(idFrontFile, 'kyc');
-              kycStatus = KycStatus.PENDING;
           } catch (uploadError) {
               console.error("ID Front Upload Failed:", uploadError);
-              return { message: "Failed to upload ID Front. Please try again." };
+              kycUploadFailed = true;
           }
       }
 
       if (hasBack) {
           try {
               idCardBackUrl = await uploadFileToCloud(idBackFile, 'kyc');
-              kycStatus = KycStatus.PENDING;
           } catch (uploadError) {
               console.error("ID Back Upload Failed:", uploadError);
-              return { message: "Failed to upload ID Back. Please try again." };
+              kycUploadFailed = true;
           }
+      }
+
+      if (idCardUrl && idCardBackUrl) {
+          kycStatus = KycStatus.PENDING;
       }
 
       if (passportFile && passportFile.size > 0) {
@@ -245,7 +248,7 @@ if (hasFront || hasBack || (passportFile && passportFile.size > 0)) {
               userImageUrl = await uploadFileToCloud(passportFile, 'avatars');
           } catch (uploadError) {
               console.error("Avatar Upload Failed:", uploadError);
-              return { message: "Failed to upload Profile Photo. Please try again." };
+              kycUploadFailed = true;
           }
       }
 
@@ -352,6 +355,19 @@ if (hasFront || hasBack || (passportFile && passportFile.size > 0)) {
                isRead: false
            }
        });
+
+       if (kycUploadFailed) {
+           await db.notification.create({
+               data: {
+                   userId: newUserId.id,
+                   title: "Identity Documents Not Saved",
+                   message: "We couldn't process one or more of your uploaded documents. Please try again from the verification page.",
+                   type: "WARNING",
+                   link: "/dashboard/verify",
+                   isRead: false
+               }
+           });
+       }
     }
 
     return {
