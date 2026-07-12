@@ -3,7 +3,7 @@
 import { getAuthenticatedUser } from "@/lib/auth/user-guard";
 import { db } from "@/lib/db";
 import { z } from "zod";
-import { checkMaintenanceMode, verifyPin, getBooleanSetting } from "@/lib/security";
+import { checkMaintenanceMode, verifyPin, checkPermissions } from "@/lib/security";
 import { revalidatePath } from "next/cache";
 import {
     TransactionType,
@@ -33,10 +33,8 @@ export async function payBill(prevState: any, formData: FormData) {
         return { message };
     }
 
-    const billsEnabled = await getBooleanSetting('feature_bills_enabled', true);
-if (!billsEnabled) {
-  return { success: false, message: "Bill payments are temporarily disabled." };
-}
+    const permission = await checkPermissions(sessionUser.id, 'BILL_PAYMENT');
+    if (!permission.allowed) return { success: false, message: `🚫 ${permission.error}` };
 
 // Validate input
 const rawData = {

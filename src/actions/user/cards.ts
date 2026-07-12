@@ -44,6 +44,10 @@ let newStatus: CardStatus;
         return { success: false, message: "Card not found." };
     }
 
+    if (card.adminLocked && card.status === CardStatus.BLOCKED) {
+        return { success: false, message: "This card was frozen by an administrator. Please contact support to unlock it." };
+    }
+
         newStatus = card.status === CardStatus.ACTIVE ? CardStatus.BLOCKED : CardStatus.ACTIVE;
 
         await db.$transaction(async (tx) => {

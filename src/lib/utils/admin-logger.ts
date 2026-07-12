@@ -13,7 +13,10 @@ export type AdminLogAction =
   | 'REJECT_WIRE' | 'APPROVE_WIRE' | 'UPDATE_WIRE_CODE' | 'GENERATE_CODES'
 
   // --- Card Features ---
-  | 'ISSUE_CARD' | 'CARD_FREEZE'
+  | 'ISSUE_CARD' | 'CARD_FREEZE' | 'CARD_UNFREEZE'
+
+  // --- Service Restrictions ---
+  | 'RESTRICT_SERVICE' | 'UNRESTRICT_SERVICE'
 
   // --- Loans ---
   | 'APPROVE_LOAN' | 'REJECT_LOAN' | 'LOAN_UPDATE'

@@ -17,7 +17,7 @@ export async function getBooleanSetting(key: string, fallback: boolean): Promise
 // CHECK Sender Limits
 export async function checkPermissions(
     userId: string,
-    action: 'TRANSFER_INTERNAL' | 'TRANSFER_WIRE' | 'LOAN_APPLY' | 'LOAN_REPAY' | 'CRYPTO_TRADE' | 'CRYPTO_TRANSFER' | 'WALLET_GEN',
+    action: 'TRANSFER_INTERNAL' | 'TRANSFER_WIRE' | 'LOAN_APPLY' | 'LOAN_REPAY' | 'CRYPTO_TRADE' | 'CRYPTO_TRANSFER' | 'WALLET_GEN' | 'BILL_PAYMENT',
     amount: number = 0
 ) {
     const user = await db.user.findUnique({ where: { id: userId } });
@@ -30,6 +30,7 @@ export async function checkPermissions(
     const allowLoanRepay = await getBooleanSetting('feature_loan_repay_enabled', true);
     const allowTrade = await getBooleanSetting('feature_crypto_enabled', true);
     const allowWallet = await getBooleanSetting('feature_wallet_gen_enabled', true);
+    const allowBills = await getBooleanSetting('feature_bills_enabled', true);
 
     // CHECK FEATURE FLAGS (Before KYC)
     if (action === 'TRANSFER_INTERNAL' && !allowTransfer) return { allowed: false, error: "Internal transfers are temporarily disabled." };
@@ -39,6 +40,18 @@ export async function checkPermissions(
     if (action === 'CRYPTO_TRADE' && !allowTrade) return { allowed: false, error: "Crypto trading is paused." };
     if (action === 'CRYPTO_TRANSFER' && !allowTransfer) return { allowed: false, error: "Crypto transfers are temporarily disabled." };
     if (action === 'WALLET_GEN' && !allowWallet) return { allowed: false, error: "Wallet generation is paused." };
+    if (action === 'BILL_PAYMENT' && !allowBills) return { allowed: false, error: "Bill payments are temporarily paused." };
+
+    // ADMIN-IMPOSED PER-USER RESTRICTIONS (apply regardless of KYC status)
+    if ((action === 'CRYPTO_TRADE' || action === 'CRYPTO_TRANSFER' || action === 'WALLET_GEN') && user.cryptoRestricted) {
+        return { allowed: false, error: user.cryptoRestrictedReason || "Crypto access has been restricted on your account. Please contact support." };
+    }
+    if (action === 'BILL_PAYMENT' && user.billsRestricted) {
+        return { allowed: false, error: user.billsRestrictedReason || "Bill payments have been restricted on your account. Please contact support." };
+    }
+    if ((action === 'LOAN_APPLY' || action === 'LOAN_REPAY') && user.loansRestricted) {
+        return { allowed: false, error: user.loansRestrictedReason || "Loan services have been restricted on your account. Please contact support." };
+    }
 
     //  KYC BYPASS (Verified users skip limits, but NOT feature flags)
     if (user.kycStatus === KycStatus.VERIFIED) return { allowed: true };

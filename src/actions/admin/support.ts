@@ -16,33 +16,11 @@ const newTicketSchema = z.object({
   message: z.string().min(10, "Please write at least 10 characters").max(2000),
 });
 
-export async function adminCreateTicket(formData: FormData) {
-  const { authorized, session } = await checkAdminAction();
-
-  if (!authorized || !session || !session.user) {
-      return { success: false, message: "Unauthorized" };
-  }
-
-  if (!canPerform(session.user.role as UserRole, 'EDIT')) {
-      return { success: false, message: "Insufficient permissions." };
-  }
-
-  const rawData = {
-    userId: formData.get("userId") as string,
-    subject: formData.get("subject") as string,
-    message: formData.get("message") as string,
-  };
-  const parsed = newTicketSchema.safeParse(rawData);
-  if (!parsed.success) {
-    return { success: false, message: parsed.error.issues[0].message };
-  }
-  const { userId, subject, message } = parsed.data;
-  const safeSubject = sanitize(subject);
-  const safeMessage = sanitize(message);
-
-  try {
-    const targetUser = await db.user.findUnique({ where: { id: userId } });
-    if (!targetUser) return { success: false, message: "User not found." };
+// Shared by adminCreateTicket and any other admin action that wants to open a
+// ticket on a user's behalf (e.g. notifying them of a service restriction).
+export async function createSupportTicket(userId: string, subject: string, message: string, adminEmail: string) {
+    const safeSubject = sanitize(subject);
+    const safeMessage = sanitize(message);
 
     const ticket = await db.ticket.create({
         data: {
@@ -72,10 +50,41 @@ export async function adminCreateTicket(formData: FormData) {
     await logAdminAction(
         "CREATE_TICKET",
         ticket.id,
-        { userId, subject: safeSubject, admin: session.user.email },
+        { userId, subject: safeSubject, admin: adminEmail },
         "INFO",
         "SUCCESS"
     );
+
+    return ticket;
+}
+
+export async function adminCreateTicket(formData: FormData) {
+  const { authorized, session } = await checkAdminAction();
+
+  if (!authorized || !session || !session.user) {
+      return { success: false, message: "Unauthorized" };
+  }
+
+  if (!canPerform(session.user.role as UserRole, 'EDIT')) {
+      return { success: false, message: "Insufficient permissions." };
+  }
+
+  const rawData = {
+    userId: formData.get("userId") as string,
+    subject: formData.get("subject") as string,
+    message: formData.get("message") as string,
+  };
+  const parsed = newTicketSchema.safeParse(rawData);
+  if (!parsed.success) {
+    return { success: false, message: parsed.error.issues[0].message };
+  }
+  const { userId, subject, message } = parsed.data;
+
+  try {
+    const targetUser = await db.user.findUnique({ where: { id: userId } });
+    if (!targetUser) return { success: false, message: "User not found." };
+
+    const ticket = await createSupportTicket(userId, subject, message, session.user.email || "Admin");
 
     revalidatePath("/admin/support");
     revalidatePath(`/admin/users/${userId}`);
