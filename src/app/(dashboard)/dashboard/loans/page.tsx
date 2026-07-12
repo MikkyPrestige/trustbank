@@ -18,7 +18,7 @@ export default async function LoansPage() {
     const [user, rates] = await Promise.all([
         db.user.findUnique({
             where: { id: session.user.id },
-            select: { kycStatus: true, currency: true }
+            select: { kycStatus: true, currency: true, loansRestricted: true, loansRestrictedReason: true }
         }),
         db.exchangeRate.findMany()
     ]);
@@ -114,6 +114,15 @@ export default async function LoansPage() {
                                 Verify Identity Now
                             </Link>
                         </div>
+                    ) : user?.loansRestricted ? (
+                        <div className={styles.lockedState}>
+                            <div className={styles.lockIconBox}>
+                                <Ban size={32} />
+                            </div>
+                            <h2>Loan Access Restricted</h2>
+                            <p>{user?.loansRestrictedReason || "Your access to loan services has been restricted by an administrator."}</p>
+                            <Link href="/dashboard/support" className={styles.verifyLink}>Contact Support</Link>
+                        </div>
                     ) : (
                         <>
                             <h2 className={styles.cardHeader}>
@@ -146,7 +155,17 @@ export default async function LoansPage() {
                         Your History
                     </h2>
 
-                    {!features.repay && (
+                    {user?.loansRestricted && (
+                        <div className={styles.lockedStateRepay}>
+                            <div className={styles.lockIconBox}>
+                                <Ban size={32} />
+                            </div>
+                            <h2>Repayments Restricted</h2>
+                            <p>{user?.loansRestrictedReason || "Your access to loan services has been restricted by an administrator."}</p>
+                        </div>
+                    )}
+
+                    {!user?.loansRestricted && !features.repay && (
                         <div className={styles.lockedStateRepay}>
                             <div className={styles.lockIconBox}>
                                 <Ban size={32} />

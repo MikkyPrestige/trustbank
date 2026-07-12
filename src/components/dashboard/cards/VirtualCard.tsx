@@ -23,7 +23,7 @@ export default function VirtualCard({ card, userName, overrideStatus, siteName }
     const [copied, setCopied] = useState(false);
 
     const currentStatus = overrideStatus || card.status;
-    const isFrozen = currentStatus === 'FROZEN';
+    const isFrozen = currentStatus === 'FROZEN' || currentStatus === 'BLOCKED';
 
     const bankLabel = siteName ? siteName.toUpperCase() : 'TRUST  BANK';
 

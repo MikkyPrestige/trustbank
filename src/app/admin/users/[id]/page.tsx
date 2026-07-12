@@ -12,6 +12,8 @@ import ActivityLog from "@/components/admin/users/[id]/ActivityLog";
 import RevokeSessionButton from "@/components/admin/users/[id]/RevokeSessionButton";
 import AdminEditUserForm from "@/components/admin/users/[id]/AdminEditUserForm";
 import AdminNewTicketButton from "@/components/admin/users/[id]/AdminNewTicketButton";
+import ServiceAccessPanel from "@/components/admin/users/[id]/ServiceAccessPanel";
+import CardFreezeButton from "@/components/admin/users/[id]/CardFreezeButton";
 import { CreditCard, Activity, User, MapPin, HeartHandshake, Heart, History, Wallet, ArrowLeft, ArrowRightLeft, ShieldAlert, Lock, Mail, Phone, Briefcase, Hash, AlertTriangle } from "lucide-react";
 import { requireAdmin } from "@/lib/auth/admin-auth";
 import Link from "next/link";
@@ -260,6 +262,17 @@ export default async function UserDetailsPage({ params }: { params: Promise<{ id
 
                 <div className={styles.col}>
                     <KycReviewSection user={user} />
+
+                    <ServiceAccessPanel
+                        userId={user.id}
+                        cryptoRestricted={user.cryptoRestricted}
+                        cryptoRestrictedReason={user.cryptoRestrictedReason}
+                        billsRestricted={user.billsRestricted}
+                        billsRestrictedReason={user.billsRestrictedReason}
+                        loansRestricted={user.loansRestricted}
+                        loansRestrictedReason={user.loansRestrictedReason}
+                    />
+
                     <div className={styles.section}>
                         <div className={styles.secHeaderRow}>
                             <h3 className={styles.secTitle}><CreditCard size={18} /> Cards</h3>
@@ -270,11 +283,23 @@ export default async function UserDetailsPage({ params }: { params: Promise<{ id
                                 <div key={card.id} className={styles.listItem}>
                                     <div className={styles.flexCenterGap}>
                                         <CreditCard size={16} className={styles.cardIcon} />
-                                        <span>Visa ...<strong>{card.cardNumber.slice(-4)}</strong></span>
+                                        <div>
+                                            <span>Visa ...<strong>{card.cardNumber.slice(-4)}</strong></span>
+                                            {card.adminLocked && card.adminLockReason && (
+                                                <p className={styles.serviceReason}>{card.adminLockReason}</p>
+                                            )}
+                                        </div>
                                     </div>
-                                <span className={`${styles.badge} ${card.status === 'ACTIVE' ? styles.badgeGreen : styles.badgeRed}`}>
-                                        {card.status}
-                                    </span>
+                                    <div className={styles.flexCenterGap}>
+                                        <span className={`${styles.badge} ${card.status === 'ACTIVE' ? styles.badgeGreen : styles.badgeRed}`}>
+                                            {card.adminLocked ? 'ADMIN LOCKED' : card.status}
+                                        </span>
+                                        <CardFreezeButton
+                                            cardId={card.id}
+                                            lastFour={card.cardNumber.slice(-4)}
+                                            adminLocked={card.adminLocked}
+                                        />
+                                    </div>
                                 </div>
                             ))}
                         </div>

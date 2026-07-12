@@ -133,6 +133,12 @@ model User {
   status               UserStatus @default(PENDING_VERIFICATION)
   kycStatus            KycStatus  @default(NOT_SUBMITTED)
   kycRejectionReason   String?
+  cryptoRestricted     Boolean  @default(false)
+  cryptoRestrictedReason String?
+  billsRestricted      Boolean  @default(false)
+  billsRestrictedReason String?
+  loansRestricted      Boolean  @default(false)
+  loansRestrictedReason String?
   fullName             String
   image                String?
   dateOfBirth          DateTime?
@@ -233,6 +239,8 @@ model Card {
   status        CardStatus @default(ACTIVE)
   isPhysical    Boolean    @default(false)
   spendingLimit Decimal? @db.Decimal(19, 4)
+  adminLocked   Boolean  @default(false)
+  adminLockReason String?
   createdAt     DateTime @default(now())
 }
 

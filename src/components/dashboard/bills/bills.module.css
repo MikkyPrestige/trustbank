@@ -225,6 +225,21 @@
   margin-top: -1rem;
 }
 
+.verifyBtn {
+  background: var(--primary);
+  color: var(--text-invert);
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.verifyBtn:hover {
+  opacity: 0.9;
+}
+
 .spin {
   animation: spin 1s linear infinite;
 }

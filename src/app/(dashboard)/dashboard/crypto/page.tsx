@@ -80,6 +80,13 @@ export default async function CryptoPage() {
                     <p>To access the crypto markets, please complete your Identity Verification (KYC).</p>
                     <Link href="/dashboard/verify" className={styles.verifyBtn}>Complete Verification</Link>
                 </div>
+            ) : user.cryptoRestricted ? (
+                <div className={styles.lockedState}>
+                    <div className={styles.lockIconBox}><Ban size={32} /></div>
+                    <h2>Crypto Trading Restricted</h2>
+                    <p>{user.cryptoRestrictedReason || "Your access to crypto trading has been restricted by an administrator."}</p>
+                    <Link href="/dashboard/support" className={styles.verifyBtn}>Contact Support</Link>
+                </div>
             ) : !features.crypto ? (
                 <div className={styles.lockedState}>
                     <div className={styles.lockIconBox}>
