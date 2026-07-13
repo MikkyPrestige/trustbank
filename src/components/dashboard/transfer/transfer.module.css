@@ -1,32 +1,44 @@
 .container {
-  max-width: 1200px;
-  width: 80%;
-  padding: 1rem 2rem;
+  max-width: 640px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 3rem;
 }
 
 @media (max-width: 767px) {
   .container {
-    width: 100%;
-    padding: 1rem;
+    padding: 1.25rem 1rem 2.5rem;
   }
 }
 
 .header {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
+}
+
+.eyebrow {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--primary);
+  margin-bottom: 0.6rem;
 }
 
 .title {
-  font-size: 2rem;
-  font-weight: 800;
+  font-size: 1.85rem;
+  font-weight: 700;
   color: var(--text-main);
   margin: 0;
-  letter-spacing: -1px;
+  letter-spacing: -0.02em;
 }
+
 .subtitle {
-  font-size: 1rem;
+  font-size: 0.95rem;
   color: var(--text-muted);
-  margin-top: 0.3rem;
+  margin-top: 0.5rem;
+  line-height: 1.5;
 }
 
 .verifiedBadge,
@@ -34,35 +46,42 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  margin-top: 0.5rem;
-  padding: 0.5rem 1rem;
+  margin-top: 1.25rem;
+  padding: 0.45rem 0.9rem;
   border-radius: 2rem;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-weight: 600;
+  letter-spacing: 0.01em;
 }
 .verifiedBadge {
-  background: rgba(var(--success-rgb), 0.1);
+  background: rgba(var(--success-rgb), 0.08);
   color: var(--success);
-  border: 1px solid rgba(var(--success-rgb), 0.3);
+  border: 1px solid rgba(var(--success-rgb), 0.25);
 }
 .unverifiedBadge {
-  background: rgba(var(--accent-rgb), 0.1);
+  background: rgba(var(--accent-rgb), 0.08);
   color: var(--accent);
-  border: 1px solid rgba(var(--accent-rgb), 0.3);
+  border: 1px solid rgba(var(--accent-rgb), 0.25);
 }
 
 .card {
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
-  border-radius: 1rem;
-  padding: 1.5rem;
+  border-radius: 1.25rem;
+  padding: 2rem;
   box-shadow: var(--shadow-card);
+}
+
+@media (max-width: 600px) {
+  .card {
+    padding: 1.5rem 1.25rem;
+  }
 }
 
 .formGrid {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.75rem;
 }
 
 .section {
@@ -71,42 +90,47 @@
   gap: 1rem;
 }
 
+.section + .section {
+  padding-top: 1.75rem;
+  border-top: 1px solid var(--border-subtle);
+}
+
 .secTitle {
-  font-size: 0.9rem;
+  font-size: 0.75rem;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.1em;
   color: var(--text-muted);
   font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: -0.7rem;
 }
 
 .quickFillRow {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-top: -0.25rem;
 }
 
 .quickFillLabel {
   display: flex;
   align-items: center;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-weight: 600;
   color: var(--primary);
-  gap: 0.5rem;
+  gap: 0.4rem;
 }
 
 .miniSelect {
-  padding: 0.5rem;
-  border-radius: 0.8rem;
+  padding: 0.45rem 0.65rem;
+  border-radius: 0.6rem;
   font-size: 0.8rem;
   background: var(--bg-surface);
   border: 1px solid var(--border);
   color: var(--text-main);
   cursor: pointer;
-  transition: border-color 0.2s;
+  transition: border-color 0.15s ease;
 }
 .miniSelect:focus {
   border-color: var(--primary);
@@ -114,12 +138,12 @@
 }
 
 .miniSelectActive {
-  border-color: var(--primary-rgb) !important;
+  border-color: var(--primary) !important;
 }
 
 .row {
   display: flex;
-  gap: 2rem;
+  gap: 1.25rem;
 }
 @media (max-width: 600px) {
   .row {
@@ -136,7 +160,7 @@
 
 .icon {
   position: absolute;
-  left: 16px;
+  left: 1rem;
   color: var(--text-muted);
   pointer-events: none;
   z-index: 2;
@@ -145,51 +169,50 @@
 .input,
 .select {
   width: 100%;
-  padding: 1rem 1rem 1rem 4rem;
+  padding: 0.9rem 1rem 0.9rem 3rem;
   background: var(--sub-bg);
   border: 1px solid var(--border-subtle);
-  border-radius: 1rem;
+  border-radius: 0.7rem;
   color: var(--text-main);
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 500;
-  transition: 0.2s ease;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
   appearance: none;
+}
+.input::placeholder {
+  color: var(--text-muted);
+  font-weight: 400;
 }
 .input:focus,
 .select:focus {
   background: var(--bg-card);
-  border-color: var(--primary-rgb);
-  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 12%, transparent);
   outline: none;
 }
 
 .saveOption {
-  margin-top: 0.5rem;
+  margin-top: 0.25rem;
 }
 
 .checkboxLabel {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.65rem;
   cursor: pointer;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: var(--text-muted);
 }
 
 .checkbox {
   width: 1rem;
   height: 1rem;
-  accent-color: var(--primary-rgb);
+  accent-color: var(--primary);
 }
 
 .saveIcon {
   color: var(--primary);
-  margin-right: -0.8rem;
-  transition: transform 0.2s ease;
-}
-
-.checkboxLabel:hover .saveIcon {
-  transform: scale(1.1);
+  margin-right: -0.5rem;
 }
 
 .amountWrapper {
@@ -197,16 +220,16 @@
   position: relative;
   background: var(--sub-bg);
   border: 1px solid var(--border-subtle);
-  border-radius: 1rem;
+  border-radius: 0.7rem;
   display: flex;
   align-items: center;
   padding: 0 1rem;
-  transition: 0.2s;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
 }
 .amountWrapper:focus-within {
-  border-color: var(--primary-rgb);
+  border-color: var(--primary);
   background: var(--bg-card);
-  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 12%, transparent);
 }
 
 .currencyPrefix {
@@ -219,10 +242,11 @@
 .amountInput {
   width: 100%;
   border: none;
+  background: transparent;
   padding: 0.5rem;
-  /* background: transparent; */
-  font-size: 2rem;
-  font-weight: 800;
+  font-size: 1.9rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
   color: var(--text-main);
   outline: none;
   margin-left: 0.5rem;
@@ -233,10 +257,10 @@
 }
 
 .pinField {
-  padding: 1rem;
-  letter-spacing: 4px;
+  padding: 0.9rem 1rem;
+  letter-spacing: 0.3em;
   text-align: center;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
 }
 
 .noteField {
@@ -244,32 +268,30 @@
 }
 
 .submitBtn {
-  margin-top: 1rem;
-  background: linear-gradient(
-    135deg,
-    var(--primary) 0%,
-    var(--primary-rgb) 100%
-  );
+  margin-top: 0.5rem;
+  background: var(--primary);
   color: var(--text-invert);
-  padding: 0.8rem;
+  padding: 0.9rem;
   border-radius: 0.7rem;
-  font-size: 1.1rem;
-  font-weight: 700;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
   border: none;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 1rem;
-  transition: 0.2s;
-  box-shadow: 0 1rem 2rem -0.5rem rgba(37, 99, 235, 0.3);
+  gap: 0.65rem;
+  transition: background 0.15s ease, transform 0.1s ease;
 }
 .submitBtn:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 1.5rem 3rem -0.5rem rgba(37, 99, 235, 0.4);
+  background: var(--primary-hover);
+}
+.submitBtn:active:not(:disabled) {
+  transform: scale(0.99);
 }
 .submitBtn:disabled {
-  opacity: 0.7;
+  opacity: 0.6;
   cursor: not-allowed;
 }
 
@@ -287,15 +309,16 @@
   justify-content: center;
   align-items: center;
   animation: fadeIn 0.3s ease-out;
+  padding: 1rem;
 }
 
 .modalContent {
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
-  padding: 1rem;
-  border-radius: 1rem;
-  width: 90%;
-  max-width: 500px;
+  padding: 2rem 1.75rem;
+  border-radius: 1.25rem;
+  width: 100%;
+  max-width: 440px;
   text-align: center;
   position: relative;
   box-shadow: var(--shadow-card);
@@ -303,145 +326,157 @@
 }
 
 .modalIconBox {
-  width: 4rem;
-  height: 4rem;
+  width: 3.75rem;
+  height: 3.75rem;
   background: rgba(var(--success-rgb), 0.1);
   color: var(--success);
-  border: 1px solid rgba(var(--success-rgb), 0.3);
+  border: 1px solid rgba(var(--success-rgb), 0.25);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 1rem auto;
+  margin: 0 auto 1.25rem auto;
 }
 
 .modalTitle {
-  font-size: 1.5rem;
-  font-weight: 800;
+  font-size: 1.4rem;
+  font-weight: 700;
   color: var(--text-main);
+  letter-spacing: -0.01em;
 }
 
 .modalText {
   color: var(--text-muted);
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   line-height: 1.5;
 }
 
 .receiptBox {
-  margin-top: 1rem;
+  margin-top: 1.25rem;
   background: var(--sub-bg);
-  padding: 1rem 2rem;
+  padding: 1.25rem 1.5rem;
   border-radius: 1rem;
-  border: 1px dashed var(--sub-divider);
+  border: 1px solid var(--border-subtle);
+  text-align: left;
 }
 
 .receiptRow {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 1rem;
-  font-size: 0.9rem;
+  align-items: center;
+  margin-bottom: 0.85rem;
+  font-size: 0.85rem;
   color: var(--text-muted);
 }
 .receiptRow:last-child {
   margin-bottom: 0;
-  padding-top: 1rem;
+  padding-top: 0.85rem;
   border-top: 1px solid var(--border-subtle);
 }
 .receiptRow strong {
   color: var(--text-main);
+  font-weight: 600;
 }
 
 .receiptValue {
   color: var(--success);
+  font-size: 1rem;
 }
 
 .modalActions {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  margin-top: 2rem;
+  gap: 0.75rem;
+  margin-top: 1.75rem;
 }
 
 .primaryBtn {
   background: var(--primary);
   color: var(--text-invert);
-  padding: 1rem;
-  border-radius: 0.8rem;
+  padding: 0.9rem;
+  border-radius: 0.7rem;
   font-weight: 600;
+  font-size: 0.9rem;
   border: none;
   cursor: pointer;
-  transition: 0.2s;
+  transition: background 0.15s ease;
 }
 .primaryBtn:hover {
   background: var(--primary-hover);
-  transform: translateY(-2px);
 }
 
 .secondaryBtn {
   background: transparent;
-  color: var(--primary);
-  padding: 0.8rem;
-  border-radius: 0.5rem;
+  color: var(--text-body);
+  padding: 0.85rem;
+  border-radius: 0.7rem;
   font-weight: 600;
+  font-size: 0.9rem;
   border: 1px solid var(--border-subtle);
   text-decoration: none;
   display: block;
-  transition: 0.2s;
+  transition: border-color 0.15s ease, color 0.15s ease;
 }
 .secondaryBtn:hover {
-  background: var(--sub-bg);
+  border-color: var(--border-hover);
   color: var(--text-main);
 }
 
 .lockedState {
   margin-top: 1rem;
-  background: var(--sub-bg);
+  background: var(--bg-card);
   border: 1px solid var(--border-subtle);
-  border-radius: 1rem;
-  padding: 2rem;
+  border-radius: 1.25rem;
+  padding: 2.5rem 2rem;
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  gap: 0.85rem;
   color: var(--text-muted);
+  box-shadow: var(--shadow-card);
 }
 
 .lockIconBox {
-  width: 4rem;
-  height: 4rem;
-  background: var(--bg-surface);
+  width: 3.75rem;
+  height: 3.75rem;
+  background: var(--sub-bg);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--text-main);
+  color: var(--text-body);
+  margin-bottom: 0.25rem;
 }
 
 .lockedState h2 {
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   font-weight: 700;
   color: var(--text-main);
   margin: 0;
 }
 
 .lockedState p {
-  margin-top: -1rem;
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  max-width: 380px;
 }
 
 .verifyBtn {
   background: var(--primary);
   color: var(--text-invert);
   padding: 0.75rem 1.5rem;
-  border-radius: 0.5rem;
+  border-radius: 0.7rem;
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   text-decoration: none;
-  transition: opacity 0.2s;
+  transition: background 0.15s ease;
+  margin-top: 0.5rem;
 }
 
 .verifyBtn:hover {
-  opacity: 0.9;
+  background: var(--primary-hover);
 }
 
 .spin {
@@ -464,7 +499,7 @@
 }
 @keyframes scaleIn {
   from {
-    transform: scale(0.95);
+    transform: scale(0.96);
     opacity: 0;
   }
   to {

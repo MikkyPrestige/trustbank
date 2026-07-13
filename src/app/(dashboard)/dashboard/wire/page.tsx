@@ -63,14 +63,15 @@ export default async function WirePage({
     return (
         <div className={styles.container}>
             <div className={styles.header}>
-                <h1 className={styles.title}>International Wire Transfer</h1>
-                <p className={styles.subtitle}>Secure SWIFT / IBAN Transfer Network</p>
+                <span className={styles.eyebrow}>Global Payments</span>
+                <h1 className={styles.title}>International Wire</h1>
+                <p className={styles.subtitle}>Send money worldwide through the secure SWIFT network.</p>
 
                 <div className={isVerified ? styles.verifiedBadge : styles.unverifiedBadge}>
                     {isVerified ? (
                         <>
                             <ShieldCheck size={16} />
-                            <span>Identity Verified • Unlimited Access Unlocked</span>
+                            <span>Verified Account • Unlimited Access</span>
                         </>
                     ) : (
                         <>

@@ -135,7 +135,7 @@ export default function WireForm({
                         <p>Your wire request has been submitted to the SWIFT network queue.</p>
                         <div className={styles.complianceBox}>
                             <p className={styles.complianceHeader}>
-                                <ShieldAlert size={16} /> ACTION REQUIRED
+                                <ShieldAlert size={16} /> Compliance Review Required
                             </p>
                             <p className={styles.complianceText}>
                                 International compliance requires <strong>Clearance Verification</strong> (CTR/SAR/SDN/CFT Codes) before funds are released.
@@ -297,7 +297,7 @@ export default function WireForm({
 
             <div className={styles.buttonWrapper}>
             <button disabled={isPending} className={styles.button}>
-                {isPending ? <><Loader2 className={styles.spin} size={20} /> Processing SWIFT...</> : 'Initiate Wire Transfer'}
+                {isPending ? <><Loader2 className={styles.spin} size={20} /> Processing Wire...</> : 'Send International Wire'}
             </button>
             </div>
         </form>
