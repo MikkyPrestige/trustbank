@@ -63,14 +63,15 @@ export default async function TransferPage({
     return (
         <div className={styles.container}>
             <header className={styles.header}>
+                <span className={styles.eyebrow}>Domestic Payments</span>
                 <h1 className={styles.title}>Local Transfer</h1>
-                <p className={styles.subtitle}>Instant transfer to any domestic bank account.</p>
+                <p className={styles.subtitle}>Move funds instantly to any domestic bank account.</p>
 
                 <div className={isVerified ? styles.verifiedBadge : styles.unverifiedBadge}>
                     {isVerified ? (
                         <>
                             <ShieldCheck size={16} />
-                            <span>Identity Verified • No Daily Limits</span>
+                            <span>Verified Account • No Transfer Limits</span>
                         </>
                     ) : (
                         <>

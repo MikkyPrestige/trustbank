@@ -272,7 +272,7 @@ export default function TransferFormContent({
             </div>
 
             <button disabled={isPending} className={styles.submitBtn}>
-                {isPending ? <Loader2 className={styles.spin} /> : <><Send size={20} /> Send Funds Now</>}
+                {isPending ? <Loader2 className={styles.spin} /> : <><Send size={18} /> Send Transfer</>}
             </button>
         </form>
     );
