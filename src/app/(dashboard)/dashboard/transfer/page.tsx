@@ -6,6 +6,7 @@ import { AlertTriangle, ShieldCheck, Ban } from "lucide-react";
 import { KycStatus } from "@prisma/client";
 import styles from "../../../../components/dashboard/transfer/transfer.module.css";
 import { getFeatureStatus } from "@/actions/admin/system-status";
+import Link from "next/link";
 
 export default async function TransferPage({
     searchParams,
@@ -80,7 +81,16 @@ export default async function TransferPage({
                 </div>
             </header>
 
-            {!features.transfers ? (
+            {user.localTransferRestricted ? (
+                <div className={styles.lockedState}>
+                    <div className={styles.lockIconBox}>
+                        <Ban size={32} />
+                    </div>
+                    <h2>Local Transfers Restricted</h2>
+                    <p>{user.localTransferRestrictedReason || "Your access to local transfers has been restricted by an administrator."}</p>
+                    <Link href="/dashboard/support" className={styles.verifyBtn}>Contact Support</Link>
+                </div>
+            ) : !features.transfers ? (
                 <div className={styles.lockedState}>
                     <div className={styles.lockIconBox}>
                         <Ban size={32} />

@@ -139,6 +139,10 @@ model User {
   billsRestrictedReason String?
   loansRestricted      Boolean  @default(false)
   loansRestrictedReason String?
+  localTransferRestricted Boolean @default(false)
+  localTransferRestrictedReason String?
+  wireTransferRestricted Boolean @default(false)
+  wireTransferRestrictedReason String?
   fullName             String
   image                String?
   dateOfBirth          DateTime?

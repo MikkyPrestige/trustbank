@@ -4,11 +4,11 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { adminSetServiceRestriction } from '@/actions/admin/restrictions';
 import styles from './users.module.css';
-import { Bitcoin, Receipt, Landmark, X, Loader2 } from 'lucide-react';
+import { Bitcoin, Receipt, Landmark, ArrowRightLeft, Globe, X, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 interface ServiceState {
-    key: 'CRYPTO' | 'BILLS' | 'LOANS';
+    key: 'CRYPTO' | 'BILLS' | 'LOANS' | 'LOCAL_TRANSFER' | 'WIRE_TRANSFER';
     label: string;
     icon: React.ReactNode;
     restricted: boolean;
@@ -23,6 +23,10 @@ interface ServiceAccessPanelProps {
     billsRestrictedReason: string | null;
     loansRestricted: boolean;
     loansRestrictedReason: string | null;
+    localTransferRestricted: boolean;
+    localTransferRestrictedReason: string | null;
+    wireTransferRestricted: boolean;
+    wireTransferRestrictedReason: string | null;
 }
 
 export default function ServiceAccessPanel({
@@ -33,6 +37,10 @@ export default function ServiceAccessPanel({
     billsRestrictedReason,
     loansRestricted,
     loansRestrictedReason,
+    localTransferRestricted,
+    localTransferRestrictedReason,
+    wireTransferRestricted,
+    wireTransferRestrictedReason,
 }: ServiceAccessPanelProps) {
     const router = useRouter();
     const [loadingKey, setLoadingKey] = useState<string | null>(null);
@@ -41,6 +49,8 @@ export default function ServiceAccessPanel({
     const [notifyViaTicket, setNotifyViaTicket] = useState(false);
 
     const services: ServiceState[] = [
+        { key: 'LOCAL_TRANSFER', label: 'Local Transfers', icon: <ArrowRightLeft size={16} />, restricted: localTransferRestricted, reason: localTransferRestrictedReason },
+        { key: 'WIRE_TRANSFER', label: 'International Wire', icon: <Globe size={16} />, restricted: wireTransferRestricted, reason: wireTransferRestrictedReason },
         { key: 'CRYPTO', label: 'Crypto Trading', icon: <Bitcoin size={16} />, restricted: cryptoRestricted, reason: cryptoRestrictedReason },
         { key: 'BILLS', label: 'Bill Payments', icon: <Receipt size={16} />, restricted: billsRestricted, reason: billsRestrictedReason },
         { key: 'LOANS', label: 'Loans', icon: <Landmark size={16} />, restricted: loansRestricted, reason: loansRestrictedReason },
