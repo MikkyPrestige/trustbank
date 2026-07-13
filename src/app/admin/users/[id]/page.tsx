@@ -271,6 +271,10 @@ export default async function UserDetailsPage({ params }: { params: Promise<{ id
                         billsRestrictedReason={user.billsRestrictedReason}
                         loansRestricted={user.loansRestricted}
                         loansRestrictedReason={user.loansRestrictedReason}
+                        localTransferRestricted={user.localTransferRestricted}
+                        localTransferRestrictedReason={user.localTransferRestrictedReason}
+                        wireTransferRestricted={user.wireTransferRestricted}
+                        wireTransferRestrictedReason={user.wireTransferRestrictedReason}
                     />
 
                     <div className={styles.section}>

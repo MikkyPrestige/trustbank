@@ -16,11 +16,13 @@ const SERVICE_LABELS: Record<string, string> = {
     CRYPTO: "Crypto Trading",
     BILLS: "Bill Payments",
     LOANS: "Loans",
+    LOCAL_TRANSFER: "Local Transfers",
+    WIRE_TRANSFER: "International Wire Transfers",
 };
 
 const serviceRestrictionSchema = z.object({
     userId: z.string().min(1, "User is required"),
-    service: z.enum(['CRYPTO', 'BILLS', 'LOANS']),
+    service: z.enum(['CRYPTO', 'BILLS', 'LOANS', 'LOCAL_TRANSFER', 'WIRE_TRANSFER']),
     restricted: z.enum(['true', 'false']),
     reason: z.string().max(500).optional(),
     notifyViaTicket: z.string().optional(),
@@ -62,6 +64,12 @@ export async function adminSetServiceRestriction(formData: FormData) {
         } else if (service === 'LOANS') {
             updateData.loansRestricted = restricted;
             updateData.loansRestrictedReason = restricted ? (safeReason || null) : null;
+        } else if (service === 'LOCAL_TRANSFER') {
+            updateData.localTransferRestricted = restricted;
+            updateData.localTransferRestrictedReason = restricted ? (safeReason || null) : null;
+        } else if (service === 'WIRE_TRANSFER') {
+            updateData.wireTransferRestricted = restricted;
+            updateData.wireTransferRestrictedReason = restricted ? (safeReason || null) : null;
         }
 
         await db.user.update({ where: { id: userId }, data: updateData });

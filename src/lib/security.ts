@@ -52,6 +52,12 @@ export async function checkPermissions(
     if ((action === 'LOAN_APPLY' || action === 'LOAN_REPAY') && user.loansRestricted) {
         return { allowed: false, error: user.loansRestrictedReason || "Loan services have been restricted on your account. Please contact support." };
     }
+    if (action === 'TRANSFER_INTERNAL' && user.localTransferRestricted) {
+        return { allowed: false, error: user.localTransferRestrictedReason || "Local transfers have been restricted on your account. Please contact support." };
+    }
+    if (action === 'TRANSFER_WIRE' && user.wireTransferRestricted) {
+        return { allowed: false, error: user.wireTransferRestrictedReason || "International wire transfers have been restricted on your account. Please contact support." };
+    }
 
     //  KYC BYPASS (Verified users skip limits, but NOT feature flags)
     if (user.kycStatus === KycStatus.VERIFIED) return { allowed: true };

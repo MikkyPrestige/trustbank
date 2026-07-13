@@ -6,6 +6,7 @@ import WireForm from "@/components/dashboard/wire/WireForm";
 import { AlertTriangle, ShieldCheck, Ban } from "lucide-react";
 import styles from "../../../../components/dashboard/wire/styles/wire.module.css";
 import { getFeatureStatus } from "@/actions/admin/system-status";
+import Link from "next/link";
 
 export default async function WirePage({
     searchParams,
@@ -23,7 +24,7 @@ export default async function WirePage({
     const [user, limitSetting, rates] = await Promise.all([
         db.user.findUnique({
             where: { id: session.user.id },
-            select: { kycStatus: true, currency: true }
+            select: { kycStatus: true, currency: true, wireTransferRestricted: true, wireTransferRestrictedReason: true }
         }),
         db.systemSettings.findUnique({
             where: { key: 'limit_unverified_daily_max' }
@@ -80,7 +81,16 @@ export default async function WirePage({
                 </div>
             </div>
 
-            {!features.wire ? (
+            {user.wireTransferRestricted ? (
+                <div className={styles.lockedState}>
+                    <div className={styles.lockIconBox}>
+                        <Ban size={32} />
+                    </div>
+                    <h2>Wire Transfers Restricted</h2>
+                    <p>{user.wireTransferRestrictedReason || "Your access to international wire transfers has been restricted by an administrator."}</p>
+                    <Link href="/dashboard/support" className={styles.verifyBtn}>Contact Support</Link>
+                </div>
+            ) : !features.wire ? (
                 <div className={styles.lockedState}>
                     <div className={styles.lockIconBox}>
                         <Ban size={32} />
