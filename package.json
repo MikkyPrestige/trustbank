@@ -65,7 +65,7 @@
     "prisma": "^6.19.3",
     "ts-node": "^10.9.2",
     "typescript": "6.0.2",
-    "vitest": "^4.1.6"
+    "vitest": "^4.1.11"
   },
   "prisma": {
     "seed": "npx tsx prisma/seed.ts"
